@@ -28,6 +28,41 @@ The system architecture defines four layers with clear component boundaries:
 4. **Transportable query results**: Standardized JSON outputs (study definition, counts, variable mappings, provenance, access constraints) for downstream use
 5. **Security by design**: NIST 800-53 framework, FedRAMP Mod/High, HIPAA compliance
 
+## Deployment
+
+The API runs as a Docker container, the UI is a static site. Both auto-deploy on push.
+
+| Service | Platform | Branch | URL |
+|---------|----------|--------|-----|
+| API (prod) | Render (Web Service, Docker) | `main` | `study-palette-api.onrender.com` |
+| API (dev) | Render (Web Service, Docker) | `api-dev-deploy` | `study-palette-dev.onrender.com` |
+| UI (prod) | Netlify | `main` | `study-palette.netlify.app` |
+| UI (preview) | Netlify | PR branches | auto-generated per PR |
+| Docs | GitHub Pages | `main` (`/docs`) | `tis-lab.github.io/study-palette` |
+
+### How it fits together
+
+- Netlify proxies `/api/*` to Render. The target is set per deploy context in `netlify.toml`:
+  - **Production** → `study-palette-api.onrender.com`
+  - **PR previews** → `study-palette-dev.onrender.com`
+- To test API changes on a PR preview, push them to `api-dev-deploy` before or alongside the PR.
+- The API Dockerfile is at `docker/api.Dockerfile`. Both Render services use it.
+
+### Render service setup (manual, not Blueprint)
+
+Create each as **New → Web Service** (not Blueprint):
+- Connect the `tis-lab/study-palette` repo
+- Runtime: **Docker**
+- Dockerfile Path: `docker/api.Dockerfile`
+- Docker Context Directory: `.`
+- Instance Type: **Free**
+- Branch: `main` for prod, `api-dev-deploy` for dev
+
+### Notes
+
+- Render free tier spins down after 15 min inactivity (~30s cold start on first request)
+- Do not use Render Blueprints — `render.yaml` creates naming conflicts with manually configured services
+
 ## Tech Stack
 - **Front end**: ReactJS — modular, reusable component library
 - **APIs**: FastAPI — Search, Query, Analyze, and Workflows services
