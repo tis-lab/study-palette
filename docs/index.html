@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Palette — BDC Meta-Analysis Study Builder</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --text: #1e293b;
+      --muted: #64748b;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    .container { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
+    header { margin-bottom: 2rem; }
+    header h1 { font-size: 2rem; color: var(--primary); }
+    header p { color: var(--muted); font-size: 1.1rem; margin-top: 0.25rem; }
+    .demo-link {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.5rem 1.25rem;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+    }
+    .demo-link:hover { opacity: 0.9; }
+    section { margin-bottom: 2rem; }
+    section h2 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+    section p, section li { color: var(--muted); }
+    ul { padding-left: 1.25rem; }
+    li { margin-bottom: 0.25rem; }
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.75rem; }
+    @media (max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .card h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .card p { font-size: 0.9rem; }
+    .links { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .links a { color: var(--primary); text-decoration: none; margin-right: 1.5rem; }
+    .links a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Study Palette</h1>
+      <p>BDC Meta-Analysis Study Builder &amp; Query Tool</p>
+      <a class="demo-link" href="https://study-palette.netlify.app">Live Demo</a>
+    </header>
+
+    <section>
+      <h2>About</h2>
+      <p>
+        Study Palette is a unified platform for cross-study data discovery and
+        meta-analysis study building within the
+        <a href="https://biodatacatalyst.nhlbi.nih.gov/">NHLBI BioData Catalyst</a>
+        ecosystem. It replaces fragmented search interfaces with a semantic,
+        modular platform that enables researchers to discover data, explore
+        variables, build studies, and transition to analysis.
+      </p>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card-grid">
+        <div class="card">
+          <h3>Front End</h3>
+          <p>ReactJS with semantic search, query builder, and interactive visualizations.</p>
+        </div>
+        <div class="card">
+          <h3>Modular APIs</h3>
+          <p>FastAPI services for search, query, analysis, and workflow orchestration.</p>
+        </div>
+        <div class="card">
+          <h3>Metadata Index</h3>
+          <p>LinkML-based "source of truth" enabling consistent cross-study search at variable and participant levels.</p>
+        </div>
+        <div class="card">
+          <h3>Integrations</h3>
+          <p>Monarch ontologies, DMC data ingestion, BDC analytic widgets, and foundational BDC services.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Related Projects</h2>
+      <ul>
+        <li><a href="https://github.com/RTIInternational/NHLBI-BDC-DMC-HM">BDCHM</a> — BDC Harmonized Data Model (LinkML)</li>
+        <li><a href="https://github.com/linkml/dm-bip">dm-bip</a> — Data Model-Based Ingestion Pipeline</li>
+      </ul>
+    </section>
+
+    <div class="links">
+      <a href="https://github.com/tis-lab/study-palette">GitHub</a>
+      <a href="https://github.com/tis-lab/study-palette/blob/main/ARCHITECTURE.md">Architecture</a>
+      <a href="https://github.com/tis-lab/study-palette/blob/main/DEVELOPMENT.md">Roadmap</a>
+    </div>
+  </div>
+</body>
+</html>
