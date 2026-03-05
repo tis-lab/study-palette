@@ -6,7 +6,10 @@ authors = [{ name = "Corey Cox", email = "corey@tislab.org" }]
 requires-python = ">=3.11,<=3.13"
 readme = "README.md"
 license = "MIT"
-dependencies = []
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.34,<1",
+]
 
 [dependency-groups]
 dev = [
@@ -18,6 +21,7 @@ dev = [
     "coverage>=7.3.0",
     "pytest-cov>=6.0",
     "codespell>=2.4.1",
+    "httpx>=0.28",
 ]
 
 [tool.uv]
@@ -28,6 +32,7 @@ target-version = "py312"
 line-length = 120
 include = [
     "src/**/*.py",
+    "api/**/*.py",
     "tests/**/*.py",
 ]
 
@@ -43,12 +48,18 @@ select = [
     "W",  # Warning
 ]
 extend-ignore = [
+    "D100",  # `missing-docstring-in-public-module`
+    "D104",  # `missing-docstring-in-public-package`
     "D211",  # `no-blank-line-before-class`
     "D212",  # `multi-line-summary-first-line`
     "D203",  # `blank-line-before-docstring`
     "S101",  # `assert`
 ]
 unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D"]
+"api/tests/**/*.py" = ["D"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
@@ -59,8 +70,8 @@ count = ""
 quiet-level = 3
 
 [tool.coverage.run]
-source = ["study_palette"]
-omit = ["tests/*", "*/__init__.py"]
+source = ["study_palette", "api"]
+omit = ["tests/*", "api/tests/*", "*/__init__.py"]
 
 [tool.coverage.report]
 show_missing = true

@@ -16,3 +16,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full system architecture. Treat i
 - See DEVELOPMENT.md for the project roadmap and milestone tracking
 - Branch protection on `main`
 - PR reviews required before merge
+
+## Commit Conventions
+- Short or one-line commit messages that summarize the work
+- No co-author lines
+- No "Closes #N" in commit messages (link issues in the PR instead)
