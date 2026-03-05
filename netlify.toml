@@ -8,7 +8,7 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://study-palette-api.fly.dev/api/:splat"
+  to = "https://study-palette-api.onrender.com/api/:splat"
   status = 200
   force = false
 

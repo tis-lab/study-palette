@@ -1,32 +1,29 @@
 import { useEffect, useState } from "react";
+import OverviewCharts from "./OverviewCharts";
 
-interface Study {
-  id: string;
-  name: string;
-  description: string;
-  participant_count: number;
-  data_types: string[];
-}
-
-interface StudiesResponse {
-  studies: Study[];
-  total: number;
+interface OverviewData {
+  conditions: {
+    name: string;
+    value: number;
+    children: { name: string; value: number }[];
+  }[];
+  procedures: { name: string; value: number }[];
 }
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 function App() {
-  const [studies, setStudies] = useState<Study[]>([]);
+  const [overview, setOverview] = useState<OverviewData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/studies`)
+    fetch(`${API_BASE}/api/overview`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<StudiesResponse>;
+        return res.json() as Promise<OverviewData>;
       })
-      .then((data) => setStudies(data.studies))
+      .then((data) => setOverview(data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
@@ -38,29 +35,9 @@ function App() {
         <p>BDC Meta-Analysis Study Builder & Query Tool</p>
       </header>
       <main>
-        {loading && <p className="status">Loading studies...</p>}
+        {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
-        {!loading && !error && (
-          <div className="study-grid">
-            {studies.map((study) => (
-              <div key={study.id} className="study-card">
-                <h2>{study.name}</h2>
-                <code>{study.id}</code>
-                <p>{study.description}</p>
-                <div className="meta">
-                  <span>{study.participant_count.toLocaleString()} participants</span>
-                  <div className="tags">
-                    {study.data_types.map((t) => (
-                      <span key={t} className="tag">
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        {overview && <OverviewCharts data={overview} />}
       </main>
     </div>
   );

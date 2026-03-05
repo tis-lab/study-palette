@@ -24,7 +24,7 @@ body {
 }
 
 .app {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
@@ -52,52 +52,27 @@ header p {
   color: var(--color-error);
 }
 
-.study-grid {
+.chart-grid {
   display: grid;
-  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
-.study-card {
+@media (max-width: 700px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-panel {
   background: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.25rem;
 }
 
-.study-card h2 {
-  font-size: 1.1rem;
-  margin-bottom: 0.25rem;
-}
-
-.study-card code {
-  font-size: 0.8rem;
-  color: var(--color-muted);
-}
-
-.study-card p {
-  margin-top: 0.5rem;
-  color: var(--color-muted);
-  font-size: 0.9rem;
-}
-
-.meta {
-  margin-top: 0.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.85rem;
-  color: var(--color-muted);
-}
-
-.tags {
-  display: flex;
-  gap: 0.375rem;
-}
-
-.tag {
-  background: var(--color-tag-bg);
-  color: var(--color-tag-text);
-  padding: 0.125rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
+.chart-panel h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
 }

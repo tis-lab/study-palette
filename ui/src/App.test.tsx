@@ -2,17 +2,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import App from "./App";
 
-const mockStudies = {
-  studies: [
+const mockOverview = {
+  conditions: [
     {
-      id: "phs000001",
-      name: "Test Study",
-      description: "A test study for unit tests.",
-      participant_count: 100,
-      data_types: ["Genomic"],
+      name: "Cardiovascular",
+      value: 45200,
+      children: [{ name: "Hypertension", value: 14400 }],
     },
   ],
-  total: 1,
+  procedures: [{ name: "Echocardiography", value: 28700 }],
 };
 
 describe("App", () => {
@@ -23,22 +21,23 @@ describe("App", () => {
   it("renders the header", () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve(mockStudies),
+      json: () => Promise.resolve(mockOverview),
     } as Response);
 
     render(<App />);
     expect(screen.getByText("Study Palette")).toBeInTheDocument();
   });
 
-  it("renders studies from the API", async () => {
+  it("renders chart panels after fetch", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve(mockStudies),
+      json: () => Promise.resolve(mockOverview),
     } as Response);
 
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByText("Test Study")).toBeInTheDocument();
+      expect(screen.getByText("Conditions")).toBeInTheDocument();
+      expect(screen.getByText("Procedures")).toBeInTheDocument();
     });
   });
 

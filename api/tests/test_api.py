@@ -29,3 +29,12 @@ def test_get_study():
 def test_get_study_not_found():
     resp = client.get("/api/studies/nonexistent")
     assert resp.status_code == 404
+
+
+def test_overview():
+    resp = client.get("/api/overview")
+    data = resp.json()
+    assert "conditions" in data
+    assert "procedures" in data
+    assert len(data["conditions"]) == 4
+    assert all("children" in c for c in data["conditions"])
