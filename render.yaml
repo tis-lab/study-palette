@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: study-palette-api
+    runtime: docker
+    plan: free
+    dockerfilePath: docker/api.Dockerfile
+    dockerContext: .
+    envVars:
+      - key: PORT
+        value: "8000"
