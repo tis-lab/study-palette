@@ -1,0 +1,56 @@
+# Grant source materials (do not commit)
+6_Workplan_Aim 1.txt
+BDC3 Data Portal Narrative Proposal_Draft_*.txt
+Figure 1.png
+Figure 2.png
+
+# Claude local config
+CLAUDE.local.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.venv/
+*.egg
+
+# Node / React
+node_modules/
+.next/
+build/
+*.tsbuildinfo
+
+# Java
+target/
+*.class
+*.jar
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Coverage
+.coverage
+coverage.xml
+htmlcov/
+
+# Testing
+.pytest_cache/
+.tox/
+
+# Build artifacts
+output/

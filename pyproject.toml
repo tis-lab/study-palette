@@ -1,0 +1,74 @@
+[project]
+name = "study-palette"
+version = "0.0.0"
+description = "BDC Meta-Analysis Study Builder & Query Tool"
+authors = [{ name = "Corey Cox", email = "corey@tislab.org" }]
+requires-python = ">=3.11,<=3.13"
+readme = "README.md"
+license = "MIT"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.2",
+    "tox>=4.16.0",
+    "tox-uv>=1.11.3",
+    "pre-commit>=3.3.3",
+    "ruff>=0.12.9",
+    "coverage>=7.3.0",
+    "pytest-cov>=6.0",
+    "codespell>=2.4.1",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 120
+include = [
+    "src/**/*.py",
+    "tests/**/*.py",
+]
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+select = [
+    "B",  # bugbear
+    "D",  # pydocstyle
+    "E",  # pycodestyle errors
+    "F",  # Pyflakes
+    "I",  # isort
+    "S",  # flake8-bandit
+    "W",  # Warning
+]
+extend-ignore = [
+    "D211",  # `no-blank-line-before-class`
+    "D212",  # `multi-line-summary-first-line`
+    "D203",  # `blank-line-before-docstring`
+    "S101",  # `assert`
+]
+unfixable = []
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.codespell]
+skip = "*.po,*.ts,.git,pyproject.toml"
+count = ""
+quiet-level = 3
+
+[tool.coverage.run]
+source = ["study_palette"]
+omit = ["tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
