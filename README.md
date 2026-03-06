@@ -26,12 +26,10 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full architecture reference and [
 
 ```
 study-palette/
-├── src/study_palette/    # Python package — metadata indexing, schema tooling
-├── tests/                # Test suite
-├── ui/                   # ReactJS front end (future)
-├── api/                  # API services (future)
+├── api/                  # FastAPI backend + DuckDB
+├── ui/                   # React + TypeScript + Vite front end
+├── docker/               # Dockerfiles
 ├── docs/                 # Architecture docs and decisions
-├── docker/               # Dockerfiles and compose
 └── .github/workflows/    # CI/CD pipelines
 ```
 

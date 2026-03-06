@@ -34,19 +34,17 @@ check_cmd() {
 }
 
 check_cmd python3 "Install Python 3.11+ (mise install python)"
+check_cmd uv "Install uv (mise install uv)"
 check_cmd bun "Install bun (mise install bun)"
 
 # --- Python backend setup ---
 
-VENV_DIR="$ROOT/.venv/uv-venv"
+VENV_DIR="$ROOT/.venv"
 if [[ ! -d "$VENV_DIR" ]]; then
     echo -e "${BLUE}[api]${RESET} Setting up Python environment..."
-    cd "$ROOT"
-    uv sync
-    cd - >/dev/null
+    uv sync --project "$ROOT"
 fi
 
-# Prefer activated venv, fall back to the uv-venv
 if [[ -n "${VIRTUAL_ENV:-}" ]]; then
     PYTHON="$VIRTUAL_ENV/bin/python"
 elif [[ -f "$VENV_DIR/bin/python" ]]; then

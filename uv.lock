@@ -607,7 +607,7 @@ wheels = [
 [[package]]
 name = "study-palette"
 version = "0.0.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
     { name = "duckdb" },
     { name = "fastapi" },
