@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-
-interface Study {
-  id: string;
-  name: string;
-  description: string;
-  participant_count: number;
-}
+import { API_BASE, type Study } from "./types";
 
 interface ConditionRow {
   condition_concept: string;
@@ -18,8 +12,6 @@ interface DemographicsRow {
   sex: string;
   count: number;
 }
-
-const API_BASE = import.meta.env.VITE_API_URL || "";
 
 const STATUS_COLORS: Record<string, string> = {
   PRESENT: "#dc2626",

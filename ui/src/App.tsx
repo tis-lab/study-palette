@@ -1,19 +1,11 @@
 import { useEffect, useState } from "react";
 import StudyOverview from "./StudyOverview";
-
-interface Study {
-  id: string;
-  name: string;
-  description: string;
-  participant_count: number;
-}
+import { API_BASE, type Study } from "./types";
 
 interface StudiesResponse {
   studies: Study[];
   total: number;
 }
-
-const API_BASE = import.meta.env.VITE_API_URL || "";
 
 function App() {
   const [studies, setStudies] = useState<Study[]>([]);
