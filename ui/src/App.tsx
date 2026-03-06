@@ -1,29 +1,32 @@
 import { useEffect, useState } from "react";
-import OverviewCharts from "./OverviewCharts";
+import StudyOverview from "./StudyOverview";
 
-interface OverviewData {
-  conditions: {
-    name: string;
-    value: number;
-    children: { name: string; value: number }[];
-  }[];
-  procedures: { name: string; value: number }[];
+interface Study {
+  id: string;
+  name: string;
+  description: string;
+  participant_count: number;
+}
+
+interface StudiesResponse {
+  studies: Study[];
+  total: number;
 }
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
 function App() {
-  const [overview, setOverview] = useState<OverviewData | null>(null);
+  const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/overview`)
+    fetch(`${API_BASE}/api/studies`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<OverviewData>;
+        return res.json() as Promise<StudiesResponse>;
       })
-      .then((data) => setOverview(data))
+      .then((data) => setStudies(data.studies))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
@@ -37,7 +40,9 @@ function App() {
       <main>
         {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
-        {overview && <OverviewCharts data={overview} />}
+        {studies.map((study) => (
+          <StudyOverview key={study.id} study={study} />
+        ))}
       </main>
     </div>
   );
