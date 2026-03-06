@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { DEMO_CONDITIONS, DEMO_DEMOGRAPHICS } from "./demoData";
-import { API_BASE, type DataMode, type Study } from "./types";
+import { API_BASE, type Study } from "./types";
 
 interface ConditionRow {
   condition_concept: string;
@@ -24,17 +23,11 @@ const SEX_COLORS: Record<string, string> = {
   "OMOP:8532": "#ec4899",
 };
 
-export default function StudyOverview({ study, mode }: { study: Study; mode: DataMode }) {
+export default function StudyOverview({ study }: { study: Study }) {
   const [conditions, setConditions] = useState<ConditionRow[]>([]);
   const [demographics, setDemographics] = useState<DemographicsRow[]>([]);
 
   useEffect(() => {
-    if (mode === "demo") {
-      setConditions(DEMO_CONDITIONS[study.id] ?? []);
-      setDemographics(DEMO_DEMOGRAPHICS[study.id] ?? []);
-      return;
-    }
-
     fetch(`${API_BASE}/api/studies/${study.id}/conditions`)
       .then((res) => res.json())
       .then((data) => setConditions(data.conditions ?? []))
@@ -53,7 +46,7 @@ export default function StudyOverview({ study, mode }: { study: Study; mode: Dat
         );
       })
       .catch(() => {});
-  }, [study.id, mode]);
+  }, [study.id]);
 
   const conditionChartData = conditions.map((c) => ({
     name: `${c.condition_concept} (${c.condition_status})`,
@@ -76,13 +69,6 @@ export default function StudyOverview({ study, mode }: { study: Study; mode: Dat
         <span className="participant-count">
           {study.participant_count.toLocaleString()} participants
         </span>
-        {study.data_types && (
-          <div className="tags">
-            {study.data_types.map((t) => (
-              <span key={t} className="tag">{t}</span>
-            ))}
-          </div>
-        )}
       </div>
       <div className="chart-grid">
         {conditionChartData.length > 0 && (

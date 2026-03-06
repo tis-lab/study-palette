@@ -3,7 +3,6 @@ export interface Study {
   name: string;
   description: string;
   participant_count: number;
-  data_types?: string[];
 }
 
 export type DataMode = "demo" | "live";

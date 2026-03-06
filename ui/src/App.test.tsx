@@ -34,10 +34,11 @@ describe("App", () => {
     expect(screen.getByText("Study Palette")).toBeInTheDocument();
   });
 
-  it("defaults to demo mode with demo studies", () => {
+  it("defaults to demo mode with overview charts", () => {
     render(<App />);
     expect(screen.getByText("Demo Data")).toBeInTheDocument();
-    expect(screen.getByText("CARe: Candidate Gene Association Resource")).toBeInTheDocument();
+    expect(screen.getByText("Conditions")).toBeInTheDocument();
+    expect(screen.getByText("Procedures")).toBeInTheDocument();
   });
 
   it("switches to live mode and fetches from API", async () => {

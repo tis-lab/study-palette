@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import OverviewCharts from "./OverviewCharts";
 import StudyOverview from "./StudyOverview";
-import { DEMO_STUDIES } from "./demoData";
+import { DEMO_OVERVIEW } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 
 interface StudiesResponse {
@@ -10,13 +11,13 @@ interface StudiesResponse {
 
 function App() {
   const [mode, setMode] = useState<DataMode>("demo");
-  const [studies, setStudies] = useState<Study[]>(DEMO_STUDIES);
+  const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (mode === "demo") {
-      setStudies(DEMO_STUDIES);
+      setStudies([]);
       setLoading(false);
       setError(null);
       return;
@@ -53,8 +54,9 @@ function App() {
       <main>
         {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
-        {studies.map((study) => (
-          <StudyOverview key={`${mode}-${study.id}`} study={study} mode={mode} />
+        {mode === "demo" && <OverviewCharts data={DEMO_OVERVIEW} />}
+        {mode === "live" && studies.map((study) => (
+          <StudyOverview key={study.id} study={study} />
         ))}
       </main>
     </div>
