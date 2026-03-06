@@ -23,6 +23,7 @@ function App() {
       return;
     }
 
+    setStudies([]);
     setLoading(true);
     setError(null);
     fetch(`${API_BASE}/api/studies`)
