@@ -54,3 +54,9 @@ htmlcov/
 
 # Build artifacts
 output/
+
+# DuckDB data files (built from seed data)
+data/*.duckdb
+
+# Temporary workspaces
+.wt/tmp/

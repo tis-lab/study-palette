@@ -1,7 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="Study Palette API", version="0.0.1")
+from api import db
+
+app = FastAPI(title="Study Palette API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -9,37 +11,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-EXAMPLE_STUDIES = [
-    {
-        "id": "phs000209",
-        "name": "CARe: Candidate Gene Association Resource",
-        "description": "Multi-ethnic cohort study of cardiovascular, lung, blood, and sleep disorders.",
-        "participant_count": 40181,
-        "data_types": ["Genomic", "Phenotypic", "Clinical"],
-    },
-    {
-        "id": "phs000179",
-        "name": "MESA: Multi-Ethnic Study of Atherosclerosis",
-        "description": "Prospective study of subclinical cardiovascular disease progression.",
-        "participant_count": 6814,
-        "data_types": ["Imaging", "Genomic", "Phenotypic"],
-    },
-    {
-        "id": "phs000286",
-        "name": "ARIC: Atherosclerosis Risk in Communities",
-        "description": "Community-based prospective cohort study of cardiovascular disease etiology.",
-        "participant_count": 15792,
-        "data_types": ["Genomic", "Phenotypic", "Clinical", "Imaging"],
-    },
-    {
-        "id": "phs001024",
-        "name": "JHS: Jackson Heart Study",
-        "description": "Prospective study of cardiovascular disease among African Americans.",
-        "participant_count": 5306,
-        "data_types": ["Genomic", "Phenotypic", "Clinical"],
-    },
-]
 
 
 OVERVIEW_DATA = {
@@ -89,14 +60,35 @@ def health():
 
 @app.get("/api/studies")
 def list_studies():
-    """Return all available studies."""
-    return {"studies": EXAMPLE_STUDIES, "total": len(EXAMPLE_STUDIES)}
+    """Return all available studies with participant counts."""
+    studies = db.get_all_studies()
+    return {"studies": studies, "total": len(studies)}
 
 
 @app.get("/api/studies/{study_id}")
 def get_study(study_id: str):
-    """Return a single study by ID."""
-    for study in EXAMPLE_STUDIES:
-        if study["id"] == study_id:
-            return study
-    raise HTTPException(status_code=404, detail="Study not found")
+    """Return a single study by ID with summary statistics."""
+    if study_id not in db.list_study_ids():
+        raise HTTPException(status_code=404, detail="Study not found")
+    study = db.get_study(study_id)
+    if not study:
+        raise HTTPException(status_code=404, detail="Study not found")
+    return study
+
+
+@app.get("/api/studies/{study_id}/participants")
+def list_participants(study_id: str):
+    """Return participants for a study, joined with demographics."""
+    if study_id not in db.list_study_ids():
+        raise HTTPException(status_code=404, detail="Study not found")
+    participants = db.get_participants(study_id)
+    return {"participants": participants, "total": len(participants)}
+
+
+@app.get("/api/studies/{study_id}/conditions")
+def list_conditions(study_id: str):
+    """Return condition summary for a study."""
+    if study_id not in db.list_study_ids():
+        raise HTTPException(status_code=404, detail="Study not found")
+    conditions = db.get_condition_summary(study_id)
+    return {"conditions": conditions}
