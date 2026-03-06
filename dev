@@ -34,6 +34,7 @@ check_cmd() {
 }
 
 check_cmd python3 "Install Python 3.11+ (mise install python)"
+check_cmd uv "Install uv (mise install uv)"
 check_cmd bun "Install bun (mise install bun)"
 
 # --- Python backend setup ---
