@@ -17,6 +17,7 @@ def seed_db(monkeypatch):
         import api.db
 
         monkeypatch.setattr(api.db, "DATA_DIR", Path(tmp))
+        api.db.list_study_ids.cache_clear()
         yield
 
 
@@ -73,3 +74,13 @@ def test_list_conditions(client):
     assert "condition_concept" in c
     assert "condition_status" in c
     assert "count" in c
+
+
+def test_list_participants_not_found(client):
+    resp = client.get("/api/studies/nonexistent/participants")
+    assert resp.status_code == 404
+
+
+def test_list_conditions_not_found(client):
+    resp = client.get("/api/studies/nonexistent/conditions")
+    assert resp.status_code == 404

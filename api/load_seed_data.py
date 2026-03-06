@@ -43,8 +43,10 @@ def load(seed_dir: Path, data_dir: Path) -> Path:
                 print(f"  skipping {filename} (not found)")
                 continue
             con.execute(f"DROP TABLE IF EXISTS {table_name}")  # noqa: S608
+            safe_path = jsonl_path.as_posix().replace("'", "''")
             con.execute(
-                f"CREATE TABLE {table_name} AS SELECT * FROM read_json_auto('{jsonl_path}')"  # noqa: S608
+                f"CREATE TABLE {table_name} AS "  # noqa: S608
+                f"SELECT * FROM read_json_auto('{safe_path}')"
             )
             count = con.execute(f"SELECT count(*) FROM {table_name}").fetchone()[0]  # noqa: S608
             print(f"  {table_name}: {count} rows")
