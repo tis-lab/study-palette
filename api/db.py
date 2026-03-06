@@ -12,7 +12,7 @@ DATA_DIR = Path(os.environ.get("STUDY_PALETTE_DATA_DIR", "data"))
 _SAFE_ID = re.compile(r"^[a-zA-Z0-9_-]+$")
 
 
-def _result_dicts(result: duckdb.DuckDBPyRelation) -> list[dict]:
+def _result_dicts(result: duckdb.DuckDBPyConnection) -> list[dict]:
     columns = [desc[0] for desc in result.description]
     return [dict(zip(columns, row, strict=True)) for row in result.fetchall()]
 
