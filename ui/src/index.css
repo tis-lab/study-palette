@@ -33,6 +33,33 @@ header {
   margin-bottom: 2rem;
 }
 
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.mode-toggle {
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-card);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.mode-toggle:hover {
+  background: var(--color-bg);
+}
+
+.mode-toggle.live {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
 header h1 {
   font-size: 1.75rem;
   color: var(--color-primary);
@@ -75,4 +102,55 @@ header p {
   font-size: 1rem;
   margin-bottom: 0.5rem;
   color: var(--color-text);
+}
+
+.study-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.study-header {
+  margin-bottom: 1.25rem;
+}
+
+.study-header h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.study-header code {
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.study-header p {
+  margin-top: 0.5rem;
+  color: var(--color-muted);
+}
+
+.participant-count {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.tags {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
 }

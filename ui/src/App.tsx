@@ -1,43 +1,64 @@
 import { useEffect, useState } from "react";
 import OverviewCharts from "./OverviewCharts";
+import StudyOverview from "./StudyOverview";
+import { DEMO_OVERVIEW } from "./demoData";
+import { API_BASE, type DataMode, type Study } from "./types";
 
-interface OverviewData {
-  conditions: {
-    name: string;
-    value: number;
-    children: { name: string; value: number }[];
-  }[];
-  procedures: { name: string; value: number }[];
+interface StudiesResponse {
+  studies: Study[];
+  total: number;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || "";
-
 function App() {
-  const [overview, setOverview] = useState<OverviewData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [mode, setMode] = useState<DataMode>("demo");
+  const [studies, setStudies] = useState<Study[]>([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/api/overview`)
+    if (mode === "demo") {
+      setStudies([]);
+      setLoading(false);
+      setError(null);
+      return;
+    }
+
+    setStudies([]);
+    setLoading(true);
+    setError(null);
+    fetch(`${API_BASE}/api/studies`)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<OverviewData>;
+        return res.json() as Promise<StudiesResponse>;
       })
-      .then((data) => setOverview(data))
+      .then((data) => setStudies(data.studies))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [mode]);
 
   return (
     <div className="app">
       <header>
-        <h1>Study Palette</h1>
-        <p>BDC Meta-Analysis Study Builder & Query Tool</p>
+        <div className="header-row">
+          <div>
+            <h1>Study Palette</h1>
+            <p>BDC Meta-Analysis Study Builder & Query Tool</p>
+          </div>
+          <button
+            className={`mode-toggle ${mode}`}
+            onClick={() => setMode(mode === "demo" ? "live" : "demo")}
+          >
+            {mode === "demo" ? "Demo Data" : "Live API"}
+          </button>
+        </div>
       </header>
       <main>
         {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
-        {overview && <OverviewCharts data={overview} />}
+        {mode === "demo" && <OverviewCharts data={DEMO_OVERVIEW} />}
+        {mode === "live" && studies.map((study) => (
+          <StudyOverview key={study.id} study={study} />
+        ))}
       </main>
     </div>
   );

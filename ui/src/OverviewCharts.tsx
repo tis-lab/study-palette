@@ -6,7 +6,7 @@ interface ConditionCategory {
   children: { name: string; value: number }[];
 }
 
-interface OverviewData {
+export interface OverviewData {
   conditions: ConditionCategory[];
   procedures: { name: string; value: number }[];
 }
