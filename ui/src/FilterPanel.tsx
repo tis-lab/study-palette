@@ -42,31 +42,34 @@ export default function FilterPanel({
         participants
       </p>
       {filters.conditionCategories.map((v) => (
-        <span
+        <button
+          type="button"
           key={`cat-${v}`}
           className="filter-chip chip-condition"
           onClick={() => onRemove("conditionCategories", v)}
         >
           {v} &times;
-        </span>
+        </button>
       ))}
       {filters.conditions.map((v) => (
-        <span
+        <button
+          type="button"
           key={`cond-${v}`}
           className="filter-chip chip-condition"
           onClick={() => onRemove("conditions", v)}
         >
           {v} &times;
-        </span>
+        </button>
       ))}
       {filters.procedures.map((v) => (
-        <span
+        <button
+          type="button"
           key={`proc-${v}`}
           className="filter-chip chip-procedure"
           onClick={() => onRemove("procedures", v)}
         >
           {v} &times;
-        </span>
+        </button>
       ))}
     </div>
   );

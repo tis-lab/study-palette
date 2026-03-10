@@ -105,9 +105,9 @@ export default function OverviewCharts({
                 onFilterAdd("conditions", outerRing[idx].name)
               }
             >
-              {outerRing.map((entry, i) => (
+              {outerRing.map((entry) => (
                 <Cell
-                  key={i}
+                  key={`${entry.category}-${entry.name}`}
                   fill={entry.color}
                   opacity={
                     filters.conditions.length > 0 &&
@@ -148,7 +148,7 @@ export default function OverviewCharts({
             >
               {data.procedures.map((entry, i) => (
                 <Cell
-                  key={i}
+                  key={entry.name}
                   fill={PROCEDURE_COLORS[i % PROCEDURE_COLORS.length]}
                   opacity={
                     filters.procedures.length > 0 &&
