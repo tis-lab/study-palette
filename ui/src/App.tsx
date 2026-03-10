@@ -1,7 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import OverviewCharts from "./OverviewCharts";
+import FilterPanel from "./FilterPanel";
 import StudyOverview from "./StudyOverview";
-import { DEMO_OVERVIEW } from "./demoData";
+import {
+  DEMO_PARTICIPANTS,
+  EMPTY_FILTERS,
+  aggregateOverview,
+  filterParticipants,
+  type ActiveFilters,
+} from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 
 interface StudiesResponse {
@@ -14,6 +21,7 @@ function App() {
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<ActiveFilters>(EMPTY_FILTERS);
 
   useEffect(() => {
     if (mode === "demo") {
@@ -36,6 +44,33 @@ function App() {
       .finally(() => setLoading(false));
   }, [mode]);
 
+  const filtered = useMemo(
+    () => filterParticipants(DEMO_PARTICIPANTS, filters),
+    [filters],
+  );
+  const overviewData = useMemo(() => aggregateOverview(filtered), [filtered]);
+
+  function handleFilterAdd(type: keyof ActiveFilters, value: string) {
+    setFilters((prev) => {
+      const current = prev[type];
+      if (current.includes(value)) {
+        return { ...prev, [type]: current.filter((v) => v !== value) };
+      }
+      return { ...prev, [type]: [...current, value] };
+    });
+  }
+
+  function handleFilterRemove(type: keyof ActiveFilters, value: string) {
+    setFilters((prev) => ({
+      ...prev,
+      [type]: prev[type].filter((v) => v !== value),
+    }));
+  }
+
+  function handleFilterClear() {
+    setFilters(EMPTY_FILTERS);
+  }
+
   return (
     <div className="app">
       <header>
@@ -55,10 +90,28 @@ function App() {
       <main>
         {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
-        {mode === "demo" && <OverviewCharts data={DEMO_OVERVIEW} />}
-        {mode === "live" && studies.map((study) => (
-          <StudyOverview key={study.id} study={study} />
-        ))}
+        {mode === "demo" && (
+          <div className="demo-layout">
+            <FilterPanel
+              filters={filters}
+              onRemove={handleFilterRemove}
+              onClear={handleFilterClear}
+              totalCount={DEMO_PARTICIPANTS.length}
+              filteredCount={filtered.length}
+            />
+            <div className="demo-content">
+              <OverviewCharts
+                data={overviewData}
+                filters={filters}
+                onFilterAdd={handleFilterAdd}
+              />
+            </div>
+          </div>
+        )}
+        {mode === "live" &&
+          studies.map((study) => (
+            <StudyOverview key={study.id} study={study} />
+          ))}
       </main>
     </div>
   );
