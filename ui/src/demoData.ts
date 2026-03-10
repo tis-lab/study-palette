@@ -141,10 +141,9 @@ export function aggregateOverview(participants: Participant[]): OverviewData {
       return {
         name,
         value: cat.total,
-        children: Array.from(cat.children.entries()).map(([n, v]) => ({
-          name: n,
-          value: v,
-        })),
+        children: (CONDITIONS[name] ?? [])
+          .filter((n) => cat.children.has(n))
+          .map((n) => ({ name: n, value: cat.children.get(n)! })),
       };
     });
 

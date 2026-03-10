@@ -68,17 +68,10 @@ describe("App", () => {
     expect(screen.getByText("Click a chart segment to filter")).toBeInTheDocument();
   });
 
-  it("shows filter chip and count when filter is active", async () => {
+  it("shows filter panel with no-filter hint and correct participant count", () => {
     render(<App />);
     const filterPanel = screen.getByText("Filters").closest(".filter-panel")!;
-
-    // Simulate adding a filter by clicking a recharts pie segment
-    // Recharts SVG clicks are hard to simulate, so test the FilterPanel behavior
-    // by checking the initial state has the right participant count structure
-    const totalCount = DEMO_PARTICIPANTS.length;
-    expect(totalCount).toBe(1000);
-
-    // Verify the filter hint is shown when no filters are active
+    expect(DEMO_PARTICIPANTS.length).toBe(1000);
     expect(within(filterPanel).getByText("Click a chart segment to filter")).toBeInTheDocument();
   });
 

@@ -33,7 +33,7 @@ export default function FilterPanel({
     <div className="filter-panel">
       <div className="filter-header">
         <h3>Filters</h3>
-        <button className="filter-clear" onClick={onClear}>
+        <button type="button" className="filter-clear" onClick={onClear}>
           Clear all
         </button>
       </div>
