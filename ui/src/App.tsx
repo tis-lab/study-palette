@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import OverviewCharts from "./OverviewCharts";
+import DemographicsSankey from "./DemographicsSankey";
 import FilterPanel from "./FilterPanel";
 import StudyOverview from "./StudyOverview";
 import {
   DEMO_PARTICIPANTS,
   EMPTY_FILTERS,
   aggregateOverview,
+  buildSankeyData,
   filterParticipants,
   type ActiveFilters,
 } from "./demoData";
@@ -49,16 +51,20 @@ function App() {
     [filters],
   );
   const overviewData = useMemo(() => aggregateOverview(filtered), [filtered]);
+  const sankeyData = useMemo(() => buildSankeyData(filtered), [filtered]);
 
-  function handleFilterAdd(type: keyof ActiveFilters, value: string) {
-    setFilters((prev) => {
-      const current = prev[type];
-      if (current.includes(value)) {
-        return { ...prev, [type]: current.filter((v) => v !== value) };
-      }
-      return { ...prev, [type]: [...current, value] };
-    });
-  }
+  const handleFilterAdd = useCallback(
+    (type: keyof ActiveFilters, value: string) => {
+      setFilters((prev) => {
+        const current = prev[type];
+        if (current.includes(value)) {
+          return { ...prev, [type]: current.filter((v) => v !== value) };
+        }
+        return { ...prev, [type]: [...current, value] };
+      });
+    },
+    [],
+  );
 
   function handleFilterRemove(type: keyof ActiveFilters, value: string) {
     setFilters((prev) => ({
@@ -103,6 +109,10 @@ function App() {
               <OverviewCharts
                 data={overviewData}
                 filters={filters}
+                onFilterAdd={handleFilterAdd}
+              />
+              <DemographicsSankey
+                data={sankeyData}
                 onFilterAdd={handleFilterAdd}
               />
             </div>

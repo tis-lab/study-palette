@@ -156,6 +156,34 @@ header p {
   color: #1e40af;
 }
 
+.chip-demographic {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.demo-content > .chart-panel {
+  margin-top: 1.5rem;
+}
+
+.sankey-container {
+  overflow: hidden;
+}
+
+.sankey-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px 0 10px;
+  margin-right: 140px;
+}
+
+.sankey-column-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .chart-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
