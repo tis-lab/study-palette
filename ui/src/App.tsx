@@ -74,10 +74,20 @@ function App() {
   return (
     <div className="app">
       <header>
+        <div className="brand-bar">
+          <img
+            className="brand-logo"
+            src="/branding/bdc-logo.svg"
+            alt="Branding placeholder"
+          />
+        </div>
         <div className="header-row">
           <div>
             <h1>Study Palette</h1>
-            <p>BDC Meta-Analysis Study Builder & Query Tool</p>
+            <p>
+              NHLBI BioData Catalyst<sup>&reg;</sup> (BDC) Meta-Analysis Study
+              Builder & Query Tool
+            </p>
           </div>
           <button
             className={`mode-toggle ${mode}`}

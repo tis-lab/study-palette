@@ -8,6 +8,8 @@
   --color-tag-bg: #eff6ff;
   --color-tag-text: #1d4ed8;
   --color-error: #dc2626;
+  --brand-logo-height: 34px;
+  --brand-clear-space: calc(var(--brand-logo-height) * 0.4);
 }
 
 * {
@@ -31,6 +33,19 @@ body {
 
 header {
   margin-bottom: 2rem;
+}
+
+.brand-bar {
+  padding: var(--brand-clear-space) 0 var(--brand-clear-space)
+    var(--brand-clear-space);
+  margin-bottom: 1rem;
+}
+
+.brand-logo {
+  display: block;
+  height: var(--brand-logo-height);
+  width: auto;
+  max-width: 100%;
 }
 
 .header-row {
