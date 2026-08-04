@@ -18,7 +18,11 @@ export default function FilterPanel({
   const hasFilters =
     filters.conditionCategories.length > 0 ||
     filters.conditions.length > 0 ||
-    filters.procedures.length > 0;
+    filters.procedures.length > 0 ||
+    filters.sex.length > 0 ||
+    filters.race.length > 0 ||
+    filters.ethnicity.length > 0 ||
+    filters.smokingStatus.length > 0;
 
   if (!hasFilters) {
     return (
@@ -71,6 +75,18 @@ export default function FilterPanel({
           {v} &times;
         </button>
       ))}
+      {(["sex", "race", "ethnicity", "smokingStatus"] as const).flatMap((key) =>
+        filters[key].map((v) => (
+          <button
+            type="button"
+            key={`${key}-${v}`}
+            className="filter-chip chip-demographic"
+            onClick={() => onRemove(key, v)}
+          >
+            {v} &times;
+          </button>
+        )),
+      )}
     </div>
   );
 }
