@@ -7,7 +7,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { ActiveFilters } from "./demoData";
-import { CHART_SEQUENCE, UNCATEGORIZED, MIN_FILL_OPACITY } from "./palette";
+import {
+  CHART_SEQUENCE,
+  UNCATEGORIZED,
+  FILL_STROKE,
+  MIN_FILL_OPACITY,
+} from "./palette";
 
 interface ConditionCategory {
   name: string;
@@ -27,10 +32,10 @@ interface OverviewChartsProps {
 }
 
 const CONDITION_COLORS: Record<string, string> = {
-  Cardiovascular: CHART_SEQUENCE[1],
-  Respiratory: CHART_SEQUENCE[2],
-  Cancer: CHART_SEQUENCE[3],
-  Neurologic: CHART_SEQUENCE[0],
+  Cardiovascular: CHART_SEQUENCE[0],
+  Respiratory: CHART_SEQUENCE[1],
+  Cancer: CHART_SEQUENCE[2],
+  Neurologic: CHART_SEQUENCE[3],
 };
 
 const PROCEDURE_COLORS = CHART_SEQUENCE;
@@ -76,6 +81,7 @@ export default function OverviewCharts({
             >
               {innerRing.map((entry) => (
                 <Cell
+                  stroke={FILL_STROKE}
                   key={entry.name}
                   fill={entry.color}
                   opacity={
@@ -102,6 +108,7 @@ export default function OverviewCharts({
             >
               {outerRing.map((entry) => (
                 <Cell
+                  stroke={FILL_STROKE}
                   key={`${entry.category}-${entry.name}`}
                   fill={entry.color}
                   opacity={
@@ -143,6 +150,7 @@ export default function OverviewCharts({
             >
               {data.procedures.map((entry, i) => (
                 <Cell
+                  stroke={FILL_STROKE}
                   key={entry.name}
                   fill={PROCEDURE_COLORS[i % PROCEDURE_COLORS.length]}
                   opacity={

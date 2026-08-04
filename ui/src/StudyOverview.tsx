@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { API_BASE, type Study } from "./types";
-import { BINARY, UNCATEGORIZED } from "./palette";
+import { BINARY, UNCATEGORIZED, FILL_STROKE } from "./palette";
 
 interface ConditionRow {
   condition_concept: string;
@@ -87,7 +87,7 @@ export default function StudyOverview({ study }: { study: Study }) {
                   outerRadius={100}
                 >
                   {conditionChartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
+                    <Cell stroke={FILL_STROKE} key={i} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -111,7 +111,7 @@ export default function StudyOverview({ study }: { study: Study }) {
                   outerRadius={100}
                 >
                   {sexChartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
+                    <Cell stroke={FILL_STROKE} key={i} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
