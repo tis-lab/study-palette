@@ -81,7 +81,7 @@ function App() {
           <img
             className="brand-logo"
             src="/branding/bdc-logo.svg"
-            alt="Branding placeholder"
+            alt=""
           />
         </div>
         <div className="header-row">

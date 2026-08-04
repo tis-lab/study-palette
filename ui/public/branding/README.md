@@ -43,9 +43,12 @@ so that overwriting a file needs no CSS changes.
 
 1. Take the two files named above from `BDC-Logos.zip`.
 2. Overwrite `bdc-logo.svg` and `favicon.png` with them, keeping these names.
-3. Update the `alt` text on the logo in `ui/src/App.tsx`. It currently reads
-   "Branding placeholder", which is accurate today and would be wrong once a real logo is
-   in place.
+
+That's the whole swap — no code changes. The logo `<img>` carries an empty `alt` and is
+intentionally decorative, because the header text beside it already reads "NHLBI BioData
+Catalyst® (BDC) Meta-Analysis Study Builder & Query Tool". That stays true once the real
+logo is in place, so the alt should remain empty rather than duplicating the name to screen
+readers.
 
 The zip also carries dark and white variants of the horizontal logo if a future header
 background calls for one.
