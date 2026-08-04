@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { API_BASE, type Study } from "./types";
+import { BINARY, UNCATEGORIZED } from "./palette";
 
 interface ConditionRow {
   condition_concept: string;
@@ -14,13 +15,13 @@ interface DemographicsRow {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  PRESENT: "#dc2626",
-  ABSENT: "#10b981",
+  PRESENT: BINARY[0],
+  ABSENT: BINARY[1],
 };
 
 const SEX_COLORS: Record<string, string> = {
-  "OMOP:8507": "#2563eb",
-  "OMOP:8532": "#ec4899",
+  "OMOP:8507": BINARY[0],
+  "OMOP:8532": BINARY[1],
 };
 
 export default function StudyOverview({ study }: { study: Study }) {
@@ -51,13 +52,13 @@ export default function StudyOverview({ study }: { study: Study }) {
   const conditionChartData = conditions.map((c) => ({
     name: `${c.condition_concept} (${c.condition_status})`,
     value: c.count,
-    color: STATUS_COLORS[c.condition_status] ?? "#94a3b8",
+    color: STATUS_COLORS[c.condition_status] ?? UNCATEGORIZED,
   }));
 
   const sexChartData = demographics.map((d) => ({
     name: d.sex === "OMOP:8507" ? "Male" : d.sex === "OMOP:8532" ? "Female" : d.sex,
     value: d.count,
-    color: SEX_COLORS[d.sex] ?? "#94a3b8",
+    color: SEX_COLORS[d.sex] ?? UNCATEGORIZED,
   }));
 
   return (

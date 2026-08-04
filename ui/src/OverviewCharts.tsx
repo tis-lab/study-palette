@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { ActiveFilters } from "./demoData";
+import { CHART_SEQUENCE, UNCATEGORIZED, MIN_FILL_OPACITY } from "./palette";
 
 interface ConditionCategory {
   name: string;
@@ -26,19 +27,13 @@ interface OverviewChartsProps {
 }
 
 const CONDITION_COLORS: Record<string, string> = {
-  Cardiovascular: "#dc2626",
-  Respiratory: "#2563eb",
-  Cancer: "#f59e0b",
-  Neurologic: "#7c3aed",
+  Cardiovascular: CHART_SEQUENCE[1],
+  Respiratory: CHART_SEQUENCE[2],
+  Cancer: CHART_SEQUENCE[3],
+  Neurologic: CHART_SEQUENCE[0],
 };
 
-const PROCEDURE_COLORS = [
-  "#0ea5e9",
-  "#10b981",
-  "#f97316",
-  "#6366f1",
-  "#ec4899",
-];
+const PROCEDURE_COLORS = CHART_SEQUENCE;
 
 export default function OverviewCharts({
   data,
@@ -50,14 +45,14 @@ export default function OverviewCharts({
       name: child.name,
       value: child.value,
       category: cat.name,
-      color: CONDITION_COLORS[cat.name] ?? "#94a3b8",
+      color: CONDITION_COLORS[cat.name] ?? UNCATEGORIZED,
     })),
   );
 
   const innerRing = data.conditions.map((cat) => ({
     name: cat.name,
     value: cat.value,
-    color: CONDITION_COLORS[cat.name] ?? "#94a3b8",
+    color: CONDITION_COLORS[cat.name] ?? UNCATEGORIZED,
   }));
 
   return (
@@ -113,7 +108,7 @@ export default function OverviewCharts({
                     filters.conditions.length > 0 &&
                     !filters.conditions.includes(entry.name)
                       ? 0.15
-                      : 0.7
+                      : MIN_FILL_OPACITY
                   }
                 />
               ))}

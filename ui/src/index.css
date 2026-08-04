@@ -1,13 +1,22 @@
 :root {
-  --color-primary: #2563eb;
-  --color-bg: #f8fafc;
+  /* BDC Style Guide palette. Bright blue is hover states only — 2.5:1 on
+     white, never safe for text or thin marks. */
+  --color-primary: #1a568c;
+  --color-primary-dark: #12385a;
+  --color-primary-bright: #41abf5;
+  --color-bg: #f4f4f6;
   --color-card: #ffffff;
-  --color-text: #1e293b;
-  --color-muted: #64748b;
-  --color-border: #e2e8f0;
-  --color-tag-bg: #eff6ff;
-  --color-tag-text: #1d4ed8;
-  --color-error: #dc2626;
+  --color-text: #393939;
+  --color-muted: #616265;
+  --color-error: #c0143c;
+
+  /* Derived tints, not brand values — the guide defines no neutrals at
+     these levels. */
+  --color-border: #dfdfdf;
+  --color-tag-bg: #eceef1;
+  --color-tag-text: #12385a;
+  --color-tag-alt-text: #5c4100;
+
   --brand-logo-height: 34px;
   --brand-clear-space: calc(var(--brand-logo-height) * 0.4);
 }
@@ -68,6 +77,7 @@ header {
 
 .mode-toggle:hover {
   background: var(--color-bg);
+  border-color: var(--color-primary-bright);
 }
 
 .mode-toggle.live {
@@ -162,13 +172,15 @@ header p {
 }
 
 .chip-condition {
-  background: #fef2f2;
-  color: #991b1b;
+  background: var(--color-tag-bg);
+  color: var(--color-tag-text);
+  border-left: 3px solid var(--color-tag-text);
 }
 
 .chip-procedure {
-  background: #eff6ff;
-  color: #1e40af;
+  background: var(--color-tag-bg);
+  color: var(--color-tag-alt-text);
+  border-left: 3px solid var(--color-tag-alt-text);
 }
 
 .chart-grid {
