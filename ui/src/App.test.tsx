@@ -75,6 +75,17 @@ describe("App", () => {
     expect(within(filterPanel).getByText("Click a chart segment to filter")).toBeInTheDocument();
   });
 
+  it("offers both figure palettes and keeps charts rendering after a switch", async () => {
+    render(<App />);
+    const picker = screen.getByLabelText("Figure palette");
+    expect(picker).toHaveValue("tol");
+
+    await userEvent.selectOptions(picker, "okabe");
+    expect(picker).toHaveValue("okabe");
+    expect(screen.getByText("Conditions")).toBeInTheDocument();
+    expect(screen.getByText("Procedures")).toBeInTheDocument();
+  });
+
   it("shows error on fetch failure in live mode", async () => {
     vi.spyOn(global, "fetch").mockResolvedValue({
       ok: false,

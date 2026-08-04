@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { API_BASE, type Study } from "./types";
+import { FILL_STROKE, type Palette } from "./palette";
 
 interface ConditionRow {
   condition_concept: string;
@@ -13,17 +14,22 @@ interface DemographicsRow {
   count: number;
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  PRESENT: "#dc2626",
-  ABSENT: "#10b981",
-};
+export default function StudyOverview({
+  study,
+  palette,
+}: {
+  study: Study;
+  palette: Palette;
+}) {
+  const statusColors: Record<string, string> = {
+    PRESENT: palette.binary[0],
+    ABSENT: palette.binary[1],
+  };
+  const sexColors: Record<string, string> = {
+    "OMOP:8507": palette.binary[0],
+    "OMOP:8532": palette.binary[1],
+  };
 
-const SEX_COLORS: Record<string, string> = {
-  "OMOP:8507": "#2563eb",
-  "OMOP:8532": "#ec4899",
-};
-
-export default function StudyOverview({ study }: { study: Study }) {
   const [conditions, setConditions] = useState<ConditionRow[]>([]);
   const [demographics, setDemographics] = useState<DemographicsRow[]>([]);
 
@@ -51,13 +57,13 @@ export default function StudyOverview({ study }: { study: Study }) {
   const conditionChartData = conditions.map((c) => ({
     name: `${c.condition_concept} (${c.condition_status})`,
     value: c.count,
-    color: STATUS_COLORS[c.condition_status] ?? "#94a3b8",
+    color: statusColors[c.condition_status] ?? palette.uncategorized,
   }));
 
   const sexChartData = demographics.map((d) => ({
     name: d.sex === "OMOP:8507" ? "Male" : d.sex === "OMOP:8532" ? "Female" : d.sex,
     value: d.count,
-    color: SEX_COLORS[d.sex] ?? "#94a3b8",
+    color: sexColors[d.sex] ?? palette.uncategorized,
   }));
 
   return (
@@ -86,7 +92,7 @@ export default function StudyOverview({ study }: { study: Study }) {
                   outerRadius={100}
                 >
                   {conditionChartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
+                    <Cell stroke={FILL_STROKE} key={i} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -110,7 +116,7 @@ export default function StudyOverview({ study }: { study: Study }) {
                   outerRadius={100}
                 >
                   {sexChartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} />
+                    <Cell stroke={FILL_STROKE} key={i} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip />

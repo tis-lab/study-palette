@@ -12,6 +12,7 @@ import {
   type ActiveFilters,
 } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
+import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
 
 interface StudiesResponse {
   studies: Study[];
@@ -24,6 +25,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<ActiveFilters>(EMPTY_FILTERS);
+  const [paletteKey, setPaletteKey] = useState<PaletteKey>(DEFAULT_PALETTE);
+  const palette = PALETTES[paletteKey];
 
   useEffect(() => {
     if (mode === "demo") {
@@ -80,17 +83,42 @@ function App() {
   return (
     <div className="app">
       <header>
+        <div className="brand-bar">
+          <img
+            className="brand-logo"
+            src="/branding/bdc-logo.svg"
+            alt=""
+          />
+        </div>
         <div className="header-row">
           <div>
             <h1>Study Palette</h1>
-            <p>BDC Meta-Analysis Study Builder & Query Tool</p>
+            <p>
+              NHLBI BioData Catalyst<sup>&reg;</sup> (BDC) Meta-Analysis Study
+              Builder & Query Tool
+            </p>
           </div>
-          <button
-            className={`mode-toggle ${mode}`}
-            onClick={() => setMode(mode === "demo" ? "live" : "demo")}
-          >
-            {mode === "demo" ? "Demo Data" : "Live API"}
-          </button>
+          <div className="header-controls">
+            <label className="palette-picker">
+              <span>Figure palette</span>
+              <select
+                value={paletteKey}
+                onChange={(e) => setPaletteKey(e.target.value as PaletteKey)}
+              >
+                {Object.entries(PALETTES).map(([key, p]) => (
+                  <option key={key} value={key}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              className={`mode-toggle ${mode}`}
+              onClick={() => setMode(mode === "demo" ? "live" : "demo")}
+            >
+              {mode === "demo" ? "Demo Data" : "Live API"}
+            </button>
+          </div>
         </div>
       </header>
       <main>
@@ -110,6 +138,7 @@ function App() {
                 data={overviewData}
                 filters={filters}
                 onFilterAdd={handleFilterAdd}
+                palette={palette}
               />
               <DemographicsSankey
                 data={sankeyData}
@@ -120,7 +149,7 @@ function App() {
         )}
         {mode === "live" &&
           studies.map((study) => (
-            <StudyOverview key={study.id} study={study} />
+            <StudyOverview key={study.id} study={study} palette={palette} />
           ))}
       </main>
     </div>
