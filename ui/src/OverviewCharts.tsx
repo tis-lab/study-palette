@@ -7,12 +7,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { ActiveFilters } from "./demoData";
-import {
-  CHART_SEQUENCE,
-  UNCATEGORIZED,
-  FILL_STROKE,
-  MIN_FILL_OPACITY,
-} from "./palette";
+import { FILL_STROKE, MIN_FILL_OPACITY, type Palette } from "./palette";
 
 interface ConditionCategory {
   name: string;
@@ -29,35 +24,35 @@ interface OverviewChartsProps {
   data: OverviewData;
   filters: ActiveFilters;
   onFilterAdd: (type: keyof ActiveFilters, value: string) => void;
+  palette: Palette;
 }
 
-const CONDITION_COLORS: Record<string, string> = {
-  Cardiovascular: CHART_SEQUENCE[0],
-  Respiratory: CHART_SEQUENCE[1],
-  Cancer: CHART_SEQUENCE[2],
-  Neurologic: CHART_SEQUENCE[3],
-};
-
-const PROCEDURE_COLORS = CHART_SEQUENCE;
+const CONDITION_ORDER = ["Cardiovascular", "Respiratory", "Cancer", "Neurologic"];
 
 export default function OverviewCharts({
   data,
   filters,
   onFilterAdd,
+  palette,
 }: OverviewChartsProps) {
+  const conditionColor = (name: string) => {
+    const i = CONDITION_ORDER.indexOf(name);
+    return i === -1 ? palette.uncategorized : palette.sequence[i];
+  };
+
   const outerRing = data.conditions.flatMap((cat) =>
     cat.children.map((child) => ({
       name: child.name,
       value: child.value,
       category: cat.name,
-      color: CONDITION_COLORS[cat.name] ?? UNCATEGORIZED,
+      color: conditionColor(cat.name),
     })),
   );
 
   const innerRing = data.conditions.map((cat) => ({
     name: cat.name,
     value: cat.value,
-    color: CONDITION_COLORS[cat.name] ?? UNCATEGORIZED,
+    color: conditionColor(cat.name),
   }));
 
   return (
@@ -152,7 +147,7 @@ export default function OverviewCharts({
                 <Cell
                   stroke={FILL_STROKE}
                   key={entry.name}
-                  fill={PROCEDURE_COLORS[i % PROCEDURE_COLORS.length]}
+                  fill={palette.sequence[i % palette.sequence.length]}
                   opacity={
                     filters.procedures.length > 0 &&
                     !filters.procedures.includes(entry.name)

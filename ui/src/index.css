@@ -10,12 +10,13 @@
   --color-muted: #616265;
   --color-error: #c0143c;
 
-  /* Derived tints, not brand values — the guide defines no neutrals at
-     these levels. */
+  /* Derived tint, not a brand value — the guide defines no neutral here. */
   --color-border: #dfdfdf;
-  --color-tag-bg: #eceef1;
-  --color-tag-text: #12385a;
-  --color-tag-alt-text: #5c4100;
+
+  /* Tol light scheme, designed for small coloured areas keeping black labels
+     readable. Both clear AA against --color-text. */
+  --color-tag-bg: #77aadd;
+  --color-tag-alt-bg: #ee8866;
 
   --brand-logo-height: 34px;
   --brand-clear-space: calc(var(--brand-logo-height) * 0.4);
@@ -61,6 +62,29 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.palette-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.palette-picker select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-card);
+  color: var(--color-text);
+  font-size: 0.8rem;
 }
 
 .mode-toggle {
@@ -173,14 +197,12 @@ header p {
 
 .chip-condition {
   background: var(--color-tag-bg);
-  color: var(--color-tag-text);
-  border-left: 3px solid var(--color-tag-text);
+  color: var(--color-text);
 }
 
 .chip-procedure {
-  background: var(--color-tag-bg);
-  color: var(--color-tag-alt-text);
-  border-left: 3px solid var(--color-tag-alt-text);
+  background: var(--color-tag-alt-bg);
+  color: var(--color-text);
 }
 
 .chart-grid {
@@ -259,7 +281,7 @@ header p {
   display: inline-block;
   padding: 0.15rem 0.5rem;
   background: var(--color-tag-bg);
-  color: var(--color-tag-text);
+  color: var(--color-text);
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 500;
