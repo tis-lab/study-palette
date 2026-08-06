@@ -9,8 +9,8 @@ Study Palette replaces fragmented search interfaces with a semantic, modular pla
 The system is organized into four layers:
 
 - **Front End** (ReactJS) — Semantic search, query builder, visualizations, and data actions
-- **Modular APIs** (FastAPI) — Search, Query, Analyze, and Workflows services
-- **Metadata Index** — A LinkML-based "source of truth" generated during data ingestion, enabling consistent cross-study search at the variable and participant levels
+- **Modular APIs** — Search, Query, Analyze, and Workflows services
+- **Metadata Index** — A LinkML-based "source of truth" generated during data ingestion, published as Parquet and queried with embedded DuckDB, enabling consistent cross-study search at the variable and participant levels
 - **External Integrations** — Monarch ontologies for entity resolution, DMC data ingestion, BDC analytic widgets, and foundational BDC services
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for the full architecture reference and [DEVELOPMENT.md](DEVELOPMENT.md) for the project roadmap.
