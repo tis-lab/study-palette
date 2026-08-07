@@ -62,6 +62,12 @@ a browsing surface with a derivation record. PROV-O's own direction agrees: `was
 runs from the derived entity to its sources, so a provenance record names the library slot by
 IRI and the library needs no knowledge of provenance at all.
 
+The provenance schema follows the same approach as BDCHM: generic structural classes with the
+structure carried by vocabulary rather than by minted classes, so that a new source with
+different granularity is a vocabulary addition instead of a schema change. DCAT is the natural
+pairing, since it is routinely used alongside PROV-O for lineage, with containment coming from
+outside PROV because PROV deliberately does not model mereology.
+
 - **Format**: Parquet. Chosen over DuckDB's native file format because native storage
   guarantees backward but only best-effort forward compatibility, and the producer (Python
   ingestion tooling) and the consumer (service tier) upgrade on independent cadences — a
@@ -97,9 +103,20 @@ consistency window — the costs are operational, not correctness.
 ## Build Layer
 
 The other half of the middleware, and ours to own. It assembles the metadata index from the
-four sources above and publishes the result as a versioned release. Harmonization and index
-generation run offline and upstream of the portal; the serving tier only reads what this
-layer produces.
+four sources above and publishes the result as a versioned release.
+
+Harmonization itself is not ours — it happens in dm-bip, upstream and offline, which is also
+where provenance is emitted. Provenance belongs at the point of derivation rather than being
+reconstructed downstream by re-parsing the transform specs, and it has two layers: mapping
+provenance, which records that a harmonized concept came from particular source variables and
+is derivable from the specs alone, and execution provenance, which records that an artifact
+was produced by a given run from given inputs and exists only at run time. The second cannot
+be reconstructed after the fact at all.
+
+What remains here is index assembly rather than data transformation: fetching published
+artifacts, building the Parquet index and the search index, and publishing the manifest that
+names them. That is deliberately the part which depends on our serving design and nothing
+else.
 
 Its language is a separate question from the serving tier's. This layer builds and consumes
 rather than deploys, so it can follow its inputs — much of the upstream tooling is LinkML and
