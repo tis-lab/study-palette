@@ -14,9 +14,10 @@ The system architecture defines four layers with clear component boundaries:
 - **Analyze API**: Structured, standardized outputs for visualization and logging
 - **Workflows API**: Transitions between Data Portal and other BDC components
 
-This is a thin middleware tier serving the front end. Logic belongs in the metadata index
-and the query layer wherever it can go there — but three responsibilities can only be
-enforced here, and must not be pushed outward into precomputation or the client:
+This is the serving half of the middleware — the build layer below is the other half. It is
+thin by design: logic belongs in the metadata index and the query layer wherever it can go
+there. But three responsibilities can only be enforced here, and must not be pushed outward
+into precomputation or the client:
 
 - **Authorization**: row-level access depends on the requesting user's authorizations, so
   it varies per user per request and cannot be precomputed
@@ -40,8 +41,26 @@ native library, which is where native-image compilation gets difficult.
 
 ## Metadata Index
 
-The LinkML "source of truth" is a build artifact, not a live database. It is generated from
-BDCHM during ingestion, published to object storage, and served read-only.
+The LinkML "source of truth" is a build artifact, not a live database. It is assembled
+during ingestion, published to object storage, and served read-only. Four upstream sources
+feed it:
+
+- **BDCHM** — the harmonized data model that participant- and variable-level data conform to
+- **BDC Variable Library** — one slot per harmonized clinical concept, grouped into category
+  modules spanning the contributing studies
+- **Provenance records** — PROV-O derivations linking each harmonized concept to the specific
+  study variables, datasets, and accessions it came from, which is what lets query results
+  carry the variable mappings and provenance the design principles below call for
+- **BDC knowledge graph** — a BDC extension of the Monarch KG, denormalized into the search
+  index at build time rather than served as a live graph
+
+Provenance references the Variable Library, not the reverse. The library is a small, stable
+catalog — one slot per concept — while provenance is large and grows with every study added,
+since a single concept can derive from dozens of study variables across several datasets.
+Having the catalog import the graph would couple a stable artifact to a volatile one and mix
+a browsing surface with a derivation record. PROV-O's own direction agrees: `wasDerivedFrom`
+runs from the derived entity to its sources, so a provenance record names the library slot by
+IRI and the library needs no knowledge of provenance at all.
 
 - **Format**: Parquet. Chosen over DuckDB's native file format because native storage
   guarantees backward but only best-effort forward compatibility, and the producer (Python
@@ -60,12 +79,6 @@ BDCHM during ingestion, published to object storage, and served read-only.
 - **Concurrency**: nothing writes at runtime. DuckDB's read-only mode allows many processes
   to read the same artifact, so service instances scale horizontally without coordination.
 
-### Ingestion and serving are separate
-
-Harmonization and index generation run offline and upstream of the portal. The runtime only
-reads the resulting artifacts. This keeps the ingestion toolchain out of the serving tier
-and allows the two to be written in different languages.
-
 ### Adding a second store
 
 The semantic layer may eventually need a store the index cannot serve. Any such store
@@ -80,6 +93,34 @@ over the knowledge graph is not.
 Polyglot persistence carries less risk here than usual, because every store is a build
 artifact regenerated at ingestion and read-only at runtime. There are no dual writes and no
 consistency window — the costs are operational, not correctness.
+
+## Build Layer
+
+The other half of the middleware, and ours to own. It assembles the metadata index from the
+four sources above and publishes the result as a versioned release. Harmonization and index
+generation run offline and upstream of the portal; the serving tier only reads what this
+layer produces.
+
+Its language is a separate question from the serving tier's. This layer builds and consumes
+rather than deploys, so it can follow its inputs — much of the upstream tooling is LinkML and
+Monarch, which is Python. Java is not excluded, and if the build has to run inside a BDC
+architectural layer that mandates it, that settles the question. Nothing in the design
+depends on the answer, because the two halves of the middleware meet only through published
+artifacts and never through a shared runtime.
+
+### Curation
+
+Artifacts are immutable once published, but they are not fixed forever — curators and
+researchers need a way to correct and extend the Variable Library and the provenance records.
+That happens by suggestion rather than mutation: a curation tool proposes changes against the
+upstream sources, those are reviewed, and the next release regenerates the artifacts.
+
+The suggestion store is mutable; the served artifacts are not, and the two meet only at build
+time. Nothing writes to a served artifact at runtime, which is what preserves the read path's
+guarantees. Whether suggestions are captured as pull requests against the source repositories
+or in a store of their own is open — the former needs no new mutable infrastructure and
+inherits an existing review workflow, but asks more of the tool that hides git from
+researchers.
 
 ## External Integrations
 - **Integrated Search**: BDCBot + Monarch ontologies/knowledge graph for entity resolution
@@ -133,7 +174,10 @@ Create each as **New → Web Service** (not Blueprint):
 ## Tech Stack
 - **Front end**: ReactJS — modular, reusable component library
 - **APIs**: FastAPI today; Spring Boot (Java 21) is the target should the tier move to Java
+- **Build layer**: language follows its inputs (LinkML and Monarch tooling is Python), unless
+  a BDC architectural layer mandates otherwise
 - **Metadata index**: Parquet on object storage, queried with embedded DuckDB
-- **Data model**: LinkML (BDCHM — BDC Harmonized Data Model)
+- **Data model**: LinkML (BDCHM — BDC Harmonized Data Model), with the BDC Variable Library
+  and a PROV-O provenance schema alongside it
 - **Semantic search**: Monarch ontologies and knowledge graph
 - **Security**: NIST 800-53, FedRAMP Mod/High, HIPAA

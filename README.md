@@ -21,6 +21,9 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full architecture reference and [
 |------------|-------------|
 | [NHLBI-BDC-DMC-HM](https://github.com/RTIInternational/NHLBI-BDC-DMC-HM) | BDC Harmonized Data Model (BDCHM) — the LinkML data model |
 | [dm-bip](https://github.com/linkml/dm-bip) | Data Model-Based Ingestion Pipeline — harmonizes and transforms data upstream of Study Palette |
+| [BDC-VarLib](https://github.com/tis-lab/BDC-VarLib) | BDC Variable Library — one LinkML slot per harmonized clinical concept, spanning the contributing studies |
+| [prov-schema](https://github.com/diatomsRcool/prov-schema) | PROV-O based LinkML schema for file and data provenance in BDC |
+| [monarch-bdc-kg](https://github.com/tis-lab/monarch-bdc-kg) | BDC knowledge graph, based on the Monarch KG |
 
 ## Project Structure
 
