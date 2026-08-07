@@ -85,16 +85,33 @@ outside PROV because PROV deliberately does not model mereology.
 - **Concurrency**: nothing writes at runtime. DuckDB's read-only mode allows many processes
   to read the same artifact, so service instances scale horizontally without coordination.
 
-### Adding a second store
+### The search index
 
-The semantic layer may eventually need a store the index cannot serve. Any such store
-follows Monarch's framework — its supported serving forms, gated on a first-class client
-for the service tier's language.
+Semantic search runs on Solr, following Monarch, whose tooling uses Solr as its default and
+more feature-rich backend and which publishes a Solr image. Reusing their index schema and
+closure fields is worth more than any marginal advantage another engine might offer,
+particularly with Monarch developers on the team. SolrJ covers the Java client requirement,
+and Solr is Apache-2.0, so there is no licensing question.
 
-A second store is added when a specific query demonstrably cannot be served, not
-speculatively. Concept expansion via precomputed transitive closure, and free-text
-resolution via full-text or vector search, are served from the index; multi-hop reasoning
-over the knowledge graph is not.
+Knowledge graph closures are denormalized into search documents at build time rather than
+traversed at query time. That keeps the graph a build-time input instead of a runtime store,
+and makes concept expansion a field lookup. Multi-hop reasoning is the thing that would
+genuinely require a live graph, and it is not currently required.
+
+Index releases follow the same pattern as the rest: build a versioned collection at
+ingestion, swap the alias on release, roll back by repointing. The index must not become the
+one mutable thing that breaks the model everything else depends on.
+
+This is the first component that requires running infrastructure, and it is an accepted cost
+rather than an oversight. It gives back the "no separate database tier to operate" property
+that the embedded query engine provides, and no managed Solr is available on the current
+deployment platform, so it needs a deliberate home.
+
+### Adding a further store
+
+A store beyond these is added when a specific query demonstrably cannot be served, not
+speculatively, and follows the same rule — Monarch's framework where it applies, gated on a
+first-class client for the service tier's language.
 
 Polyglot persistence carries less risk here than usual, because every store is a build
 artifact regenerated at ingestion and read-only at runtime. There are no dual writes and no
@@ -194,6 +211,7 @@ Create each as **New → Web Service** (not Blueprint):
 - **Build layer**: language follows its inputs (LinkML and Monarch tooling is Python), unless
   a BDC architectural layer mandates otherwise
 - **Metadata index**: Parquet on object storage, queried with embedded DuckDB
+- **Semantic search**: Solr, following Monarch, with KG closures denormalized at build time
 - **Data model**: LinkML (BDCHM — BDC Harmonized Data Model), with the BDC Variable Library
   and a PROV-O provenance schema alongside it
 - **Semantic search**: Monarch ontologies and knowledge graph
