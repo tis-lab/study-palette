@@ -15,9 +15,9 @@ The system architecture defines four layers with clear component boundaries:
 - **Workflows API**: Transitions between Data Portal and other BDC components
 
 This is the serving half of the middleware — the build layer below is the other half. It is
-thin by design: logic belongs in the metadata index and the query layer wherever it can go
-there. But three responsibilities can only be enforced here, and must not be pushed outward
-into precomputation or the client:
+thin by design: logic belongs in the metadata index and in the queries run against it
+wherever it can go there. But three responsibilities can only be enforced here, and must not
+be pushed outward into precomputation or the client:
 
 - **Authorization**: row-level access depends on the requesting user's authorizations, so
   it varies per user per request and cannot be precomputed
@@ -32,12 +32,14 @@ The tier is deliberately thin so that the framework choice does not cascade. Ing
 storage, and query are all language-independent, which keeps this a contained decision.
 
 The current implementation is FastAPI. Should the tier move to Java, the target is Spring
-Boot on Java 21 — Web MVC rather than WebFlux, since the query path is blocking JDBC and
-virtual threads cover the concurrency that would otherwise justify a reactive stack — with
-`springdoc-openapi` generating the schema from types and Jakarta Bean Validation on request
-models. Quarkus and Micronaut were considered for their startup and memory profile, but
-that advantage comes from GraalVM native-image, and DuckDB's JDBC driver bundles a JNI
-native library, which is where native-image compilation gets difficult.
+Boot on Java 21, with `springdoc-openapi` generating the schema from types and Jakarta Bean
+Validation on request models.
+
+Web MVC rather than WebFlux, because queries run against embedded DuckDB over JDBC: the work
+happens in-process and is CPU-bound, so a reactive stack has nothing to await, and virtual
+threads cover request concurrency. Quarkus and Micronaut were considered for their startup
+and memory profile, but that advantage comes from GraalVM native-image, and DuckDB's JDBC
+driver bundles a JNI native library, which is where native-image compilation gets difficult.
 
 ## Metadata Index
 
