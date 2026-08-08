@@ -1,0 +1,12 @@
+- class_derivations:
+    Demography:
+      populated_from: pht000121
+      slot_derivations:
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212100}) + ":Example Study Two")'
+        sex:
+          populated_from: phv10212101
+        race:
+          populated_from: phv10212102
+        ethnicity:
+          populated_from: phv10212103

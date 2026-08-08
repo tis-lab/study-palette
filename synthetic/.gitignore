@@ -1,0 +1,6 @@
+# Generated corpus — reproducible from SEED, distributed as release assets
+data/
+output/
+# Vendored upstream schema, fetched not committed
+bdchm.yaml
+__pycache__/

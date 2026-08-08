@@ -1,0 +1,46 @@
+- class_derivations:
+    MeasurementObservationSet:
+      populated_from: pht000113
+      slot_derivations:
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
+        associated_visit:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111300}) + ":Example Study One VISIT " + str({phv10111301}))'
+        observations:
+          class_derivations:
+          - MeasurementObservation:
+              populated_from: pht000113
+              slot_derivations:
+                observation_type:
+                  value: OMOP:4152194
+                body_position:
+                  value: "SITTING_POSITION"
+                body_site:
+                  value: "Right arm"
+                value_quantity:
+                  class_derivations:
+                  - Quantity:
+                      populated_from: pht000113
+                      slot_derivations:
+                        value_decimal:
+                          populated_from: phv10111305
+                        unit:
+                          value: "mm[Hg]"
+          - MeasurementObservation:
+              populated_from: pht000113
+              slot_derivations:
+                observation_type:
+                  value: OMOP:4154790
+                body_position:
+                  value: "SITTING_POSITION"
+                body_site:
+                  value: "Right arm"
+                value_quantity:
+                  class_derivations:
+                  - Quantity:
+                      populated_from: pht000113
+                      slot_derivations:
+                        value_decimal:
+                          populated_from: phv10111306
+                        unit:
+                          value: "mm[Hg]"

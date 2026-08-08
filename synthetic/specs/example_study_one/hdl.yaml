@@ -1,0 +1,44 @@
+- class_derivations:
+    MeasurementObservation:
+      populated_from: pht000114
+      slot_derivations:
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111400}) + ":Example Study One")'
+        associated_visit:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111400}) + ":Example Study One VISIT " + str({phv10111401}))'
+        observation_type:
+          value: OMOP:3007070
+        associated_assay:
+          class_derivations:
+          - Assay:
+              populated_from: pht000114
+              slot_derivations:
+                lower_limit_of_detection:
+                  class_derivations:
+                  - Quantity:
+                      populated_from: pht000114
+                      slot_derivations:
+                        value_decimal:
+                          value: 5.0
+                        unit:
+                          value: "mg/dL"
+                upper_limit_of_detection:
+                  class_derivations:
+                  - Quantity:
+                      populated_from: pht000114
+                      slot_derivations:
+                        value_decimal:
+                          value: 150.0
+                        unit:
+                          value: "mg/dL"
+        value_quantity:
+          class_derivations:
+          - Quantity:
+              populated_from: pht000114
+              slot_derivations:
+                value_decimal:
+                  populated_from: phv10111402
+                operator:
+                  populated_from: phv10111403
+                unit:
+                  value: "mg/dL"

@@ -1,0 +1,28 @@
+- class_derivations:
+    MeasurementObservation:
+      populated_from: pht000124
+      slot_derivations:
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212400}) + ":Example Study Two")'
+        associated_visit:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10212400}) + ":Example Study Two VISIT " + str({phv10212401}))'
+        observation_type:
+          value: OMOP:3000905
+        associated_assay:
+          class_derivations:
+          - Assay:
+              populated_from: pht000124
+              slot_derivations:
+                identity:
+                  value: "CBC"
+                name:
+                  value: "Complete Blood Count"
+        value_quantity:
+          class_derivations:
+          - Quantity:
+              populated_from: pht000124
+              slot_derivations:
+                value_decimal:
+                  populated_from: phv10212405
+                unit:
+                  value: "10*3/uL"

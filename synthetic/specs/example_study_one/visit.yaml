@@ -1,0 +1,12 @@
+- class_derivations:
+    Visit:
+      populated_from: pht000112
+      slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111200}) + ":Example Study One VISIT " + str({phv10111201}))'
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111200}) + ":Example Study One")'
+        visit_category:
+          populated_from: phv10111202
+        age_at_visit_start:
+          populated_from: phv10111203

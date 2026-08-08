@@ -1,0 +1,33 @@
+- class_derivations:
+    Person:
+      populated_from: pht000121
+      slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/Person", str({dbGaP_Subject_ID}))'
+        identity:
+          expr: 'str({dbGaP_Subject_ID})'
+        species:
+          value: NCBITaxon:9606
+        vital_status:
+          expr: 'case(({phv10212105} == 0, "OMOP:4230556"), ({phv10212105} == 1, "OMOP:434489"))'
+        cause_of_death:
+          class_derivations:
+          - CauseOfDeath:
+              populated_from: pht000121
+              slot_derivations:
+                cause:
+                  populated_from: phv10212106
+                order:
+                  expr: 'case(({phv10212105} == 1, 1))'
+- class_derivations:
+    Participant:
+      populated_from: pht000121
+      slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212100}) + ":Example Study Two")'
+        identity:
+          expr: 'str({phv10212100})'
+        member_of_research_study:
+          value: 'Example Study Two'
+        associated_person:
+          expr: 'uuid5("https://w3id.org/bdchm/Person", str({dbGaP_Subject_ID}))'
