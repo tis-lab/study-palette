@@ -2,6 +2,8 @@
     Condition:
       populated_from: pht000115
       slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10111500}) + ":Example Study One:family_stroke")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111500}) + ":Example Study One")'
         condition_concept:

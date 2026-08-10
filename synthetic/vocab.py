@@ -76,3 +76,22 @@ HISTORICAL = "HISTORICAL"
 # Visit categories — BDCHM VisitTypeEnum
 STUDY_SITE_VISIT = "STUDY_SITE_VISIT"
 TELEHEALTH = "TELEHEALTH"
+
+# Visit provenance — BDCHM VisitProvenanceEnum. The real specs leave this unset
+# even though it is required; a reference corpus should populate it.
+VISIT_PROVENANCE = "CASE_REPORT_FORM"
+
+# Assay methods — BDCHM AssayMethodEnum resolves through MMO. No MMO term is
+# attested in the real specs, so these were looked up in MMO directly rather
+# than invented.
+ASSAY_METHOD_HDL = "MMO:0000133"  # serum high-density lipoprotein-cholesterol measurement test
+ASSAY_METHOD_WBC = "MMO:0000533"  # white blood cell counting method
+
+# Relationship of a condition to the participant. ONESELF has no OMOP meaning
+# in BDCHM — it is a bare permissible value.
+ONESELF = "ONESELF"
+CONDITION_NS = "https://w3id.org/bdchm/Condition"
+DEMOGRAPHY_NS = "https://w3id.org/bdchm/Demography"
+DRUG_EXPOSURE_NS = "https://w3id.org/bdchm/DrugExposure"
+OBSERVATION_SET_NS = "https://w3id.org/bdchm/MeasurementObservationSet"
+CAUSE_OF_DEATH_NS = "https://w3id.org/bdchm/CauseOfDeath"

@@ -15,6 +15,8 @@
           - CauseOfDeath:
               populated_from: pht000111
               slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/CauseOfDeath", str({dbGaP_Subject_ID}))'
                 cause:
                   populated_from: phv10111106
                 order:

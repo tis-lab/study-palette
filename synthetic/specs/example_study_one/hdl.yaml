@@ -2,6 +2,8 @@
     MeasurementObservation:
       populated_from: pht000114
       slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111400}) + ":Example Study One:" + str({phv10111401}) + ":HDL")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111400}) + ":Example Study One")'
         associated_visit:
@@ -13,11 +15,17 @@
           - Assay:
               populated_from: pht000114
               slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/Assay", "Example Study One:HDL")'
+                method:
+                  value: MMO:0000133
                 lower_limit_of_detection:
                   class_derivations:
                   - Quantity:
                       populated_from: pht000114
                       slot_derivations:
+                        id:
+                          expr: 'uuid5("https://w3id.org/bdchm/Quantity", "Example Study One:HDL:LLOD")'
                         value_decimal:
                           value: 5.0
                         unit:
@@ -27,6 +35,8 @@
                   - Quantity:
                       populated_from: pht000114
                       slot_derivations:
+                        id:
+                          expr: 'uuid5("https://w3id.org/bdchm/Quantity", "Example Study One:HDL:ULOD")'
                         value_decimal:
                           value: 150.0
                         unit:
@@ -36,6 +46,8 @@
           - Quantity:
               populated_from: pht000114
               slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111400}) + ":Example Study One:" + str({phv10111401}) + ":HDL")'
                 value_decimal:
                   populated_from: phv10111402
                 operator:

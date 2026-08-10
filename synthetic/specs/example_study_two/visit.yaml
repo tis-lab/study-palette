@@ -10,3 +10,5 @@
           populated_from: phv10212202
         age_at_visit_start:
           populated_from: phv10212203
+        visit_provenance:
+          value: CASE_REPORT_FORM

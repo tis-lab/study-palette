@@ -2,6 +2,8 @@
     MeasurementObservation:
       populated_from: pht000113
       slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":HEIGHT_CM")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
         associated_visit:
@@ -13,6 +15,8 @@
           - Quantity:
               populated_from: pht000113
               slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":HEIGHT_CM")'
                 value_decimal:
                   populated_from: phv10111302
                 unit:

@@ -2,6 +2,8 @@
     DrugExposure:
       populated_from: pht000116
       slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/DrugExposure", str({phv10111600}) + ":Example Study One:ccb")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111600}) + ":Example Study One")'
         drug_concept:

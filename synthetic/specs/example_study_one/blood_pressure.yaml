@@ -2,6 +2,8 @@
     MeasurementObservationSet:
       populated_from: pht000113
       slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservationSet", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":bp")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
         associated_visit:
@@ -11,6 +13,10 @@
           - MeasurementObservation:
               populated_from: pht000113
               slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":systolic")'
+                associated_participant:
+                  expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
                 observation_type:
                   value: OMOP:4152194
                 body_position:
@@ -22,6 +28,8 @@
                   - Quantity:
                       populated_from: pht000113
                       slot_derivations:
+                        id:
+                          expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":systolic")'
                         value_decimal:
                           populated_from: phv10111305
                         unit:
@@ -29,6 +37,10 @@
           - MeasurementObservation:
               populated_from: pht000113
               slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":diastolic")'
+                associated_participant:
+                  expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
                 observation_type:
                   value: OMOP:4154790
                 body_position:
@@ -40,6 +52,8 @@
                   - Quantity:
                       populated_from: pht000113
                       slot_derivations:
+                        id:
+                          expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":diastolic")'
                         value_decimal:
                           populated_from: phv10111306
                         unit:

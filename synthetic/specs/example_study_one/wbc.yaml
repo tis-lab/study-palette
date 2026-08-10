@@ -2,6 +2,8 @@
     MeasurementObservation:
       populated_from: pht000114
       slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111400}) + ":Example Study One:" + str({phv10111401}) + ":WBC")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111400}) + ":Example Study One")'
         associated_visit:
@@ -13,15 +15,17 @@
           - Assay:
               populated_from: pht000114
               slot_derivations:
-                identity:
-                  value: "CBC"
-                name:
-                  value: "Complete Blood Count"
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/Assay", "Example Study One:CBC")'
+                method:
+                  value: MMO:0000533
         value_quantity:
           class_derivations:
           - Quantity:
               populated_from: pht000114
               slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111400}) + ":Example Study One:" + str({phv10111401}) + ":WBC")'
                 value_decimal:
                   populated_from: phv10111405
                 unit:

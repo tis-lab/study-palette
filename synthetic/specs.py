@@ -15,10 +15,29 @@ from pathlib import Path
 
 import generate as g
 import population as pop
+import vocab as v
 
 PERSON_NS = "https://w3id.org/bdchm/Person"
 PARTICIPANT_NS = "https://w3id.org/bdchm/Participant"
 VISIT_NS = "https://w3id.org/bdchm/Visit"
+OBSERVATION_NS = "https://w3id.org/bdchm/MeasurementObservation"
+QUANTITY_NS = "https://w3id.org/bdchm/Quantity"
+ASSAY_NS = "https://w3id.org/bdchm/Assay"
+
+
+def uid(namespace, key):
+    """A uuid5 derivation expression. Nested objects need explicit ids."""
+    return f"'uuid5(\"{namespace}\", {key})'"
+
+
+def row_key(study, table, suffix):
+    """A key unique per source row, for identifying nested objects."""
+    subject = phv(study, table, "SUBJECT_ID")
+    columns, _ = g.LAYOUTS[table]
+    if "VISIT_NUM" in columns:
+        num = phv(study, table, "VISIT_NUM")
+        return f'str({{{subject}}}) + ":{study.name}:" + str({{{num}}}) + ":{suffix}"'
+    return f'str({{{subject}}}) + ":{study.name}:{suffix}"' 
 
 
 def phv(study, table, column):
@@ -62,6 +81,8 @@ def person_and_participant(study):
           - CauseOfDeath:
               populated_from: {t}
               slot_derivations:
+                id:
+                  expr: {uid(v.CAUSE_OF_DEATH_NS, f'str({{dbGaP_Subject_ID}})')}
                 cause:
                   populated_from: {cause}
                 order:
@@ -88,6 +109,8 @@ def demography(study):
     Demography:
       populated_from: {t}
       slot_derivations:
+        id:
+          expr: {uid(v.DEMOGRAPHY_NS, row_key(study, "subject", "demography"))}
         associated_participant:
           expr: {participant}
         sex:
@@ -115,6 +138,8 @@ def visits(study):
           populated_from: {phv(study, "visit", "VISIT_TYPE")}
         age_at_visit_start:
           populated_from: {phv(study, "visit", "AGE_DAYS")}
+        visit_provenance:
+          value: {v.VISIT_PROVENANCE}
 """
 
 
@@ -126,10 +151,14 @@ def blood_pressure(study):
     sbp = phv(study, "clinical", "SBP")
     dbp = phv(study, "clinical", "DBP")
 
-    def observation(concept, source):
+    def observation(concept, source, label):
         return f"""          - MeasurementObservation:
               populated_from: {t}
               slot_derivations:
+                id:
+                  expr: {uid(OBSERVATION_NS, row_key(study, "clinical", label))}
+                associated_participant:
+                  expr: {participant}
                 observation_type:
                   value: {concept}
                 body_position:
@@ -141,6 +170,8 @@ def blood_pressure(study):
                   - Quantity:
                       populated_from: {t}
                       slot_derivations:
+                        id:
+                          expr: {uid(QUANTITY_NS, row_key(study, "clinical", label))}
                         value_decimal:
                           populated_from: {source}
                         unit:
@@ -150,14 +181,16 @@ def blood_pressure(study):
     MeasurementObservationSet:
       populated_from: {t}
       slot_derivations:
+        id:
+          expr: {uid(v.OBSERVATION_SET_NS, row_key(study, "clinical", "bp"))}
         associated_participant:
           expr: {participant}
         associated_visit:
           expr: {visit}
         observations:
           class_derivations:
-{observation("OMOP:4152194", sbp)}
-{observation("OMOP:4154790", dbp)}
+{observation("OMOP:4152194", sbp, "systolic")}
+{observation("OMOP:4154790", dbp, "diastolic")}
 """
 
 
@@ -166,10 +199,13 @@ def simple_measure(study, table, column, concept, unit, extra=""):
     t = study.tables[table]
     _, participant = ident(study, table)
     visit = visit_ref(study, table)
+    key = row_key(study, table, column)
     return f"""- class_derivations:
     MeasurementObservation:
       populated_from: {t}
       slot_derivations:
+        id:
+          expr: {uid(OBSERVATION_NS, key)}
         associated_participant:
           expr: {participant}
         associated_visit:
@@ -181,6 +217,8 @@ def simple_measure(study, table, column, concept, unit, extra=""):
           - Quantity:
               populated_from: {t}
               slot_derivations:
+                id:
+                  expr: {uid(QUANTITY_NS, key)}
                 value_decimal:
                   populated_from: {phv(study, table, column)}
                 unit:
@@ -198,6 +236,8 @@ def hdl(study):
     MeasurementObservation:
       populated_from: {t}
       slot_derivations:
+        id:
+          expr: {uid(OBSERVATION_NS, row_key(study, "labs", "HDL"))}
         associated_participant:
           expr: {participant}
         associated_visit:
@@ -209,11 +249,17 @@ def hdl(study):
           - Assay:
               populated_from: {t}
               slot_derivations:
+                id:
+                  expr: {uid(ASSAY_NS, f'"{study.name}:HDL"')}
+                method:
+                  value: {v.ASSAY_METHOD_HDL}
                 lower_limit_of_detection:
                   class_derivations:
                   - Quantity:
                       populated_from: {t}
                       slot_derivations:
+                        id:
+                          expr: {uid(QUANTITY_NS, f'"{study.name}:HDL:LLOD"')}
                         value_decimal:
                           value: {pop.HDL_LLOD}
                         unit:
@@ -223,6 +269,8 @@ def hdl(study):
                   - Quantity:
                       populated_from: {t}
                       slot_derivations:
+                        id:
+                          expr: {uid(QUANTITY_NS, f'"{study.name}:HDL:ULOD"')}
                         value_decimal:
                           value: {pop.HDL_ULOD}
                         unit:
@@ -232,6 +280,8 @@ def hdl(study):
           - Quantity:
               populated_from: {t}
               slot_derivations:
+                id:
+                  expr: {uid(QUANTITY_NS, row_key(study, "labs", "HDL"))}
                 value_decimal:
                   populated_from: {phv(study, "labs", "HDL")}
                 operator:
@@ -250,6 +300,8 @@ def wbc(study):
     MeasurementObservation:
       populated_from: {t}
       slot_derivations:
+        id:
+          expr: {uid(OBSERVATION_NS, row_key(study, "labs", "WBC"))}
         associated_participant:
           expr: {participant}
         associated_visit:
@@ -261,15 +313,17 @@ def wbc(study):
           - Assay:
               populated_from: {t}
               slot_derivations:
-                identity:
-                  value: "CBC"
-                name:
-                  value: "Complete Blood Count"
+                id:
+                  expr: {uid(ASSAY_NS, f'"{study.name}:CBC"')}
+                method:
+                  value: {v.ASSAY_METHOD_WBC}
         value_quantity:
           class_derivations:
           - Quantity:
               populated_from: {t}
               slot_derivations:
+                id:
+                  expr: {uid(QUANTITY_NS, row_key(study, "labs", "WBC"))}
                 value_decimal:
                   populated_from: {phv(study, "labs", "WBC")}
                 unit:
@@ -277,9 +331,15 @@ def wbc(study):
 """
 
 
-def condition(study, status_col, concept_col, provenance, extra=""):
+def condition(study, label, status_col, concept_col, provenance, relationship=None):
+    """One Condition. relationship defaults to ONESELF for self-reported history."""
     t = study.tables["conditions"]
     _, participant = ident(study, "conditions")
+    relationship_line = (
+        f"          populated_from: {relationship}"
+        if relationship
+        else f"          value: {v.ONESELF}"
+    )
     concept = (
         f"          populated_from: {phv(study, 'conditions', concept_col)}"
         if concept_col
@@ -289,6 +349,8 @@ def condition(study, status_col, concept_col, provenance, extra=""):
     Condition:
       populated_from: {t}
       slot_derivations:
+        id:
+          expr: {uid(v.CONDITION_NS, row_key(study, "conditions", label))}
         associated_participant:
           expr: {participant}
         condition_concept:
@@ -297,7 +359,9 @@ def condition(study, status_col, concept_col, provenance, extra=""):
           populated_from: {phv(study, "conditions", status_col)}
         condition_provenance:
           value: {provenance}
-{extra}"""
+        relationship_to_participant:
+{relationship_line}
+"""
 
 
 def drug_exposure(study):
@@ -307,6 +371,8 @@ def drug_exposure(study):
     DrugExposure:
       populated_from: {t}
       slot_derivations:
+        id:
+          expr: {uid(v.DRUG_EXPOSURE_NS, row_key(study, "meds", "ccb"))}
         associated_participant:
           expr: {participant}
         drug_concept:
@@ -336,16 +402,16 @@ def build(study):
             extra='        qualifier:\n          value: "AVERAGE"\n',
         ),
         "wbc": wbc(study),
-        "cond_heart_failure": condition(study, "HEART_FAILURE", "HF_CONCEPT", "PATIENT_SELF-REPORTED_CONDITION"),
+        "cond_heart_failure": condition(
+            study, "heart_failure", "HEART_FAILURE", "HF_CONCEPT", v.SELF_REPORTED_CONDITION),
         "cond_family_stroke": condition(
-            study, "FAM_STROKE", "FS_CONCEPT", "PATIENT_SELF-REPORTED_CONDITION",
-            extra=f"        relationship_to_participant:\n          populated_from: {phv(study, 'conditions', 'FS_RELATIVE')}\n",
+            study, "family_stroke", "FAM_STROKE", "FS_CONCEPT", v.SELF_REPORTED_CONDITION,
+            relationship=phv(study, "conditions", "FS_RELATIVE"),
         ),
-        "cond_hypertension": condition(study, "HYPERTENSION", None, "PATIENT_SELF-REPORTED_CONDITION"),
+        "cond_hypertension": condition(
+            study, "hypertension", "HYPERTENSION", None, v.SELF_REPORTED_CONDITION),
         "cond_heart_attack": condition(
-            study, "HEART_ATTACK", "HA_CONCEPT", "PATIENT_SELF-REPORTED_CONDITION",
-            extra="        associated_evidence:\n          value: ECG\n",
-        ),
+            study, "heart_attack", "HEART_ATTACK", "HA_CONCEPT", v.SELF_REPORTED_CONDITION),
         "drug_exposure": drug_exposure(study),
     }
     return specs
