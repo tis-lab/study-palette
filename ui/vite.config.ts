@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: [
-      "https://study-palette-client-dept-bdc-data-portal.apps.cloudapps.unc.edu",
+      "study-palette-client-dept-bdc-data-portal.apps.cloudapps.unc.edu",
     ],
     port: 3000,
     proxy: {
