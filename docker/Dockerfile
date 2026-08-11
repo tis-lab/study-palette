@@ -1,5 +1,4 @@
 FROM python:latest
-MAINTAINER TraCS AppDev Team <appdev@tracs.unc.edu>
 
 ENV PYTHONUNBUFFERED=1
 
@@ -10,12 +9,12 @@ LABEL io.k8s.description="BDC Data Portal API" \
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+COPY api/ api/
 
-RUN python -m load_seed_data
+RUN python -m api.load_seed_data
 
 EXPOSE 8080
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8080"]
