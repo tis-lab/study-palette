@@ -194,12 +194,23 @@ def blood_pressure(study):
 """
 
 
-def simple_measure(study, table, column, concept, unit, extra=""):
-    """A single MeasurementObservation with a Quantity value."""
+def simple_measure(study, table, column, concept, unit, extra="", categorical=False):
+    """A single MeasurementObservation with a Quantity value.
+
+    Categorical measurements go to value_concept rather than value_decimal —
+    value_decimal is typed decimal, and the real specs (see fam_income) put
+    label strings in value_concept for this case.
+    """
     t = study.tables[table]
     _, participant = ident(study, table)
     visit = visit_ref(study, table)
     key = row_key(study, table, column)
+    if categorical:
+        value_slot = "value_concept"
+        unit_line = ""
+    else:
+        value_slot = "value_decimal"
+        unit_line = f'                unit:\n                  value: "{unit}"\n'
     return f"""- class_derivations:
     MeasurementObservation:
       populated_from: {t}
@@ -219,11 +230,9 @@ def simple_measure(study, table, column, concept, unit, extra=""):
               slot_derivations:
                 id:
                   expr: {uid(QUANTITY_NS, key)}
-                value_decimal:
+                {value_slot}:
                   populated_from: {phv(study, table, column)}
-                unit:
-                  value: "{unit}"
-"""
+{unit_line}"""
 
 
 def hdl(study):
@@ -394,7 +403,10 @@ def build(study):
         "blood_pressure": blood_pressure(study),
         "height": simple_measure(study, "clinical", "HEIGHT_CM", "OMOP:3036277", "cm"),
         "weight": simple_measure(study, "clinical", "WEIGHT_KG", "OMOP:3025315", "kg"),
-        "bmi": simple_measure(study, "clinical", "BMI", "OMOP:3038553", bmi_unit),
+        "bmi": simple_measure(
+            study, "clinical", "BMI", "OMOP:3038553", bmi_unit,
+            categorical=study.bmi_categorical,
+        ),
         "hdl": hdl(study),
         # BUN is reported as an average, which the qualifier slot records.
         "bun": simple_measure(

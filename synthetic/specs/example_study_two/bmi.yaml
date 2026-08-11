@@ -17,7 +17,5 @@
               slot_derivations:
                 id:
                   expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10212300}) + ":Example Study Two:" + str({phv10212301}) + ":BMI")'
-                value_decimal:
+                value_concept:
                   populated_from: phv10212304
-                unit:
-                  value: ""
