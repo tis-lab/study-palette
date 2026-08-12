@@ -33,6 +33,7 @@ target-version = "py312"
 line-length = 120
 include = [
     "api/**/*.py",
+    "synthetic/**/*.py",
 ]
 
 [tool.ruff.lint]

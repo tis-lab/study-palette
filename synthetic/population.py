@@ -1,5 +1,6 @@
 # ruff: noqa: S311
-"""The population model.
+"""
+The population model.
 
 Builds people, their study participation, visits, measurements, conditions and
 drug exposures. Emits nothing — see generate.py for the dbGaP-style writers.
@@ -109,6 +110,8 @@ class Participant:
 
 @dataclass
 class Visit:
+    """One study visit and the measurements taken at it."""
+
     number: int
     category: str
     age_days: int
@@ -160,7 +163,8 @@ def _make_person(rng, dbgap_id, study):
 
 
 def _make_visits(rng, study, person):
-    """One TELEHEALTH visit per participant; the rest are site visits.
+    """
+    One TELEHEALTH visit per participant; the rest are site visits.
 
     Deceased participants stop attending: visits are truncated at a random
     point so nobody is measured after they die.
@@ -298,7 +302,8 @@ def build():
 
 
 def _apply_hdl_limits(rng, participants):
-    """Force exactly HDL_BELOW_LLOD results below the assay's lower limit.
+    """
+    Force exactly HDL_BELOW_LLOD results below the assay's lower limit.
 
     These carry a '<' operator on the Quantity rather than a plain value, which
     is how BDCHM represents a censored result.

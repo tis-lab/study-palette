@@ -1,5 +1,6 @@
 # ruff: noqa: S311
-"""Coded values used by the synthetic corpus.
+"""
+Coded values used by the synthetic corpus.
 
 Every CURIE here is attested in RTI's priority_variables_transform specs or in
 BDCHM itself, so the corpus resolves against the same vocabulary as real

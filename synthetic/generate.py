@@ -1,5 +1,6 @@
 # ruff: noqa: S311
-"""Emit the synthetic corpus as dbGaP-style raw tables.
+"""
+Emit the synthetic corpus as dbGaP-style raw tables.
 
 These are inputs to dm-bip, not harmonized output. Running them through the
 pipeline with BDCHM as the target schema is what makes the result structurally
@@ -60,6 +61,7 @@ def phv_ids(study, table, count):
 
 
 def write_table(out_dir, study, table, rows):
+    """Write one table in dbGaP raw format, returning its path."""
     columns, phv_count = LAYOUTS[table]
     pht = study.tables[table]
     path = out_dir / f"{study.phs}.v1.{pht}.v1.p1.c1.ex0_1s.HMB.txt.gz"
@@ -127,6 +129,7 @@ def build_rows(participants, study):
 
 
 def main():
+    """Generate the raw tables for both studies."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--out",

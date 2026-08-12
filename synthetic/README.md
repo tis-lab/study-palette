@@ -36,9 +36,13 @@ make pipeline CONFIG=$SYNTH/pipeline/example_study_one.mk \
               SYNTH_DIR=$SYNTH SYNTH_OUTPUT_DIR=$SYNTH/output/study_one
 ```
 
-BDCHM is not vendored — drop `bdchm.yaml` from
-[NHLBI-BDC-DMC-HM](https://github.com/RTIInternational/NHLBI-BDC-DMC-HM) into
-this directory first.
+BDCHM is fetched rather than vendored, pinned to a release so an upstream change
+is a deliberate bump here rather than a silent change in what the pipeline
+produces:
+
+```bash
+./fetch-bdchm.sh          # currently v1.3.0
+```
 
 ## What is and isn't committed
 
@@ -79,5 +83,7 @@ has to render:
 - `exposure_status` distinguishing absent from present drug exposures
 - Continuous and categorical presentations of the same concept across cohorts
 
-Coverage against BDCHM's full slot inventory is measured separately, and is the
-acceptance number for broadening the corpus beyond this first pass.
+Coverage against BDCHM's full slot inventory — the percentage of slots appearing
+at least once — is intended as the acceptance number for broadening the corpus
+beyond this first pass. **That measurement is not built yet.** This pass covers
+the brief only.

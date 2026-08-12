@@ -1,4 +1,5 @@
-"""Check the corpus against the brief and against its own internal consistency.
+"""
+Check the corpus against the brief and against its own internal consistency.
 
 Distribution checks use a tolerance because sampling variation is expected and
 wanted — the brief says as much. Invariant checks are exact: a violation there
@@ -20,6 +21,7 @@ notes = []
 
 
 def near(label, actual, expected, tolerance=TOLERANCE):
+    """Record a distribution check that allows sampling variation."""
     ok = abs(actual - expected) <= tolerance
     notes.append(f"{'ok ' if ok else 'FAIL'} {label}: {actual:.3f} (expected ~{expected:.3f})")
     if not ok:
@@ -27,6 +29,7 @@ def near(label, actual, expected, tolerance=TOLERANCE):
 
 
 def exact(label, actual, expected):
+    """Record an invariant check that must hold exactly."""
     ok = actual == expected
     notes.append(f"{'ok ' if ok else 'FAIL'} {label}: {actual} (expected {expected})")
     if not ok:
@@ -34,11 +37,13 @@ def exact(label, actual, expected):
 
 
 def fraction(items, predicate):
+    """Return the proportion of items satisfying the predicate."""
     items = list(items)
     return sum(1 for x in items if predicate(x)) / len(items) if items else 0.0
 
 
 def main():
+    """Run every check and report."""
     people, participants = pop.build()
 
     for study in (pop.STUDY_ONE, pop.STUDY_TWO):

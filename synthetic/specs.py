@@ -1,4 +1,5 @@
-"""Emit BDCHM-targeted transformation specs for the synthetic cohorts.
+"""
+Emit BDCHM-targeted transformation specs for the synthetic cohorts.
 
 The specs are generated rather than hand-written because both studies share a
 structure and differ only in accessions — generating them from the same column
@@ -26,18 +27,18 @@ ASSAY_NS = "https://w3id.org/bdchm/Assay"
 
 
 def uid(namespace, key):
-    """A uuid5 derivation expression. Nested objects need explicit ids."""
+    """Build a uuid5 derivation expression. Nested objects need explicit ids."""
     return f"'uuid5(\"{namespace}\", {key})'"
 
 
 def row_key(study, table, suffix):
-    """A key unique per source row, for identifying nested objects."""
+    """Build a key unique per source row, for identifying nested objects."""
     subject = phv(study, table, "SUBJECT_ID")
     columns, _ = g.LAYOUTS[table]
     if "VISIT_NUM" in columns:
         num = phv(study, table, "VISIT_NUM")
         return f'str({{{subject}}}) + ":{study.name}:" + str({{{num}}}) + ":{suffix}"'
-    return f'str({{{subject}}}) + ":{study.name}:{suffix}"' 
+    return f'str({{{subject}}}) + ":{study.name}:{suffix}"'
 
 
 def phv(study, table, column):
@@ -48,18 +49,20 @@ def phv(study, table, column):
 
 
 def ident(study, table):
-    """The uuid5 expressions that tie records back to participant and visit."""
+    """Build the uuid5 expressions that tie records back to participant and visit."""
     subject = phv(study, table, "SUBJECT_ID")
     return subject, f"'uuid5(\"{PARTICIPANT_NS}\", str({{{subject}}}) + \":{study.name}\")'"
 
 
 def visit_ref(study, table):
+    """Build the uuid5 reference to a row's visit."""
     subject = phv(study, table, "SUBJECT_ID")
     num = phv(study, table, "VISIT_NUM")
     return f"'uuid5(\"{VISIT_NS}\", str({{{subject}}}) + \":{study.name} VISIT \" + str({{{num}}}))'"
 
 
 def person_and_participant(study):
+    """Build the Person and Participant derivations."""
     t = study.tables["subject"]
     subject = phv(study, "subject", "SUBJECT_ID")
     vital = phv(study, "subject", "VITAL_STATUS")
@@ -82,7 +85,7 @@ def person_and_participant(study):
               populated_from: {t}
               slot_derivations:
                 id:
-                  expr: {uid(v.CAUSE_OF_DEATH_NS, f'str({{dbGaP_Subject_ID}})')}
+                  expr: {uid(v.CAUSE_OF_DEATH_NS, 'str({dbGaP_Subject_ID})')}
                 cause:
                   populated_from: {cause}
                 order:
@@ -103,6 +106,7 @@ def person_and_participant(study):
 
 
 def demography(study):
+    """Build the Demography derivation."""
     t = study.tables["subject"]
     _, participant = ident(study, "subject")
     return f"""- class_derivations:
@@ -123,6 +127,7 @@ def demography(study):
 
 
 def visits(study):
+    """Build the Visit derivation."""
     t = study.tables["visit"]
     subject = phv(study, "visit", "SUBJECT_ID")
     num = phv(study, "visit", "VISIT_NUM")
@@ -195,7 +200,8 @@ def blood_pressure(study):
 
 
 def simple_measure(study, table, column, concept, unit, extra="", categorical=False):
-    """A single MeasurementObservation with a Quantity value.
+    """
+    Build a single MeasurementObservation with a Quantity value.
 
     Categorical measurements go to value_concept rather than value_decimal —
     value_decimal is typed decimal, and the real specs (see fam_income) put
@@ -374,6 +380,7 @@ def condition(study, label, status_col, concept_col, provenance, relationship=No
 
 
 def drug_exposure(study):
+    """Build the DrugExposure derivation."""
     t = study.tables["meds"]
     _, participant = ident(study, "meds")
     return f"""- class_derivations:
@@ -430,6 +437,7 @@ def build(study):
 
 
 def main():
+    """Write specs for both studies."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=Path(__file__).parent / "specs")
     args = parser.parse_args()
