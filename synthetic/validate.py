@@ -126,10 +126,15 @@ def main():
     ]
     near("null rate", sum(1 for c in cells if c is None) / len(cells), pop.NULL_RATE, tolerance=0.002)
 
-    # The four calcium channel blockers should be evenly divided.
+    # The four calcium channel blockers should be evenly divided. Guard the
+    # denominator: a generation change that produced no exposures should fail a
+    # check, not crash the run partway through.
     ccb = Counter(p.ccb for p in participants if p.ccb)
-    for concept in v.CALCIUM_CHANNEL_BLOCKERS:
-        near(f"CCB share {concept}", ccb[concept] / sum(ccb.values()), 0.25, tolerance=0.06)
+    total = sum(ccb.values())
+    exact("any calcium channel blocker exposures", total > 0, True)
+    if total:
+        for concept in v.CALCIUM_CHANNEL_BLOCKERS:
+            near(f"CCB share {concept}", ccb[concept] / total, 0.25, tolerance=0.06)
 
     print("\n".join(notes))
     print()
