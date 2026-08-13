@@ -73,6 +73,29 @@ two `Participant` records — the same way real cross-study participation appear
 One visit per participant is `TELEHEALTH`; the rest are `STUDY_SITE_VISIT`.
 Deceased participants stop attending, so nobody is measured after they die.
 
+## Known shapes that surprise people
+
+**`cause_of_death` is present for living participants**, multivalued, with a null
+cause:
+
+```yaml
+cause_of_death:
+- cause: null
+  order: null
+  id: 73e3cc59-...
+vital_status: OMOP:4230556
+```
+
+Test `vital_status`, not the presence of `cause_of_death`.
+
+This is not an artifact of the synthetic corpus — it is how the real
+transformation behaves. RTI's MESA spec derives `cause_of_death` the same way,
+with `cause` set to `None` for the living and no mechanism to suppress the
+object, because `ClassDerivation` in linkml-map has no conditional emission
+(see linkml/linkml-map#187). Real harmonized BDC data therefore carries the same
+shape, and the corpus reproduces it deliberately. A portal built against a
+tidied-up version would break on real data.
+
 ## Structural features exercised
 
 Beyond the clinical values, the corpus is meant to exercise the shapes a portal
