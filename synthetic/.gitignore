@@ -1,6 +1,7 @@
 # Generated corpus — reproducible from SEED, distributed as release assets
 data/
 output/
+# sample/ is committed on purpose — see README
 # Vendored upstream schema, fetched not committed
 bdchm.yaml
 __pycache__/

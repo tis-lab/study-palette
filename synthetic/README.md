@@ -46,10 +46,15 @@ produces:
 
 ## What is and isn't committed
 
-The generator is committed; the corpus is not. Generation is deterministic given
-`SEED`, so the same seed reproduces the same corpus byte for byte — which makes
-committing several megabytes of generated `.gz` pointless, and keeps diffs
-reviewable. Built corpora are distributed as release assets.
+The generator is committed. The corpus is not: it is 14MB of YAML, deterministic
+given `SEED`, and would produce a 14MB diff every time the seed or the model
+changed. Built corpora are distributed as release assets — 3MB compressed, with
+a stable URL and a version, which is what a consuming team needs anyway.
+
+`sample/` **is** committed — 40KB of hand-selected records covering every
+structural feature the corpus claims. It exists so a reviewer, or a team
+deciding whether this is the reference data they want, can see the output shape
+without running the pipeline. Regenerate it with `python sample.py` after a run.
 
 ## The cohorts
 

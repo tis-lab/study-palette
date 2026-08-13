@@ -1,0 +1,31 @@
+# study_one: family history, with the relative recorded
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+condition_concept: MONDO:0005264
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: ABSENT
+id: 1bacbc56-4aaf-5017-b70c-42fa03f9d48b
+relationship_to_participant: OMOP:4321888
+---
+# study_one: about oneself
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+condition_concept: MONDO:0005068
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: PRESENT
+id: 4058ed2d-92d4-5b8a-af0e-aee32c2c9960
+relationship_to_participant: ONESELF
+---
+# study_two: family history, with the relative recorded
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+condition_concept: MONDO:0013792
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: UNKNOWN
+id: 87bc5b14-516d-598a-a33d-0bd3d7b92615
+relationship_to_participant: OMOP:4321888
+---
+# study_two: about oneself
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+condition_concept: MONDO:0005068
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: ABSENT
+id: 67332483-bbf9-57fd-98de-9f54e47bcd9e
+relationship_to_participant: ONESELF

@@ -1,0 +1,154 @@
+# study_one: HDL below the assay's lower limit, carrying the operator
+associated_assay:
+  id: ddcb07cc-0d54-5828-93a8-495a3f8a3f07
+  lower_limit_of_detection:
+    id: c6473842-2d99-5ae5-9b6e-ad28ae6871a3
+    unit: mg/dL
+    value_decimal: 5.0
+  method: MMO:0000133
+  upper_limit_of_detection:
+    id: b0655aa0-8a6e-5719-809d-e5678af1e9e6
+    unit: mg/dL
+    value_decimal: 150.0
+associated_participant: 9e9b7cbd-07b5-5ea9-9912-6cc95a1e8ca5
+associated_visit: 7b35a86e-1813-56e3-97d2-0fbb66803db0
+id: b01f532f-d4cd-5dc7-b494-79b5876a6e8c
+observation_type: OMOP:3007070
+value_quantity:
+  id: be2ab2d1-121b-547f-aae9-c647ddf3d69f
+  operator: <
+  unit: mg/dL
+  value_decimal: 5.0
+---
+# study_one: HDL with assay detection limits
+associated_assay:
+  id: ddcb07cc-0d54-5828-93a8-495a3f8a3f07
+  lower_limit_of_detection:
+    id: c6473842-2d99-5ae5-9b6e-ad28ae6871a3
+    unit: mg/dL
+    value_decimal: 5.0
+  method: MMO:0000133
+  upper_limit_of_detection:
+    id: b0655aa0-8a6e-5719-809d-e5678af1e9e6
+    unit: mg/dL
+    value_decimal: 150.0
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+associated_visit: 75122f58-efd2-559d-9eac-2619199795aa
+id: 5c2378dc-1d98-5cf0-9af3-2161df597017
+observation_type: OMOP:3007070
+value_quantity:
+  id: 16ec110d-a004-5269-a4f0-33574ed63357
+  operator: null
+  unit: mg/dL
+  value_decimal: 58.4
+---
+# study_one: WBC referencing the CBC assay
+associated_assay:
+  id: 25bf7403-bd81-5764-9e90-8af5246333ff
+  method: MMO:0000533
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+associated_visit: 75122f58-efd2-559d-9eac-2619199795aa
+id: 520eee1a-926b-5bc0-80fa-fa7aec68871c
+observation_type: OMOP:3000905
+value_quantity:
+  id: 071da59d-a293-55d0-a8ab-141a15d99ab3
+  unit: 10*3/uL
+  value_decimal: 10.4
+---
+# study_one: BUN qualified as an average
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+associated_visit: 75122f58-efd2-559d-9eac-2619199795aa
+id: 74e323bb-6fa2-5a03-b8d4-01d1b37713bb
+observation_type: OMOP:3013682
+qualifier: AVERAGE
+value_quantity:
+  id: 54f1a4f3-26f9-532c-af11-0f9a032fcc7e
+  unit: mg/dL
+  value_decimal: 18.4
+---
+# study_one: BMI as a continuous value
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+associated_visit: 75122f58-efd2-559d-9eac-2619199795aa
+id: dcfddca5-aea6-55ea-a3f5-05c8ea5e87b6
+observation_type: OMOP:3038553
+value_quantity:
+  id: 69a41584-68c4-5f4c-ab51-419b2f2416f7
+  unit: kg/m2
+  value_decimal: 21.9
+---
+# study_two: HDL below the assay's lower limit, carrying the operator
+associated_assay:
+  id: 1533b5fa-b7d7-5d34-a075-88950c88b9b3
+  lower_limit_of_detection:
+    id: 7994b9e9-3e5a-5f29-a258-5873bfa4ba3f
+    unit: mg/dL
+    value_decimal: 5.0
+  method: MMO:0000133
+  upper_limit_of_detection:
+    id: cd40e959-ee21-55fb-bcd2-a6a84fdae679
+    unit: mg/dL
+    value_decimal: 150.0
+associated_participant: f82b92bc-cc81-5d6d-9fcc-e2b1df68b733
+associated_visit: ca601664-8b89-5304-8f58-200d2ccaa4a2
+id: e5e4b790-b5ed-57ee-8679-9c75b4af3960
+observation_type: OMOP:3007070
+value_quantity:
+  id: 31829a46-4891-541c-b0ae-437badfdb600
+  operator: <
+  unit: mg/dL
+  value_decimal: 5.0
+---
+# study_two: HDL with assay detection limits
+associated_assay:
+  id: 1533b5fa-b7d7-5d34-a075-88950c88b9b3
+  lower_limit_of_detection:
+    id: 7994b9e9-3e5a-5f29-a258-5873bfa4ba3f
+    unit: mg/dL
+    value_decimal: 5.0
+  method: MMO:0000133
+  upper_limit_of_detection:
+    id: cd40e959-ee21-55fb-bcd2-a6a84fdae679
+    unit: mg/dL
+    value_decimal: 150.0
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+associated_visit: 22bf721d-ce80-5f08-b1c5-d19857b89b15
+id: 417b93ad-af07-509f-861b-451ae970154f
+observation_type: OMOP:3007070
+value_quantity:
+  id: 9c071689-64ca-58df-b23b-1c664ee4336f
+  operator: null
+  unit: mg/dL
+  value_decimal: 63.7
+---
+# study_two: WBC referencing the CBC assay
+associated_assay:
+  id: c1a9ff74-d562-5bd5-b97f-15a2ed7a8e57
+  method: MMO:0000533
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+associated_visit: 22bf721d-ce80-5f08-b1c5-d19857b89b15
+id: 4965a51d-170d-5b2b-a818-05af41b3424c
+observation_type: OMOP:3000905
+value_quantity:
+  id: a91f6e17-efb3-5168-b09b-0a66df0abe43
+  unit: 10*3/uL
+  value_decimal: 9.9
+---
+# study_two: BUN qualified as an average
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+associated_visit: 22bf721d-ce80-5f08-b1c5-d19857b89b15
+id: d5c1a7cf-457f-5274-b8f5-41644eb4b1c5
+observation_type: OMOP:3013682
+qualifier: AVERAGE
+value_quantity:
+  id: 6e3ab74d-99e2-5419-984a-29361d647941
+  unit: mg/dL
+  value_decimal: 17.9
+---
+# study_two: BMI as a category
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+associated_visit: 22bf721d-ce80-5f08-b1c5-d19857b89b15
+id: 6b2572f5-a244-504c-9f4f-7dae5a26ceb0
+observation_type: OMOP:3038553
+value_quantity:
+  id: f427eb8f-c038-5c83-9ea3-ffa4586a6728
+  value_concept: normal weight

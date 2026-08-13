@@ -1,0 +1,27 @@
+# study_one: taking a calcium channel blocker
+associated_participant: e805802b-da55-5d52-9db3-810ad3ed2058
+drug_concept: RxCUI:17767
+exposure_provenance: PATIENT_SELF_REPORTED_MEDICATION
+exposure_status: PRESENT
+id: 5f34642a-0636-5a84-a778-a3ba54d8f45f
+---
+# study_one: not taking one
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+drug_concept: null
+exposure_provenance: PATIENT_SELF_REPORTED_MEDICATION
+exposure_status: ABSENT
+id: f9592e79-ad0d-5e45-b130-a5823ecc447a
+---
+# study_two: taking a calcium channel blocker
+associated_participant: 0a0a6844-cd9d-5401-95b0-f7dfa5d910db
+drug_concept: NDFRT:N0000175421
+exposure_provenance: PATIENT_SELF_REPORTED_MEDICATION
+exposure_status: PRESENT
+id: 5cd32ad9-48ef-570f-a1bb-c7ef61bbc57c
+---
+# study_two: not taking one
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+drug_concept: null
+exposure_provenance: PATIENT_SELF_REPORTED_MEDICATION
+exposure_status: ABSENT
+id: db1378b7-26b4-5bad-b1e6-2c1d28a4c562

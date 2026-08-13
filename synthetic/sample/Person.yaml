@@ -1,0 +1,39 @@
+# study_one: deceased, with cause of death
+cause_of_death:
+- cause: ICD10CM:R99
+  id: 90723e22-0b8f-5ab4-b1bd-8e697cd52e1e
+  order: 1
+id: ddbe1e3e-e49d-590e-97f5-2e5e2102cbd0
+identity: '900001'
+species: NCBITaxon:9606
+vital_status: OMOP:434489
+---
+# study_one: living, note the empty cause_of_death entry
+cause_of_death:
+- cause: null
+  id: 73e3cc59-34b6-5c7e-aee4-df4f2adf0d96
+  order: null
+id: 567cf7d7-a287-5577-82b2-1feaca5df345
+identity: '900002'
+species: NCBITaxon:9606
+vital_status: OMOP:4230556
+---
+# study_two: deceased, with cause of death
+cause_of_death:
+- cause: ICD10CM:R99
+  id: c810c2ab-9b85-58f1-a7ba-009eccd3b843
+  order: 1
+id: 79153ada-4607-5077-a30d-93cc240aa7df
+identity: '900441'
+species: NCBITaxon:9606
+vital_status: OMOP:434489
+---
+# study_two: living, note the empty cause_of_death entry
+cause_of_death:
+- cause: null
+  id: c92da1ee-347b-585a-a12c-bda32ec3c201
+  order: null
+id: b9733cac-ed81-52b8-bb35-ac8f1fccb21f
+identity: '900093'
+species: NCBITaxon:9606
+vital_status: OMOP:4230556
