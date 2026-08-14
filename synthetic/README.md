@@ -28,6 +28,23 @@ python specs.py             # BDCHM-targeted transformation specs
 python validate.py          # distributions and invariants
 ```
 
+After the pipeline has run:
+
+```bash
+python schema.py --study study_one   # JSONL -> Parquet, typed from BDCHM
+```
+
+The pipeline emits YAML and JSONL side by side — YAML is what makes the
+published corpus readable, JSONL is the machine-facing form with the same
+nesting. `schema.py` reads BDCHM for leaf types and the transformation specs for
+which slots nest, because the model alone does not decide that: BDCHM gives
+`associated_participant` a range of `Participant`, but the spec materialises it
+as a uuid5 string while `value_quantity` is nested inline.
+
+It also reports where the model and the data disagree on cardinality. That is
+not hypothetical — BDCHM declares `identity` multivalued and every
+transformation spec, RTI's included, emits a scalar.
+
 Then, from a dm-bip checkout:
 
 ```bash

@@ -12,3 +12,8 @@ DM_MAP_TARGET_SCHEMA := $(SYNTH_DIR)/bdchm.yaml
 DM_MAPPING_PREFIX    := SYNTH1
 DM_MAPPING_POSTFIX   := -data
 DM_MAP_STRICT        := false
+
+# YAML stays primary because it is what makes the published corpus readable.
+# JSONL is emitted alongside it as the machine-facing form: it preserves the
+# same nesting and is what the Parquet build reads.
+DM_MAP_OUTPUT_TYPE   := yaml jsonl
