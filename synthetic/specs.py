@@ -180,7 +180,8 @@ def blood_pressure(study):
                         value_decimal:
                           populated_from: {source}
                         unit:
-                          value: "mm[Hg]\""""
+                          value: "mm[Hg]"
+"""
 
     return f"""- class_derivations:
     MeasurementObservationSet:
@@ -194,9 +195,7 @@ def blood_pressure(study):
           expr: {visit}
         observations:
           class_derivations:
-{observation("OMOP:4152194", sbp, "systolic")}
-{observation("OMOP:4154790", dbp, "diastolic")}
-"""
+{observation("OMOP:4152194", sbp, "systolic")}{observation("OMOP:4154790", dbp, "diastolic")}"""
 
 
 def simple_measure(study, table, column, concept, unit, extra="", categorical=False):
