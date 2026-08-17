@@ -1,13 +1,17 @@
+import CohortCharts from "./CohortCharts";
 import {
+  cohort,
   participants,
   withDescendants,
   type Concept,
   type Indexed,
 } from "./data";
+import type { PaletteKey } from "../palette";
 
 interface Props {
   data: Indexed;
   concept: Concept;
+  paletteKey: PaletteKey;
   onSelectConcept: (concept: Concept) => void;
 }
 
@@ -16,8 +20,14 @@ interface Props {
  * what VarLib records, what the knowledge graph says the terms mean, and how
  * many participants the corpus holds.
  */
-export default function ConceptDetail({ data, concept, onSelectConcept }: Props) {
+export default function ConceptDetail({
+  data,
+  concept,
+  paletteKey,
+  onSelectConcept,
+}: Props) {
   const { perStudy, total, illustrative } = participants(data, concept);
+  const matched = cohort(data, concept);
 
   // The reveal: other harmonized variables reaching the same ontology terms.
   const siblings = new Map<string, Concept>();
@@ -40,6 +50,16 @@ export default function ConceptDetail({ data, concept, onSelectConcept }: Props)
       </header>
 
       {concept.description && <p className="lede">{concept.description}</p>}
+
+      <section>
+        <h3>Cohort</h3>
+        <CohortCharts
+          cohort={matched}
+          total={data.participants.length}
+          label={concept.name}
+          paletteKey={paletteKey}
+        />
+      </section>
 
       <section>
         <h3>Ontology terms</h3>

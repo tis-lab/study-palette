@@ -20,7 +20,18 @@ export interface Term {
   label_source: "monarch" | "varlib";
 }
 
+export interface Participant {
+  id: string;
+  study: string;
+  sex: string;
+  race: string;
+  ethnicity: string;
+  concepts: string[];
+  measures: Record<string, number>;
+}
+
 export interface ExploreData {
+  participants: Participant[];
   concepts: Concept[];
   terms: Record<string, Term>;
   corpus: Record<string, Record<string, number>>;
@@ -56,6 +67,21 @@ export function index(data: ExploreData): Indexed {
     byCategory,
     illustrativeSet: new Set(data.illustrative),
   };
+}
+
+/**
+ * The cohort a concept selects, expanded through the ontology: a participant
+ * coded with a narrower term still belongs to the broader one. This is the
+ * whole argument for the knowledge graph — a plain match on the parent term
+ * would miss everyone recorded against a child.
+ */
+export function cohort(data: Indexed, concept: Concept): Participant[] {
+  const wanted = new Set(
+    concept.mappings.flatMap((curie) => withDescendants(data, curie)),
+  );
+  return data.participants.filter((p) =>
+    p.concepts.some((c) => wanted.has(c)),
+  );
 }
 
 /** Participants for a concept, summed across contributing studies. */

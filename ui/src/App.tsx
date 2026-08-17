@@ -131,7 +131,7 @@ function App() {
       <main>
         {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
-        {mode === "explore" && <Explore />}
+        {mode === "explore" && <Explore paletteKey={paletteKey} />}
         {mode === "demo" && (
           <div className="demo-layout">
             <FilterPanel

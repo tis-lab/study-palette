@@ -131,6 +131,83 @@ def load_corpus(output_dir):
     return counts
 
 
+DEMOGRAPHY_LABELS = {
+    "OMOP:8507": "Male",
+    "OMOP:8532": "Female",
+    "OMOP:8527": "White",
+    "OMOP:8516": "Black or African American",
+    "OMOP:8515": "Asian",
+    "OMOP:8657": "American Indian or Alaska Native",
+    "OMOP:38003615": "Middle Eastern or North African",
+    "OMOP:8557": "Native Hawaiian or Pacific Islander",
+    "OMOP:38003563": "Hispanic or Latino",
+    "OMOP:38003564": "Not Hispanic or Latino",
+}
+
+# Measurements worth charting for a cohort, by observation_type.
+MEASURES = {
+    "OMOP:3038553": "BMI",
+    "OMOP:4152194": "Systolic BP",
+    "OMOP:3007070": "HDL",
+}
+
+
+def load_participants(output_dir):
+    """Join demography, conditions and a few measures into one row per participant.
+
+    This is what makes a cohort chartable: pick a concept, keep the participants
+    who have it, and the demographic and clinical breakdowns follow.
+    """
+    people = {}
+
+    for study, prefix in (("study_one", "SYNTH1"), ("study_two", "SYNTH2")):
+        base = output_dir / study / "mapped-data"
+        label = "Example Study One" if study == "study_one" else "Example Study Two"
+        if not (base / f"{prefix}-Demography--data.jsonl").exists():
+            print(f"  ! no corpus for {study}, skipping")
+            continue
+
+        def read(kind):
+            path = base / f"{prefix}-{kind}--data.jsonl"
+            with open(path) as fh:
+                for line in fh:
+                    yield json.loads(line)
+
+        for row in read("Demography"):
+            pid = row["associated_participant"]
+            races = row.get("race") or []
+            people[pid] = {
+                "id": pid[:8],
+                "study": label,
+                "sex": DEMOGRAPHY_LABELS.get(row.get("sex"), "Unknown"),
+                "race": DEMOGRAPHY_LABELS.get(
+                    races[0] if races else None, "Unknown"
+                ),
+                "ethnicity": DEMOGRAPHY_LABELS.get(row.get("ethnicity"), "Unknown"),
+                "concepts": [],
+                "measures": {},
+            }
+
+        for row in read("Condition"):
+            pid = row.get("associated_participant")
+            if row.get("condition_status") == "PRESENT" and pid in people:
+                people[pid]["concepts"].append(row["condition_concept"])
+
+        # One value per measure per participant is enough to chart a distribution.
+        for row in read("MeasurementObservation"):
+            pid = row.get("associated_participant")
+            measure = MEASURES.get(row.get("observation_type"))
+            if not measure or pid not in people:
+                continue
+            value = (row.get("value_quantity") or {}).get("value_decimal")
+            if value is not None and measure not in people[pid]["measures"]:
+                people[pid]["measures"][measure] = round(value, 1)
+
+    for person in people.values():
+        person["concepts"] = sorted(set(person["concepts"]))
+    return list(people.values())
+
+
 def fill_gaps(concepts, terms, corpus):
     """Fill what the real sources cannot supply, deterministically.
 
@@ -215,6 +292,8 @@ def main():
     print("Corpus:")
     corpus = load_corpus(args.corpus)
     print(f"  {len(corpus)} concepts present in participant data")
+    participants = load_participants(args.corpus)
+    print(f"  {len(participants)} participants with demographics and measures")
 
     illustrative = fill_gaps(concepts, terms, corpus)
     print(f"  {len(illustrative)} concepts given illustrative counts")
@@ -225,6 +304,7 @@ def main():
         "concepts": concepts,
         "terms": terms,
         "corpus": corpus,
+        "participants": participants,
         "illustrative": illustrative,
         "studies": sorted({s for c in concepts for s in c["studies"]}),
     }

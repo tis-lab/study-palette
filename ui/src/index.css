@@ -557,3 +557,32 @@ header p {
   padding: 1.5rem 0.5rem;
   text-align: center;
 }
+
+.cohort-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.cohort-count {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.cohort-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.75rem;
+}
+
+.cohort-charts .chart-panel {
+  padding: 0.6rem;
+}
+
+.cohort-charts h4 {
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+}

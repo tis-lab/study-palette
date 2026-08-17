@@ -8,13 +8,14 @@ import {
   type Hit,
   type Indexed,
 } from "./data";
+import type { PaletteKey } from "../palette";
 
 /**
  * Two ways into the same data. Browsing answers "what is in here"; search
  * answers "can this corpus address my question". Both land on the same concept
  * detail, which is where the knowledge graph and the variable library meet.
  */
-export default function Explore() {
+export default function Explore({ paletteKey }: { paletteKey: PaletteKey }) {
   const [raw, setRaw] = useState<ExploreData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState<string | null>(null);
@@ -188,6 +189,7 @@ export default function Explore() {
             <ConceptDetail
               data={data}
               concept={selected}
+              paletteKey={paletteKey}
               onSelectConcept={setSelected}
             />
           ) : (
