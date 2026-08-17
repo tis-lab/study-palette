@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { ActiveFilters } from "./demoData";
+import { FILL_STROKE, MIN_FILL_OPACITY, type Palette } from "./palette";
 
 interface ConditionCategory {
   name: string;
@@ -23,41 +24,35 @@ interface OverviewChartsProps {
   data: OverviewData;
   filters: ActiveFilters;
   onFilterAdd: (type: keyof ActiveFilters, value: string) => void;
+  palette: Palette;
 }
 
-const CONDITION_COLORS: Record<string, string> = {
-  Cardiovascular: "#dc2626",
-  Respiratory: "#2563eb",
-  Cancer: "#f59e0b",
-  Neurologic: "#7c3aed",
-};
-
-const PROCEDURE_COLORS = [
-  "#0ea5e9",
-  "#10b981",
-  "#f97316",
-  "#6366f1",
-  "#ec4899",
-];
+const CONDITION_ORDER = ["Cardiovascular", "Respiratory", "Cancer", "Neurologic"];
 
 export default function OverviewCharts({
   data,
   filters,
   onFilterAdd,
+  palette,
 }: OverviewChartsProps) {
+  const conditionColor = (name: string) => {
+    const i = CONDITION_ORDER.indexOf(name);
+    return i === -1 ? palette.uncategorized : palette.sequence[i];
+  };
+
   const outerRing = data.conditions.flatMap((cat) =>
     cat.children.map((child) => ({
       name: child.name,
       value: child.value,
       category: cat.name,
-      color: CONDITION_COLORS[cat.name] ?? "#94a3b8",
+      color: conditionColor(cat.name),
     })),
   );
 
   const innerRing = data.conditions.map((cat) => ({
     name: cat.name,
     value: cat.value,
-    color: CONDITION_COLORS[cat.name] ?? "#94a3b8",
+    color: conditionColor(cat.name),
   }));
 
   return (
@@ -81,6 +76,7 @@ export default function OverviewCharts({
             >
               {innerRing.map((entry) => (
                 <Cell
+                  stroke={FILL_STROKE}
                   key={entry.name}
                   fill={entry.color}
                   opacity={
@@ -107,13 +103,14 @@ export default function OverviewCharts({
             >
               {outerRing.map((entry) => (
                 <Cell
+                  stroke={FILL_STROKE}
                   key={`${entry.category}-${entry.name}`}
                   fill={entry.color}
                   opacity={
                     filters.conditions.length > 0 &&
                     !filters.conditions.includes(entry.name)
                       ? 0.15
-                      : 0.7
+                      : MIN_FILL_OPACITY
                   }
                 />
               ))}
@@ -148,8 +145,9 @@ export default function OverviewCharts({
             >
               {data.procedures.map((entry, i) => (
                 <Cell
+                  stroke={FILL_STROKE}
                   key={entry.name}
-                  fill={PROCEDURE_COLORS[i % PROCEDURE_COLORS.length]}
+                  fill={palette.sequence[i % palette.sequence.length]}
                   opacity={
                     filters.procedures.length > 0 &&
                     !filters.procedures.includes(entry.name)

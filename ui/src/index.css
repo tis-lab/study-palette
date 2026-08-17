@@ -1,13 +1,25 @@
 :root {
-  --color-primary: #2563eb;
-  --color-bg: #f8fafc;
+  /* BDC Style Guide palette. Bright blue is hover states only — 2.5:1 on
+     white, never safe for text or thin marks. */
+  --color-primary: #1a568c;
+  --color-primary-dark: #12385a;
+  --color-primary-bright: #41abf5;
+  --color-bg: #f4f4f6;
   --color-card: #ffffff;
-  --color-text: #1e293b;
-  --color-muted: #64748b;
-  --color-border: #e2e8f0;
-  --color-tag-bg: #eff6ff;
-  --color-tag-text: #1d4ed8;
-  --color-error: #dc2626;
+  --color-text: #393939;
+  --color-muted: #616265;
+  --color-error: #c0143c;
+
+  /* Derived tint, not a brand value — the guide defines no neutral here. */
+  --color-border: #dfdfdf;
+
+  /* Tol light scheme, designed for small coloured areas keeping black labels
+     readable. Both clear AA against --color-text. */
+  --color-tag-bg: #77aadd;
+  --color-tag-alt-bg: #ee8866;
+
+  --brand-logo-height: 34px;
+  --brand-clear-space: calc(var(--brand-logo-height) * 0.4);
 }
 
 * {
@@ -33,10 +45,46 @@ header {
   margin-bottom: 2rem;
 }
 
+.brand-bar {
+  padding: var(--brand-clear-space) 0 var(--brand-clear-space)
+    var(--brand-clear-space);
+  margin-bottom: 1rem;
+}
+
+.brand-logo {
+  display: block;
+  height: var(--brand-logo-height);
+  width: auto;
+  max-width: 100%;
+}
+
 .header-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.palette-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-muted);
+}
+
+.palette-picker select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-card);
+  color: var(--color-text);
+  font-size: 0.8rem;
 }
 
 .mode-toggle {
@@ -53,6 +101,7 @@ header {
 
 .mode-toggle:hover {
   background: var(--color-bg);
+  border-color: var(--color-primary-bright);
 }
 
 .mode-toggle.live {
@@ -147,13 +196,41 @@ header p {
 }
 
 .chip-condition {
-  background: #fef2f2;
-  color: #991b1b;
+  background: var(--color-tag-bg);
+  color: var(--color-text);
 }
 
 .chip-procedure {
-  background: #eff6ff;
-  color: #1e40af;
+  background: var(--color-tag-alt-bg);
+  color: var(--color-text);
+}
+
+.chip-demographic {
+  background: #f0fdf4;
+  color: #166534;
+}
+
+.demo-content > .chart-panel {
+  margin-top: 1.5rem;
+}
+
+.sankey-container {
+  overflow: hidden;
+}
+
+.sankey-labels {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px 0 10px;
+  margin-right: 140px;
+}
+
+.sankey-column-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .chart-grid {
@@ -232,7 +309,7 @@ header p {
   display: inline-block;
   padding: 0.15rem 0.5rem;
   background: var(--color-tag-bg);
-  color: var(--color-tag-text);
+  color: var(--color-text);
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 500;

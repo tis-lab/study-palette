@@ -1,8 +1,8 @@
 # Study Palette
 
-A unified platform for cross-study data discovery and meta-analysis study building within the [NHLBI BioData Catalyst](https://biodatacatalyst.nhlbi.nih.gov/) (BDC) ecosystem.
+A unified tool for cross-study data discovery and meta-analysis study building within the [NHLBI BioData Catalyst®](https://biodatacatalyst.nhlbi.nih.gov/) (BDC) ecosystem.
 
-Study Palette replaces fragmented search interfaces with a semantic, modular platform that enables researchers to discover data, explore variables, build studies, and transition to analysis — all from a single portal.
+Study Palette replaces fragmented search interfaces with a semantic, modular application that enables researchers to discover data, explore variables, build studies, and transition to analysis — all from a single portal.
 
 ## Architecture
 

@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-Study Palette is the BDC Meta-Analysis Study Builder & Query Tool — a unified platform for cross-study data discovery and study building within the NHLBI BioData Catalyst ecosystem.
+Study Palette is the Meta-Analysis Study Builder & Query Tool for the NHLBI BioData Catalyst® (BDC) ecosystem — a unified tool for cross-study data discovery and study building.
 
-The system replaces fragmented interfaces with a semantic, modular, and user-friendly platform that increases adoption, reduces user burden, and accelerates research.
+The system replaces fragmented interfaces with a semantic, modular, and user-friendly application that increases adoption, reduces user burden, and accelerates research.
 
 ## Architecture
 

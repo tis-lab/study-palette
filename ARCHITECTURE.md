@@ -1,6 +1,6 @@
 # Architecture
 
-The system architecture defines four layers with clear component boundaries:
+Study Palette is built for the NHLBI BioData Catalyst® (BDC) ecosystem. The system architecture defines four layers with clear component boundaries:
 
 ## Front End (ReactJS)
 - **Semantic Search**: Field entry of search terms, entity resolution, concept curation
