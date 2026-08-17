@@ -30,7 +30,8 @@ function App() {
   const palette = PALETTES[paletteKey];
 
   useEffect(() => {
-    if (mode === "demo") {
+    // Only the live tab talks to the API. Demo and Explore are self-contained.
+    if (mode !== "live") {
       setStudies([]);
       setLoading(false);
       setError(null);
