@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import OverviewCharts from "./OverviewCharts";
 import FilterPanel from "./FilterPanel";
 import StudyOverview from "./StudyOverview";
+import Explore from "./explore/Explore";
 import {
   DEMO_PARTICIPANTS,
   EMPTY_FILTERS,
@@ -17,7 +18,7 @@ interface StudiesResponse {
 }
 
 function App() {
-  const [mode, setMode] = useState<DataMode>("demo");
+  const [mode, setMode] = useState<DataMode | "explore">("demo");
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,17 +80,23 @@ function App() {
             <h1>Study Palette</h1>
             <p>BDC Meta-Analysis Study Builder & Query Tool</p>
           </div>
-          <button
-            className={`mode-toggle ${mode}`}
-            onClick={() => setMode(mode === "demo" ? "live" : "demo")}
-          >
-            {mode === "demo" ? "Demo Data" : "Live API"}
-          </button>
+          <div className="mode-tabs">
+            {(["demo", "explore", "live"] as const).map((m) => (
+              <button
+                key={m}
+                className={`mode-toggle ${m === mode ? "active" : ""}`}
+                onClick={() => setMode(m)}
+              >
+                {m === "demo" ? "Demo Data" : m === "explore" ? "Explore" : "Live API"}
+              </button>
+            ))}
+          </div>
         </div>
       </header>
       <main>
         {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
+        {mode === "explore" && <Explore />}
         {mode === "demo" && (
           <div className="demo-layout">
             <FilterPanel
