@@ -111,6 +111,28 @@ def enrich(curies):
     return terms
 
 
+def enrich_rxcui(curies):
+    """RxCUI is not in Monarch but RxNav resolves it, and needs no key."""
+    terms = {}
+    ids = sorted(c for c in curies if c.startswith("RxCUI:"))
+    print(f"  resolving {len(ids)} RxCUI terms against RxNav")
+    for curie in ids:
+        url = f"https://rxnav.nlm.nih.gov/REST/rxcui/{curie.split(':')[1]}.json"
+        try:
+            with urllib.request.urlopen(url, timeout=15) as response:  # noqa: S310
+                name = json.load(response).get("idGroup", {}).get("name")
+        except Exception:  # noqa: BLE001
+            name = None
+        if name:
+            terms[curie] = {
+                "id": curie, "label": name, "description": None,
+                "synonyms": [], "parents": [], "children": [],
+                "child_labels": {}, "label_source": "rxnav",
+            }
+        time.sleep(0.05)
+    return terms
+
+
 def load_corpus(output_dir):
     """Count corpus participants per condition concept, per study."""
     counts = {}
@@ -208,6 +230,101 @@ def load_participants(output_dir):
     return list(people.values())
 
 
+# VarLib slot names are internal shorthand. They should never reach a user, so
+# every concept gets a display label — from the knowledge graph where a term
+# resolves, and otherwise by expanding the abbreviations the team writes in.
+ABBREVIATIONS = {
+    "hist": "history of", "fam": "family history of", "tak": "taking",
+    "bdy": "body", "hgt": "height", "wgt": "weight", "hrt": "heart",
+    "hrtdis": "heart disease", "hrtfail": "heart failure", "dis": "disease",
+    "bld": "blood", "urin": "urine", "urine": "urine", "lvl": "level",
+    "edu": "education", "chol": "cholesterol", "gluc": "glucose",
+    "creat": "creatinine", "hemo": "hemoglobin", "hemat": "hematocrit",
+    "cac": "coronary artery calcium", "imt": "intima-media thickness",
+    "sten": "stenosis", "mi": "myocardial infarction",
+    "my": "myocardial", "inf": "infarction", "cvd": "cardiovascular disease",
+    "chd": "coronary heart disease", "pad": "peripheral artery disease",
+    "cor": "coronary", "angio": "angiography", "bypg": "bypass graft",
+    "art": "artery", "ven": "venous", "thromb": "thrombosis",
+    "trt": "treatment", "hyperten": "hypertension", "diab": "diabetes",
+    "med": "medication", "meds": "medications", "smok": "smoking",
+    "cig": "cigarette", "serving": "servings", "vege": "vegetable",
+    "circ": "circumference", "rt": "rate", "press": "pressure",
+    "art_press": "arterial pressure", "spirometry": "spirometry",
+    "calchanblk": "calcium channel blockers", "betablk": "beta blockers",
+    "aceinhib": "ACE inhibitors", "diuret": "diuretics",
+    "statin": "statins", "nstat": "non-statin", "orlhypoag": "oral hypoglycaemics",
+    "vasodil": "vasodilators", "alphablk": "alpha blockers",
+    "adrenergics": "adrenergics", "cenactag": "centrally acting agents",
+    "aldorecepblk": "aldosterone receptor blockers",
+    "angiorecepblk": "angiotensin receptor blockers",
+    "antihypertensives": "antihypertensives", "steroid": "steroids",
+    "cort": "corticosteroid", "resp": "respiratory", "slp": "sleep",
+    "ap": "apnoea", "isch": "ischaemic", "atk": "attack",
+    "valv": "valvular", "pacem": "pacemaker", "stat": "status",
+    "ct": "count", "pct": "percent", "ncnc_bld": "count in blood",
+    "rdbld": "red blood", "whtbld": "white blood", "lympho": "lymphocyte",
+    "neutro": "neutrophil", "fast": "fasting", "tot": "total",
+    "triglyc": "triglycerides", "albumin": "albumin", "bilirubin": "bilirubin",
+    "con": "conjugated", "cysc": "cystatin C", "fibrin": "fibrinogen",
+    "factor": "factor", "willeb": "von Willebrand", "fac": "factor",
+    "lppla2": "Lp-PLA2", "act": "activity", "mass": "mass",
+    "isoprostane_8_epi_pgf2a": "8-epi-PGF2a isoprostane",
+    "apnea_hypop_index": "apnoea-hypopnoea index",
+}
+
+
+def expand(name):
+    """Turn a slot shorthand into something readable."""
+    if name in ABBREVIATIONS:
+        return ABBREVIATIONS[name].capitalize()
+    words = [ABBREVIATIONS.get(part, part) for part in name.split("_")]
+    text = " ".join(words).replace("_", " ").strip()
+    return text[:1].upper() + text[1:]
+
+
+QUALIFIERS = {
+    "hist": "History of",
+    "fam": "Family history of",
+    "tak": "Taking",
+}
+
+
+def add_labels(concepts, terms):
+    """Give every concept a human label, resolved from its CURIEs where possible.
+
+    History and family-history variables are a disease term combined with a
+    status, so the ontology label alone would read as a current diagnosis. The
+    qualifier is restored from the slot's prefix.
+    """
+    resolved = 0
+    for concept in concepts:
+        label = None
+        # Medication variables ask about a drug *class*. RxCUI names a specific
+        # ingredient and ATC names the class but does not resolve publicly, so
+        # the expanded shorthand is the most accurate option available.
+        if concept["name"].startswith("tak_"):
+            concept["label"] = expand(concept["name"])
+            continue
+        for curie in concept["mappings"]:
+            term = terms.get(curie)
+            if term and term.get("label_source") in ("monarch", "rxnav") and term.get("label"):
+                label = term["label"]
+                resolved += 1
+                break
+
+        if label:
+            qualifier = QUALIFIERS.get(concept["name"].split("_")[0])
+            if qualifier:
+                label = f"{qualifier} {label[:1].lower()}{label[1:]}"
+        else:
+            label = expand(concept["name"])
+
+        concept["label"] = label.strip()
+        concept["label"] = concept["label"][:1].upper() + concept["label"][1:]
+    return resolved
+
+
 def fill_gaps(concepts, terms, corpus):
     """Fill what the real sources cannot supply, deterministically.
 
@@ -239,7 +356,7 @@ def fill_gaps(concepts, terms, corpus):
                 "label_source": "varlib",
             }
     for term in terms.values():
-        term["label_source"] = "monarch"
+        term.setdefault("label_source", "monarch")
     terms.update(labelled_by)
 
     illustrative = set()
@@ -287,6 +404,7 @@ def main():
     curies = {m for c in concepts for m in c["mappings"]}
     print("Monarch:")
     terms = enrich(curies)
+    terms.update(enrich_rxcui(curies))
     print(f"  {len(terms)} resolved of {len(curies)} mapped terms")
 
     print("Corpus:")
@@ -296,6 +414,9 @@ def main():
     print(f"  {len(participants)} participants with demographics and measures")
 
     illustrative = fill_gaps(concepts, terms, corpus)
+    from_kg = add_labels(concepts, terms)
+    print(f"  {from_kg} concepts labelled from the KG, "
+          f"{len(concepts) - from_kg} from expanded shorthand")
     print(f"  {len(illustrative)} concepts given illustrative counts")
     print(f"  {sum(1 for t in terms.values() if t['label_source'] == 'varlib')}"
           f" terms labelled from VarLib (not in the KG)")

@@ -128,7 +128,7 @@ export default function Explore({ paletteKey }: { paletteKey: PaletteKey }) {
                         setCategory(concept.category);
                       }}
                     >
-                      {concept.name}
+                      {concept.label}
                     </button>
                   ))}
                 </div>
@@ -140,49 +140,47 @@ export default function Explore({ paletteKey }: { paletteKey: PaletteKey }) {
 
       <div className="explore-body">
         <nav className="category-list">
-          <h3>Categories</h3>
+          <h3>
+            {data.concepts.length} concepts in {categories.length} categories
+          </h3>
           <ul>
-            {categories.map((name) => (
-              <li key={name}>
-                <button
-                  className={name === category ? "active" : ""}
-                  onClick={() => {
-                    setCategory(name);
-                    setSelected(null);
-                  }}
-                >
-                  {name}
-                  <span className="muted">{data.byCategory[name].length}</span>
-                </button>
-              </li>
-            ))}
+            {categories.map((name) => {
+              const open = name === category;
+              return (
+                <li key={name}>
+                  <button
+                    className={`category-toggle ${open ? "active" : ""}`}
+                    aria-expanded={open}
+                    onClick={() => setCategory(open ? null : name)}
+                  >
+                    <span className="caret">{open ? "\u25be" : "\u25b8"}</span>
+                    {name}
+                    <span className="muted">{data.byCategory[name].length}</span>
+                  </button>
+                  {open && (
+                    <ul className="concept-list">
+                      {shown.map((concept) => (
+                        <li key={concept.name}>
+                          <button
+                            className={
+                              concept.name === selected?.name ? "active" : ""
+                            }
+                            onClick={() => setSelected(concept)}
+                          >
+                            {concept.label}
+                            <span className="muted">
+                              {concept.studies.length}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
-
-        <div className="concept-list">
-          {category ? (
-            <ul>
-              {shown.map((concept) => (
-                <li key={concept.name}>
-                  <button
-                    className={concept.name === selected?.name ? "active" : ""}
-                    onClick={() => setSelected(concept)}
-                  >
-                    <strong>{concept.name}</strong>
-                    <span className="muted">
-                      {concept.studies.length} studies
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="muted placeholder">
-              {data.concepts.length} harmonized concepts across{" "}
-              {categories.length} categories. Pick one, or search above.
-            </p>
-          )}
-        </div>
 
         <div className="detail-pane">
           {selected ? (

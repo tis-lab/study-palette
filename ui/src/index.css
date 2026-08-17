@@ -373,9 +373,36 @@ header p {
 
 .explore-body {
   display: grid;
-  grid-template-columns: 210px 240px 1fr;
+  grid-template-columns: 280px 1fr;
   gap: 1.25rem;
   align-items: start;
+}
+
+.category-list {
+  max-height: 40rem;
+  overflow-y: auto;
+}
+
+.category-toggle {
+  font-weight: 600;
+}
+
+.caret {
+  display: inline-block;
+  width: 0.9rem;
+  color: var(--color-muted);
+}
+
+.category-list .concept-list {
+  border: none;
+  padding: 0 0 0.4rem 1.1rem;
+  max-height: none;
+  overflow: visible;
+  background: none;
+}
+
+.category-list .concept-list button {
+  font-weight: 400;
 }
 
 @media (max-width: 1000px) {

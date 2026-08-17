@@ -1,6 +1,7 @@
 export interface Concept {
   name: string;
   title: string;
+  label: string;
   description: string;
   category: string;
   bdchm_class: string | null;

@@ -44,8 +44,7 @@ export default function ConceptDetail({
   return (
     <div className="concept-detail">
       <header>
-        <h2>{concept.title}</h2>
-        <code>{concept.name}</code>
+        <h2>{concept.label}</h2>
         <span className="chip-category">{concept.category}</span>
       </header>
 
@@ -54,9 +53,10 @@ export default function ConceptDetail({
       <section>
         <h3>Cohort</h3>
         <CohortCharts
+          data={data}
           cohort={matched}
           total={data.participants.length}
-          label={concept.name}
+          label={concept.label}
           paletteKey={paletteKey}
         />
       </section>
@@ -109,7 +109,7 @@ export default function ConceptDetail({
             {[...siblings.values()].map((sibling) => (
               <li key={sibling.name}>
                 <button onClick={() => onSelectConcept(sibling)}>
-                  {sibling.name}
+                  {sibling.label}
                 </button>
                 <span className="muted">{sibling.studies.length} studies</span>
               </li>
@@ -149,6 +149,9 @@ export default function ConceptDetail({
             </span>
           ))}
         </div>
+        <p className="muted slot-name">
+          Recorded internally as <code>{concept.name}</code>
+        </p>
         {concept.variable_count > 0 && (
           <p className="muted">
             {concept.variable_count} source variables across those studies
