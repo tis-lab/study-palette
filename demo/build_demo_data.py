@@ -393,7 +393,11 @@ def main():
             "/home/corey/Code/study-palette/.wt/synthetic-corpus/synthetic/output"
         ),
     )
-    parser.add_argument("--out", type=Path, default=here / "data.json")
+    # Written straight into the app's public directory: it is the only consumer,
+    # and a second copy under demo/ would just be 300KB of duplicate in git.
+    parser.add_argument(
+        "--out", type=Path, default=here.parent / "ui" / "public" / "explore-data.json"
+    )
     args = parser.parse_args()
 
     print("VarLib:")
