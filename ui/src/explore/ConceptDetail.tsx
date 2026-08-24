@@ -1,4 +1,5 @@
 import CohortCharts from "./CohortCharts";
+import RelatedData from "./RelatedData";
 import {
   cohort,
   participants,
@@ -60,6 +61,13 @@ export default function ConceptDetail({
           paletteKey={paletteKey}
         />
       </section>
+
+      <RelatedData
+        data={data}
+        concept={concept}
+        paletteKey={paletteKey}
+        onSelectConcept={onSelectConcept}
+      />
 
       <section>
         <h3>Ontology terms</h3>

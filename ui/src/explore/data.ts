@@ -39,6 +39,15 @@ export interface ExploreData {
   illustrative: string[];
   studies: string[];
   measure_units: Record<string, string>;
+  edges: Record<string, Edge[]>;
+  kg_coverage: Record<string, { neighbours: number; harmonized: number }>;
+}
+
+export interface Edge {
+  predicate: string;
+  object: string;
+  label: string | null;
+  source: "kg" | "curated";
 }
 
 /**
@@ -110,6 +119,85 @@ export function withDescendants(data: Indexed, curie: string): string[] {
     for (const child of data.terms[current]?.children ?? []) queue.push(child);
   }
   return [...seen];
+}
+
+export interface Related {
+  concept: Concept;
+  via: string;
+  source: "hierarchy" | "kg" | "curated";
+}
+
+const PREDICATE_LABELS: Record<string, string> = {
+  "biolink:has_biomarker": "biomarker",
+  "biolink:diagnosed_by": "used to diagnose",
+  "biolink:has_phenotype": "phenotype",
+  "biolink:related_to": "related",
+  "biolink:disrupts": "disrupts",
+  "biolink:disease_has_location": "location",
+};
+
+/** A term, everything above it, and everything below it, within `hops`. */
+function withinHops(data: Indexed, curie: string, hops: number): string[] {
+  const seen = new Set([curie]);
+  let frontier = [curie];
+  for (let hop = 0; hop < hops; hop++) {
+    const next: string[] = [];
+    for (const current of frontier) {
+      const term = data.terms[current];
+      for (const n of [...(term?.parents ?? []), ...(term?.children ?? [])]) {
+        if (!seen.has(n)) {
+          seen.add(n);
+          next.push(n);
+        }
+      }
+    }
+    frontier = next;
+  }
+  return [...seen];
+}
+
+/**
+ * What else is worth looking at near this concept, grouped by category.
+ *
+ * Two mechanisms, because one is not enough. Ontology hierarchy is is-a only,
+ * so walking it from a disease reaches other diseases and never a lab result —
+ * MONDO and OBA have no edges between them in any public graph. Conditions
+ * therefore come from the hierarchy, and measurements and procedures come from
+ * curated edges. Which is which is carried through so the interface can say so.
+ */
+export function related(
+  data: Indexed,
+  concept: Concept,
+  hops = 2,
+): Record<string, Related[]> {
+  const found = new Map<string, Related>();
+
+  const add = (curie: string, via: string, source: Related["source"]) => {
+    for (const other of data.byTerm[curie] ?? []) {
+      if (other.name === concept.name) continue;
+      // Hierarchy is the weaker claim, so a curated edge wins the label.
+      if (found.has(other.name) && source === "hierarchy") continue;
+      found.set(other.name, { concept: other, via, source });
+    }
+  };
+
+  for (const curie of concept.mappings) {
+    for (const near of withinHops(data, curie, hops)) {
+      if (near !== curie) add(near, "same branch of the ontology", "hierarchy");
+    }
+    for (const edge of data.edges[curie] ?? []) {
+      add(edge.object, PREDICATE_LABELS[edge.predicate] ?? edge.predicate, edge.source);
+    }
+  }
+
+  const byCategory: Record<string, Related[]> = {};
+  for (const entry of found.values()) {
+    (byCategory[entry.concept.category] ??= []).push(entry);
+  }
+  for (const rows of Object.values(byCategory)) {
+    rows.sort((a, b) => b.concept.studies.length - a.concept.studies.length);
+  }
+  return byCategory;
 }
 
 const MONARCH = "https://api-v3.monarchinitiative.org/v3/api";

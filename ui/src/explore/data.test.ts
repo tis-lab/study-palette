@@ -1,7 +1,14 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { cohort, index, participants, withDescendants, type ExploreData } from "./data";
+import {
+  cohort,
+  index,
+  participants,
+  related,
+  withDescendants,
+  type ExploreData,
+} from "./data";
 
 // Vitest runs from ui/, and the fixture is the artifact the app actually serves.
 const raw: ExploreData = JSON.parse(
@@ -97,6 +104,30 @@ describe("explore fixture", () => {
     // WBC is linked to nothing, so it is the control.
     const wbc = avg(matched, "WBC") - avg(data.participants, "WBC");
     expect(Math.abs(wbc)).toBeLessThan(1);
+  });
+
+  it("reaches measurements and procedures only through curated edges", () => {
+    // Ontology hierarchy is is-a only, so it cannot cross from a MONDO disease
+    // to an OBA lab or an OMOP procedure. If those categories ever show up as
+    // "hierarchy" the walk has escaped its vocabulary and the provenance
+    // labelling in the interface is wrong.
+    const heartFailure = data.concepts.find((c) => c.name === "hist_hrtfail");
+    const groups = related(data, heartFailure!);
+
+    for (const category of ["LabMeasurement", "DiagnosticTestProcedure"]) {
+      const rows = groups[category] ?? [];
+      expect(rows.length).toBeGreaterThan(0);
+      expect(rows.every((r) => r.source === "curated")).toBe(true);
+    }
+    expect((groups.ConditionDisease ?? []).length).toBeGreaterThan(0);
+  });
+
+  it("only carries edges that reach a harmonized variable", () => {
+    const attested = new Set(data.concepts.flatMap((c) => c.mappings));
+    const stranded = Object.values(data.edges)
+      .flat()
+      .filter((e) => !attested.has(e.object));
+    expect(stranded).toEqual([]);
   });
 
   it("marks illustrative counts rather than passing them off as real", () => {

@@ -111,6 +111,113 @@ def enrich(curies):
     return terms
 
 
+# Hierarchy is is-a only, so walking it from a disease reaches other diseases.
+# These are the associative edges Monarch does hold, and they are what carry a
+# term sideways into phenotypes and anatomy rather than just up and down.
+HARVESTED = {
+    "biolink:has_phenotype",
+    "biolink:disrupts",
+    "biolink:disease_has_location",
+    "biolink:related_to",
+}
+
+
+def harvest_edges(curies):
+    """Pull associative edges out of Monarch for the terms that have them."""
+    edges = {}
+    subjects = sorted(c for c in curies if c.startswith(("MONDO:", "HP:")))
+    print(f"  harvesting edges for {len(subjects)} terms")
+
+    for i, curie in enumerate(subjects, 1):
+        result = fetch(f"association?subject={urllib.parse.quote(curie)}&limit=100")
+        found = []
+        for item in (result or {}).get("items") or []:
+            predicate = item.get("predicate")
+            if predicate in HARVESTED and item.get("object"):
+                found.append({
+                    "predicate": predicate,
+                    "object": item["object"],
+                    "label": item.get("object_label"),
+                    "source": "kg",
+                })
+        if found:
+            edges[curie] = found
+        if i % 25 == 0:
+            print(f"    {i}/{len(subjects)}")
+        time.sleep(0.05)
+
+    print(f"  {sum(len(v) for v in edges.values())} edges harvested")
+    return edges
+
+
+def keep_landing(edges, attested):
+    """
+    Drop harvested edges that do not reach a harmonized variable.
+
+    Monarch returns every phenotype of a disease, and BDC harmonizes a small
+    fraction of them. The rest cannot drive anything in the interface and cost
+    a few hundred KB, so only the landing edges are carried — with a count of
+    what was dropped, because "20 neighbours, 3 of them harmonized" is the
+    honest framing of how much of the graph BDC actually covers.
+    """
+    kept = {}
+    coverage = {}
+    for subject, found in edges.items():
+        lands = [e for e in found if e["object"] in attested]
+        if lands:
+            kept[subject] = lands
+        harvested = [e for e in found if e["source"] == "kg"]
+        if harvested:
+            coverage[subject] = {
+                "neighbours": len(harvested),
+                "harmonized": sum(1 for e in harvested if e["object"] in attested),
+            }
+    dropped = sum(len(v) for v in edges.values()) - sum(len(v) for v in kept.values())
+    print(f"  {dropped} edges dropped as unharmonized, "
+          f"{sum(len(v) for v in kept.values())} kept")
+    return kept, coverage
+
+
+def curated_edges(path, attested):
+    """
+    Load the hand-curated disease -> measurement/procedure edges.
+
+    These exist because no public graph holds them. Every edge is checked
+    against the terms the variable library actually uses, so a typo or a stale
+    CURIE fails the build rather than silently dropping out of the interface.
+    """
+    if not path.exists():
+        print(f"  ! no curated edges at {path}")
+        return {}
+
+    with open(path) as fh:
+        raw = yaml.safe_load(fh) or {}
+
+    edges = {}
+    unknown = []
+    for subject, predicates in raw.items():
+        for predicate, objects in (predicates or {}).items():
+            for obj in objects or []:
+                if obj not in attested:
+                    unknown.append(f"{subject} {predicate} {obj}")
+                    continue
+                edges.setdefault(subject, []).append({
+                    "predicate": predicate,
+                    "object": obj,
+                    "label": None,
+                    "source": "curated",
+                })
+    if unknown:
+        raise SystemExit(
+            "curated edges reference terms the variable library does not use:\n  "
+            + "\n  ".join(unknown)
+        )
+
+    print(f"  {sum(len(v) for v in edges.values())} curated edges over "
+          f"{len(edges)} subjects")
+    return edges
+
+
 def enrich_rxcui(curies):
     """RxCUI is not in Monarch but RxNav resolves it, and needs no key."""
     terms = {}
@@ -423,6 +530,9 @@ def main():
     # Written straight into the app's public directory: it is the only consumer,
     # and a second copy under demo/ would just be 300KB of duplicate in git.
     parser.add_argument(
+        "--curated", type=Path, default=here / "curated_edges.yaml"
+    )
+    parser.add_argument(
         "--out", type=Path, default=here.parent / "ui" / "public" / "explore-data.json"
     )
     args = parser.parse_args()
@@ -437,6 +547,12 @@ def main():
     terms = enrich(curies)
     terms.update(enrich_rxcui(curies))
     print(f"  {len(terms)} resolved of {len(curies)} mapped terms")
+    edges = harvest_edges(curies)
+
+    print("Curated edges:")
+    for subject, found in curated_edges(args.curated, curies).items():
+        edges.setdefault(subject, []).extend(found)
+    edges, coverage = keep_landing(edges, curies)
 
     print("Corpus:")
     corpus = load_corpus(args.corpus)
@@ -460,6 +576,8 @@ def main():
         "illustrative": illustrative,
         "studies": sorted({s for c in concepts for s in c["studies"]}),
         "measure_units": MEASURE_UNITS,
+        "edges": edges,
+        "kg_coverage": coverage,
     }
     args.out.write_text(json.dumps(payload, separators=(",", ":")))
     print(f"\n{args.out} — {args.out.stat().st_size / 1024:.0f} KB")
