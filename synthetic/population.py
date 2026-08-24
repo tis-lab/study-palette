@@ -20,6 +20,16 @@ SEED = 20260807
 NULL_RATE = 0.005
 # 10% of measurements land outside the normal range.
 PATHOLOGY_RATE = 0.10
+# Measurements co-occur with the conditions that explain them, so that selecting
+# a cohort produces a distribution that differs from the corpus as a whole.
+# Illustrative: the direction of each association is real, the strength is not
+# taken from any literature and must not be read as a finding.
+COMORBID_PATHOLOGY_RATE = 0.55
+COMORBIDITY = {
+    "heart_failure": ("systolic", "diastolic", "bmi", "hdl", "bun"),
+    "hypertension": ("systolic", "diastolic"),
+    "heart_attack": ("systolic", "hdl"),
+}
 # Exactly this many HDL results fall below the assay's lower limit.
 HDL_BELOW_LLOD = 5
 
@@ -136,10 +146,22 @@ def _maybe_null(rng, value):
     return None if rng.random() < NULL_RATE else value
 
 
-def _measure(rng, normal, pathological):
-    """Draw from the normal range, or the pathological one PATHOLOGY_RATE of the time."""
-    lo, hi = pathological if rng.random() < PATHOLOGY_RATE else normal
+def _measure(rng, normal, pathological, rate=PATHOLOGY_RATE):
+    """Draw from the normal range, or the pathological one `rate` of the time."""
+    lo, hi = pathological if rng.random() < rate else normal
     return round(rng.uniform(lo, hi), 1)
+
+
+def _elevated(conditions):
+    """Which measures this participant's conditions make abnormal more often."""
+    if not conditions:
+        return frozenset()
+    measures = set()
+    for name, linked in COMORBIDITY.items():
+        entry = conditions.get(name)
+        if entry and entry["status"] in (v.PRESENT, v.HISTORICAL):
+            measures.update(linked)
+    return frozenset(measures)
 
 
 def _make_person(rng, dbgap_id, study):
@@ -187,11 +209,16 @@ def _make_visits(rng, study, person):
     return visits
 
 
-def _fill_measurements(rng, study, visit):
+def _fill_measurements(rng, study, visit, conditions=None):
+    elevated = _elevated(conditions)
+
+    def rate(measure):
+        return COMORBID_PATHOLOGY_RATE if measure in elevated else PATHOLOGY_RATE
+
     visit.height_cm = _maybe_null(rng, _measure(rng, (150, 190), (135, 205)))
     visit.weight_kg = _maybe_null(rng, _measure(rng, (55, 95), (38, 145)))
 
-    bmi = _measure(rng, (18.5, 24.9), (25.0, 41.0))
+    bmi = _measure(rng, (18.5, 24.9), (25.0, 41.0), rate("bmi"))
     if study.bmi_categorical:
         if bmi < 18.5:
             category = "underweight"
@@ -203,11 +230,12 @@ def _fill_measurements(rng, study, visit):
     else:
         visit.bmi = _maybe_null(rng, bmi)
 
-    visit.systolic = _maybe_null(rng, _measure(rng, (105, 132), (141, 178)))
-    visit.diastolic = _maybe_null(rng, _measure(rng, (68, 84), (91, 108)))
-    visit.hdl = _maybe_null(rng, _measure(rng, (40, 72), (22, 39)))
-    visit.bun = _maybe_null(rng, _measure(rng, (7, 20), (21, 46)))
-    visit.wbc = _maybe_null(rng, _measure(rng, (4.5, 11.0), (1.8, 19.5)))
+    sys_rate, dia_rate = rate("systolic"), rate("diastolic")
+    visit.systolic = _maybe_null(rng, _measure(rng, (105, 132), (141, 178), sys_rate))
+    visit.diastolic = _maybe_null(rng, _measure(rng, (68, 84), (91, 108), dia_rate))
+    visit.hdl = _maybe_null(rng, _measure(rng, (40, 72), (22, 39), rate("hdl")))
+    visit.bun = _maybe_null(rng, _measure(rng, (7, 20), (21, 46), rate("bun")))
+    visit.wbc = _maybe_null(rng, _measure(rng, (4.5, 11.0), (1.8, 19.5), rate("wbc")))
 
 
 def _make_conditions(rng):
@@ -287,11 +315,14 @@ def build():
             )
             next_subject[study.name] += 1
 
+            # Conditions first: measurements are drawn conditional on them, so
+            # that an abnormal result and the diagnosis explaining it co-occur.
+            participant.conditions = _make_conditions(rng)
+
             participant.visits = _make_visits(rng, study, person)
             for visit in participant.visits:
-                _fill_measurements(rng, study, visit)
+                _fill_measurements(rng, study, visit, participant.conditions)
 
-            participant.conditions = _make_conditions(rng)
             if rng.random() < 0.20:
                 participant.ccb = rng.choice(v.CALCIUM_CHANNEL_BLOCKERS)
 

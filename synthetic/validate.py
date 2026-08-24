@@ -132,9 +132,12 @@ def main():
     ccb = Counter(p.ccb for p in participants if p.ccb)
     total = sum(ccb.values())
     exact("any calcium channel blocker exposures", total > 0, True)
+    # Only ~200 participants are exposed, so a quarter-share carries a standard
+    # error near 0.03. At 2 sd, one of these four checks fails on roughly one
+    # seed in six; 3 sd still catches a genuinely skewed choice.
     if total:
         for concept in v.CALCIUM_CHANNEL_BLOCKERS:
-            near(f"CCB share {concept}", ccb[concept] / total, 0.25, tolerance=0.06)
+            near(f"CCB share {concept}", ccb[concept] / total, 0.25, tolerance=0.09)
 
     print("\n".join(notes))
     print()
