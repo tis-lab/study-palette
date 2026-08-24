@@ -170,7 +170,24 @@ DEMOGRAPHY_LABELS = {
 MEASURES = {
     "OMOP:3038553": "BMI",
     "OMOP:4152194": "Systolic BP",
+    "OMOP:4154790": "Diastolic BP",
     "OMOP:3007070": "HDL",
+    "OMOP:3013682": "BUN",
+    "OMOP:3000905": "WBC",
+    "OMOP:3036277": "Height",
+    "OMOP:3025315": "Weight",
+}
+
+# Units, so a chart can say what it is measuring.
+MEASURE_UNITS = {
+    "BMI": "kg/m²",
+    "Systolic BP": "mm[Hg]",
+    "Diastolic BP": "mm[Hg]",
+    "HDL": "mg/dL",
+    "BUN": "mg/dL",
+    "WBC": "10³/µL",
+    "Height": "cm",
+    "Weight": "kg",
 }
 
 
@@ -216,14 +233,24 @@ def load_participants(output_dir):
                 people[pid]["concepts"].append(row["condition_concept"])
 
         # One value per measure per participant is enough to chart a distribution.
-        for row in read("MeasurementObservation"):
+        def record(row):
             pid = row.get("associated_participant")
             measure = MEASURES.get(row.get("observation_type"))
             if not measure or pid not in people:
-                continue
+                return
             value = (row.get("value_quantity") or {}).get("value_decimal")
             if value is not None and measure not in people[pid]["measures"]:
                 people[pid]["measures"][measure] = round(value, 1)
+
+        for row in read("MeasurementObservation"):
+            record(row)
+
+        # Blood pressure is modelled as ARIC records it: systolic and diastolic
+        # are two observations nested inside one set, so they never appear in the
+        # flat MeasurementObservation file.
+        for row in read("MeasurementObservationSet"):
+            for observation in row.get("observations") or []:
+                record(observation)
 
     for person in people.values():
         person["concepts"] = sorted(set(person["concepts"]))
@@ -432,6 +459,7 @@ def main():
         "participants": participants,
         "illustrative": illustrative,
         "studies": sorted({s for c in concepts for s in c["studies"]}),
+        "measure_units": MEASURE_UNITS,
     }
     args.out.write_text(json.dumps(payload, separators=(",", ":")))
     print(f"\n{args.out} — {args.out.stat().st_size / 1024:.0f} KB")

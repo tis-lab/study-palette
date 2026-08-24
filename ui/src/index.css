@@ -580,6 +580,19 @@ header p {
   font-size: 0.85rem;
 }
 
+.measure-delta {
+  margin: -0.25rem 0 0.35rem;
+  font-size: 0.75rem;
+}
+
+.synthetic-note {
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 3px solid var(--color-muted);
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
 .placeholder {
   padding: 1.5rem 0.5rem;
   text-align: center;

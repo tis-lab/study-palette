@@ -38,6 +38,7 @@ export interface ExploreData {
   corpus: Record<string, Record<string, number>>;
   illustrative: string[];
   studies: string[];
+  measure_units: Record<string, string>;
 }
 
 /**

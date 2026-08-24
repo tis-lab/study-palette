@@ -64,6 +64,41 @@ describe("explore fixture", () => {
     }
   });
 
+  it("labels the units of every measure it carries", () => {
+    const carried = new Set(
+      data.participants.flatMap((p) => Object.keys(p.measures)),
+    );
+    expect(carried.size).toBeGreaterThan(4);
+    for (const measure of carried) {
+      expect(data.measure_units[measure]).toBeTruthy();
+    }
+  });
+
+  it("separates a cohort from the corpus on linked measures only", () => {
+    // Measurements are generated conditional on diagnosis, so a heart-failure
+    // cohort must sit apart from the corpus on the measures clinically linked
+    // to it — and must not on the ones that aren't. Without this the charts
+    // are flat and the cohort view says nothing.
+    const heartFailure = data.concepts.find((c) => c.name === "hist_hrtfail");
+    const matched = cohort(data, heartFailure!);
+    const avg = (rows: typeof matched, measure: string) => {
+      const nums = rows
+        .map((r) => r.measures[measure])
+        .filter((v): v is number => v != null);
+      return nums.reduce((t, n) => t + n, 0) / nums.length;
+    };
+
+    for (const measure of ["Systolic BP", "BUN"]) {
+      const gap = avg(matched, measure) - avg(data.participants, measure);
+      expect(gap).toBeGreaterThan(1);
+    }
+    expect(avg(matched, "HDL") - avg(data.participants, "HDL")).toBeLessThan(-1);
+
+    // WBC is linked to nothing, so it is the control.
+    const wbc = avg(matched, "WBC") - avg(data.participants, "WBC");
+    expect(Math.abs(wbc)).toBeLessThan(1);
+  });
+
   it("marks illustrative counts rather than passing them off as real", () => {
     expect(data.illustrative.length).toBeGreaterThan(0);
     const withData = data.concepts.filter(
