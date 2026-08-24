@@ -106,7 +106,7 @@ export default function RelatedData({
               ]}
             />
             <Bar dataKey="value" stroke={FILL_STROKE} isAnimationActive={false}>
-              {chart.map((row, i) => (
+              {chart.map((_, i) => (
                 <Cell key={i} fill={palette.sequence[i % palette.sequence.length]} />
               ))}
             </Bar>
