@@ -1,23 +1,44 @@
 # Synthetic corpus
 
 Two fictional cohorts, structurally faithful to harmonized BDC data, for teams
-building against the portal without touching participant data.
+building against the portal without touching participant data. For more detail
+on each study population's properties, see [Cohorts](#cohorts) below.
 
 Nothing here derives from real participants. Every coded value — CURIEs, enum
 members, units — is taken from RTI's `priority_variables_transform` specs or
 from BDCHM itself, so the corpus resolves against the same vocabulary as real
 harmonized data.
 
-## Why it goes through dm-bip
+## Why the corpus goes through dm-bip
 
 The generator emits **dbGaP-style raw tables**, not harmonized output, and those
 are transformed by dm-bip against BDCHM. Emitting BDCHM directly would be a
 second implementation of the transformation, free to drift from the real one in
 ways nobody would notice until a portal built on it met real data.
 
+dm-bip makes two things out of that one set of inputs, and the corpus exercises
+both: the **harmonized BDCHM records** (`make pipeline`, step 3) and the **BDC
+variable library** (`make variable-library`, step 4). The drift argument covers
+both equally — a hand-written variable library would be a second implementation
+of the same extraction.
+
+So the corpus is built in two halves, and the seam between them is a manual
+step: the scripts here only write files, and turning those files into harmonized
+BDCHM and a variable library is done by separate commands run from a dm-bip
+checkout.
+
 ```
-generate.py  ->  data/raw/*.txt.gz  ->  dm-bip map-data  ->  harmonized BDCHM
-specs.py     ->  specs/*/*.yaml     ->  ^
+this repo ───────────────────────────────────────────────────────
+  generate.py     ->  data/raw/<study>/*.txt.gz  ─┐
+  specs.py        ->  specs/<study>/*.yaml       ─┼─ inputs
+  fetch-bdchm.sh  ->  bdchm.yaml                 ─┘  (map-data only)
+                                                  │
+════ manual boundary: nothing above invokes dm-bip ═══════════════
+                                                  │
+a dm-bip checkout ────────────────────────────────┴────────────
+  both take CONFIG=pipeline/<study>.mk SYNTH_DIR=... SYNTH_OUTPUT_DIR=...
+  make pipeline          ->  output/<study>/mapped-data/   (harmonized BDCHM)
+  make variable-library  ->  output/<study>/variable-library.yaml
 ```
 
 ## Running it
@@ -25,7 +46,8 @@ specs.py     ->  specs/*/*.yaml     ->  ^
 ### 1. Generate the corpus
 
 ```bash
-python generate.py          # raw tables, per study
+python generate.py          # Uses the study and participant level details defined in populution.py
+                            # Generates .gz files in data/raw/study_one; raw tables, per study
 python specs.py             # BDCHM-targeted transformation specs
 python validate.py          # distributions and invariants
 ```
@@ -41,6 +63,10 @@ produces:
 ```
 
 ### 3. Harmonize (from a dm-bip checkout)
+
+Run this step from the root of a [dm-bip](https://github.com/linkml/dm-bip)
+checkout, not from this repo — `make pipeline` is dm-bip's target, and the paths
+below reach back here through `SYNTH`.
 
 This is **one cohort's** invocation — `study_two` is run the same way, with its
 own config and its own output directory:
@@ -72,8 +98,9 @@ make pipeline CONFIG=$SYNTH/pipeline/example_study_two.mk \
 
 ### 4. Extract the variable library
 
-The **variable library** — one BDC variable library entry per source variable
-named in the specs — is a separate dm-bip target, deliberately not part of `make
+Generation of the **variable library** continues in the [dm-bip](https://github.com/linkml/dm-bip)
+checkout. One BDC variable library entry per source variable named in the specs
+is generated as a separate dm-bip target, deliberately not part of `make
 pipeline`:
 
 ```bash
@@ -86,12 +113,15 @@ this target: its output path is `$(DM_OUTPUT_DIR)/variable-library.yaml`, so
 a mismatched pair overwrites the other cohort's library in place rather than
 producing a second file next to it.
 
-`make schema-create` is its only prerequisite, not the whole pipeline: it
-reads the specs and the inferred `output/study_one/ExampleStudyOne.yaml`,
-and never touches validated or mapped data. Being a file target it prints
-"Nothing to be done" when its output is newer than its inputs — remove
-`output/study_one/variable-library.yaml` to force a rebuild, not the output
-directory, which holds the schema it reads.
+Its only inputs are the specs and the inferred schema
+`output/study_one/ExampleStudyOne.yaml` — built in step 3, or on demand by make
+if you run this target alone; validated and mapped data are never involved.
+Being a file target, it prints "Nothing to be done" when the library is newer
+than its inputs, so force a rebuild by removing
+`output/study_one/variable-library.yaml`, not the output directory, which holds
+the schema it reads.
+
+#### What a successful run looks like
 
 On `example_study_one` this emits 35 entries from 35 source variables (19
 continuous, 16 categorical), byte-identical across runs. It warns that
@@ -112,7 +142,10 @@ structural feature the corpus claims. It exists so a reviewer, or a team
 deciding whether this is the reference data they want, can see the output shape
 without running the pipeline. Regenerate it with `python sample.py` after a run.
 
-## The cohorts
+## Cohorts
+
+Both cohorts are defined by the `Study` instances at the top of `population.py`;
+the values below are those fields, and changing them there changes the corpus.
 
 |  | Example Study One | Example Study Two |
 |---|---|---|
