@@ -1,0 +1,16 @@
+- class_derivations:
+    Condition:
+      populated_from: pht000115
+      slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10111500}) + ":Example Study One:family_stroke")'
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111500}) + ":Example Study One")'
+        condition_concept:
+          populated_from: phv10111504
+        condition_status:
+          populated_from: phv10111503
+        condition_provenance:
+          value: PATIENT_SELF-REPORTED_CONDITION
+        relationship_to_participant:
+          populated_from: phv10111505

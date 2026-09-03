@@ -1,0 +1,23 @@
+- class_derivations:
+    MeasurementObservation:
+      populated_from: pht000113
+      slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":WEIGHT_KG")'
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
+        associated_visit:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111300}) + ":Example Study One VISIT " + str({phv10111301}))'
+        observation_type:
+          value: OMOP:3025315
+        value_quantity:
+          class_derivations:
+          - Quantity:
+              populated_from: pht000113
+              slot_derivations:
+                id:
+                  expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":WEIGHT_KG")'
+                value_decimal:
+                  populated_from: phv10111303
+                unit:
+                  value: "kg"

@@ -1,0 +1,16 @@
+- class_derivations:
+    Condition:
+      populated_from: pht000125
+      slot_derivations:
+        id:
+          expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10212500}) + ":Example Study Two:heart_failure")'
+        associated_participant:
+          expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212500}) + ":Example Study Two")'
+        condition_concept:
+          populated_from: phv10212502
+        condition_status:
+          populated_from: phv10212501
+        condition_provenance:
+          value: PATIENT_SELF-REPORTED_CONDITION
+        relationship_to_participant:
+          value: ONESELF

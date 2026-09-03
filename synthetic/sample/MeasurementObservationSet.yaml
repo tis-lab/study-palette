@@ -1,0 +1,47 @@
+# study_one: blood pressure, systolic and diastolic in one set
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+associated_visit: 75122f58-efd2-559d-9eac-2619199795aa
+id: f443b266-2d72-5429-8df4-43dfaf1bcc12
+observations:
+- associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+  body_position: SITTING_POSITION
+  body_site: Right arm
+  id: daae1547-43eb-5db9-88a0-1fc442022951
+  observation_type: OMOP:4152194
+  value_quantity:
+    id: 7fe894d1-919d-573a-a17d-d36adc78f486
+    unit: mm[Hg]
+    value_decimal: 164.3
+- associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+  body_position: SITTING_POSITION
+  body_site: Right arm
+  id: ecee49c5-c3c5-540b-b723-f43b78f05656
+  observation_type: OMOP:4154790
+  value_quantity:
+    id: f2c228df-56c8-56a0-946d-d8c06f69d7e0
+    unit: mm[Hg]
+    value_decimal: 82.6
+---
+# study_two: blood pressure, systolic and diastolic in one set
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+associated_visit: 22bf721d-ce80-5f08-b1c5-d19857b89b15
+id: e9806428-dd0d-5ea0-b9d4-a7b21d8156c5
+observations:
+- associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+  body_position: SITTING_POSITION
+  body_site: Right arm
+  id: 2d648e6e-ea07-5879-a4f8-569930bc20d0
+  observation_type: OMOP:4152194
+  value_quantity:
+    id: d7463d3b-6bbb-53a5-9ee8-d61c723822bd
+    unit: mm[Hg]
+    value_decimal: 128.2
+- associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+  body_position: SITTING_POSITION
+  body_site: Right arm
+  id: f3d69c77-bf43-5e06-9185-ce6cac66e8de
+  observation_type: OMOP:4154790
+  value_quantity:
+    id: cbe14372-7714-55f0-a567-db4b1735f728
+    unit: mm[Hg]
+    value_decimal: 94.6

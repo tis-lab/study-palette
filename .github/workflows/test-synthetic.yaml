@@ -1,0 +1,61 @@
+name: Test Synthetic Corpus
+
+on:
+  pull_request:
+    paths:
+      - "synthetic/**"
+      - ".github/workflows/test-synthetic.yaml"
+  push:
+    branches: [main]
+    paths:
+      - "synthetic/**"
+      - ".github/workflows/test-synthetic.yaml"
+
+jobs:
+  test-synthetic:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The corpus is a build product, not a committed artifact: it is
+      # regenerated here and checked, rather than diffed against something
+      # stored in the repo.
+      - name: Generate raw tables
+        working-directory: synthetic
+        run: python generate.py
+
+      - name: Generate transformation specs
+        working-directory: synthetic
+        run: python specs.py
+
+      - name: Validate distributions and invariants
+        working-directory: synthetic
+        run: python validate.py
+
+      - name: Check specs are well-formed YAML
+        working-directory: synthetic
+        run: |
+          pip install --quiet pyyaml
+          python - <<'PY'
+          import glob
+          import sys
+
+          import yaml
+
+          bad = []
+          paths = sorted(glob.glob("specs/*/*.yaml"))
+          for path in paths:
+              try:
+                  yaml.safe_load(open(path))
+              except yaml.YAMLError as exc:
+                  bad.append(f"{path}: {exc}")
+          print(f"{len(paths) - len(bad)}/{len(paths)} specs parse")
+          if bad:
+              print("\n".join(bad))
+              sys.exit(1)
+          PY

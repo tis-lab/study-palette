@@ -1,0 +1,31 @@
+# study_one: Hispanic ethnicity
+associated_participant: dd37092b-1515-5c8b-aebf-18507b1f98f6
+ethnicity: OMOP:38003563
+id: 27107a6a-5d26-54ac-90cd-c243d4102d3a
+race:
+- OMOP:8527
+sex: OMOP:8507
+---
+# study_one: non-Hispanic
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+ethnicity: OMOP:38003564
+id: 0dc199a5-8a48-58f1-be03-90ac898be070
+race:
+- OMOP:8516
+sex: OMOP:8507
+---
+# study_two: Hispanic ethnicity
+associated_participant: 390f76f9-c667-5487-a1b9-ecd8b5fe9927
+ethnicity: OMOP:38003563
+id: 021e4f47-6504-5725-b1e0-d79450ce064a
+race:
+- OMOP:8527
+sex: OMOP:8532
+---
+# study_two: non-Hispanic
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+ethnicity: OMOP:38003564
+id: 18e9e092-8ad5-5414-b9e8-677ff7d886d1
+race:
+- OMOP:8515
+sex: OMOP:8532

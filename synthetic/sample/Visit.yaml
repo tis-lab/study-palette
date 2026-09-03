@@ -1,0 +1,27 @@
+# study_one: telehealth
+age_at_visit_start: 28105
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+id: 7d2ad563-3512-5d32-8737-82e10cfcac51
+visit_category: TELEHEALTH
+visit_provenance: CASE_REPORT_FORM
+---
+# study_one: study site visit
+age_at_visit_start: 27375
+associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+id: 75122f58-efd2-559d-9eac-2619199795aa
+visit_category: STUDY_SITE_VISIT
+visit_provenance: CASE_REPORT_FORM
+---
+# study_two: telehealth
+age_at_visit_start: 22630
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+id: 17f3fa62-5837-571d-9e3a-5b089b4c1d9d
+visit_category: TELEHEALTH
+visit_provenance: CASE_REPORT_FORM
+---
+# study_two: study site visit
+age_at_visit_start: 21170
+associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+id: 22bf721d-ce80-5f08-b1c5-d19857b89b15
+visit_category: STUDY_SITE_VISIT
+visit_provenance: CASE_REPORT_FORM
