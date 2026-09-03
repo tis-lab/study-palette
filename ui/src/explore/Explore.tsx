@@ -39,6 +39,7 @@ export default function Explore({ paletteKey }: { paletteKey: PaletteKey }) {
   useEffect(() => {
     if (!data || query.trim().length < 3) {
       setHits(null);
+      setSearching(false);
       return;
     }
     let cancelled = false;

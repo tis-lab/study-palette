@@ -18,7 +18,7 @@ export interface Term {
   parents: string[];
   children: string[];
   child_labels: Record<string, string>;
-  label_source: "monarch" | "varlib";
+  label_source: "monarch" | "rxnav" | "varlib";
 }
 
 export interface Participant {
@@ -95,16 +95,20 @@ export function cohort(data: Indexed, concept: Concept): Participant[] {
   );
 }
 
-/** Participants for a concept, summed across contributing studies. */
+/**
+ * Participants for a concept, summed across contributing studies. Concepts
+ * with no ontology mappings are keyed by name, as the builder writes them.
+ */
 export function participants(data: Indexed, concept: Concept) {
+  const keys = concept.mappings.length ? concept.mappings : [concept.name];
   const perStudy: Record<string, number> = {};
-  for (const curie of concept.mappings) {
-    for (const [study, n] of Object.entries(data.corpus[curie] ?? {})) {
+  for (const key of keys) {
+    for (const [study, n] of Object.entries(data.corpus[key] ?? {})) {
       perStudy[study] = (perStudy[study] ?? 0) + n;
     }
   }
   const total = Object.values(perStudy).reduce((a, b) => a + b, 0);
-  const illustrative = concept.mappings.some((c) => data.illustrativeSet.has(c));
+  const illustrative = keys.some((k) => data.illustrativeSet.has(k));
   return { perStudy, total, illustrative };
 }
 

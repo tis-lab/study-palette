@@ -13,7 +13,12 @@ The KG lookups are baked in here rather than left to the browser so the demo
 does not depend on the network at showtime. The UI still queries Monarch live
 for free-text search; this is the floor it falls back to.
 
-    python demo/build_demo_data.py
+Both inputs live outside this repo: BDC-VarLib is a separate clone, and the
+corpus is the output of the synthetic corpus generator.
+
+    python demo/build_demo_data.py \
+        --varlib path/to/BDC-VarLib/docs/schema/bdc_varlib.yaml \
+        --corpus path/to/synthetic/output
 """
 
 import argparse
@@ -56,7 +61,8 @@ def annotation(slot, tag):
 
 def load_varlib(path):
     """Flatten VarLib into concepts, each with mappings and contributing studies."""
-    schema = yaml.safe_load(open(path))
+    with open(path) as fh:
+        schema = yaml.safe_load(fh)
     slots = schema.get("slots", {})
 
     category_of = {}
@@ -518,14 +524,14 @@ def main():
     parser.add_argument(
         "--varlib",
         type=Path,
-        default=Path("/home/corey/Code/study-palette/.tmp/BDC-VarLib/docs/schema/bdc_varlib.yaml"),
+        required=True,
+        help="BDC-VarLib LinkML schema, docs/schema/bdc_varlib.yaml in that repo",
     )
     parser.add_argument(
         "--corpus",
         type=Path,
-        default=Path(
-            "/home/corey/Code/study-palette/.wt/synthetic-corpus/synthetic/output"
-        ),
+        required=True,
+        help="synthetic corpus output directory, holding study_one/ and study_two/",
     )
     # Written straight into the app's public directory: it is the only consumer,
     # and a second copy under demo/ would just be 300KB of duplicate in git.
