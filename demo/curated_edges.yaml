@@ -1,0 +1,162 @@
+# Provisional disease -> measurement/procedure edges.
+#
+# WHY THIS FILE EXISTS
+# No public knowledge graph connects a MONDO disease to an OBA or OMOP
+# measurement: the vocabularies have no edges between them, and ontology
+# hierarchy is is-a only, so walking it from a disease reaches other diseases
+# and nothing else. Monarch supplies disease->disease and disease->phenotype
+# edges, which the builder harvests. The edges below are the layer that does
+# not exist anywhere yet and that Study Palette expects to curate.
+#
+# STATUS
+# Authored for the demo. Every edge is a clinical assertion that has NOT been
+# reviewed by a clinician. Directions are conventional rather than exhaustive:
+# these are the investigations a study would routinely carry for the condition,
+# not a diagnostic protocol. Treat as a starting point for curation, not a
+# reference. The UI marks anything sourced here as "curated" so it is never
+# mistaken for a harvested edge.
+#
+# PREDICATES
+#   biolink:has_biomarker  a measurement that indicates or monitors the condition
+#   biolink:diagnosed_by   a procedure or test used to establish or stage it
+#
+# Every object CURIE below is attested in the variable library, so each edge
+# resolves to harmonized variables that real studies actually collect.
+
+MONDO:0005252:                          # heart failure
+  biolink:has_biomarker:
+    - OBA:2045303                       # Natriuretic peptides B level
+    - OBA:2050096                       # Serum creatinine amount
+    - OBA:VT0005265                     # Blood urea nitrogen amount
+    - OBA:VT0001776                     # Blood sodium amount
+    - OMOP:37208635                     # Egfr
+    - OMOP:4021291                      # Troponin
+  biolink:diagnosed_by:
+    - OBA:1001086                       # QRS duration
+    - HP:0001712                        # Left ventricular hypertrophy
+    - OMOP:4273023                      # Qt ekg
+    - OMOP:45772840                     # Pacemaker status
+
+MONDO:0005009:                          # congestive heart failure
+  biolink:has_biomarker:
+    - OBA:2045303                       # Natriuretic peptides B level
+    - OBA:2050096                       # Serum creatinine amount
+    - OBA:VT0005265                     # Blood urea nitrogen amount
+    - OMOP:37208635                     # Egfr
+  biolink:diagnosed_by:
+    - HP:0001712                        # Left ventricular hypertrophy
+    - OBA:1001086                       # QRS duration
+
+HP:0000822:                             # hypertension
+  biolink:has_biomarker:
+    - OBA:2050096                       # Serum creatinine amount
+    - OBA:VT0002871                     # Urine albumin amount
+    - OMOP:4154347                      # Albumin creatinine
+    - OBA:VT0002668                     # Blood potassium amount
+    - OBA:VT0001776                     # Blood sodium amount
+    - OMOP:37208635                     # Egfr
+  biolink:diagnosed_by:
+    - HP:0001712                        # Left ventricular hypertrophy
+    - OMOP:4138462                      # Carotid artery thickness
+
+MONDO:0005068:                          # myocardial infarction
+  biolink:has_biomarker:
+    - OMOP:4021291                      # Troponin
+    - OBA:VT0000180                     # Blood cholesterol amount
+    - OBA:VT0000181                     # Blood LDL cholesterol amount
+    - OBA:VT0000184                     # Blood HDL cholesterol amount
+    - OBA:VT0002644                     # Blood triglyceride amount
+    - OMOP:4208414                      # Crp
+  biolink:diagnosed_by:
+    - OBA:1001086                       # QRS duration
+    - OMOP:4273023                      # Qt ekg
+    - OMOP:4274406                      # Pr ekg
+    - OMOP:42872742                     # Coronary artery calcium score
+
+HP:0001297:                             # stroke
+  biolink:has_biomarker:
+    - OBA:VT0000181                     # Blood LDL cholesterol amount
+    - OBA:VT0000180                     # Blood cholesterol amount
+    - OBA:0000061                       # Circulating fibrinogen levels
+    - OMOP:37393605                     # D dimer
+    - OBA:VT0000188                     # Blood glucose amount
+  biolink:diagnosed_by:
+    - OMOP:43020498                     # Carotid stenosis left
+    - OMOP:43021859                     # Carotid stenosis right
+    - OMOP:4102124                      # Carotid plaque
+    - OMOP:4138462                      # Carotid artery thickness
+
+MONDO:0004981:                          # atrial fibrillation
+  biolink:has_biomarker:
+    - OBA:2045303                       # Natriuretic peptides B level
+    - OMOP:4021291                      # Troponin
+  biolink:diagnosed_by:
+    - OBA:1001086                       # QRS duration
+    - OMOP:4273023                      # Qt ekg
+    - OMOP:4274406                      # Pr ekg
+    - OMOP:45772840                     # Pacemaker status
+
+MONDO:0005015:                          # diabetes mellitus
+  biolink:has_biomarker:
+    - OMOP:4184637                      # Hemoglobin a1c
+    - OBA:VT0000188                     # Blood glucose amount
+    - OMOP:4156660                      # Fasting glucose blood
+    - OBA:2060174                       # Amount of insulin in blood
+    - OBA:VT0002871                     # Urine albumin amount
+    - OMOP:4154347                      # Albumin creatinine
+    - OMOP:37208635                     # Egfr
+
+MONDO:0005002:                          # chronic obstructive pulmonary disease
+  biolink:has_biomarker:
+    - OMOP:4208414                      # Crp
+    - OBA:0000061                       # Circulating fibrinogen levels
+  biolink:diagnosed_by:
+    - OMOP:4176265                      # Spirometry
+    - OMOP:4241837                      # Spirometry pre/post bronchodilator
+
+MONDO:0004979:                          # asthma
+  biolink:has_biomarker:
+    - OBA:VT0002602                     # Eosinophil quantity
+  biolink:diagnosed_by:
+    - OMOP:4176265                      # Spirometry
+    - OMOP:4241837                      # Spirometry pre/post bronchodilator
+
+MONDO:0005607:                          # chronic bronchitis
+  biolink:diagnosed_by:
+    - OMOP:4176265                      # Spirometry
+
+MONDO:0005386:                          # peripheral arterial disease
+  biolink:has_biomarker:
+    - OBA:VT0000181                     # Blood LDL cholesterol amount
+    - OBA:VT0000180                     # Blood cholesterol amount
+    - OBA:VT0000188                     # Blood glucose amount
+    - OMOP:4208414                      # Crp
+  biolink:diagnosed_by:
+    - OMOP:4102124                      # Carotid plaque
+    - OMOP:4138462                      # Carotid artery thickness
+    - OMOP:42872742                     # Coronary artery calcium score
+
+HP:0001681:                             # angina pectoris
+  biolink:has_biomarker:
+    - OMOP:4021291                      # Troponin
+    - OBA:VT0000181                     # Blood LDL cholesterol amount
+    - OBA:VT0000180                     # Blood cholesterol amount
+  biolink:diagnosed_by:
+    - OBA:1001086                       # QRS duration
+    - OMOP:4273023                      # Qt ekg
+    - OMOP:42872742                     # Coronary artery calcium score
+
+MONDO:0005279:                          # pulmonary embolism
+  biolink:has_biomarker:
+    - OMOP:37393605                     # D dimer
+    - OBA:0000061                       # Circulating fibrinogen levels
+
+MONDO:0005139:                          # morbid obesity
+  biolink:has_biomarker:
+    - OBA:VT0000188                     # Blood glucose amount
+    - OMOP:4184637                      # Hemoglobin a1c
+    - OBA:2060174                       # Amount of insulin in blood
+    - OBA:VT0002644                     # Blood triglyceride amount
+    - OBA:VT0000184                     # Blood HDL cholesterol amount
+  biolink:diagnosed_by:
+    - OMOP:37396400                     # Apnoea-hypopnoea index

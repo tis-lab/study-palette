@@ -3,6 +3,7 @@ import OverviewCharts from "./OverviewCharts";
 import DemographicsSankey from "./DemographicsSankey";
 import FilterPanel from "./FilterPanel";
 import StudyOverview from "./StudyOverview";
+import Explore from "./explore/Explore";
 import {
   DEMO_PARTICIPANTS,
   EMPTY_FILTERS,
@@ -20,7 +21,7 @@ interface StudiesResponse {
 }
 
 function App() {
-  const [mode, setMode] = useState<DataMode>("demo");
+  const [mode, setMode] = useState<DataMode | "explore">("demo");
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +30,8 @@ function App() {
   const palette = PALETTES[paletteKey];
 
   useEffect(() => {
-    if (mode === "demo") {
+    // Only the live tab talks to the API. Demo and Explore are self-contained.
+    if (mode !== "live") {
       setStudies([]);
       setLoading(false);
       setError(null);
@@ -112,18 +114,24 @@ function App() {
                 ))}
               </select>
             </label>
-            <button
-              className={`mode-toggle ${mode}`}
-              onClick={() => setMode(mode === "demo" ? "live" : "demo")}
-            >
-              {mode === "demo" ? "Demo Data" : "Live API"}
-            </button>
+            <div className="mode-tabs">
+              {(["demo", "explore", "live"] as const).map((m) => (
+                <button
+                  key={m}
+                  className={`mode-toggle ${m === mode ? "active" : ""}`}
+                  onClick={() => setMode(m)}
+                >
+                  {m === "demo" ? "Demo Data" : m === "explore" ? "Explore" : "Live API"}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </header>
       <main>
         {loading && <p className="status">Loading...</p>}
         {error && <p className="status error">Error: {error}</p>}
+        {mode === "explore" && <Explore paletteKey={paletteKey} />}
         {mode === "demo" && (
           <div className="demo-layout">
             <FilterPanel
