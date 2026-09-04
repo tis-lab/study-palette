@@ -8,6 +8,8 @@
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212400}) + ":Example Study Two")'
         associated_visit:
           expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10212400}) + ":Example Study Two VISIT " + str({phv10212401}))'
+        age_at_observation:
+          populated_from: phv10212402
         observation_type:
           value: OMOP:3007070
         associated_assay:
@@ -49,8 +51,8 @@
                 id:
                   expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10212400}) + ":Example Study Two:" + str({phv10212401}) + ":HDL")'
                 value_decimal:
-                  populated_from: phv10212402
-                operator:
                   populated_from: phv10212403
+                operator:
+                  populated_from: phv10212404
                 unit:
                   value: "mg/dL"

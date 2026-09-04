@@ -17,6 +17,10 @@
                   expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":systolic")'
                 associated_participant:
                   expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
+                associated_visit:
+                  expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111300}) + ":Example Study One VISIT " + str({phv10111301}))'
+                age_at_observation:
+                  populated_from: phv10111302
                 observation_type:
                   value: OMOP:4152194
                 body_position:
@@ -31,7 +35,7 @@
                         id:
                           expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":systolic")'
                         value_decimal:
-                          populated_from: phv10111305
+                          populated_from: phv10111306
                         unit:
                           value: "mm[Hg]"
           - MeasurementObservation:
@@ -41,6 +45,10 @@
                   expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":diastolic")'
                 associated_participant:
                   expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
+                associated_visit:
+                  expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111300}) + ":Example Study One VISIT " + str({phv10111301}))'
+                age_at_observation:
+                  populated_from: phv10111302
                 observation_type:
                   value: OMOP:4154790
                 body_position:
@@ -55,6 +63,6 @@
                         id:
                           expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":diastolic")'
                         value_decimal:
-                          populated_from: phv10111306
+                          populated_from: phv10111307
                         unit:
                           value: "mm[Hg]"

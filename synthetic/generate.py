@@ -26,29 +26,58 @@ LAYOUTS = {
         7,
     ),
     "visit": (["dbGaP_Subject_ID", "SUBJECT_ID", "VISIT_NUM", "VISIT_TYPE", "AGE_DAYS"], 4),
+    # AGE_DAYS repeats the visit's age on every measurement table. It is
+    # derivable by joining to the visit table, but real dbGaP measurement tables
+    # carry the age alongside the result, and it is what age_at_observation is
+    # populated from without requiring the transformation to join.
     "clinical": (
-        ["dbGaP_Subject_ID", "SUBJECT_ID", "VISIT_NUM", "HEIGHT_CM", "WEIGHT_KG", "BMI", "SBP", "DBP"],
-        7,
+        ["dbGaP_Subject_ID", "SUBJECT_ID", "VISIT_NUM", "AGE_DAYS",
+         "HEIGHT_CM", "WEIGHT_KG", "BMI", "SBP", "DBP"],
+        8,
     ),
     "labs": (
-        ["dbGaP_Subject_ID", "SUBJECT_ID", "VISIT_NUM", "HDL", "HDL_OPERATOR", "BUN", "WBC"],
-        6,
+        ["dbGaP_Subject_ID", "SUBJECT_ID", "VISIT_NUM", "AGE_DAYS",
+         "HDL", "HDL_OPERATOR", "BUN", "WBC", "GLUCOSE", "HBA1C"],
+        9,
     ),
+    # One row per participant, so the visit that recorded each condition is a
+    # per-condition column rather than the table-level VISIT_NUM the measurement
+    # tables carry. SNOMED and ICD-10-CM appear only here: BDCHM has no slot for
+    # source terminology, so they stay in the raw layer, which is where they sit
+    # in real dbGaP tables too.
     "conditions": (
         [
             "dbGaP_Subject_ID",
             "SUBJECT_ID",
             "HEART_FAILURE",
             "HF_CONCEPT",
+            "HF_AGE_START",
+            "HF_VISIT",
             "FAM_STROKE",
             "FS_CONCEPT",
             "FS_RELATIVE",
+            "FS_VISIT",
             "HYPERTENSION",
+            "HTN_CONCEPT",
+            "HTN_SNOMED",
+            "HTN_ICD10",
+            "HTN_AGE_START",
+            "HTN_AGE_END",
+            "HTN_VISIT",
+            "DIABETES",
+            "DM_CONCEPT",
+            "DM_SNOMED",
+            "DM_ICD10",
+            "DM_AGE_START",
+            "DM_AGE_END",
+            "DM_VISIT",
             "HEART_ATTACK",
             "HA_CONCEPT",
             "HA_SOURCE",
+            "HA_AGE_START",
+            "HA_VISIT",
         ],
-        10,
+        28,
     ),
     "meds": (["dbGaP_Subject_ID", "SUBJECT_ID", "CCB_STATUS", "CCB_CONCEPT"], 3),
 }
@@ -98,25 +127,33 @@ def build_rows(participants, study):
         for visit in p.visits:
             rows["visit"].append([gid, sid, visit.number, visit.category, visit.age_days])
             rows["clinical"].append([
-                gid, sid, visit.number,
+                gid, sid, visit.number, visit.age_days,
                 visit.height_cm, visit.weight_kg,
                 visit.bmi_category if study.bmi_categorical else visit.bmi,
                 visit.systolic, visit.diastolic,
             ])
             rows["labs"].append([
-                gid, sid, visit.number,
+                gid, sid, visit.number, visit.age_days,
                 visit.hdl, visit.hdl_operator, visit.bun, visit.wbc,
+                visit.glucose, visit.hba1c,
             ])
 
         c = p.conditions
+        hf, fs, htn, dm, ha = (
+            c["heart_failure"], c["family_stroke"], c["hypertension"],
+            c["diabetes"], c["heart_attack"],
+        )
         rows["conditions"].append([
             gid, sid,
-            c["heart_failure"]["status"], c["heart_failure"]["concept"],
-            c["family_stroke"]["status"], c["family_stroke"]["concept"],
-            c["family_stroke"]["relationship"],
-            c["hypertension"]["status"],
-            c["heart_attack"]["status"], c["heart_attack"]["concept"],
-            "STUDY_RECORD" if c["heart_attack"]["from_study_record"] else "SELF_REPORT",
+            hf["status"], hf["concept"], hf["age_start"], hf["visit"],
+            fs["status"], fs["concept"], fs["relationship"], fs["visit"],
+            htn["status"], htn["concept"], htn["snomed"], htn["icd10"],
+            htn["age_start"], htn["age_end"], htn["visit"],
+            dm["status"], dm["concept"], dm["snomed"], dm["icd10"],
+            dm["age_start"], dm["age_end"], dm["visit"],
+            ha["status"], ha["concept"],
+            "STUDY_RECORD" if ha["from_study_record"] else "SELF_REPORT",
+            ha["age_start"], ha["visit"],
         ])
 
         rows["meds"].append([

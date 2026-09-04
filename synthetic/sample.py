@@ -56,11 +56,32 @@ SELECTORS = {
         ("BMI as a category",
          lambda d: d.get("observation_type") == "OMOP:3038553"
          and d.get("value_quantity", {}).get("value_concept") is not None),
+        ("fasting glucose, anchored to an age and a visit",
+         lambda d: d.get("observation_type") == "OMOP:4156660"
+         and d.get("age_at_observation") is not None),
+        ("HbA1c, reported as a percentage",
+         lambda d: d.get("observation_type") == "OMOP:4184637"
+         and d.get("value_quantity", {}).get("unit") == "%"),
     ],
     "Condition": [
         ("family history, with the relative recorded",
          lambda d: d.get("relationship_to_participant", "").startswith("OMOP:")),
         ("about oneself", lambda d: d.get("relationship_to_participant") == "ONESELF"),
+        # The temporal slots, which are what make a condition queryable against
+        # the measurements taken around it.
+        ("ongoing, dated to the age at diagnosis",
+         lambda d: d.get("age_at_condition_start") and not d.get("age_at_condition_end")),
+        ("resolved, with both a start and an end age",
+         lambda d: d.get("age_at_condition_start") and d.get("age_at_condition_end")),
+        ("undiagnosed: screened for, so no dates and no source code",
+         lambda d: d.get("condition_status") == "ABSENT"),
+        # Concept breadth: T2D and a hypertension subtype more specific than the
+        # hierarchy root everyone else is coded to.
+        ("Type 2 diabetes", lambda d: d.get("condition_concept") == "MONDO:0005148"),
+        ("hypertensive heart disease, not just 'hypertension'",
+         lambda d: d.get("condition_concept") == "MONDO:0001302"),
+        ("an infarction with an ECG in evidence rather than self-report",
+         lambda d: d.get("associated_evidence") == "electrocardiogram"),
     ],
     "DrugExposure": [
         ("taking a calcium channel blocker", lambda d: d.get("drug_concept")),

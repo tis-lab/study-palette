@@ -20,20 +20,20 @@ vital_status: OMOP:4230556
 ---
 # study_two: deceased, with cause of death
 cause_of_death:
-- cause: ICD10CM:R99
-  id: c810c2ab-9b85-58f1-a7ba-009eccd3b843
+- cause: ICD10CM:I20-I25
+  id: dec11e22-1e3d-5caa-8f2e-431632c49f26
   order: 1
-id: 79153ada-4607-5077-a30d-93cc240aa7df
-identity: '900441'
+id: 5dcbaad9-f657-5cfe-b8f3-c180aaf0fc56
+identity: '900449'
 species: NCBITaxon:9606
 vital_status: OMOP:434489
 ---
 # study_two: living, note the empty cause_of_death entry
 cause_of_death:
 - cause: null
-  id: c92da1ee-347b-585a-a12c-bda32ec3c201
+  id: 77455809-ed44-58e7-8916-5fb170defbf4
   order: null
-id: b9733cac-ed81-52b8-bb35-ac8f1fccb21f
-identity: '900093'
+id: 383327ec-dd83-5a40-a8a5-07aa34bd31d6
+identity: '900483'
 species: NCBITaxon:9606
 vital_status: OMOP:4230556
