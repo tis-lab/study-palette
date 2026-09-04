@@ -48,24 +48,24 @@ relationship_to_participant: ONESELF
 age_at_condition_end: null
 age_at_condition_start: null
 associated_evidence: self-report questionnaire
-associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
+associated_participant: e805802b-da55-5d52-9db3-810ad3ed2058
 associated_visit: null
 condition_concept: MONDO:0005148
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
 condition_status: ABSENT
-id: 93dc8788-7f85-5c52-b78f-0244bd7f1f3b
+id: 7421193c-9e57-5018-ad8e-956ccb1df1a5
 relationship_to_participant: ONESELF
 ---
 # study_one: Type 2 diabetes
 age_at_condition_end: null
-age_at_condition_start: null
+age_at_condition_start: 17887
 associated_evidence: self-report questionnaire
-associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
-associated_visit: null
+associated_participant: 94470960-2d15-5ae5-8eb7-664b56478e73
+associated_visit: d3e958b4-898c-5942-be79-765f4890d4f6
 condition_concept: MONDO:0005148
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
-condition_status: ABSENT
-id: 93dc8788-7f85-5c52-b78f-0244bd7f1f3b
+condition_status: PRESENT
+id: 696a19ca-77f3-5443-af49-36d06f7a33ca
 relationship_to_participant: ONESELF
 ---
 # study_one: hypertensive heart disease, not just 'hypertension'
@@ -141,24 +141,24 @@ relationship_to_participant: ONESELF
 age_at_condition_end: null
 age_at_condition_start: null
 associated_evidence: self-report questionnaire
-associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
+associated_participant: fd79135a-f146-5bd8-8774-cd330887be23
 associated_visit: null
 condition_concept: MONDO:0005148
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
 condition_status: ABSENT
-id: ac60fd9e-c1ff-55b9-829b-261592dbaaf5
+id: 359d1efa-1663-55eb-ae26-49e37732b615
 relationship_to_participant: ONESELF
 ---
 # study_two: Type 2 diabetes
 age_at_condition_end: null
-age_at_condition_start: null
+age_at_condition_start: 25238
 associated_evidence: self-report questionnaire
-associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
-associated_visit: null
+associated_participant: e562d1f8-aea8-5991-b75f-5f135d78015f
+associated_visit: f4071f3b-98cf-5adf-9e62-ee3ed69111c6
 condition_concept: MONDO:0005148
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
-condition_status: ABSENT
-id: ac60fd9e-c1ff-55b9-829b-261592dbaaf5
+condition_status: PRESENT
+id: 1abb7978-2941-5bfd-ae1a-f3ad8f1716ef
 relationship_to_participant: ONESELF
 ---
 # study_two: hypertensive heart disease, not just 'hypertension'
