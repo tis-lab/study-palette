@@ -42,8 +42,16 @@ which slots nest, because the model alone does not decide that: BDCHM gives
 as a uuid5 string while `value_quantity` is nested inline.
 
 It also reports where the model and the data disagree on cardinality. That is
-not hypothetical — BDCHM declares `identity` multivalued and every
-transformation spec, RTI's included, emits a scalar.
+not hypothetical — BDCHM declares `identity` and `Condition.associated_evidence`
+multivalued, and every transformation spec, RTI's included, emits a scalar for
+both.
+
+The `associated_evidence` case has a sharp edge worth knowing about: in
+linkml-map a `value:` derivation emits a scalar, while `populated_from` with
+`value_mappings` honours the multivalued declaration and emits a list. Using
+both for one slot leaves it carrying two shapes, and `schema.py` types a column
+from the first record it sees — so it would get the rest wrong. The specs here
+branch with `case()` instead, which stays scalar and matches what RTI emits.
 
 Then, from a dm-bip checkout:
 
@@ -83,12 +91,78 @@ without running the pipeline. Regenerate it with `python sample.py` after a run.
 | Race | 50/30/10/10 white, black, Asian, American Indian | 60/20/10/10 white, black, Middle Eastern, Native Hawaiian |
 | BMI | continuous | categorical |
 
+Both carry the same five conditions — heart failure, family history of stroke,
+hypertension, Type 2 diabetes, and myocardial infarction — and the same
+measurements, including fasting glucose and HbA1c.
+
 5% of Study Two's participants are the same individuals as in Study One. They
 share a `dbGaP_Subject_ID`, so harmonization resolves them to one `Person` with
 two `Participant` records — the same way real cross-study participation appears.
 
 One visit per participant is `TELEHEALTH`; the rest are `STUDY_SITE_VISIT`.
 Deceased participants stop attending, so nobody is measured after they die.
+
+## Time
+
+Conditions carry `age_at_condition_start`, `age_at_condition_end` where they
+resolved, and the `associated_visit` that recorded them. Measurements carry
+`age_at_observation` and their own `associated_visit` — including the systolic
+and diastolic observations nested inside a blood pressure set, which are
+queryable on their own and should not need a join back through the set to be
+placed in time.
+
+The reason to populate those slots is that a quarter of diagnoses are **incident**:
+made between two visits rather than before enrolment. A condition only makes
+the measurements it explains abnormal from its diagnosis onwards, and stops
+once it resolves, so the same participant's results fall into two distinct
+distributions:
+
+```
+glucose at or above 126 mg/dL, participants diagnosed with T2D mid-study
+  before the diagnosis   10.3%     (the corpus-wide rate)
+  after  the diagnosis   52.2%     (the diabetic rate)
+```
+
+A corpus where every diagnosis predates every visit answers "measurements after
+diagnosis" with the whole cohort, and the temporal slots are decoration.
+`validate.py` checks the separation rather than merely checking the slots are
+non-null.
+
+Family history is the exception: `age_at_condition_start` is defined as the
+*participant's* age, which means nothing for a condition a parent had, so
+family-history records carry the recording visit and no ages.
+
+## Concepts and source terminology
+
+Hypertension and Type 2 diabetes are coded from the BDC cohort-readiness
+code-set reference — 13 hypertension subtypes and 11 for T2D, against the
+single `HP:0000822` and no diabetes at all that the corpus started with. A
+participant screened and found negative is coded to the hierarchy root, since a
+questionnaire asks about hypertension in general; a subtype is recorded once
+there is a diagnosis.
+
+SNOMED CT and ICD-10-CM appear **only in the raw dbGaP-style tables**. BDCHM has
+no slot for source terminology anywhere — `condition_concept` is single-valued
+over `ConditionConceptEnum`, which is MONDO ∪ HPO — so mapping source codes into
+harmonized output would mean inventing a place to put them. Leaving them in the
+raw layer is also what real data looks like, and it means the transformation
+exercises the code-mapping path rather than assuming it away.
+
+That matters most for T2D, where the reference gives `MONDO:0005148` for nearly
+every row and puts the complication-level detail in ICD-10-CM. The granularity
+this corpus offers for diabetes complications lives in the source codes.
+
+Two reference rows are deliberately not used, and one class of cell is not
+guessed at:
+
+- **Pregnancy-related hypertension** — both cohorts enrol at 45-78.
+- **T2D with ophthalmic complications** — its ICD-10-CM cell is the bare
+  wildcard `E11.3*` and its MONDO is the shared root, so it would be
+  indistinguishable from every other T2D record.
+- Cells naming a hierarchy rather than a term (`"44054006 hierarchy + renal
+  complication descendants"`) or a wildcard rather than a code become `None`
+  rather than a guess. A subtype with no concrete source code emits none, which
+  is a shape real data has too.
 
 ## Known shapes that surprise people
 
@@ -124,7 +198,9 @@ has to render:
 - `associated_assay` referencing a CBC instance (WBC)
 - `qualifier` marking a value as an average (BUN)
 - `Condition.relationship_to_participant` for family history
-- `associated_evidence` on study-record-sourced conditions
+- `associated_evidence` distinguishing an ECG-backed infarction from self-report
+- `age_at_condition_start` / `_end` and `associated_visit` on conditions
+- `age_at_observation` on every measurement, nested ones included
 - `exposure_status` distinguishing absent from present drug exposures
 - Continuous and categorical presentations of the same concept across cohorts
 

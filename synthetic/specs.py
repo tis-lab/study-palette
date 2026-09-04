@@ -54,11 +54,32 @@ def ident(study, table):
     return subject, f"'uuid5(\"{PARTICIPANT_NS}\", str({{{subject}}}) + \":{study.name}\")'"
 
 
-def visit_ref(study, table):
-    """Build the uuid5 reference to a row's visit."""
+def visit_ref(study, table, column="VISIT_NUM"):
+    """
+    Build the uuid5 reference to a row's visit.
+
+    The measurement tables carry one VISIT_NUM for the row. The conditions
+    table is one row per participant, so each condition names the visit that
+    recorded it in its own column.
+    """
     subject = phv(study, table, "SUBJECT_ID")
-    num = phv(study, table, "VISIT_NUM")
+    num = phv(study, table, column)
     return f"'uuid5(\"{VISIT_NS}\", str({{{subject}}}) + \":{study.name} VISIT \" + str({{{num}}}))'"
+
+
+def observed_at(study, table):
+    """
+    Build the two temporal anchors every MeasurementObservation should carry.
+
+    RTI derives age_at_observation as '{age_in_years} * 365' because their raw
+    columns hold years; ours hold days already, so this is a plain
+    populated_from and nulls propagate rather than needing a case() guard.
+    """
+    return (
+        f"        associated_visit:\n          expr: {visit_ref(study, table)}\n"
+        f"        age_at_observation:\n"
+        f"          populated_from: {phv(study, table, 'AGE_DAYS')}\n"
+    )
 
 
 def person_and_participant(study):
@@ -157,6 +178,9 @@ def blood_pressure(study):
     dbp = phv(study, "clinical", "DBP")
 
     def observation(concept, source, label):
+        # The set carries associated_visit too, but an observation is also
+        # queryable on its own, and a consumer filtering MeasurementObservation
+        # by time should not have to join back through the set to do it.
         return f"""          - MeasurementObservation:
               populated_from: {t}
               slot_derivations:
@@ -164,6 +188,10 @@ def blood_pressure(study):
                   expr: {uid(OBSERVATION_NS, row_key(study, "clinical", label))}
                 associated_participant:
                   expr: {participant}
+                associated_visit:
+                  expr: {visit}
+                age_at_observation:
+                  populated_from: {phv(study, "clinical", "AGE_DAYS")}
                 observation_type:
                   value: {concept}
                 body_position:
@@ -208,7 +236,6 @@ def simple_measure(study, table, column, concept, unit, extra="", categorical=Fa
     """
     t = study.tables[table]
     _, participant = ident(study, table)
-    visit = visit_ref(study, table)
     key = row_key(study, table, column)
     if categorical:
         value_slot = "value_concept"
@@ -224,9 +251,7 @@ def simple_measure(study, table, column, concept, unit, extra="", categorical=Fa
           expr: {uid(OBSERVATION_NS, key)}
         associated_participant:
           expr: {participant}
-        associated_visit:
-          expr: {visit}
-        observation_type:
+{observed_at(study, table)}        observation_type:
           value: {concept}
 {extra}        value_quantity:
           class_derivations:
@@ -245,7 +270,6 @@ def hdl(study):
     t = study.tables["labs"]
     operator = phv(study, "labs", "HDL_OPERATOR")
     _, participant = ident(study, "labs")
-    visit = visit_ref(study, "labs")
     return f"""- class_derivations:
     MeasurementObservation:
       populated_from: {t}
@@ -254,9 +278,7 @@ def hdl(study):
           expr: {uid(OBSERVATION_NS, row_key(study, "labs", "HDL"))}
         associated_participant:
           expr: {participant}
-        associated_visit:
-          expr: {visit}
-        observation_type:
+{observed_at(study, "labs")}        observation_type:
           value: OMOP:3007070
         associated_assay:
           class_derivations:
@@ -309,7 +331,6 @@ def wbc(study):
     """WBC references a CBC assay instance through associated_assay."""
     t = study.tables["labs"]
     _, participant = ident(study, "labs")
-    visit = visit_ref(study, "labs")
     return f"""- class_derivations:
     MeasurementObservation:
       populated_from: {t}
@@ -318,9 +339,7 @@ def wbc(study):
           expr: {uid(OBSERVATION_NS, row_key(study, "labs", "WBC"))}
         associated_participant:
           expr: {participant}
-        associated_visit:
-          expr: {visit}
-        observation_type:
+{observed_at(study, "labs")}        observation_type:
           value: OMOP:3000905
         associated_assay:
           class_derivations:
@@ -345,8 +364,28 @@ def wbc(study):
 """
 
 
-def condition(study, label, status_col, concept_col, provenance, relationship=None):
-    """One Condition. relationship defaults to ONESELF for self-reported history."""
+def condition(
+    study,
+    label,
+    status_col,
+    concept_col,
+    provenance,
+    relationship=None,
+    visit_col=None,
+    age_start_col=None,
+    age_end_col=None,
+    evidence=None,
+):
+    """
+    One Condition. relationship defaults to ONESELF for self-reported history.
+
+    The temporal slots are optional because not every condition has a meaningful
+    one: family history is about a relative, so the participant's age at its
+    start is undefined, and an infarction is an event rather than a state that
+    resolves, so it has no end. Where a column is given, it is populated
+    straight through — the raw columns hold days and are already null when the
+    condition is absent, so no case() guard is needed to suppress them.
+    """
     t = study.tables["conditions"]
     _, participant = ident(study, "conditions")
     relationship_line = (
@@ -354,11 +393,21 @@ def condition(study, label, status_col, concept_col, provenance, relationship=No
         if relationship
         else f"          value: {v.ONESELF}"
     )
-    concept = (
-        f"          populated_from: {phv(study, 'conditions', concept_col)}"
-        if concept_col
-        else "          value: HP:0000822"
-    )
+
+    temporal = ""
+    if visit_col:
+        temporal += f"        associated_visit:\n          expr: {visit_ref(study, 'conditions', visit_col)}\n"
+    if age_start_col:
+        temporal += (
+            f"        age_at_condition_start:\n"
+            f"          populated_from: {phv(study, 'conditions', age_start_col)}\n"
+        )
+    if age_end_col:
+        temporal += (
+            f"        age_at_condition_end:\n"
+            f"          populated_from: {phv(study, 'conditions', age_end_col)}\n"
+        )
+
     return f"""- class_derivations:
     Condition:
       populated_from: {t}
@@ -367,15 +416,49 @@ def condition(study, label, status_col, concept_col, provenance, relationship=No
           expr: {uid(v.CONDITION_NS, row_key(study, "conditions", label))}
         associated_participant:
           expr: {participant}
-        condition_concept:
-{concept}
+{temporal}        condition_concept:
+          populated_from: {phv(study, 'conditions', concept_col)}
         condition_status:
           populated_from: {phv(study, "conditions", status_col)}
         condition_provenance:
           value: {provenance}
         relationship_to_participant:
 {relationship_line}
-"""
+{evidence or ""}"""
+
+
+def self_report_evidence():
+    """
+    Evidence for a condition taken from a questionnaire.
+
+    BDCHM ranges associated_evidence on Entity and marks it multivalued, but
+    MESA-ingest puts a bare descriptive string there. The corpus follows the
+    real spec rather than the model, so schema.py reports the cardinality
+    disagreement instead of the corpus hiding it.
+    """
+    return f'        associated_evidence:\n          value: "{v.SELF_REPORT_EVIDENCE}"\n'
+
+
+def mi_evidence(study):
+    """
+    Evidence for an infarction, which differs by where the record came from.
+
+    Half of the MIs are in the study record with an ECG behind them; the rest
+    are self-reported.
+
+    This branches with case() rather than the value_mappings the real specs use
+    for coded columns, because the two disagree on cardinality: value_mappings
+    honours BDCHM's multivalued declaration and emits a list, while a plain
+    `value:` emits a scalar. Mixing them would leave one slot carrying both
+    shapes, which schema.py types from the first record it sees and would
+    therefore get wrong for the rest. RTI emits the scalar, so the corpus does.
+    """
+    source = phv(study, "conditions", "HA_SOURCE")
+    return (
+        f"        associated_evidence:\n"
+        f"          expr: 'case(({{{source}}} == \"STUDY_RECORD\", \"{v.ECG_EVIDENCE}\"),"
+        f" ({{{source}}} == \"SELF_REPORT\", \"{v.SELF_REPORT_EVIDENCE}\"))'\n"
+    )
 
 
 def drug_exposure(study):
@@ -420,16 +503,42 @@ def build(study):
             extra='        qualifier:\n          value: "AVERAGE"\n',
         ),
         "wbc": wbc(study),
+        # Fasting glucose and HbA1c follow MESA-ingest's specs: the same OMOP
+        # observation types, units, and method_type strings.
+        "glucose": simple_measure(
+            study, "labs", "GLUCOSE", v.FASTING_GLUCOSE, "mg/dL",
+            extra=f'        method_type:\n          value: {v.GLUCOSE_METHOD}\n',
+        ),
+        "hba1c": simple_measure(
+            study, "labs", "HBA1C", v.HBA1C, "%",
+            extra=f'        method_type:\n          value: "{v.HBA1C_METHOD}"\n',
+        ),
         "cond_heart_failure": condition(
-            study, "heart_failure", "HEART_FAILURE", "HF_CONCEPT", v.SELF_REPORTED_CONDITION),
+            study, "heart_failure", "HEART_FAILURE", "HF_CONCEPT", v.SELF_REPORTED_CONDITION,
+            visit_col="HF_VISIT", age_start_col="HF_AGE_START",
+            evidence=self_report_evidence(),
+        ),
         "cond_family_stroke": condition(
             study, "family_stroke", "FAM_STROKE", "FS_CONCEPT", v.SELF_REPORTED_CONDITION,
             relationship=phv(study, "conditions", "FS_RELATIVE"),
+            visit_col="FS_VISIT",
+            evidence=self_report_evidence(),
         ),
         "cond_hypertension": condition(
-            study, "hypertension", "HYPERTENSION", None, v.SELF_REPORTED_CONDITION),
+            study, "hypertension", "HYPERTENSION", "HTN_CONCEPT", v.SELF_REPORTED_CONDITION,
+            visit_col="HTN_VISIT", age_start_col="HTN_AGE_START", age_end_col="HTN_AGE_END",
+            evidence=self_report_evidence(),
+        ),
+        "cond_diabetes": condition(
+            study, "diabetes", "DIABETES", "DM_CONCEPT", v.SELF_REPORTED_CONDITION,
+            visit_col="DM_VISIT", age_start_col="DM_AGE_START", age_end_col="DM_AGE_END",
+            evidence=self_report_evidence(),
+        ),
         "cond_heart_attack": condition(
-            study, "heart_attack", "HEART_ATTACK", "HA_CONCEPT", v.SELF_REPORTED_CONDITION),
+            study, "heart_attack", "HEART_ATTACK", "HA_CONCEPT", v.SELF_REPORTED_CONDITION,
+            visit_col="HA_VISIT", age_start_col="HA_AGE_START",
+            evidence=mi_evidence(study),
+        ),
         "drug_exposure": drug_exposure(study),
     }
     return specs

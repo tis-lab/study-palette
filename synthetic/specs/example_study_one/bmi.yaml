@@ -8,6 +8,8 @@
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111300}) + ":Example Study One")'
         associated_visit:
           expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111300}) + ":Example Study One VISIT " + str({phv10111301}))'
+        age_at_observation:
+          populated_from: phv10111302
         observation_type:
           value: OMOP:3038553
         value_quantity:
@@ -18,6 +20,6 @@
                 id:
                   expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10111300}) + ":Example Study One:" + str({phv10111301}) + ":BMI")'
                 value_decimal:
-                  populated_from: phv10111304
+                  populated_from: phv10111305
                 unit:
                   value: "kg/m2"

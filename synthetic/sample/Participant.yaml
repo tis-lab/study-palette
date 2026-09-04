@@ -5,7 +5,7 @@ identity: '100001'
 member_of_research_study: Example Study One
 ---
 # study_two: enrolment, linked to a Person
-associated_person: b9733cac-ed81-52b8-bb35-ac8f1fccb21f
+associated_person: 383327ec-dd83-5a40-a8a5-07aa34bd31d6
 id: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
 identity: '200001'
 member_of_research_study: Example Study Two

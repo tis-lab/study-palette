@@ -3,7 +3,7 @@
       populated_from: pht000124
       slot_derivations:
         id:
-          expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10212400}) + ":Example Study Two:" + str({phv10212401}) + ":WBC")'
+          expr: 'uuid5("https://w3id.org/bdchm/MeasurementObservation", str({phv10212400}) + ":Example Study Two:" + str({phv10212401}) + ":HBA1C")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212400}) + ":Example Study Two")'
         associated_visit:
@@ -11,24 +11,17 @@
         age_at_observation:
           populated_from: phv10212402
         observation_type:
-          value: OMOP:3000905
-        associated_assay:
-          class_derivations:
-          - Assay:
-              populated_from: pht000124
-              slot_derivations:
-                id:
-                  expr: 'uuid5("https://w3id.org/bdchm/Assay", "Example Study Two:CBC")'
-                method:
-                  value: MMO:0000533
+          value: OMOP:4184637
+        method_type:
+          value: "blood assay"
         value_quantity:
           class_derivations:
           - Quantity:
               populated_from: pht000124
               slot_derivations:
                 id:
-                  expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10212400}) + ":Example Study Two:" + str({phv10212401}) + ":WBC")'
+                  expr: 'uuid5("https://w3id.org/bdchm/Quantity", str({phv10212400}) + ":Example Study Two:" + str({phv10212401}) + ":HBA1C")'
                 value_decimal:
-                  populated_from: phv10212406
+                  populated_from: phv10212408
                 unit:
-                  value: "10*3/uL"
+                  value: "%"

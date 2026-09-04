@@ -6,11 +6,17 @@
           expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10212500}) + ":Example Study Two:heart_attack")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212500}) + ":Example Study Two")'
+        associated_visit:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10212500}) + ":Example Study Two VISIT " + str({phv10212527}))'
+        age_at_condition_start:
+          populated_from: phv10212526
         condition_concept:
-          populated_from: phv10212508
+          populated_from: phv10212524
         condition_status:
-          populated_from: phv10212507
+          populated_from: phv10212523
         condition_provenance:
           value: PATIENT_SELF-REPORTED_CONDITION
         relationship_to_participant:
           value: ONESELF
+        associated_evidence:
+          expr: 'case(({phv10212525} == "STUDY_RECORD", "electrocardiogram"), ({phv10212525} == "SELF_REPORT", "self-report questionnaire"))'

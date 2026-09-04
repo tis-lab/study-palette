@@ -6,11 +6,19 @@
           expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10212500}) + ":Example Study Two:hypertension")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212500}) + ":Example Study Two")'
+        associated_visit:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10212500}) + ":Example Study Two VISIT " + str({phv10212515}))'
+        age_at_condition_start:
+          populated_from: phv10212513
+        age_at_condition_end:
+          populated_from: phv10212514
         condition_concept:
-          value: HP:0000822
+          populated_from: phv10212510
         condition_status:
-          populated_from: phv10212506
+          populated_from: phv10212509
         condition_provenance:
           value: PATIENT_SELF-REPORTED_CONDITION
         relationship_to_participant:
           value: ONESELF
+        associated_evidence:
+          value: "self-report questionnaire"

@@ -3,17 +3,19 @@
       populated_from: pht000125
       slot_derivations:
         id:
-          expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10212500}) + ":Example Study Two:heart_failure")'
+          expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10212500}) + ":Example Study Two:diabetes")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10212500}) + ":Example Study Two")'
         associated_visit:
-          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10212500}) + ":Example Study Two VISIT " + str({phv10212504}))'
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10212500}) + ":Example Study Two VISIT " + str({phv10212522}))'
         age_at_condition_start:
-          populated_from: phv10212503
+          populated_from: phv10212520
+        age_at_condition_end:
+          populated_from: phv10212521
         condition_concept:
-          populated_from: phv10212502
+          populated_from: phv10212517
         condition_status:
-          populated_from: phv10212501
+          populated_from: phv10212516
         condition_provenance:
           value: PATIENT_SELF-REPORTED_CONDITION
         relationship_to_participant:

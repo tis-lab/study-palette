@@ -6,11 +6,15 @@
           expr: 'uuid5("https://w3id.org/bdchm/Condition", str({phv10111500}) + ":Example Study One:family_stroke")'
         associated_participant:
           expr: 'uuid5("https://w3id.org/bdchm/Participant", str({phv10111500}) + ":Example Study One")'
+        associated_visit:
+          expr: 'uuid5("https://w3id.org/bdchm/Visit", str({phv10111500}) + ":Example Study One VISIT " + str({phv10111508}))'
         condition_concept:
-          populated_from: phv10111504
+          populated_from: phv10111506
         condition_status:
-          populated_from: phv10111503
+          populated_from: phv10111505
         condition_provenance:
           value: PATIENT_SELF-REPORTED_CONDITION
         relationship_to_participant:
-          populated_from: phv10111505
+          populated_from: phv10111507
+        associated_evidence:
+          value: "self-report questionnaire"

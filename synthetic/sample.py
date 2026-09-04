@@ -56,11 +56,41 @@ SELECTORS = {
         ("BMI as a category",
          lambda d: d.get("observation_type") == "OMOP:3038553"
          and d.get("value_quantity", {}).get("value_concept") is not None),
+        ("fasting glucose, anchored to an age and a visit",
+         lambda d: d.get("observation_type") == "OMOP:4156660"
+         and d.get("age_at_observation") is not None),
+        ("HbA1c, reported as a percentage",
+         lambda d: d.get("observation_type") == "OMOP:4184637"
+         and d.get("value_quantity", {}).get("unit") == "%"),
     ],
     "Condition": [
         ("family history, with the relative recorded",
          lambda d: d.get("relationship_to_participant", "").startswith("OMOP:")),
         ("about oneself", lambda d: d.get("relationship_to_participant") == "ONESELF"),
+        # The temporal slots, which are what make a condition queryable against
+        # the measurements taken around it.
+        ("ongoing, dated to the age at diagnosis",
+         lambda d: d.get("age_at_condition_start") and not d.get("age_at_condition_end")),
+        ("resolved, with both a start and an end age",
+         lambda d: d.get("age_at_condition_start") and d.get("age_at_condition_end")),
+        # Scoped to diabetes rather than any absent condition, so the record
+        # shown is the screening answer the neighbouring T2D entry is the
+        # diagnosed counterpart to.
+        ("undiagnosed: screened for, so no dates and no source code",
+         lambda d: d.get("condition_concept") == "MONDO:0005148"
+         and d.get("condition_status") == "ABSENT"),
+        # Concept breadth: T2D and a hypertension subtype more specific than the
+        # hierarchy root everyone else is coded to. Both must be diagnosed —
+        # MONDO:0005148 is also what a negative diabetes screen is coded to, so
+        # matching on the concept alone would label a participant who does not
+        # have diabetes 'Type 2 diabetes'.
+        ("Type 2 diabetes",
+         lambda d: d.get("condition_concept") == "MONDO:0005148"
+         and d.get("condition_status") in ("PRESENT", "HISTORICAL")),
+        ("hypertensive heart disease, not just 'hypertension'",
+         lambda d: d.get("condition_concept") == "MONDO:0001302"),
+        ("an infarction with an ECG in evidence rather than self-report",
+         lambda d: d.get("associated_evidence") == "electrocardiogram"),
     ],
     "DrugExposure": [
         ("taking a calcium channel blocker", lambda d: d.get("drug_concept")),
@@ -76,13 +106,23 @@ def load(path):
 
 
 def pick(records, selectors):
-    """Take the first record matching each selector, keeping the labels."""
-    chosen = []
+    """
+    Take the first unused record matching each selector, keeping the labels.
+
+    Selectors overlap — a record can be about oneself, undiagnosed, and coded
+    to diabetes all at once — so without skipping what earlier selectors took,
+    one record turns up several times under several labels and the sample stops
+    showing as many distinct shapes as it claims to.
+    """
+    chosen, seen = [], set()
     for label, predicate in selectors:
         for record in records:
+            if record.get("id") in seen:
+                continue
             try:
                 if predicate(record):
                     chosen.append((label, record))
+                    seen.add(record.get("id"))
                     break
             except (AttributeError, TypeError):
                 continue

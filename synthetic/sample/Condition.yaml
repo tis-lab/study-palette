@@ -1,31 +1,185 @@
 # study_one: family history, with the relative recorded
+associated_evidence: self-report questionnaire
 associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
-condition_concept: MONDO:0005264
+associated_visit: 75122f58-efd2-559d-9eac-2619199795aa
+condition_concept: MONDO:0013792
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
 condition_status: ABSENT
 id: 1bacbc56-4aaf-5017-b70c-42fa03f9d48b
 relationship_to_participant: OMOP:4321888
 ---
 # study_one: about oneself
+age_at_condition_end: null
+age_at_condition_start: null
+associated_evidence: self-report questionnaire
 associated_participant: ded1d538-866f-5c18-8aa2-0b24f1f08a5a
-condition_concept: MONDO:0005068
+associated_visit: null
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: ABSENT
+id: 93dc8788-7f85-5c52-b78f-0244bd7f1f3b
+relationship_to_participant: ONESELF
+---
+# study_one: ongoing, dated to the age at diagnosis
+age_at_condition_end: null
+age_at_condition_start: 22043
+associated_evidence: self-report questionnaire
+associated_participant: 1e3b97bf-f17d-53ab-b05b-da66139cf65a
+associated_visit: 91a85e60-c7b1-55f6-9c7a-1caef7e28fc1
+condition_concept: MONDO:0005148
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
 condition_status: PRESENT
-id: 4058ed2d-92d4-5b8a-af0e-aee32c2c9960
+id: fe9fd9e2-68c7-541e-a276-f5410ab6c5ae
+relationship_to_participant: ONESELF
+---
+# study_one: resolved, with both a start and an end age
+age_at_condition_end: 23679
+age_at_condition_start: 20465
+associated_evidence: self-report questionnaire
+associated_participant: 005f1434-9203-5c31-8d4f-4426ea0d1edc
+associated_visit: 912a37e2-3cd7-5e43-90e4-ea31243a63cc
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: HISTORICAL
+id: 2e1fc958-7841-5bb9-ab91-051f7d35e061
+relationship_to_participant: ONESELF
+---
+# study_one: undiagnosed: screened for, so no dates and no source code
+age_at_condition_end: null
+age_at_condition_start: null
+associated_evidence: self-report questionnaire
+associated_participant: e805802b-da55-5d52-9db3-810ad3ed2058
+associated_visit: null
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: ABSENT
+id: 7421193c-9e57-5018-ad8e-956ccb1df1a5
+relationship_to_participant: ONESELF
+---
+# study_one: Type 2 diabetes
+age_at_condition_end: null
+age_at_condition_start: 17887
+associated_evidence: self-report questionnaire
+associated_participant: 94470960-2d15-5ae5-8eb7-664b56478e73
+associated_visit: d3e958b4-898c-5942-be79-765f4890d4f6
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: PRESENT
+id: 696a19ca-77f3-5443-af49-36d06f7a33ca
+relationship_to_participant: ONESELF
+---
+# study_one: hypertensive heart disease, not just 'hypertension'
+age_at_condition_end: null
+age_at_condition_start: 22145
+associated_evidence: self-report questionnaire
+associated_participant: 4bf678da-a746-5d29-a100-2814a8973b28
+associated_visit: 8c37d465-a2ae-5a97-b0fa-6ffc0e0625ec
+condition_concept: MONDO:0001302
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: PRESENT
+id: d4033a16-0e38-522b-99a3-a7f7d21bbc53
+relationship_to_participant: ONESELF
+---
+# study_one: an infarction with an ECG in evidence rather than self-report
+age_at_condition_start: 15441
+associated_evidence: electrocardiogram
+associated_participant: c033e47e-9147-55f9-a2f2-d9aee07f19d9
+associated_visit: 35c0c7fc-fb59-567f-903f-cac28727e381
+condition_concept: MONDO:0006803
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: PRESENT
+id: 4b55221e-27aa-5882-9b26-485714d8a2c9
 relationship_to_participant: ONESELF
 ---
 # study_two: family history, with the relative recorded
+associated_evidence: self-report questionnaire
 associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
-condition_concept: MONDO:0013792
+associated_visit: 22bf721d-ce80-5f08-b1c5-d19857b89b15
+condition_concept: MONDO:0006809
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
-condition_status: UNKNOWN
+condition_status: ABSENT
 id: 87bc5b14-516d-598a-a33d-0bd3d7b92615
 relationship_to_participant: OMOP:4321888
 ---
 # study_two: about oneself
+age_at_condition_end: null
+age_at_condition_start: null
+associated_evidence: self-report questionnaire
 associated_participant: e9d16f51-a014-5b89-bb71-d3550b9a7cbb
-condition_concept: MONDO:0005068
+associated_visit: null
+condition_concept: MONDO:0005148
 condition_provenance: PATIENT_SELF-REPORTED_CONDITION
 condition_status: ABSENT
-id: 67332483-bbf9-57fd-98de-9f54e47bcd9e
+id: ac60fd9e-c1ff-55b9-829b-261592dbaaf5
+relationship_to_participant: ONESELF
+---
+# study_two: ongoing, dated to the age at diagnosis
+age_at_condition_end: null
+age_at_condition_start: 16623
+associated_evidence: self-report questionnaire
+associated_participant: 95a9eb19-e6ee-59bd-bb86-1a9f46b34601
+associated_visit: 1f8fd2ab-290a-551e-9f62-14dc76f5d60a
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: PRESENT
+id: cd68a5aa-db88-5dfa-9e87-86cc123056be
+relationship_to_participant: ONESELF
+---
+# study_two: resolved, with both a start and an end age
+age_at_condition_end: 26131
+age_at_condition_start: 25125
+associated_evidence: self-report questionnaire
+associated_participant: 16f1434c-7148-5af2-bf4b-3c9b0f5345bd
+associated_visit: 1e7adf97-1060-5efd-be0b-af4b2b0357d8
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: HISTORICAL
+id: dfd1a68f-e83b-5bbe-b087-0fa6986fa01f
+relationship_to_participant: ONESELF
+---
+# study_two: undiagnosed: screened for, so no dates and no source code
+age_at_condition_end: null
+age_at_condition_start: null
+associated_evidence: self-report questionnaire
+associated_participant: fd79135a-f146-5bd8-8774-cd330887be23
+associated_visit: null
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: ABSENT
+id: 359d1efa-1663-55eb-ae26-49e37732b615
+relationship_to_participant: ONESELF
+---
+# study_two: Type 2 diabetes
+age_at_condition_end: null
+age_at_condition_start: 25238
+associated_evidence: self-report questionnaire
+associated_participant: e562d1f8-aea8-5991-b75f-5f135d78015f
+associated_visit: f4071f3b-98cf-5adf-9e62-ee3ed69111c6
+condition_concept: MONDO:0005148
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: PRESENT
+id: 1abb7978-2941-5bfd-ae1a-f3ad8f1716ef
+relationship_to_participant: ONESELF
+---
+# study_two: hypertensive heart disease, not just 'hypertension'
+age_at_condition_end: 27128
+age_at_condition_start: 20216
+associated_evidence: self-report questionnaire
+associated_participant: 6d489c3a-0277-5196-8034-a232e2b76e3a
+associated_visit: 6c3f6f5d-788d-5eda-a287-e6f7598e9d95
+condition_concept: MONDO:0001302
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: HISTORICAL
+id: 93201bc3-a85a-5db5-ac2e-7f0a02d48eb3
+relationship_to_participant: ONESELF
+---
+# study_two: an infarction with an ECG in evidence rather than self-report
+age_at_condition_start: 19714
+associated_evidence: electrocardiogram
+associated_participant: cd0524eb-56c3-53f2-bd42-3a8aa2cceb36
+associated_visit: c8edc65c-3eb1-5a90-a683-b28aee2660e6
+condition_concept: MONDO:0005068
+condition_provenance: PATIENT_SELF-REPORTED_CONDITION
+condition_status: PRESENT
+id: daf67a3e-8982-50fe-ba22-aba5987760d3
 relationship_to_participant: ONESELF
