@@ -15,6 +15,23 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    lib: {
+      entry: "src/index.ts",
+      formats: ["es"],
+      fileName: "index",
+    },
+
+    rollupOptions: {
+      external: [
+        "react",
+        "react-dom",
+        "@mui/material",
+        "@emotion/react",
+        "@emotion/styled",
+      ],
+    },
+  },
   test: {
     environment: "jsdom",
     globals: true,
