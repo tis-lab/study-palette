@@ -16,9 +16,14 @@ second implementation of the transformation, free to drift from the real one in
 ways nobody would notice until a portal built on it met real data.
 
 ```
-generate.py  ->  data/raw/*.txt.gz  ->  dm-bip map-data  ->  harmonized BDCHM
-specs.py     ->  specs/*/*.yaml     ->  ^
+generate.py  ->  data/raw/SYNTHETIC.*.txt.gz  ->  dm-bip map-data  ->  harmonized BDCHM
+specs.py     ->  specs/*/*.yaml               ->  ^
 ```
+
+The raw tables follow the dbGaP naming convention exactly apart from a
+`SYNTHETIC.` prefix. Without it a file lifted out of its directory is
+indistinguishable from a controlled-access export, and a file is identified by
+its name rather than by the citation line in its header.
 
 ## Running it
 

@@ -18,6 +18,17 @@ import population as pop
 
 CITATION = "Synthetic corpus for portal development. Not derived from participant data."
 
+# Every raw table is named so it cannot be mistaken for a controlled-access
+# dbGaP export. The header already says so, but a file that escapes its
+# directory is identified by its name, not by its contents, and these otherwise
+# follow the dbGaP naming convention exactly.
+#
+# A prefix rather than a suffix: it is what a directory listing sorts on and
+# shows first, and it survives the truncation that hides the middle of a long
+# name. dm-bip finds the table accession with an unanchored search for
+# `pht[0-9]+`, so the prefix does not disturb the pipeline.
+SYNTHETIC_MARKER = "SYNTHETIC"
+
 # Column layouts. The phv accessions are fictional but well-formed, and are
 # what the transformation specs reference.
 LAYOUTS = {
@@ -93,7 +104,7 @@ def write_table(out_dir, study, table, rows):
     """Write one table in dbGaP raw format, returning its path."""
     columns, phv_count = LAYOUTS[table]
     pht = study.tables[table]
-    path = out_dir / f"{study.phs}.v1.{pht}.v1.p1.c1.ex0_1s.HMB.txt.gz"
+    path = out_dir / f"{SYNTHETIC_MARKER}.{study.phs}.v1.{pht}.v1.p1.c1.ex0_1s.HMB.txt.gz"
 
     with gzip.open(path, "wt", newline="") as fh:
         fh.write(f"# Study accession: {study.phs}.v1.p1\n")
