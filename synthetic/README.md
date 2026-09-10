@@ -16,8 +16,8 @@ second implementation of the transformation, free to drift from the real one in
 ways nobody would notice until a portal built on it met real data.
 
 ```
-generate.py  ->  data/raw/SYNTHETIC.*.txt.gz  ->  dm-bip map-data  ->  harmonized BDCHM
-specs.py     ->  specs/*/*.yaml               ->  ^
+generate.py  ->  data/raw/*/SYNTHETIC.*.txt.gz  ->  dm-bip map-data  ->  harmonized BDCHM
+specs.py     ->  specs/*/*.yaml                 ->  ^
 ```
 
 The raw tables follow the dbGaP naming convention exactly apart from a
