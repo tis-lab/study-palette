@@ -1,0 +1,53 @@
+{
+  "name": "bdc-dp-core",
+  "version": "0.0.1",
+  "description": "",
+  "bugs": {
+    "url": "https://github.com/tis-lab/bdc-dp-core/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tis-lab/bdc-dp-core.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/package.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "build:package": "rollup -c",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.2.0",
+    "@tis-lab/study-palette-ui": "file:.yalc/@tis-lab/study-palette-ui",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-scripts": "^5.0.1"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "yalcSig": "562dbb46b4597ed2fff0fc8d7b567d41"
+}
