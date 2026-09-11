@@ -13,7 +13,6 @@ import {
 } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
-import { useUserContext } from "@tis-lab/context-providers";
 
 interface StudiesResponse {
   studies: Study[];
@@ -21,7 +20,6 @@ interface StudiesResponse {
 }
 
 function App() {
-  const context = useUserContext();
   const [mode, setMode] = useState<DataMode>("demo");
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(false);
@@ -95,10 +93,6 @@ function App() {
               NHLBI BioData Catalyst<sup>&reg;</sup> (BDC) Meta-Analysis Study
               Builder & Query Tool
             </p>
-          </div>
-          <div>
-            Hello, {context?.user?.profile?.firstName}{" "}
-            {context?.user?.profile?.lastName}
           </div>
           <div className="header-controls">
             <label className="palette-picker">
