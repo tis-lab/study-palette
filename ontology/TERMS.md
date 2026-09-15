@@ -139,33 +139,33 @@ Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs,
 
 | CURIE | Label | Vocabulary | Studies | Via |
 |---|---|---|---|---|
-| `ATC:C09BA` | Ace inhibitors and diuretics | ATC1-4 | 3 | `tak_aceinhib` |
-| `ATC:C09A` | Ace inhibitors, plain | ATC1-4 | 6 | `tak_aceinhib` |
+| `ATC:C09BA` | ACE inhibitors and diuretics | ATC1-4 | 3 | `tak_aceinhib` |
+| `ATC:C09A` | ACE INHIBITORS, PLAIN | ATC1-4 | 6 | `tak_aceinhib` |
 | `RxCUI:149` | acebutolol | RxNorm | 1 | `tak_betablk` |
-| `NDFRT:N0000175557` | Aldosterone antagonist | EPC | 2 | `tak_aldorecepblk` |
+| `NDFRT:N0000175557` | Aldosterone Antagonist | EPC | 2 | `tak_aldorecepblk` |
 | `ATC:C03DA` | Aldosterone antagonists | ATC1-4 | 1 | `tak_aldorecepblk` |
-| `NDFRT:N0000175553` | Alpha-adrenergic blocker | EPC | 1 | `tak_alphablk` |
+| `NDFRT:N0000175553` | alpha-Adrenergic Blocker | EPC | 1 | `tak_alphablk` |
 | `RxCUI:17767` | amlodipine | RxNorm | 3 | `tak_calchanblk` |
-| `NDFRT:N0000175562` | Angiotensin converting enzyme inhibitor | EPC | 1 | `tak_aceinhib`, `tak_alphablk` |
-| `ATC:C09DA` | Angiotensin ii receptor blockers (arbs) and diuretics | ATC1-4 | 2 | `tak_angiorecepblk` |
-| `ATC:C09C` | Angiotensin ii receptor blockers (arbs), plain | ATC1-4 | 6 | `tak_aceinhib`, `tak_angiorecepblk` |
-| `ATC:C02` | Antihypertensives | ATC1-4 | 9 | `hypert_trt`, `tak_aceinhib`, `tak_alphablk` +1 |
-| `ATC:C02L` | Antihypertensives and diuretics in combination | ATC1-4 | 3 | `tak_vasodil` |
+| `NDFRT:N0000175562` | Angiotensin Converting Enzyme Inhibitor | EPC | 1 | `tak_aceinhib`, `tak_alphablk` |
+| `ATC:C09DA` | Angiotensin II receptor blockers (ARBs) and diuretics | ATC1-4 | 2 | `tak_angiorecepblk` |
+| `ATC:C09C` | ANGIOTENSIN II RECEPTOR BLOCKERS (ARBs), PLAIN | ATC1-4 | 6 | `tak_aceinhib`, `tak_angiorecepblk` |
+| `ATC:C02` | ANTIHYPERTENSIVES | ATC1-4 | 9 | `hypert_trt`, `tak_aceinhib`, `tak_alphablk` +1 |
+| `ATC:C02L` | ANTIHYPERTENSIVES AND DIURETICS IN COMBINATION | ATC1-4 | 3 | `tak_vasodil` |
 | `RxCUI:1202` | atenolol | RxNorm | 1 | `tak_betablk` |
 | `RxCUI:1436` | bepridil | RxNorm | 1 | `tak_calchanblk` |
-| `ATC:C07A` | Beta blocking agents | ATC1-4 | 7 | `tak_betablk` |
-| `ATC:C07D` | Beta blocking agents, thiazides and other diuretics | ATC1-4 | 1 | `tak_betablk` |
-| `ATC:A10B` | Blood glucose lowering drugs, excl. insulins | ATC1-4 | 1 | `tak_med_diab` |
-| `ATC:C08` | Calcium channel blockers | ATC1-4 | 5 | `tak_calchanblk` |
+| `ATC:C07A` | BETA BLOCKING AGENTS | ATC1-4 | 7 | `tak_betablk` |
+| `ATC:C07D` | BETA BLOCKING AGENTS, THIAZIDES AND OTHER DIURETICS | ATC1-4 | 1 | `tak_betablk` |
+| `ATC:A10B` | BLOOD GLUCOSE LOWERING DRUGS, EXCL. INSULINS | ATC1-4 | 1 | `tak_med_diab` |
+| `ATC:C08` | CALCIUM CHANNEL BLOCKERS | ATC1-4 | 5 | `tak_calchanblk` |
 | `RxCUI:1998` | captopril | RxNorm | 1 | `hypert_trt` |
-| `NDFRT:N0000175554` | Central alpha-2 adrenergic agonist | EPC | 1 | `tak_cenactag` |
+| `NDFRT:N0000175554` | Central alpha-2 Adrenergic Agonist | EPC | 1 | `tak_cenactag` |
 | `RxCUI:2404` | chlorpropamide | RxNorm | 1 | `tak_orlhypoag` |
 | `RxCUI:2599` | clonidine | RxNorm | 1 | `tak_cenactag` |
 | `RxCUI:151549` | Corgard | RxNorm | 1 | `tak_betablk` |
-| `NDFRT:N0000175421` | Dihydropyridine calcium channel blocker | EPC | 1 | `tak_calchanblk` |
+| `NDFRT:N0000175421` | Dihydropyridine Calcium Channel Blocker | EPC | 1 | `tak_calchanblk` |
 | `RxCUI:3443` | diltiazem | RxNorm | 4 | `tak_calchanblk` |
-| `ATC:C03` | Diuretics | ATC1-4 | 8 | `hypert_trt`, `tak_alphablk`, `tak_diuret` |
-| `ATC:A10` | Drugs used in diabetes | ATC1-4 | 5 | `tak_med_diab` |
+| `ATC:C03` | DIURETICS | ATC1-4 | 8 | `hypert_trt`, `tak_alphablk`, `tak_diuret` |
+| `ATC:A10` | DRUGS USED IN DIABETES | ATC1-4 | 5 | `tak_med_diab` |
 | `RxCUI:4316` | felodipine | RxNorm | 1 | `tak_calchanblk` |
 | `RxCUI:25789` | glimepiride | RxNorm | 1 | `tak_orlhypoag` |
 | `RxCUI:4821` | glipizide | RxNorm | 1 | `tak_orlhypoag` |
@@ -185,19 +185,19 @@ Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs,
 | `RxCUI:7396` | nicardipine | RxNorm | 1 | `tak_calchanblk` |
 | `RxCUI:7417` | nifedipine | RxNorm | 1 | `tak_calchanblk` |
 | `RxCUI:7435` | nisoldipine | RxNorm | 1 | `tak_calchanblk` |
-| `ATC:C04` | Peripheral vasodilators | ATC1-4 | 4 | `tak_vasodil` |
+| `ATC:C04` | PERIPHERAL VASODILATORS | ATC1-4 | 4 | `tak_vasodil` |
 | `RxCUI:8332` | pindolol | RxNorm | 1 | `hypert_trt`, `tak_betablk` |
-| `NDFRT:N0000175418` | Potassium-sparing diuretic | EPC | 3 | `tak_aldorecepblk`, `tak_diuret` |
+| `NDFRT:N0000175418` | Potassium-sparing Diuretic | EPC | 3 | `tak_aldorecepblk`, `tak_diuret` |
 | `RxCUI:8787` | propranolol | RxNorm | 1 | `tak_betablk` |
 | `RxCUI:73044` | repaglinide | RxNorm | 1 | `tak_orlhypoag` |
 | `RxCUI:84108` | rosiglitazone | RxNorm | 1 | `tak_orlhypoag` |
 | `RxCUI:9997` | spironolactone | RxNorm | 1 | `tak_aldorecepblk` |
 | `RxCUI:152413` | Tenormin | RxNorm | 1 | `tak_betablk` |
-| `NDFRT:N0000175419` | Thiazide diuretic | EPC | 4 | `tak_diuret` |
+| `NDFRT:N0000175419` | Thiazide Diuretic | EPC | 4 | `tak_diuret` |
 | `RxCUI:10600` | timolol | RxNorm | 1 | `tak_betablk` |
 | `RxCUI:152440` | Trandate | RxNorm | 1 | `hypert_trt` |
 | `RxCUI:72610` | troglitazone | RxNorm | 1 | `tak_orlhypoag` |
-| `ATC:C01D` | Vasodilators used in cardiac diseases | ATC1-4 | 3 | `tak_vasodil` |
+| `ATC:C01D` | VASODILATORS USED IN CARDIAC DISEASES | ATC1-4 | 3 | `tak_vasodil` |
 | `RxCUI:11170` | verapamil | RxNorm | 4 | `tak_calchanblk` |
 
 ## MeasurementObservationSet

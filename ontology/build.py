@@ -13,7 +13,7 @@ It is carried here as provenance — which variable and study a term is reached
 through — and is used at build time to scope which specs are read. Nothing
 downstream should key on it or display it.
 
-    python ontology/build.py --specs path/to/NHLBI-BDC-DMC-HV/priority_variables_transform
+    python -m ontology.build --specs path/to/NHLBI-BDC-DMC-HV/priority_variables_transform
 
 Resolved terms are cached in ontology/.cache.json; delete it to refresh.
 """
@@ -22,9 +22,9 @@ import argparse
 import json
 from pathlib import Path
 
-from extract import from_specs
-from focus import FOCUS_AREAS, area_of
-from resolve import resolve_all
+from ontology.extract import from_specs
+from ontology.focus import FOCUS_AREAS, area_of
+from ontology.resolve import resolve_all
 
 HERE = Path(__file__).parent
 

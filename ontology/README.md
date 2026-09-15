@@ -45,8 +45,11 @@ that no current harmonization emits.
 ## Building
 
 ```
-python ontology/build.py --specs path/to/NHLBI-BDC-DMC-HV/priority_variables_transform
+python -m ontology.build --specs path/to/NHLBI-BDC-DMC-HV/priority_variables_transform
 ```
+
+Run from the repository root — `ontology` is a package, so `build` imports its
+siblings by name rather than relying on the working directory.
 
 Writes `terms.json` (full records, for the UI) and `TERMS.md` (the human
 handoff). `--all` reads every spec rather than the proof-of-concept focus

@@ -100,8 +100,10 @@ def from_ols(curie):
     """
     Look a CURIE up in its defining ontology via OLS4.
 
-    `exact_match=true` and `isDefiningOntology` together keep this from picking
-    up a term that some unrelated ontology happens to import.
+    An OBO term is frequently imported into other ontologies, and OLS indexes
+    every copy. `exact=true` scoped to the owning ontology narrows it, and
+    `is_defining_ontology` is then checked on the result so a label can only
+    come from the ontology that actually defines the term.
     """
     prefix = curie.split(":", 1)[0]
     ontology = OLS_ONTOLOGIES.get(prefix)
@@ -117,6 +119,8 @@ def from_ols(curie):
     docs = ((payload or {}).get("response") or {}).get("docs") or []
     for doc in docs:
         if doc.get("obo_id") != curie:
+            continue
+        if not doc.get("is_defining_ontology"):
             continue
         description = doc.get("description") or []
         return {
@@ -174,12 +178,14 @@ def from_rxclass(curie):
     ) or []
     if not found:
         return None
-    # RxClass publishes these upper-cased. Only the case is normalised —
-    # the wording is left exactly as WHO/NLM give it.
-    name = found[0]["className"]
+    # Verbatim, including case. ATC publishes upper-case ("ACE INHIBITORS,
+    # PLAIN") while NDFRT is mixed ("Central alpha-2 Adrenergic Agonist"), and
+    # normalising either way corrupts the acronyms that carry the meaning —
+    # ACE, ARBs and the II in "ANGIOTENSIN II". How it is cased on screen is
+    # the interface's decision to make, not this module's.
     return {
         "id": curie,
-        "label": name[:1].upper() + name[1:].lower(),
+        "label": found[0]["className"],
         "description": None,
         "synonyms": [],
         "source": "rxclass",

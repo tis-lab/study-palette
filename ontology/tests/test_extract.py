@@ -6,15 +6,11 @@ inside `case(...)` expressions, several concepts in one spec, and accessions
 that look enough like CURIEs to be swept up by a careless pattern.
 """
 
-import sys
 import textwrap
-from pathlib import Path
 
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from extract import from_specs, walk  # noqa: E402
+from ontology.extract import from_specs, walk
 
 
 def parse(text):
