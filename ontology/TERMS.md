@@ -220,7 +220,7 @@ Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs,
 
 ## Synthetic corpus only
 
-43 terms.
+46 terms.
 
 | CURIE | Label | Vocabulary | Studies | Via |
 |---|---|---|---|---|
@@ -267,6 +267,9 @@ Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs,
 | `OMOP:3013682` | Urea nitrogen [Mass/volume] in Serum or Plasma | LOINC | 0 | synthetic corpus |
 | `OMOP:8527` | White | Race | 0 | synthetic corpus |
 | `MMO:0000533` | white blood cell counting method | MMO | 0 | synthetic corpus |
+| `ICD10CM:I00-I99` | _unresolved_ | — | 0 | synthetic corpus |
+| `ICD10CM:I20-I25` | _unresolved_ | — | 0 | synthetic corpus |
+| `ICD10CM:R99` | _unresolved_ | — | 0 | synthetic corpus |
 
 ## Mappings to report upstream
 
@@ -280,5 +283,8 @@ These CURIEs sit in a concept slot but do not name a clinical concept — a unit
 
 No public service resolves these. ICD10CM entries are chapter ranges rather than concepts, so they are expected here.
 
+- `ICD10CM:I00-I99`
+- `ICD10CM:I20-I25`
+- `ICD10CM:R99`
 - `OMOP:4822126`
 - `OMOP:4822160`

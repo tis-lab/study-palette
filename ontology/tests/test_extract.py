@@ -133,6 +133,20 @@ def test_scan_tree_finds_concepts_no_spec_emits(tmp_path):
     assert found == {"MONDO:0001134", "MONDO:0005148"}
 
 
+def test_a_vocabulary_with_digits_in_its_prefix_is_found(tmp_path):
+    """
+    ICD10CM is the one listed vocabulary whose prefix contains digits.
+
+    A letter-only prefix pattern drops it without trace, which is worse than
+    failing to resolve it: the README and the generated list both promise
+    ICD10CM will be reported as unresolved.
+    """
+    (tmp_path / "vocab.py").write_text(
+        'TOP_DEATH_CAUSES = ["ICD10CM:I20-I25", "ICD10CM:R99"]\n'
+    )
+    assert scan_tree(tmp_path) == {"ICD10CM:I20-I25", "ICD10CM:R99"}
+
+
 def test_scan_tree_on_a_missing_directory_is_empty(tmp_path):
     assert scan_tree(tmp_path / "nope") == set()
 

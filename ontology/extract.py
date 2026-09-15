@@ -24,7 +24,10 @@ from pathlib import Path
 
 import yaml
 
-CURIE = re.compile(r"\b([A-Z][A-Za-z]*):([A-Za-z0-9][A-Za-z0-9._-]*)\b")
+# Digits are allowed in the prefix: ICD10CM carries them, and a letter-only
+# pattern drops it silently rather than reporting it unresolved. `VOCABULARIES`
+# below is what actually gates a match, so a permissive prefix costs nothing.
+CURIE = re.compile(r"\b([A-Z][A-Za-z0-9]*):([A-Za-z0-9][A-Za-z0-9._-]*)\b")
 
 # Slots whose value is a concept a user would browse or filter on.
 CONCEPT_SLOTS = {

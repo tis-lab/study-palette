@@ -1203,6 +1203,57 @@
    "areas": []
   },
   {
+   "curie": "ICD10CM:I00-I99",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": null,
+   "definition": null,
+   "synonyms": [],
+   "label_source": null,
+   "vocabulary": null,
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ICD10CM:I20-I25",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": null,
+   "definition": null,
+   "synonyms": [],
+   "label_source": null,
+   "vocabulary": null,
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ICD10CM:R99",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": null,
+   "definition": null,
+   "synonyms": [],
+   "label_source": null,
+   "vocabulary": null,
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MMO:0000133",
    "bdchm_classes": [],
    "slots": [],
@@ -6239,6 +6290,9 @@
   }
  ],
  "unresolved": [
+  "ICD10CM:I00-I99",
+  "ICD10CM:I20-I25",
+  "ICD10CM:R99",
   "OMOP:4822126",
   "OMOP:4822160"
  ]
