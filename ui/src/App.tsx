@@ -96,7 +96,7 @@ function App() {
               Builder & Query Tool
             </p>
           </div>
-          {context?.user?.profile?.firstName} {context?.user?.profile?.lastName}
+          {context?.user?.profile?.firstName}
           <div className="header-controls">
             <label className="palette-picker">
               <span>Figure palette</span>
