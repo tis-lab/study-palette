@@ -1,0 +1,4963 @@
+{
+ "concepts": [
+  {
+   "name": "afib",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0004981"
+   ],
+   "curie": "MONDO:0004981",
+   "label": "Atrial fibrillation",
+   "ontology_label": "atrial fibrillation",
+   "label_source": "monarch",
+   "matched_on": "synonym",
+   "vocabulary": "MONDO",
+   "definition": "A disorder characterized by an electrocardiographic finding of a supraventricular arrhythmia characterized by the replacement of consistent P waves by rapid oscillations or fibrillatory waves that vary in size, shape and timing and are accompanied by an irregular ventricular response. (CDISC)",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "alpha1_antitrypsin",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "MeasurementObservation derivation of 'alpha1_antitrypsin'",
+   "mappings": [
+    "OBA:2050075"
+   ],
+   "curie": "OBA:2050075",
+   "label": "Serum alpha-1-antitrypsin amount",
+   "ontology_label": "serum alpha-1-antitrypsin amount",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The amount of a alpha-1-antitrypsin when measured in blood serum.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "angina",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "HP:0001681"
+   ],
+   "curie": "HP:0001681",
+   "label": "Angina pectoris",
+   "ontology_label": "Angina pectoris",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "HP",
+   "definition": "Paroxysmal chest pain that occurs with exertion or stress and is related to myocardial ischemia.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "asthma",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0004979",
+    "HP:0012393",
+    "MONDO:0005492",
+    "HP:0003193",
+    "HP:0030828",
+    "MONDO:0850282",
+    "MONDO:0004784",
+    "MONDO:0024355"
+   ],
+   "curie": "MONDO:0004979",
+   "label": "Asthma",
+   "ontology_label": "asthma",
+   "label_source": "monarch",
+   "matched_on": "label",
+   "vocabulary": "MONDO",
+   "definition": "A bronchial disease that is characterized by chronic inflammation and narrowing of the airways, which is caused by a combination of environmental and genetic factors resulting in recurring periods of wheezing (a whistling sound while breathing), chest tightness, shortness of breath, mucus production and coughing. The symptoms appear due to a variety of triggers such as allergens, irritants, respiratory infections, weather changes, exercise, stress, reflux disease, medications, foods and emotional anxiety.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "HP:0012393",
+     "label": "Allergy"
+    },
+    {
+     "id": "MONDO:0005492",
+     "label": "urticaria"
+    },
+    {
+     "id": "HP:0003193",
+     "label": "Allergic rhinitis"
+    },
+    {
+     "id": "HP:0030828",
+     "label": "Wheezing"
+    },
+    {
+     "id": "MONDO:0850282",
+     "label": "chronic asthma"
+    },
+    {
+     "id": "MONDO:0004784",
+     "label": "allergic asthma"
+    },
+    {
+     "id": "MONDO:0024355",
+     "label": "respiratory tract infectious disorder"
+    }
+   ]
+  },
+  {
+   "name": "asthma_md",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS",
+   "mappings": [
+    "MONDO:0004979"
+   ],
+   "curie": "MONDO:0004979",
+   "label": "Asthma",
+   "ontology_label": "asthma",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A bronchial disease that is characterized by chronic inflammation and narrowing of the airways, which is caused by a combination of environmental and genetic factors resulting in recurring periods of wheezing (a whistling sound while breathing), chest tightness, shortness of breath, mucus production and coughing. The symptoms appear due to a variety of triggers such as allergens, irritants, respiratory infections, weather changes, exercise, stress, reflux disease, medications, foods and emotional anxiety.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "blood_clots",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0000831"
+   ],
+   "curie": "MONDO:0000831",
+   "label": "Thrombotic disease",
+   "ontology_label": "thrombotic disease",
+   "label_source": "monarch",
+   "matched_on": "synonym",
+   "vocabulary": "MONDO",
+   "definition": "The formation of a blood clot in the lumen of a vessel or heart chamber; causes include coagulation disorders and vascular endothelial injury.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "bronchitis",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005607"
+   ],
+   "curie": "MONDO:0005607",
+   "label": "Chronic bronchitis",
+   "ontology_label": "chronic bronchitis",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A type of chronic obstructive pulmonary disease characterized by chronic inflammation in the bronchial tree that results in edema, mucus production, obstruction, and reduced airflow to and from the lung alveoli. The most common cause is tobacco smoking. Signs and symptoms include coughing with excessive mucus production, and shortness of breath.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "bronchitis_md",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS",
+   "mappings": [
+    "MONDO:0005607"
+   ],
+   "curie": "MONDO:0005607",
+   "label": "Chronic bronchitis",
+   "ontology_label": "chronic bronchitis",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A type of chronic obstructive pulmonary disease characterized by chronic inflammation in the bronchial tree that results in edema, mucus production, obstruction, and reduced airflow to and from the lung alveoli. The most common cause is tobacco smoking. Signs and symptoms include coughing with excessive mucus production, and shortness of breath.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "chd",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CASE_REPORT_FORM; CLINICAL_DIAGNOSIS; PATIENT_SELF_REPORT",
+   "mappings": [
+    "MONDO:0005010"
+   ],
+   "curie": "MONDO:0005010",
+   "label": "Coronary artery disorder",
+   "ontology_label": "coronary artery disorder",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Narrowing of the coronary arteries due to fatty deposits inside the arterial walls. The diagnostic criteria may include documented history of any of the following: documented coronary artery stenosis greater than or equal to 50% (by cardiac catheterization or other modality of direct imaging of the coronary arteries); previous coronary artery bypass surgery (CABG); previous percutaneous coronary intervention (PCI); previous myocardial infarction. (ACC)",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "chf",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CASE_REPORT_FORM; CLINICAL_DIAGNOSIS; PATIENT_SELF_REPORT",
+   "mappings": [
+    "MONDO:0005009",
+    "MONDO:0005252"
+   ],
+   "curie": "MONDO:0005009",
+   "label": "Congestive heart failure",
+   "ontology_label": "congestive heart failure",
+   "label_source": "monarch",
+   "matched_on": "synonym",
+   "vocabulary": "MONDO",
+   "definition": "Failure of the heart to pump a sufficient amount of blood to meet the needs of the body tissues, resulting in tissue congestion and edema. Signs and symptoms include shortness of breath, pitting edema, enlarged tender liver, engorged neck veins, and pulmonary rales.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0005252",
+     "label": "heart failure"
+    }
+   ]
+  },
+  {
+   "name": "chr_bronchitis",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORT",
+   "mappings": [
+    "MONDO:0005607",
+    "MONDO:0005002"
+   ],
+   "curie": "MONDO:0005607",
+   "label": "Chronic bronchitis",
+   "ontology_label": "chronic bronchitis",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A type of chronic obstructive pulmonary disease characterized by chronic inflammation in the bronchial tree that results in edema, mucus production, obstruction, and reduced airflow to and from the lung alveoli. The most common cause is tobacco smoking. Signs and symptoms include coughing with excessive mucus production, and shortness of breath.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0005002",
+     "label": "chronic obstructive pulmonary disease"
+    }
+   ]
+  },
+  {
+   "name": "copd",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005002",
+    "MONDO:0000270"
+   ],
+   "curie": "MONDO:0005002",
+   "label": "Chronic obstructive pulmonary disease",
+   "ontology_label": "chronic obstructive pulmonary disease",
+   "label_source": "monarch",
+   "matched_on": "synonym",
+   "vocabulary": "MONDO",
+   "definition": "A chronic and progressive lung disorder characterized by the loss of elasticity of the bronchial tree and the air sacs, destruction of the air sacs wall, thickening of the bronchial wall, and mucous accumulation in the bronchial tree. The pathologic changes result in the disruption of the air flow in the bronchial airways. Signs and symptoms include shortness of breath, wheezing, productive cough, and chest tightness. The two main types of chronic obstructive pulmonary disease are chronic obstructive bronchitis and emphysema.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0000270",
+     "label": "lower respiratory tract disorder"
+    }
+   ]
+  },
+  {
+   "name": "cvd",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS",
+   "mappings": [
+    "MONDO:0005311",
+    "MONDO:0004995"
+   ],
+   "curie": "MONDO:0004995",
+   "label": "Cardiovascular disorder",
+   "ontology_label": "cardiovascular disorder",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A disease involving the cardiovascular system.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0005311",
+     "label": "atherosclerosis"
+    }
+   ]
+  },
+  {
+   "name": "diabetes",
+   "area": "Diabetes",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005015"
+   ],
+   "curie": "MONDO:0005015",
+   "label": "Diabetes mellitus",
+   "ontology_label": "diabetes mellitus",
+   "label_source": "monarch",
+   "matched_on": "synonym",
+   "vocabulary": "MONDO",
+   "definition": "A metabolic disorder characterized by abnormally high blood sugar levels due to diminished production of insulin or insulin resistance/desensitization.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "emphysema",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORT",
+   "mappings": [
+    "MONDO:0004848",
+    "MONDO:0004849"
+   ],
+   "curie": "MONDO:0004849",
+   "label": "Pulmonary emphysema",
+   "ontology_label": "pulmonary emphysema",
+   "label_source": "monarch",
+   "matched_on": "synonym",
+   "vocabulary": "MONDO",
+   "definition": "A subcategory of chronic obstructive pulmonary disease (COPD). It occurs in people who smoke and suffer from chronic bronchitis. It is characterized by inflation of the alveoli, alveolar wall damage, and reduction in the number of alveoli, resulting in difficulty breathing.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0004848",
+     "label": "ulcerative stomatitis"
+    }
+   ]
+  },
+  {
+   "name": "hyperten",
+   "area": "Hypertension",
+   "category": "ConditionDisease",
+   "description": "CASE_REPORT_FORM; CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "HP:0000822",
+    "MONDO:0005149"
+   ],
+   "curie": "MONDO:0005149",
+   "label": "Pulmonary hypertension",
+   "ontology_label": "pulmonary hypertension",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Increased pressure within the pulmonary circulation due to lung or heart disorder.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "HP:0000822",
+     "label": "Hypertension"
+    }
+   ]
+  },
+  {
+   "name": "hypertension",
+   "area": "Hypertension",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; SELF_DIAGNOSIS",
+   "mappings": [
+    "HP:0000822"
+   ],
+   "curie": "HP:0000822",
+   "label": "Hypertension",
+   "ontology_label": "Hypertension",
+   "label_source": "monarch",
+   "matched_on": "label",
+   "vocabulary": "HP",
+   "definition": "The presence of chronic increased pressure in the systemic arterial system.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "pad",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION; SELF_REPORTED",
+   "mappings": [
+    "MONDO:0005386",
+    "MONDO:0005294",
+    "HP:0004417"
+   ],
+   "curie": "MONDO:0005386",
+   "label": "Peripheral arterial disease",
+   "ontology_label": "peripheral arterial disease",
+   "label_source": "monarch",
+   "matched_on": "synonym",
+   "vocabulary": "MONDO",
+   "definition": "A disorder of the arteries supplying the upper and lower extremity and the visceral organs. This includes the mesenteric arteries, the renal arteries and the aorta and excludes cerebrovascular arterial disease. Patients experience cramping and pain usually in the calves and thighs while walking. The symptoms subside with rest.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0005294",
+     "label": "peripheral vascular disease"
+    },
+    {
+     "id": "HP:0004417",
+     "label": "Intermittent claudication"
+    }
+   ]
+  },
+  {
+   "name": "pulmonary_fibrosis",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS",
+   "mappings": [
+    "MONDO:0002771"
+   ],
+   "curie": "MONDO:0002771",
+   "label": "Pulmonary fibrosis",
+   "ontology_label": "pulmonary fibrosis",
+   "label_source": "monarch",
+   "matched_on": "label",
+   "vocabulary": "MONDO",
+   "definition": "Chronic progressive interstitial lung disorder characterized by the replacement of the lung tissue by connective tissue, leading to progressive dyspnea, respiratory failure, or right heart failure. Causes include chronic inflammatory processes, exposure to environmental irritants, radiation therapy, autoimmune disorders, certain drugs, or it may be idiopathic (no identifiable cause).",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "slp_ap",
+   "area": "Lung",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORT",
+   "mappings": [
+    "HP:0010535",
+    "MONDO:0005296"
+   ],
+   "curie": "MONDO:0005296",
+   "label": "Sleep apnea syndrome",
+   "ontology_label": "sleep apnea syndrome",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A disorder characterized by multiple cessations of respirations during sleep that induce partial arousals and interfere with the maintenance of sleep.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "HP:0010535",
+     "label": "Sleep apnea"
+    }
+   ]
+  },
+  {
+   "name": "stroke",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "HP:0001297",
+    "HP:0002140",
+    "MONDO:0005264",
+    "MONDO:0011057",
+    "MONDO:0005394",
+    "HP:0002170",
+    "MONDO:0005099",
+    "HP:0001342",
+    "MONDO:0006809"
+   ],
+   "curie": "HP:0001297",
+   "label": "Stroke",
+   "ontology_label": "Stroke",
+   "label_source": "monarch",
+   "matched_on": "label",
+   "vocabulary": "HP",
+   "definition": "Sudden impairment of blood flow to a part of the brain due to occlusion or rupture of an artery to the brain.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "HP:0002140",
+     "label": "Ischemic stroke"
+    },
+    {
+     "id": "MONDO:0005264",
+     "label": "transient ischemic attack"
+    },
+    {
+     "id": "MONDO:0011057",
+     "label": "cerebrovascular disorder"
+    },
+    {
+     "id": "MONDO:0005394",
+     "label": "brain infarction"
+    },
+    {
+     "id": "HP:0002170",
+     "label": "Intracranial hemorrhage"
+    },
+    {
+     "id": "MONDO:0005099",
+     "label": "subarachnoid hemorrhage"
+    },
+    {
+     "id": "HP:0001342",
+     "label": "Cerebral hemorrhage"
+    },
+    {
+     "id": "MONDO:0006809",
+     "label": "intracranial embolism"
+    }
+   ]
+  },
+  {
+   "name": "stroke_isch_atk",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005264"
+   ],
+   "curie": "MONDO:0005264",
+   "label": "Transient ischemic attack",
+   "ontology_label": "transient ischemic attack",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A brief attack (from a few minutes to an hour) of cerebral dysfunction of vascular origin, with no persistent neurological deficit.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "valv_hrtdis",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORT",
+   "mappings": [
+    "MONDO:0002869",
+    "MONDO:0042981",
+    "MONDO:0005648",
+    "HP:0001653",
+    "HP:0001718"
+   ],
+   "curie": "MONDO:0002869",
+   "label": "Heart valve disorder",
+   "ontology_label": "heart valve disorder",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A disease involving the cardial valve.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0042981",
+     "label": "aortic valve stenosis"
+    },
+    {
+     "id": "MONDO:0005648",
+     "label": "aortic valve insufficiency"
+    },
+    {
+     "id": "HP:0001653",
+     "label": "Mitral regurgitation"
+    },
+    {
+     "id": "HP:0001718",
+     "label": "Mitral stenosis"
+    }
+   ]
+  },
+  {
+   "name": "ven_thromb",
+   "area": "Cardiac",
+   "category": "ConditionDisease",
+   "description": "CLINICAL_DIAGNOSIS; OMOP:4822126; OMOP:4822160; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORT",
+   "mappings": [
+    "MONDO:0005279",
+    "HP:0002625",
+    "MONDO:0005399",
+    "MONDO:0005252",
+    "MONDO:0000831"
+   ],
+   "curie": "MONDO:0000831",
+   "label": "Thrombotic disease",
+   "ontology_label": "thrombotic disease",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "The formation of a blood clot in the lumen of a vessel or heart chamber; causes include coagulation disorders and vascular endothelial injury.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0005279",
+     "label": "pulmonary embolism"
+    },
+    {
+     "id": "HP:0002625",
+     "label": "Deep venous thrombosis"
+    },
+    {
+     "id": "MONDO:0005399",
+     "label": "venous thromboembolism"
+    },
+    {
+     "id": "MONDO:0005252",
+     "label": "heart failure"
+    }
+   ]
+  },
+  {
+   "name": "hist_cor_angio",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "OMOP:4184832",
+    "OMOP:4044550",
+    "OMOP:1242799",
+    "OMOP:4178405",
+    "OMOP:4223020",
+    "OMOP:4006788"
+   ],
+   "curie": "OMOP:1242799",
+   "label": "History of operation on carotid artery",
+   "ontology_label": "Operation on carotid artery",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "OMOP:4184832",
+     "label": "Coronary angioplasty"
+    },
+    {
+     "id": "OMOP:4044550",
+     "label": "Dilation - action"
+    },
+    {
+     "id": "OMOP:4178405",
+     "label": "Revascularization - action"
+    },
+    {
+     "id": "OMOP:4223020",
+     "label": "Cardiac catheterization"
+    },
+    {
+     "id": "OMOP:4006788",
+     "label": "Percutaneous transluminal coronary angioplasty"
+    }
+   ]
+  },
+  {
+   "name": "hist_cor_art_dis",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005010"
+   ],
+   "curie": "MONDO:0005010",
+   "label": "History of coronary artery disorder",
+   "ontology_label": "coronary artery disorder",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Narrowing of the coronary arteries due to fatty deposits inside the arterial walls. The diagnostic criteria may include documented history of any of the following: documented coronary artery stenosis greater than or equal to 50% (by cardiac catheterization or other modality of direct imaging of the coronary arteries); previous coronary artery bypass surgery (CABG); previous percutaneous coronary intervention (PCI); previous myocardial infarction. (ACC)",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hist_cor_bypg",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "OMOP:4336464"
+   ],
+   "curie": "OMOP:4336464",
+   "label": "History of coronary artery bypass graft",
+   "ontology_label": "Coronary artery bypass graft",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hist_coronary_bypass",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "OMOP:4336464"
+   ],
+   "curie": "OMOP:4336464",
+   "label": "History of coronary artery bypass graft",
+   "ontology_label": "Coronary artery bypass graft",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hist_cvd",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORT",
+   "mappings": [
+    "HP:0001681",
+    "MONDO:0005010",
+    "MONDO:0005453",
+    "MONDO:0005294",
+    "MONDO:0004995",
+    "MONDO:0005009",
+    "MONDO:0005068",
+    "MONDO:0000745",
+    "HP:0002621",
+    "MONDO:0005279",
+    "MONDO:0002869"
+   ],
+   "curie": "MONDO:0000745",
+   "label": "History of cardiac arrest",
+   "ontology_label": "cardiac arrest",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Cessation of breathing and/or cardiac function.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "HP:0001681",
+     "label": "Angina pectoris"
+    },
+    {
+     "id": "MONDO:0005010",
+     "label": "coronary artery disorder"
+    },
+    {
+     "id": "MONDO:0005453",
+     "label": "congenital heart disease"
+    },
+    {
+     "id": "MONDO:0005294",
+     "label": "peripheral vascular disease"
+    },
+    {
+     "id": "MONDO:0004995",
+     "label": "cardiovascular disorder"
+    },
+    {
+     "id": "MONDO:0005009",
+     "label": "congestive heart failure"
+    },
+    {
+     "id": "MONDO:0005068",
+     "label": "myocardial infarction"
+    },
+    {
+     "id": "HP:0002621",
+     "label": "Atherosclerosis"
+    },
+    {
+     "id": "MONDO:0005279",
+     "label": "pulmonary embolism"
+    },
+    {
+     "id": "MONDO:0002869",
+     "label": "heart valve disorder"
+    }
+   ]
+  },
+  {
+   "name": "hist_heart_disease",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005267"
+   ],
+   "curie": "MONDO:0005267",
+   "label": "History of heart disorder",
+   "ontology_label": "heart disorder",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "A disease involving the heart and/or pericardium.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hist_heart_failure",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005009"
+   ],
+   "curie": "MONDO:0005009",
+   "label": "History of congestive heart failure",
+   "ontology_label": "congestive heart failure",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Failure of the heart to pump a sufficient amount of blood to meet the needs of the body tissues, resulting in tissue congestion and edema. Signs and symptoms include shortness of breath, pitting edema, enlarged tender liver, engorged neck veins, and pulmonary rales.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hist_hrt_failure",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005009"
+   ],
+   "curie": "MONDO:0005009",
+   "label": "History of congestive heart failure",
+   "ontology_label": "congestive heart failure",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Failure of the heart to pump a sufficient amount of blood to meet the needs of the body tissues, resulting in tissue congestion and edema. Signs and symptoms include shortness of breath, pitting edema, enlarged tender liver, engorged neck veins, and pulmonary rales.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hist_hrtdis",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0001302",
+    "MONDO:0002869",
+    "MONDO:0005267",
+    "MONDO:0024644",
+    "MONDO:0005010",
+    "MONDO:0005453",
+    "MONDO:0006955",
+    "MONDO:0003803",
+    "MONDO:0003767"
+   ],
+   "curie": "MONDO:0001302",
+   "label": "History of hypertensive heart disease",
+   "ontology_label": "hypertensive heart disease",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Abnormal enlargement of the heart resulting from long-standing hypertension.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0002869",
+     "label": "heart valve disorder"
+    },
+    {
+     "id": "MONDO:0005267",
+     "label": "heart disorder"
+    },
+    {
+     "id": "MONDO:0024644",
+     "label": "myocardial ischemia"
+    },
+    {
+     "id": "MONDO:0005010",
+     "label": "coronary artery disorder"
+    },
+    {
+     "id": "MONDO:0005453",
+     "label": "congenital heart disease"
+    },
+    {
+     "id": "MONDO:0006955",
+     "label": "rheumatic heart disease"
+    },
+    {
+     "id": "MONDO:0003803",
+     "label": "aortic valve disorder"
+    },
+    {
+     "id": "MONDO:0003767",
+     "label": "mitral valve disorder"
+    }
+   ]
+  },
+  {
+   "name": "hist_hrtfail",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005252",
+    "MONDO:0005009"
+   ],
+   "curie": "MONDO:0005009",
+   "label": "History of congestive heart failure",
+   "ontology_label": "congestive heart failure",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Failure of the heart to pump a sufficient amount of blood to meet the needs of the body tissues, resulting in tissue congestion and edema. Signs and symptoms include shortness of breath, pitting edema, enlarged tender liver, engorged neck veins, and pulmonary rales.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0005252",
+     "label": "heart failure"
+    }
+   ]
+  },
+  {
+   "name": "hist_mi",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "MONDO:0005068"
+   ],
+   "curie": "MONDO:0005068",
+   "label": "History of myocardial infarction",
+   "ontology_label": "myocardial infarction",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Gross necrosis of the myocardium, as a result of interruption of the blood supply to the area, as in coronary thrombosis.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hist_my_inf",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "CLINICAL_DIAGNOSIS; EHR_ENCOUNTER_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORT",
+   "mappings": [
+    "MONDO:0005068",
+    "MONDO:0006803"
+   ],
+   "curie": "MONDO:0005068",
+   "label": "History of myocardial infarction",
+   "ontology_label": "myocardial infarction",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Gross necrosis of the myocardium, as a result of interruption of the blood supply to the area, as in coronary thrombosis.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "MONDO:0006803",
+     "label": "inferior myocardial infarction"
+    }
+   ]
+  },
+  {
+   "name": "history_cvd",
+   "area": "Cardiac",
+   "category": "DiseaseHistory",
+   "description": "CLINICAL_DIAGNOSIS",
+   "mappings": [
+    "MONDO:0005009"
+   ],
+   "curie": "MONDO:0005009",
+   "label": "Congestive heart failure",
+   "ontology_label": "congestive heart failure",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "MONDO",
+   "definition": "Failure of the heart to pump a sufficient amount of blood to meet the needs of the body tissues, resulting in tissue congestion and edema. Signs and symptoms include shortness of breath, pitting edema, enlarged tender liver, engorged neck veins, and pulmonary rales.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "bnp",
+   "area": "Cardiac",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'bnp'",
+   "mappings": [
+    "OBA:2045303"
+   ],
+   "curie": "OBA:2045303",
+   "label": "Natriuretic peptides B level",
+   "ontology_label": "natriuretic peptides B level",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The amount of a natriuretic peptides B when measured in anatomical entity.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "crp",
+   "area": "Cardiac",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'crp'",
+   "mappings": [
+    "OMOP:4208414"
+   ],
+   "curie": "OMOP:4208414",
+   "label": "C-reactive protein measurement",
+   "ontology_label": "C-reactive protein measurement",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "d_dimer",
+   "area": "Cardiac",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'd_dimer'",
+   "mappings": [
+    "OMOP:37393605"
+   ],
+   "curie": "OMOP:37393605",
+   "label": "D-dimer level",
+   "ontology_label": "D-dimer level",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "fast_gluc_bld",
+   "area": "Diabetes",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'fast_gluc_bld'",
+   "mappings": [
+    "OMOP:4156660"
+   ],
+   "curie": "OMOP:4156660",
+   "label": "Fasting blood glucose measurement",
+   "ontology_label": "Fasting blood glucose measurement",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "fasting_blood_gluc",
+   "area": "Diabetes",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'fasting_blood_gluc'",
+   "mappings": [
+    "OMOP:4156660"
+   ],
+   "curie": "OMOP:4156660",
+   "label": "Fasting blood glucose measurement",
+   "ontology_label": "Fasting blood glucose measurement",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "glucose_bld",
+   "area": "Diabetes",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'glucose_bld'",
+   "mappings": [
+    "OBA:VT0000188"
+   ],
+   "curie": "OBA:VT0000188",
+   "label": "Blood glucose amount",
+   "ontology_label": "blood glucose amount",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The amount of a glucose when measured in blood.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hemo_a1c",
+   "area": "Diabetes",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'hemo_a1c'",
+   "mappings": [
+    "OMOP:4184637"
+   ],
+   "curie": "OMOP:4184637",
+   "label": "Hemoglobin A1c measurement",
+   "ontology_label": "Hemoglobin A1c measurement",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "insulin_blood",
+   "area": "Diabetes",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'insulin_blood'",
+   "mappings": [
+    "OBA:2060174"
+   ],
+   "curie": "OBA:2060174",
+   "label": "Amount of insulin in blood",
+   "ontology_label": "amount of insulin in blood",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The amount of a insulin when measured in blood.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "insulin_in_blood",
+   "area": "Diabetes",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'insulin_in_blood'",
+   "mappings": [
+    "OBA:2060174"
+   ],
+   "curie": "OBA:2060174",
+   "label": "Amount of insulin in blood",
+   "ontology_label": "amount of insulin in blood",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The amount of a insulin when measured in blood.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "nt_bnp",
+   "area": "Cardiac",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'nt_bnp'",
+   "mappings": [
+    "OBA:2045303",
+    "OMOP:4189511"
+   ],
+   "curie": "OBA:2045303",
+   "label": "Natriuretic peptides B level",
+   "ontology_label": "natriuretic peptides B level",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The amount of a natriuretic peptides B when measured in anatomical entity.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "OMOP:4189511",
+     "label": "N terminal pro-brain natriuretic peptide level"
+    }
+   ]
+  },
+  {
+   "name": "troponin",
+   "area": "Cardiac",
+   "category": "LabMeasurement",
+   "description": "MeasurementObservation derivation of 'troponin'",
+   "mappings": [
+    "OMOP:4021291",
+    "OMOP:8842"
+   ],
+   "curie": "OMOP:4021291",
+   "label": "Troponin measurement",
+   "ontology_label": "Troponin measurement",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "blood_pressure",
+   "area": "Hypertension",
+   "category": "VitalSignsAnthropometry",
+   "description": "MeasurementObservationSet/MeasurementObservation derivation of 'blood_pressure'",
+   "mappings": [
+    "OMOP:4152194"
+   ],
+   "curie": "OMOP:4152194",
+   "label": "Systolic blood pressure",
+   "ontology_label": "Systolic blood pressure",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hrt_rt",
+   "area": "Cardiac",
+   "category": "VitalSignsAnthropometry",
+   "description": "MeasurementObservation derivation of 'hrt_rt'",
+   "mappings": [
+    "OBA:1001087"
+   ],
+   "curie": "OBA:1001087",
+   "label": "Heart rate",
+   "ontology_label": "heart rate",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The rate of a heart contraction.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "hrtrt",
+   "area": "Cardiac",
+   "category": "VitalSignsAnthropometry",
+   "description": "MeasurementObservation derivation of 'hrtrt'",
+   "mappings": [
+    "OBA:1001087"
+   ],
+   "curie": "OBA:1001087",
+   "label": "Heart rate",
+   "ontology_label": "heart rate",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The rate of a heart contraction.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "mean_art_press",
+   "area": "Hypertension",
+   "category": "VitalSignsAnthropometry",
+   "description": "MeasurementObservation derivation of 'mean_art_press'",
+   "mappings": [
+    "OBA:VT2000000"
+   ],
+   "curie": "OBA:VT2000000",
+   "label": "Arterial blood pressure trait",
+   "ontology_label": "arterial blood pressure trait",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The pressure of a arterial blood.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "mn_art_pres",
+   "area": "Hypertension",
+   "category": "VitalSignsAnthropometry",
+   "description": "MeasurementObservation derivation of 'mn_art_pres'",
+   "mappings": [
+    "OBA:VT2000000"
+   ],
+   "curie": "OBA:VT2000000",
+   "label": "Arterial blood pressure trait",
+   "ontology_label": "arterial blood pressure trait",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The pressure of a arterial blood.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "spo2",
+   "area": "Cardiac",
+   "category": "VitalSignsAnthropometry",
+   "description": "MeasurementObservation derivation of 'spo2'",
+   "mappings": [
+    "OBA:2045443"
+   ],
+   "curie": "OBA:2045443",
+   "label": "Oxygen concentration in blood",
+   "ontology_label": "oxygen concentration in blood",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The concentration of of a oxygen atom when measured in blood.",
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "apnea_hypop_index",
+   "area": "Lung",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'apnea_hypop_index'",
+   "mappings": [
+    "OMOP:37396400"
+   ],
+   "curie": "OMOP:37396400",
+   "label": "Apnea Hypopnea Index",
+   "ontology_label": "Apnea Hypopnea Index",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "cac_score",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'cac_score'",
+   "mappings": [
+    "OMOP:42872742"
+   ],
+   "curie": "OMOP:42872742",
+   "label": "Coronary artery calcium score",
+   "ontology_label": "Coronary artery calcium score",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "cac_volume",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'cac_volume'",
+   "mappings": [
+    "OMOP:4166120"
+   ],
+   "curie": "OMOP:4166120",
+   "label": "Calcium volume",
+   "ontology_label": "Calcium volume",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "carotid_imt",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'carotid_imt'",
+   "mappings": [
+    "OMOP:4138462",
+    "OBA:2050108"
+   ],
+   "curie": "OBA:2050108",
+   "label": "Carotid artery thickness",
+   "ontology_label": "carotid artery thickness",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": "The thickness of a carotid artery segment.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "OMOP:4138462",
+     "label": "Carotid intima media thickness"
+    }
+   ]
+  },
+  {
+   "name": "carotid_plaque",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "OMOP:4102124"
+   ],
+   "curie": "OMOP:4102124",
+   "label": "Carotid atherosclerosis",
+   "ontology_label": "Carotid atherosclerosis",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "carotid_sten_left",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'carotid_sten_left'",
+   "mappings": [
+    "OMOP:43020498"
+   ],
+   "curie": "OMOP:43020498",
+   "label": "Left carotid artery stenosis",
+   "ontology_label": "Left carotid artery stenosis",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "carotid_sten_right",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'carotid_sten_right'",
+   "mappings": [
+    "OMOP:43021859"
+   ],
+   "curie": "OMOP:43021859",
+   "label": "Right carotid artery stenosis",
+   "ontology_label": "Right carotid artery stenosis",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "lvh_ekg",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "CLINICAL_DIAGNOSIS; CLINICAL_FINDING; PATIENT_SELF-REPORTED_CONDITION",
+   "mappings": [
+    "HP:0001712",
+    "HP:0001714"
+   ],
+   "curie": "HP:0001712",
+   "label": "Left ventricular hypertrophy",
+   "ontology_label": "Left ventricular hypertrophy",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "HP",
+   "definition": "Enlargement or increased size of the heart left ventricle.",
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "HP:0001714",
+     "label": "Ventricular hypertrophy"
+    }
+   ]
+  },
+  {
+   "name": "pacem_stat",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation/Procedure derivation of 'pacem_stat'",
+   "mappings": [
+    "OMOP:45772840"
+   ],
+   "curie": "OMOP:45772840",
+   "label": "Implantable cardiac pacemaker",
+   "ontology_label": "Implantable cardiac pacemaker",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "pr_ekg",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'pr_ekg'",
+   "mappings": [
+    "OMOP:4274406"
+   ],
+   "curie": "OMOP:4274406",
+   "label": "PR interval - finding",
+   "ontology_label": "PR interval - finding",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "pr_qrs_qt",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'pr_qrs_qt'",
+   "mappings": [
+    "OMOP:4273023"
+   ],
+   "curie": "OMOP:4273023",
+   "label": "QT interval - finding",
+   "ontology_label": "QT interval - finding",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "qrs_ekg",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'qrs_ekg'",
+   "mappings": [
+    "OBA:1001086",
+    "OMOP:4273021"
+   ],
+   "curie": "OBA:1001086",
+   "label": "QRS duration",
+   "ontology_label": "QRS duration",
+   "label_source": "monarch",
+   "matched_on": "priority",
+   "vocabulary": "OBA",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "OMOP:4273021",
+     "label": "QRS complex - finding"
+    }
+   ]
+  },
+  {
+   "name": "qt_ekg",
+   "area": "Cardiac",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservation derivation of 'qt_ekg'",
+   "mappings": [
+    "OMOP:4273023"
+   ],
+   "curie": "OMOP:4273023",
+   "label": "QT interval - finding",
+   "ontology_label": "QT interval - finding",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "spirometry",
+   "area": "Lung",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservationSet derivation of 'spirometry'",
+   "mappings": [
+    "OMOP:4176265",
+    "OMOP:4241837"
+   ],
+   "curie": "OMOP:4176265",
+   "label": "Forced vital capacity",
+   "ontology_label": "Forced vital capacity",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "OMOP:4241837",
+     "label": "Forced expired volume in 1 second"
+    }
+   ]
+  },
+  {
+   "name": "spirometry_post_bd",
+   "area": "Lung",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservationSet derivation of 'spirometry_post_bd'",
+   "mappings": [
+    "OMOP:4241837",
+    "OMOP:4176265"
+   ],
+   "curie": "OMOP:4176265",
+   "label": "Forced vital capacity",
+   "ontology_label": "Forced vital capacity",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "OMOP:4241837",
+     "label": "Forced expired volume in 1 second"
+    }
+   ]
+  },
+  {
+   "name": "spirometry_pre_bd",
+   "area": "Lung",
+   "category": "DiagnosticTestProcedure",
+   "description": "MeasurementObservationSet derivation of 'spirometry_pre_bd'",
+   "mappings": [
+    "OMOP:4241837",
+    "OMOP:4176265"
+   ],
+   "curie": "OMOP:4176265",
+   "label": "Forced vital capacity",
+   "ontology_label": "Forced vital capacity",
+   "label_source": "ohdsi",
+   "matched_on": "priority",
+   "vocabulary": "SNOMED",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "OMOP:4241837",
+     "label": "Forced expired volume in 1 second"
+    }
+   ]
+  },
+  {
+   "name": "hypert_trt",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "CLINICAL_DIAGNOSIS; PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF-REPORTED_CONDITION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "ATC:C02",
+    "HP:0000822",
+    "ATC:C03",
+    "RxCUI:1998"
+   ],
+   "curie": "ATC:C02",
+   "label": "Antihypertensives",
+   "ontology_label": "Antihypertensives",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "HP:0000822",
+     "label": "Hypertension"
+    },
+    {
+     "id": "ATC:C03",
+     "label": "Diuretics"
+    },
+    {
+     "id": "RxCUI:1998",
+     "label": "captopril"
+    }
+   ]
+  },
+  {
+   "name": "tak_aceinhib",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "ATC:C09A",
+    "ATC:C09BA",
+    "RxCUI:29046",
+    "ATC:C02",
+    "ATC:C09C"
+   ],
+   "curie": "ATC:C02",
+   "label": "Antihypertensives",
+   "ontology_label": "Antihypertensives",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "ATC:C09A",
+     "label": "Ace inhibitors, plain"
+    },
+    {
+     "id": "ATC:C09BA",
+     "label": "Ace inhibitors and diuretics"
+    },
+    {
+     "id": "RxCUI:29046",
+     "label": "lisinopril"
+    },
+    {
+     "id": "ATC:C09C",
+     "label": "Angiotensin ii receptor blockers (arbs), plain"
+    }
+   ]
+  },
+  {
+   "name": "tak_aldorecepblk",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "RxCUI:9997",
+    "ATC:C03DA"
+   ],
+   "curie": "ATC:C03DA",
+   "label": "Aldosterone antagonists",
+   "ontology_label": "Aldosterone antagonists",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "RxCUI:9997",
+     "label": "spironolactone"
+    }
+   ]
+  },
+  {
+   "name": "tak_alphablk",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "ATC:C02",
+    "ATC:C03"
+   ],
+   "curie": "ATC:C02",
+   "label": "Antihypertensives",
+   "ontology_label": "Antihypertensives",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "ATC:C03",
+     "label": "Diuretics"
+    }
+   ]
+  },
+  {
+   "name": "tak_angiorecepblk",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "ATC:C09C",
+    "ATC:C09DA"
+   ],
+   "curie": "ATC:C09C",
+   "label": "Angiotensin ii receptor blockers (arbs), plain",
+   "ontology_label": "Angiotensin ii receptor blockers (arbs), plain",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "ATC:C09DA",
+     "label": "Angiotensin ii receptor blockers (arbs) and diuretics"
+    }
+   ]
+  },
+  {
+   "name": "tak_antihypertensives",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION",
+   "mappings": [
+    "ATC:C02"
+   ],
+   "curie": "ATC:C02",
+   "label": "Antihypertensives",
+   "ontology_label": "Antihypertensives",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "tak_betablk",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "ATC:C07A",
+    "RxCUI:151890",
+    "ATC:C07D",
+    "RxCUI:8787"
+   ],
+   "curie": "ATC:C07A",
+   "label": "Beta blocking agents",
+   "ontology_label": "Beta blocking agents",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "RxCUI:151890",
+     "label": "Inderal"
+    },
+    {
+     "id": "ATC:C07D",
+     "label": "Beta blocking agents, thiazides and other diuretics"
+    },
+    {
+     "id": "RxCUI:8787",
+     "label": "propranolol"
+    }
+   ]
+  },
+  {
+   "name": "tak_calchanblk",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION; PRESCRIPTION_WRITTEN",
+   "mappings": [
+    "ATC:C08",
+    "RxCUI:17767",
+    "RxCUI:3443",
+    "RxCUI:11170"
+   ],
+   "curie": "ATC:C08",
+   "label": "Calcium channel blockers",
+   "ontology_label": "Calcium channel blockers",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "RxCUI:17767",
+     "label": "amlodipine"
+    },
+    {
+     "id": "RxCUI:3443",
+     "label": "diltiazem"
+    },
+    {
+     "id": "RxCUI:11170",
+     "label": "verapamil"
+    }
+   ]
+  },
+  {
+   "name": "tak_cenactag",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION",
+   "mappings": [
+    "RxCUI:6876",
+    "RxCUI:2599"
+   ],
+   "curie": "RxCUI:2599",
+   "label": "Clonidine",
+   "ontology_label": "clonidine",
+   "label_source": "rxnav",
+   "matched_on": "priority",
+   "vocabulary": "RxNorm",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "RxCUI:6876",
+     "label": "methyldopa"
+    }
+   ]
+  },
+  {
+   "name": "tak_diuret",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION; PRESCRIPTION_WRITTEN",
+   "mappings": [
+    "ATC:C03"
+   ],
+   "curie": "ATC:C03",
+   "label": "Diuretics",
+   "ontology_label": "Diuretics",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "tak_insulin",
+   "area": "Diabetes",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [],
+   "curie": null,
+   "label": null,
+   "label_source": null,
+   "unresolved": [],
+   "competing": []
+  },
+  {
+   "name": "tak_med_diab",
+   "area": "Diabetes",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "ATC:A10",
+    "ATC:A10B"
+   ],
+   "curie": "ATC:A10",
+   "label": "Drugs used in diabetes",
+   "ontology_label": "Drugs used in diabetes",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "ATC:A10B",
+     "label": "Blood glucose lowering drugs, excl. insulins"
+    }
+   ]
+  },
+  {
+   "name": "tak_orlhypoag",
+   "area": "Diabetes",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "RxCUI:6809",
+    "RxCUI:72610",
+    "RxCUI:4821",
+    "RxCUI:4815",
+    "RxCUI:2404",
+    "RxCUI:84108",
+    "RxCUI:73044",
+    "RxCUI:25789"
+   ],
+   "curie": "RxCUI:2404",
+   "label": "Chlorpropamide",
+   "ontology_label": "chlorpropamide",
+   "label_source": "rxnav",
+   "matched_on": "priority",
+   "vocabulary": "RxNorm",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "RxCUI:6809",
+     "label": "metformin"
+    },
+    {
+     "id": "RxCUI:72610",
+     "label": "troglitazone"
+    },
+    {
+     "id": "RxCUI:4821",
+     "label": "glipizide"
+    },
+    {
+     "id": "RxCUI:4815",
+     "label": "glyburide"
+    },
+    {
+     "id": "RxCUI:84108",
+     "label": "rosiglitazone"
+    },
+    {
+     "id": "RxCUI:73044",
+     "label": "repaglinide"
+    },
+    {
+     "id": "RxCUI:25789",
+     "label": "glimepiride"
+    }
+   ]
+  },
+  {
+   "name": "tak_vasodil",
+   "area": "Hypertension",
+   "category": "TreatmentMedication",
+   "description": "PATIENT SELF-REPORTED MEDICATION; PATIENT_SELF_REPORTED_MEDICATION",
+   "mappings": [
+    "ATC:C04",
+    "ATC:C01D",
+    "ATC:C02L",
+    "RxCUI:5470"
+   ],
+   "curie": "ATC:C01D",
+   "label": "Vasodilators used in cardiac diseases",
+   "ontology_label": "Vasodilators used in cardiac diseases",
+   "label_source": "rxclass",
+   "matched_on": "priority",
+   "vocabulary": "ATC1-4",
+   "definition": null,
+   "unresolved": [],
+   "competing": [
+    {
+     "id": "ATC:C04",
+     "label": "Peripheral vasodilators"
+    },
+    {
+     "id": "ATC:C02L",
+     "label": "Antihypertensives and diuretics in combination"
+    },
+    {
+     "id": "RxCUI:5470",
+     "label": "hydralazine"
+    }
+   ]
+  }
+ ],
+ "terms": {
+  "ATC:A10": {
+   "id": "ATC:A10",
+   "label": "Drugs used in diabetes",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:A10B": {
+   "id": "ATC:A10B",
+   "label": "Blood glucose lowering drugs, excl. insulins",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C01D": {
+   "id": "ATC:C01D",
+   "label": "Vasodilators used in cardiac diseases",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C02": {
+   "id": "ATC:C02",
+   "label": "Antihypertensives",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C02L": {
+   "id": "ATC:C02L",
+   "label": "Antihypertensives and diuretics in combination",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C03": {
+   "id": "ATC:C03",
+   "label": "Diuretics",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C03DA": {
+   "id": "ATC:C03DA",
+   "label": "Aldosterone antagonists",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C04": {
+   "id": "ATC:C04",
+   "label": "Peripheral vasodilators",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C07A": {
+   "id": "ATC:C07A",
+   "label": "Beta blocking agents",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C07D": {
+   "id": "ATC:C07D",
+   "label": "Beta blocking agents, thiazides and other diuretics",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C08": {
+   "id": "ATC:C08",
+   "label": "Calcium channel blockers",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C09A": {
+   "id": "ATC:C09A",
+   "label": "Ace inhibitors, plain",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C09BA": {
+   "id": "ATC:C09BA",
+   "label": "Ace inhibitors and diuretics",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C09C": {
+   "id": "ATC:C09C",
+   "label": "Angiotensin ii receptor blockers (arbs), plain",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "ATC:C09DA": {
+   "id": "ATC:C09DA",
+   "label": "Angiotensin ii receptor blockers (arbs) and diuretics",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "ATC1-4"
+  },
+  "HP:0000819": {
+   "id": "HP:0000819",
+   "label": "Diabetes mellitus",
+   "description": "A group of abnormalities characterized by hyperglycemia and glucose intolerance.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0000818",
+    "HP:0001952"
+   ],
+   "children": [
+    "HP:0000831",
+    "HP:0004904",
+    "HP:0005978",
+    "HP:0001953",
+    "HP:0100651"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0000822": {
+   "id": "HP:0000822",
+   "label": "Hypertension",
+   "description": "The presence of chronic increased pressure in the systemic arterial system.",
+   "synonyms": [
+    "Arterial hypertension",
+    "Systemic hypertension"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "UPHENO:7000207",
+    "HP:0032263"
+   ],
+   "children": [
+    "HP:0000875",
+    "HP:0002640",
+    "HP:0100735",
+    "HP:0430034",
+    "HP:0100817",
+    "HP:6000321"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001297": {
+   "id": "HP:0001297",
+   "label": "Stroke",
+   "description": "Sudden impairment of blood flow to a part of the brain due to occlusion or rupture of an artery to the brain.",
+   "synonyms": [
+    "Cerebral vascular events",
+    "Cerebrovascular accident",
+    "Stroke"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0100659"
+   ],
+   "children": [
+    "HP:0002326",
+    "HP:0002401",
+    "HP:0002140",
+    "HP:0033762"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001342": {
+   "id": "HP:0001342",
+   "label": "Cerebral hemorrhage",
+   "description": "Hemorrhage into the parenchyma of the brain.",
+   "synonyms": [
+    "Bleeding in brain",
+    "Cerebral haemorrhage",
+    "Intracerebral haemorrhage",
+    "Intracerebral hemorrhage"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "UPHENO:7000252",
+    "HP:0002170"
+   ],
+   "children": [
+    "HP:0007023",
+    "HP:0004968"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001409": {
+   "id": "HP:0001409",
+   "label": "Portal hypertension",
+   "description": "Increased pressure in the portal vein.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0032263",
+    "HP:0006707",
+    "UPHENO:7000261"
+   ],
+   "children": [
+    "HP:0004941"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001653": {
+   "id": "HP:0001653",
+   "label": "Mitral regurgitation",
+   "description": "An abnormality of the mitral valve characterized by insufficiency or incompetence of the mitral valve resulting in retrograde leaking of blood through the mitral valve upon ventricular contraction.",
+   "synonyms": [
+    "Mitral incompetence",
+    "Mitral insufficiency",
+    "Mitral valve insufficiency",
+    "Mitral valve regurgitation"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0031481",
+    "HP:0034376",
+    "UPHENO:7000272"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001681": {
+   "id": "HP:0001681",
+   "label": "Angina pectoris",
+   "description": "Paroxysmal chest pain that occurs with exertion or stress and is related to myocardial ischemia.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0011025",
+    "UPHENO:7000281"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001712": {
+   "id": "HP:0001712",
+   "label": "Left ventricular hypertrophy",
+   "description": "Enlargement or increased size of the heart left ventricle.",
+   "synonyms": [
+    "Heart left ventricle hypertrophy",
+    "Left ventricular wall hypertrophy"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0001711",
+    "HP:0001714",
+    "UPHENO:0084509"
+   ],
+   "children": [
+    "HP:0005129"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001714": {
+   "id": "HP:0001714",
+   "label": "Ventricular hypertrophy",
+   "description": "Enlargement of the cardiac ventricular muscle tissue with increase in the width of the wall of the ventricle and loss of elasticity. Ventricular hypertrophy is clinically differentiated into left and right ventricular hypertrophy.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0001713"
+   ],
+   "children": [
+    "HP:0001712",
+    "HP:0001667",
+    "HP:0200128"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0001718": {
+   "id": "HP:0001718",
+   "label": "Mitral stenosis",
+   "description": "An abnormal narrowing of the orifice of the mitral valve.",
+   "synonyms": [
+    "Mitral valve stenosis"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0031481",
+    "UPHENO:0081850"
+   ],
+   "children": [
+    "HP:0011570"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0002092": {
+   "id": "HP:0002092",
+   "label": "Pulmonary arterial hypertension",
+   "description": "Pulmonary hypertension is defined mean pulmonary artery pressure of 25mmHg or more and pulmonary capillary wedge pressure of 15mmHg or less when measured by right heart catheterisation at rest and in a supine position.",
+   "synonyms": [
+    "Increased blood pressure in blood vessels of lungs",
+    "Pulmonary artery hypertension"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0033578"
+   ],
+   "children": [
+    "HP:0033424",
+    "HP:0033423"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0002140": {
+   "id": "HP:0002140",
+   "label": "Ischemic stroke",
+   "description": "Acute ischemic stroke (AIS) is defined by the sudden loss of blood flow to an area of the brain with the resulting loss of neurologic function. It is caused by thrombosis or embolism that occludes a cerebral vessel supplying a specific area of the brain. During a vessel occlusion, there is a core area where damage to the brain is irreversible and an area of penumbra where the brain has lost function owing to decreased blood flow but is not irreversibly injured.",
+   "synonyms": [
+    "Ischaemic stroke"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0001297",
+    "HP:0002637",
+    "HP:0025722"
+   ],
+   "children": [
+    "HP:0032325"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0002170": {
+   "id": "HP:0002170",
+   "label": "Intracranial hemorrhage",
+   "description": "Hemorrhage occurring within the skull.",
+   "synonyms": [
+    "Bleeding within the skull",
+    "Intracranial haemorrhage"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0011029",
+    "HP:0100659",
+    "UPHENO:7000335"
+   ],
+   "children": [
+    "HP:0001342",
+    "HP:0002138",
+    "HP:0011695",
+    "HP:0030746",
+    "HP:0100309",
+    "HP:0100310",
+    "HP:0034208"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0002621": {
+   "id": "HP:0002621",
+   "label": "Atherosclerosis",
+   "description": "A condition characterized by patchy atheromas or atherosclerotic plaques which develop in the walls of medium-sized and large arteries and can lead to arterial stenosis with reduced or blocked blood flow.",
+   "synonyms": [
+    "Atherosclerotic cardiovascular disease",
+    "Narrowing and hardening of arteries"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "UPHENO:7000370",
+    "HP:0002634"
+   ],
+   "children": [
+    "HP:0001677",
+    "HP:0007201",
+    "HP:0004416",
+    "HP:0004943",
+    "HP:0003651",
+    "HP:0031012",
+    "HP:0031011",
+    "HP:0031678",
+    "HP:0012397"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0002625": {
+   "id": "HP:0002625",
+   "label": "Deep venous thrombosis",
+   "description": "Formation of a blot clot in a deep vein. The clot often blocks blood flow, causing swelling and pain. The deep veins of the leg are most often affected.",
+   "synonyms": [
+    "Blood clot in a deep vein",
+    "Deep vein thrombosis",
+    "Multiple deep venous thrombosis"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0004936"
+   ],
+   "children": [
+    "HP:0004850"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0003193": {
+   "id": "HP:0003193",
+   "label": "Allergic rhinitis",
+   "description": "It is characterized by one or more symptoms including sneezing, itching, nasal congestion, and rhinorrhea.",
+   "synonyms": [
+    "Hay fever",
+    "Hayfever"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0012393",
+    "HP:0012384"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0004417": {
+   "id": "HP:0004417",
+   "label": "Intermittent claudication",
+   "description": "Intermittent claudication is a symptom of peripheral arterial occlusive disease. After having walked over a distance which is individually characteristic, the patients experience pain or cramps in the calves, feet or thighs which typically subsides on standing still.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0025323"
+   ],
+   "children": [
+    "HP:6001462",
+    "HP:6001463"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0005978": {
+   "id": "HP:0005978",
+   "label": "Type II diabetes mellitus",
+   "description": "A type of diabetes mellitus initially characterized by insulin resistance and hyperinsulinemia and subsequently by glucose interolerance and hyperglycemia.",
+   "synonyms": [
+    "Diabetes mellitus Type II",
+    "Diabetes mellitus, noninsulin-dependent",
+    "NIDDM",
+    "NIDDM diabetes mellitus",
+    "Non-insulin dependent diabetes",
+    "Noninsulin dependent diabetes mellitus",
+    "Noninsulin-dependent diabetes",
+    "Type 2 diabetes",
+    "Type II diabetes"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0000819"
+   ],
+   "children": [
+    "HP:0008205"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0010535": {
+   "id": "HP:0010535",
+   "label": "Sleep apnea",
+   "description": "An intermittent cessation of airflow at the mouth and nose during sleep is known as sleep apnea. Apneas that last at least 10 seconds are considered significant, but individuals with sleep apnea may experience apneas lasting from 20 seconds up to 2 or 3 minutes. Patients may have up to 15 events per hour of sleep.",
+   "synonyms": [
+    "Pauses in breathing while sleeping",
+    "Sleep apnea",
+    "Sleep apnoea"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:5200283"
+   ],
+   "children": [
+    "HP:0002870",
+    "HP:0010536"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0012393": {
+   "id": "HP:0012393",
+   "label": "Allergy",
+   "description": "An allergy is an immune response or reaction to substances that are usually not harmful.",
+   "synonyms": [
+    "Allergy"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0100326"
+   ],
+   "children": [
+    "HP:0007879",
+    "HP:0003193",
+    "HP:0012395",
+    "HP:0012394",
+    "HP:0410323",
+    "HP:0410326",
+    "HP:0410334",
+    "HP:0410322",
+    "HP:0410324",
+    "HP:0410335",
+    "HP:0410319",
+    "HP:0410320",
+    "HP:0410337",
+    "HP:0410338",
+    "HP:0500093",
+    "HP:0500094"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0030828": {
+   "id": "HP:0030828",
+   "label": "Wheezing",
+   "description": "A high-pitched whistling sound associated with labored breathing.",
+   "synonyms": [
+    "Wheezing"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0030829",
+    "UPHENO:7000721"
+   ],
+   "children": [
+    "HP:0031995"
+   ],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0100735": {
+   "id": "HP:0100735",
+   "label": "Hypertensive crisis",
+   "description": null,
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0000822"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "HP:0100817": {
+   "id": "HP:0100817",
+   "label": "Renovascular hypertension",
+   "description": "The presence of hypertension related to stenosis of the renal artery.",
+   "synonyms": [
+    "Hypertension due to renal artery hyperplasia"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "HP:0000822",
+    "HP:0012211"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "HP"
+  },
+  "MMO:0000133": {
+   "id": "MMO:0000133",
+   "label": "serum high-density lipoprotein-cholesterol measurement test",
+   "description": "A test which determines the amount of cholesterol carried in high-density lipoprotein (HDL) particles in a sample of serum, the clear liquid that separates from blood after it has clotted completely, i.e. blood plasma from which fibrinogen has been removed.",
+   "synonyms": [
+    "serum HDL-cholesterol test"
+   ],
+   "synonyms_exact": false,
+   "source": "ols",
+   "vocabulary": "MMO"
+  },
+  "MMO:0000533": {
+   "id": "MMO:0000533",
+   "label": "white blood cell counting method",
+   "description": "Any method, manual or automated, by which the number, specifically of white blood cells (leukocytes), in a sample of blood is assessed and a value assigned. Leukocytes are largely colorless blood corpuscles capable of ameboid movement, whose chief function is to protect the body against microorganisms and other disease-causing entities.",
+   "synonyms": [
+    "blood leukocyte counting method"
+   ],
+   "synonyms_exact": false,
+   "source": "ols",
+   "vocabulary": "MMO"
+  },
+  "MONDO:0000270": {
+   "id": "MONDO:0000270",
+   "label": "lower respiratory tract disorder",
+   "description": "A disease involving the lower respiratory tract.",
+   "synonyms": [
+    "disease of lower respiratory tract",
+    "disease or disorder of lower respiratory tract",
+    "disorder of lower respiratory tract",
+    "lower respiratory tract disease",
+    "lower respiratory tract disease or disorder"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005087"
+   ],
+   "children": [
+    "MONDO:0021925",
+    "MONDO:0002037",
+    "MONDO:0002567",
+    "MONDO:0001358",
+    "MONDO:0005275"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0000745": {
+   "id": "MONDO:0000745",
+   "label": "cardiac arrest",
+   "description": "Cessation of breathing and/or cardiac function.",
+   "synonyms": [
+    "circulatory arrest"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0007263"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0000831": {
+   "id": "MONDO:0000831",
+   "label": "thrombotic disease",
+   "description": "The formation of a blood clot in the lumen of a vessel or heart chamber; causes include coagulation disorders and vascular endothelial injury.",
+   "synonyms": [
+    "Clots, blood",
+    "Thromboses",
+    "blood Clots",
+    "blood clot",
+    "clot, blood",
+    "thrombosis",
+    "thrombotic disorder",
+    "thrombus"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005385"
+   ],
+   "children": [
+    "MONDO:0018048",
+    "MONDO:0035008",
+    "MONDO:0035009",
+    "MONDO:0001339",
+    "MONDO:0000610",
+    "MONDO:0006716",
+    "MONDO:0002907",
+    "MONDO:0018854"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0001105": {
+   "id": "MONDO:0001105",
+   "label": "renal hypertension",
+   "description": "Hypertension caused by the kidney's hormonal response to narrowing or occlusion of the renal arteries.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "renovascular hypertension"
+   ],
+   "parents": [
+    "MONDO:0005240",
+    "MONDO:0001200"
+   ],
+   "children": [
+    "MONDO:0001784",
+    "MONDO:0001647",
+    "MONDO:0006947"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0001134": {
+   "id": "MONDO:0001134",
+   "label": "essential hypertension",
+   "description": "Hypertension that presents without an identifiable cause.",
+   "synonyms": [
+    "idiopathic hypertension",
+    "primary hypertension"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005044"
+   ],
+   "children": [
+    "MONDO:0001151",
+    "MONDO:0001133",
+    "MONDO:0007781"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0001200": {
+   "id": "MONDO:0001200",
+   "label": "secondary hypertension",
+   "description": "High blood pressure caused by an underlying medical condition.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005044"
+   ],
+   "children": [
+    "MONDO:0001646",
+    "MONDO:0001785",
+    "MONDO:0001105"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0001302": {
+   "id": "MONDO:0001302",
+   "label": "hypertensive heart disease",
+   "description": "Abnormal enlargement of the heart resulting from long-standing hypertension.",
+   "synonyms": [
+    "hypertensive heart disease"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005267"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0002771": {
+   "id": "MONDO:0002771",
+   "label": "pulmonary fibrosis",
+   "description": "Chronic progressive interstitial lung disorder characterized by the replacement of the lung tissue by connective tissue, leading to progressive dyspnea, respiratory failure, or right heart failure. Causes include chronic inflammatory processes, exposure to environmental irritants, radiation therapy, autoimmune disorders, certain drugs, or it may be idiopathic (no identifiable cause).",
+   "synonyms": [
+    "pulmonary interstitial fibrosis"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0015925"
+   ],
+   "children": [
+    "MONDO:0023286",
+    "MONDO:0003563",
+    "MONDO:0003564",
+    "MONDO:0001438",
+    "MONDO:0000148",
+    "MONDO:0021953"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0002869": {
+   "id": "MONDO:0002869",
+   "label": "heart valve disorder",
+   "description": "A disease involving the cardial valve.",
+   "synonyms": [
+    "cardial valve disease",
+    "cardial valve disease or disorder",
+    "disease of cardial valve",
+    "disease or disorder of cardial valve",
+    "disorder of cardial valve",
+    "disorder of heart valve",
+    "heart valve disorder",
+    "valvular heart disorder"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005267"
+   ],
+   "children": [
+    "MONDO:0003628",
+    "MONDO:0003767",
+    "MONDO:0003803",
+    "MONDO:0000471"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0003767": {
+   "id": "MONDO:0003767",
+   "label": "mitral valve disorder",
+   "description": "A disease involving the mitral valve.",
+   "synonyms": [
+    "disease of mitral valve",
+    "disease or disorder of mitral valve",
+    "disorder of mitral valve",
+    "mitral valve disease",
+    "mitral valve disease or disorder",
+    "mitral valve disorder"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "rheumatic disease of mitral valve",
+    "rheumatic mitral insufficiency",
+    "rheumatic mitral valve changes",
+    "rheumatic mitral valve incompetence",
+    "rheumatic mitral valve regurgitation"
+   ],
+   "parents": [
+    "MONDO:0002869"
+   ],
+   "children": [
+    "MONDO:0042967",
+    "MONDO:0042966",
+    "MONDO:0004910",
+    "MONDO:0005852",
+    "MONDO:0015109",
+    "MONDO:0015249",
+    "MONDO:1030008"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0003803": {
+   "id": "MONDO:0003803",
+   "label": "aortic valve disorder",
+   "description": "A disease involving the aortic valve.",
+   "synonyms": [
+    "aortic valve disease",
+    "aortic valve disease or disorder",
+    "aortic valve disorder",
+    "disease of aortic valve",
+    "disease or disorder of aortic valve",
+    "disorder of aortic valve"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0002869",
+    "MONDO:0005561",
+    "MONDO:0045001"
+   ],
+   "children": [
+    "MONDO:0042981",
+    "MONDO:0005463",
+    "MONDO:0006655",
+    "MONDO:0005648",
+    "MONDO:0007194"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0004784": {
+   "id": "MONDO:0004784",
+   "label": "allergic asthma",
+   "description": "A asthma with a basis in a pathological type I hypersensitivity reaction.",
+   "synonyms": [
+    "allergic form of asthma"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0004979",
+    "MONDO:0000771"
+   ],
+   "children": [
+    "MONDO:0025556"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0004848": {
+   "id": "MONDO:0004848",
+   "label": "ulcerative stomatitis",
+   "description": "Inflammation of the mouth mucosa associated with the presence of ulcers.",
+   "synonyms": [
+    "ulcerative stomatitis"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0004842"
+   ],
+   "children": [
+    "MONDO:0017124"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0004849": {
+   "id": "MONDO:0004849",
+   "label": "pulmonary emphysema",
+   "description": "A subcategory of chronic obstructive pulmonary disease (COPD). It occurs in people who smoke and suffer from chronic bronchitis. It is characterized by inflation of the alveoli, alveolar wall damage, and reduction in the number of alveoli, resulting in difficulty breathing.",
+   "synonyms": [
+    "emphysema",
+    "emphysema, pulmonary"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005002"
+   ],
+   "children": [
+    "MONDO:0000923",
+    "MONDO:0000924",
+    "MONDO:0007535",
+    "MONDO:0000925",
+    "MONDO:0007536"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0004979": {
+   "id": "MONDO:0004979",
+   "label": "asthma",
+   "description": "A bronchial disease that is characterized by chronic inflammation and narrowing of the airways, which is caused by a combination of environmental and genetic factors resulting in recurring periods of wheezing (a whistling sound while breathing), chest tightness, shortness of breath, mucus production and coughing. The symptoms appear due to a variety of triggers such as allergens, irritants, respiratory infections, weather changes, exercise, stress, reflux disease, medications, foods and emotional anxiety.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "chronic obstructive asthma",
+    "chronic obstructive asthma with acute exacerbation",
+    "chronic obstructive asthma with status asthmaticus",
+    "exercise induced asthma",
+    "exercise-induced asthma"
+   ],
+   "parents": [
+    "MONDO:0001358"
+   ],
+   "children": [
+    "MONDO:0850282",
+    "MONDO:0850283",
+    "MONDO:0022742",
+    "MONDO:0001491",
+    "MONDO:0004766",
+    "MONDO:0005405",
+    "MONDO:0004784",
+    "MONDO:0004765"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0004981": {
+   "id": "MONDO:0004981",
+   "label": "atrial fibrillation",
+   "description": "A disorder characterized by an electrocardiographic finding of a supraventricular arrhythmia characterized by the replacement of consistent P waves by rapid oscillations or fibrillatory waves that vary in size, shape and timing and are accompanied by an irregular ventricular response. (CDISC)",
+   "synonyms": [
+    "AF",
+    "AFib",
+    "atrial fibrillation",
+    "atrial fibrillation (disease)"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0007263"
+   ],
+   "children": [
+    "MONDO:0018054",
+    "MONDO:1030009",
+    "MONDO:1030011"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0004995": {
+   "id": "MONDO:0004995",
+   "label": "cardiovascular disorder",
+   "description": "A disease involving the cardiovascular system.",
+   "synonyms": [
+    "cardiovascular disease",
+    "cardiovascular disease (CVD)",
+    "cardiovascular disorder",
+    "cardiovascular system disease",
+    "cardiovascular system disease or disorder",
+    "disease of cardiovascular system",
+    "disease or disorder of cardiovascular system",
+    "disorder of cardiovascular system"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:7770006"
+   ],
+   "children": [
+    "MONDO:0024239",
+    "MONDO:0024757",
+    "MONDO:0005267",
+    "MONDO:0000603",
+    "MONDO:0005385",
+    "MONDO:0012726"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005002": {
+   "id": "MONDO:0005002",
+   "label": "chronic obstructive pulmonary disease",
+   "description": "A chronic and progressive lung disorder characterized by the loss of elasticity of the bronchial tree and the air sacs, destruction of the air sacs wall, thickening of the bronchial wall, and mucous accumulation in the bronchial tree. The pathologic changes result in the disruption of the air flow in the bronchial airways. Signs and symptoms include shortness of breath, wheezing, productive cough, and chest tightness. The two main types of chronic obstructive pulmonary disease are chronic obstructive bronchitis and emphysema.",
+   "synonyms": [
+    "COLD",
+    "COPD",
+    "COPD, chronic obstructive pulmonary disease",
+    "chronic obstructive airways disease",
+    "chronic obstructive lung disease",
+    "chronic obstructive pulmonary disease (COPD)",
+    "chronic obstructive pulmonary disease, (COPD)",
+    "cold",
+    "cold (chronic obstructive lung disease)",
+    "disease (COPD), chronic obstructive",
+    "obstructive lung disease, chronic",
+    "obstructive pulmonary disease (COPD), chronic",
+    "pulmonary disease (COPD), chronic obstructive"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0002567",
+    "MONDO:0002267"
+   ],
+   "children": [
+    "MONDO:0011490",
+    "MONDO:0004822",
+    "MONDO:0005607",
+    "MONDO:0004849",
+    "MONDO:0011751"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005009": {
+   "id": "MONDO:0005009",
+   "label": "congestive heart failure",
+   "description": "Failure of the heart to pump a sufficient amount of blood to meet the needs of the body tissues, resulting in tissue congestion and edema. Signs and symptoms include shortness of breath, pitting edema, enlarged tender liver, engorged neck veins, and pulmonary rales.",
+   "synonyms": [
+    "CHF",
+    "cardiac failure, congestive",
+    "congestive heart disease",
+    "failure, congestive heart",
+    "heart failure, congestive"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005252"
+   ],
+   "children": [
+    "MONDO:0980735",
+    "MONDO:0001899",
+    "MONDO:0006727",
+    "MONDO:0004596",
+    "MONDO:0006993"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005010": {
+   "id": "MONDO:0005010",
+   "label": "coronary artery disorder",
+   "description": "Narrowing of the coronary arteries due to fatty deposits inside the arterial walls. The diagnostic criteria may include documented history of any of the following: documented coronary artery stenosis greater than or equal to 50% (by cardiac catheterization or other modality of direct imaging of the coronary arteries); previous coronary artery bypass surgery (CABG); previous percutaneous coronary intervention (PCI); previous myocardial infarction. (ACC)",
+   "synonyms": [
+    "CAD",
+    "CHD (coronary heart disease)",
+    "coronary artery disease",
+    "coronary artery disease or disorder",
+    "coronary disease",
+    "coronary heart disease",
+    "disease of coronary artery",
+    "disease or disorder of coronary artery",
+    "disorder of coronary artery"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "coronary arteriosclerosis"
+   ],
+   "parents": [
+    "MONDO:0000473",
+    "MONDO:0005267"
+   ],
+   "children": [
+    "MONDO:0980999",
+    "MONDO:0015203",
+    "MONDO:0021661",
+    "MONDO:0850371",
+    "MONDO:0006714",
+    "MONDO:0006715",
+    "MONDO:0006716",
+    "MONDO:0005356",
+    "MONDO:0005436",
+    "MONDO:0006805",
+    "MONDO:0012011",
+    "MONDO:0012586"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005015": {
+   "id": "MONDO:0005015",
+   "label": "diabetes mellitus",
+   "description": "A metabolic disorder characterized by abnormally high blood sugar levels due to diminished production of insulin or insulin resistance/desensitization.",
+   "synonyms": [
+    "DM",
+    "diabetes",
+    "diabetes mellitus",
+    "diabetes mellitus (disease)"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0001933",
+    "MONDO:0002908"
+   ],
+   "children": [
+    "MONDO:1010179",
+    "MONDO:0005406",
+    "MONDO:0005147",
+    "MONDO:0005148",
+    "MONDO:0010785",
+    "MONDO:0012819",
+    "MONDO:0015967",
+    "MONDO:7770003"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005044": {
+   "id": "MONDO:0005044",
+   "label": "hypertensive disorder",
+   "description": "Persistently high systemic arterial blood pressure. Based on multiple readings (blood pressure determination), hypertension is currently defined as when systolic pressure is consistently greater than 140 mm Hg or when diastolic pressure is consistently 90 mm Hg or more.",
+   "synonyms": [
+    "blood pressure, high",
+    "blood pressure, increased",
+    "high blood pressure",
+    "hypertensive disease",
+    "increased blood pressure",
+    "pressure, high blood",
+    "vascular hypertensive disorder"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0000473"
+   ],
+   "children": [
+    "MONDO:0100078",
+    "MONDO:0005585",
+    "MONDO:0006810",
+    "MONDO:0001134",
+    "MONDO:0006846",
+    "MONDO:0001200",
+    "MONDO:0005149",
+    "MONDO:0005430",
+    "MONDO:0006875",
+    "MONDO:0023530",
+    "MONDO:0024664",
+    "MONDO:1030007"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005068": {
+   "id": "MONDO:0005068",
+   "label": "myocardial infarction",
+   "description": "Gross necrosis of the myocardium, as a result of interruption of the blood supply to the area, as in coronary thrombosis.",
+   "synonyms": [
+    "MI",
+    "MI, myocardial infarction",
+    "heart attack",
+    "infarction (MI), myocardial",
+    "myocardial infarct",
+    "myocardial infarction",
+    "myocardial infarction (disease)",
+    "myocardial infarction, (MI)"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0024643"
+   ],
+   "children": [
+    "MONDO:0003671",
+    "MONDO:0003673",
+    "MONDO:0003674",
+    "MONDO:0003676",
+    "MONDO:0003677",
+    "MONDO:0003678",
+    "MONDO:0003679",
+    "MONDO:0003675",
+    "MONDO:0004781",
+    "MONDO:0006652",
+    "MONDO:0006803",
+    "MONDO:0003670",
+    "MONDO:0003672",
+    "MONDO:0004876"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005080": {
+   "id": "MONDO:0005080",
+   "label": "portal hypertension",
+   "description": "Increased blood pressure in the portal venous system. It is most commonly caused by cirrhosis. Other causes include portal vein thrombosis, Budd-Chiari syndrome, and right heart failure. Complications include ascites, esophageal varices, encephalopathy, and splenomegaly.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0002405"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005081": {
+   "id": "MONDO:0005081",
+   "label": "preeclampsia",
+   "description": "Preeclampsia is a hypertensive disorder of pregnancy that is characterized by new-onset hypertension with proteinuria presenting after 20 weeks of gestation, and depending on mild or severe forms may initially present with severe headache, visual disturbances, and hyperreflexia.",
+   "synonyms": [
+    "pre-eclampsia",
+    "pre-eclamptic toxaemia",
+    "pre-eclamptic toxemia",
+    "preeclampsia",
+    "preeclampsia/eclampsia",
+    "pregnancy toxaemia",
+    "proteinuric hypertension of pregnancy"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0003847",
+    "MONDO:0045048"
+   ],
+   "children": [
+    "MONDO:0100467",
+    "MONDO:0012264",
+    "MONDO:0012265",
+    "MONDO:0012266",
+    "MONDO:0013817",
+    "MONDO:0001072",
+    "MONDO:0001641"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005099": {
+   "id": "MONDO:0005099",
+   "label": "subarachnoid hemorrhage",
+   "description": "A serious neurological disorder characterized by intracranial hemorrhage into the subarachnoid space.",
+   "synonyms": [
+    "subarachnoid haemorrhage (disease)",
+    "subarachnoid hemorrhage",
+    "subarachnoid hemorrhage (disease)"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:1060199"
+   ],
+   "children": [
+    "MONDO:0019543"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005148": {
+   "id": "MONDO:0005148",
+   "label": "type 2 diabetes mellitus",
+   "description": "A type of diabetes mellitus that is characterized by insulin resistance or desensitization and increased blood glucose levels. This is a chronic disease that can develop gradually over the life of a patient and can be linked to both environmental factors and heredity.",
+   "synonyms": [
+    "NIDDM",
+    "T2D",
+    "T2DM",
+    "T2DM - type 2 diabetes mellitus",
+    "adult onset diabetes",
+    "adult-onset diabetes",
+    "diabetes mellitis type 2",
+    "diabetes mellitis type II",
+    "diabetes mellitus, noninsulin-dependent",
+    "diabetes mellitus, noninsulin-dependent, association with",
+    "diabetes mellitus, noninsulin-dependent, late onset",
+    "diabetes mellitus, type 2",
+    "diabetes mellitus, type II",
+    "diabetes, type 2",
+    "insulin resistance, severe, digenic",
+    "non-insulin dependent diabetes",
+    "non-insulin dependent diabetes mellitus",
+    "noninsulin dependent diabetes",
+    "noninsulin-dependent diabetes mellitus",
+    "type 2 diabetes",
+    "type 2 diabetes mellitus",
+    "type 2 diabetes mellitus non-insulin dependent",
+    "type II diabetes",
+    "type II diabetes mellitus"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "diabetes mellitus, noninsulin-dependent, 2"
+   ],
+   "parents": [
+    "MONDO:0005015"
+   ],
+   "children": [
+    "MONDO:0011027",
+    "MONDO:0011955",
+    "MONDO:0005827",
+    "MONDO:0011363",
+    "MONDO:0011072",
+    "MONDO:0014488"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005149": {
+   "id": "MONDO:0005149",
+   "label": "pulmonary hypertension",
+   "description": "Increased pressure within the pulmonary circulation due to lung or heart disorder.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005044"
+   ],
+   "children": [
+    "MONDO:0015924",
+    "MONDO:0100159",
+    "MONDO:0017157",
+    "MONDO:0012032",
+    "MONDO:0013024",
+    "MONDO:0013458"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005252": {
+   "id": "MONDO:0005252",
+   "label": "heart failure",
+   "description": "Inability of the heart to pump blood at an adequate rate to meet tissue metabolic requirements. Clinical symptoms of heart failure include: unusual dyspnea on light exertion, recurrent dyspnea occurring in the supine position, fluid retention or rales, jugular venous distension, pulmonary edema on physical exam, or pulmonary edema on chest x-ray presumed to be cardiac dysfunction.",
+   "synonyms": [
+    "cardiac failure",
+    "cardiac insufficiency",
+    "failure, heart",
+    "heart failure",
+    "insufficiency, Cardiac"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005267"
+   ],
+   "children": [
+    "MONDO:0044079",
+    "MONDO:0005254",
+    "MONDO:0005009",
+    "MONDO:0005253"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005264": {
+   "id": "MONDO:0005264",
+   "label": "transient ischemic attack",
+   "description": "A brief attack (from a few minutes to an hour) of cerebral dysfunction of vascular origin, with no persistent neurological deficit.",
+   "synonyms": [
+    "TIA",
+    "TIA - transient ischemic attack",
+    "attack, transient ischaemic",
+    "attack, transient ischemic",
+    "ischaemic attack, transient",
+    "ischemic attack, transient",
+    "transient cerebral ischemia (disorder) [ambiguous]",
+    "transient ischaemic attack (disease)",
+    "transient ischaemic attacks",
+    "transient ischemic attack",
+    "transient ischemic attack (disease)",
+    "transient ischemic attacks"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005299",
+    "MONDO:1060198"
+   ],
+   "children": [
+    "MONDO:0001631"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005267": {
+   "id": "MONDO:0005267",
+   "label": "heart disorder",
+   "description": "A disease involving the heart and/or pericardium.",
+   "synonyms": [
+    "cardiac disease",
+    "disease of heart",
+    "disease or disorder of heart",
+    "disorder of heart",
+    "disorder of heart/pericardium",
+    "heart disease",
+    "heart disease or disorder",
+    "heart disorder",
+    "heart trouble",
+    "heart/pericardial disease",
+    "heart/pericardial disease or disorder",
+    "heart/pericardial disorder",
+    "heart/pericardial trouble"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0004995"
+   ],
+   "children": [
+    "MONDO:0024636",
+    "MONDO:0043529",
+    "MONDO:0044875",
+    "MONDO:0100547",
+    "MONDO:0800175",
+    "MONDO:0010825",
+    "MONDO:0011050",
+    "MONDO:0011676",
+    "MONDO:0018923",
+    "MONDO:0020983",
+    "MONDO:0022859",
+    "MONDO:0024643",
+    "MONDO:0045001",
+    "MONDO:0018043",
+    "MONDO:0044649",
+    "MONDO:0005453",
+    "MONDO:0001302",
+    "MONDO:0002869",
+    "MONDO:0000813",
+    "MONDO:0000992",
+    "MONDO:0000470",
+    "MONDO:0000474",
+    "MONDO:0005252",
+    "MONDO:0004994",
+    "MONDO:0005010",
+    "MONDO:0006955",
+    "MONDO:0006779",
+    "MONDO:0007263",
+    "MONDO:0010199",
+    "MONDO:0015296",
+    "MONDO:0013053",
+    "MONDO:0016460",
+    "MONDO:0021209",
+    "MONDO:0021902"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005279": {
+   "id": "MONDO:0005279",
+   "label": "pulmonary embolism",
+   "description": "The obstruction of the pulmonary artery or one of its branches by an embolus, sometimes associated with infarction of the lung.",
+   "synonyms": [
+    "embolism, pulmonary",
+    "pulmonary embolism",
+    "pulmonary embolism (disease)",
+    "pulmonary embolus"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0000473"
+   ],
+   "children": [
+    "MONDO:0004594"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005294": {
+   "id": "MONDO:0005294",
+   "label": "peripheral vascular disease",
+   "description": "Any disorder affecting blood flow through the veins or arteries outside of the heart.",
+   "synonyms": [
+    "disease, peripheral vascular",
+    "peripheral vascular disorder",
+    "vascular disease, peripheral"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005385"
+   ],
+   "children": [
+    "MONDO:0043361",
+    "MONDO:0044037",
+    "MONDO:0000960",
+    "MONDO:0001576",
+    "MONDO:0005386",
+    "MONDO:0006855",
+    "MONDO:0004745",
+    "MONDO:0005295",
+    "MONDO:0008364",
+    "MONDO:0008889",
+    "MONDO:0016028"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005296": {
+   "id": "MONDO:0005296",
+   "label": "sleep apnea syndrome",
+   "description": "A disorder characterized by multiple cessations of respirations during sleep that induce partial arousals and interfere with the maintenance of sleep.",
+   "synonyms": [
+    "SDB",
+    "sleep apnea",
+    "sleep apnea syndrome",
+    "sleep apneas",
+    "sleep disordered breathing",
+    "sleep-disordered breathing"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0003406",
+    "MONDO:0005087"
+   ],
+   "children": [
+    "MONDO:0004731",
+    "MONDO:0007147"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005311": {
+   "id": "MONDO:0005311",
+   "label": "atherosclerosis",
+   "description": "A disease characterized by the build-up of fatty material and calcium deposition in the arterial wall resulting in partial or complete occlusion of the arterial lumen.",
+   "synonyms": [
+    "atherosclerosis of artery"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0002277"
+   ],
+   "children": [
+    "MONDO:1060134",
+    "MONDO:0021661",
+    "MONDO:0030702",
+    "MONDO:0002275",
+    "MONDO:0006694",
+    "MONDO:0000980"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005386": {
+   "id": "MONDO:0005386",
+   "label": "peripheral arterial disease",
+   "description": "A disorder of the arteries supplying the upper and lower extremity and the visceral organs. This includes the mesenteric arteries, the renal arteries and the aorta and excludes cerebrovascular arterial disease. Patients experience cramping and pain usually in the calves and thighs while walking. The symptoms subside with rest.",
+   "synonyms": [
+    "PAD",
+    "pad",
+    "peripheral arterial disorder"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0000473",
+    "MONDO:0005294"
+   ],
+   "children": [
+    "MONDO:0041114"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005394": {
+   "id": "MONDO:0005394",
+   "label": "brain infarction",
+   "description": "Tissue necrosis in any area of the brain, including the cerebral hemispheres, the cerebellum, and the brain stem. Brain infarction is the result of a cascade of events initiated by inadequate blood flow through the brain that is followed by hypoxia and hypoglycemia in brain tissue. Damage may be temporary, permanent, selective or pan-necrosis.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0011057"
+   ],
+   "children": [
+    "MONDO:0005426",
+    "MONDO:0002679",
+    "MONDO:0006686"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005399": {
+   "id": "MONDO:0005399",
+   "label": "venous thromboembolism",
+   "description": "Occlusion of the lumen of a vein by a thrombus that has migrated from a distal site via the blood stream.",
+   "synonyms": [
+    "venous thromboembolism"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005385"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005453": {
+   "id": "MONDO:0005453",
+   "label": "congenital heart disease",
+   "description": "A heart disease that is present at birth. Representative examples include atrial septal defect, ventricular septal defect, tetralogy of Fallot, and patent foramen ovale.",
+   "synonyms": [
+    "congenital anomaly of heart",
+    "congenital heart defect",
+    "congenital heart defects"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005267",
+    "MONDO:0024239"
+   ],
+   "children": [
+    "MONDO:0100540",
+    "MONDO:0800476",
+    "MONDO:1010144",
+    "MONDO:0100557",
+    "MONDO:0700352",
+    "MONDO:0800440",
+    "MONDO:0015203",
+    "MONDO:0019808",
+    "MONDO:0020295",
+    "MONDO:0043127",
+    "MONDO:0100614",
+    "MONDO:0018072",
+    "MONDO:0100009",
+    "MONDO:0100541",
+    "MONDO:0002078",
+    "MONDO:0000119",
+    "MONDO:0008917",
+    "MONDO:0011514",
+    "MONDO:0008542",
+    "MONDO:0015249",
+    "MONDO:0011827",
+    "MONDO:0019443",
+    "MONDO:1010098"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005492": {
+   "id": "MONDO:0005492",
+   "label": "urticaria",
+   "description": "A vascular reaction of the skin characterized by erythema and wheal formation due to localized increase of vascular permeability. The causative mechanism may be allergy, infection, or stress.",
+   "synonyms": [
+    "hives",
+    "urticaria",
+    "urticaria (disease)"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0002406"
+   ],
+   "children": [
+    "MONDO:0043254",
+    "MONDO:0850230",
+    "MONDO:0044211",
+    "MONDO:0006599",
+    "MONDO:0006526",
+    "MONDO:0007969",
+    "MONDO:0008632",
+    "MONDO:0008634",
+    "MONDO:0010481",
+    "MONDO:0008353",
+    "MONDO:0015340",
+    "MONDO:0019023",
+    "MONDO:0022799",
+    "MONDO:0025513"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005607": {
+   "id": "MONDO:0005607",
+   "label": "chronic bronchitis",
+   "description": "A type of chronic obstructive pulmonary disease characterized by chronic inflammation in the bronchial tree that results in edema, mucus production, obstruction, and reduced airflow to and from the lung alveoli. The most common cause is tobacco smoking. Signs and symptoms include coughing with excessive mucus production, and shortness of breath.",
+   "synonyms": [
+    "bronchitis, chronic"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0003781",
+    "MONDO:0005002"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005648": {
+   "id": "MONDO:0005648",
+   "label": "aortic valve insufficiency",
+   "description": "Dysfunction of the aortic valve characterized by incomplete valve closure.",
+   "synonyms": [
+    "aortic insufficiency",
+    "rheumatic aortic insufficiency",
+    "rheumatic aortic regurgitation"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0020674",
+    "MONDO:0003803"
+   ],
+   "children": [
+    "MONDO:0019809"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0005827": {
+   "id": "MONDO:0005827",
+   "label": "lipoatrophic diabetes",
+   "description": "A rare syndrome characterized by almost complete absence of body fat, accentuated muscularity, insulin-resistant diabetes, hyperlipidemia, hepatomegaly, and hypermetabolism.",
+   "synonyms": [
+    "diabete, lipoatrophic",
+    "lipoatrophic diabetes"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005148"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0006796": {
+   "id": "MONDO:0006796",
+   "label": "hypertensive encephalopathy",
+   "description": "Encephalopathy resulting from hypertension.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0006810"
+   ],
+   "children": [
+    "MONDO:0044033"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0006803": {
+   "id": "MONDO:0006803",
+   "label": "inferior myocardial infarction",
+   "description": "Myocardial infarction in which the inferior wall of the heart is involved. It is often caused by occlusion of the right coronary artery.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005068"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0006809": {
+   "id": "MONDO:0006809",
+   "label": "intracranial embolism",
+   "description": "Blocking of a blood vessel in the skull by an embolus which can be a blood clot (thrombus) or other undissolved material in the blood stream. Most emboli are of cardiac origin and are associated with heart diseases. Other non-cardiac sources of emboli are usually associated with vascular diseases.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:1060198"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0006846": {
+   "id": "MONDO:0006846",
+   "label": "malignant hypertension",
+   "description": "Severe hypertension that is characterized by rapid onset of extremely high blood pressure and hypertension-mediated organ damage.",
+   "synonyms": [
+    "accelerated-malignant hypertension",
+    "hypertensive emergency",
+    "malignant phase hypertension"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005044"
+   ],
+   "children": [
+    "MONDO:0000959",
+    "MONDO:0001785",
+    "MONDO:0001133"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0006947": {
+   "id": "MONDO:0006947",
+   "label": "renovascular hypertension",
+   "description": "High blood pressure secondary to renal artery stenosis.",
+   "synonyms": [
+    "renovascular hypertension",
+    "renovascular hypertension (disease)"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0001105"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0006955": {
+   "id": "MONDO:0006955",
+   "label": "rheumatic heart disease",
+   "description": "An autoinflammatory condition following an infection with Group A Beta Hemolytic Streptococcus (GABHS), in which the heart is attacked by antibodies formed in reaction to a recent GABHS infection. Chief anatomic changes of the valve include leaflet thickening, commissural fusion, and shortening and thickening of the tendinous cords, all of which can result in valvular dysfunction.",
+   "synonyms": [
+    "RHD",
+    "disease, rheumatic heart",
+    "heart disease, rheumatic",
+    "rheumatic carditis"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0021166",
+    "MONDO:0005267"
+   ],
+   "children": [
+    "MONDO:0021777",
+    "MONDO:0024655",
+    "MONDO:0004582",
+    "MONDO:0001899"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0011057": {
+   "id": "MONDO:0011057",
+   "label": "cerebrovascular disorder",
+   "description": "A disorder resulting from inadequate blood flow in the vessels that supply the brain. Representative examples include cerebrovascular ischemia, cerebral embolism, and cerebral infarction.",
+   "synonyms": [
+    "cerebrovascular disease",
+    "cerebrovascular disorder"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "CVA",
+    "CVA (cerebral vascular accident)",
+    "cerebral infarction",
+    "cerebrovascular accident",
+    "stroke"
+   ],
+   "parents": [
+    "MONDO:0005560",
+    "MONDO:0043218"
+   ],
+   "children": [
+    "MONDO:1040016",
+    "MONDO:0032814",
+    "MONDO:0017993",
+    "MONDO:0020496",
+    "MONDO:0035551",
+    "MONDO:0003718",
+    "MONDO:0005299",
+    "MONDO:0005394",
+    "MONDO:0005620",
+    "MONDO:0001277",
+    "MONDO:0006983",
+    "MONDO:0002907",
+    "MONDO:0004648",
+    "MONDO:0005269",
+    "MONDO:0005621",
+    "MONDO:0005098",
+    "MONDO:0005189",
+    "MONDO:0006812",
+    "MONDO:0009468",
+    "MONDO:0006505",
+    "MONDO:0006808",
+    "MONDO:0018832",
+    "MONDO:1030010",
+    "MONDO:1060190"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0013792": {
+   "id": "MONDO:0013792",
+   "label": "intracerebral hemorrhage",
+   "description": "A cerebrovascular disorder characterized by bleeding into one or both cerebral hemispheres including the basal ganglia and the cerebral cortex. It is often associated with hypertension and craniocerebral trauma.",
+   "synonyms": [
+    "stroke, hemorrhagic"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:1060199"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0015924": {
+   "id": "MONDO:0015924",
+   "label": "pulmonary arterial hypertension",
+   "description": "Pulmonary arterial hypertension (PAH) is a group of diseases characterized by mean pulmonary artery pressure >20 mmHg and elevated pulmonary arterial resistance leading to right heart failure. PAH is progressive and potentially fatal. PAH may be idiopathic and/ or familial, have overt features of venous/capillary involvement (pulmonary veno-occlusive disease, PVOD/pulmonary capillary hemangiomatosis, PCH), induced by drug or toxin (drug-or toxin-induced PAH), or associated with other diseases like congenital heart disease, connective tissue disease, HIV, schistosomiasis, portal hypertension (PAH associated with other disease).",
+   "synonyms": [
+    "PAH",
+    "pulmonary arterial hypertension"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "PAH with overt features of venous/capillaries involvement",
+    "PVOD/PCH"
+   ],
+   "parents": [
+    "MONDO:0005149"
+   ],
+   "children": [
+    "MONDO:0017148",
+    "MONDO:0017149",
+    "MONDO:0018554",
+    "MONDO:0019944",
+    "MONDO:0001999"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0024355": {
+   "id": "MONDO:0024355",
+   "label": "respiratory tract infectious disorder",
+   "description": "Invasion of the host RESPIRATORY SYSTEM by microorganisms, usually leading to pathological processes or diseases.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "respiratory infection, upper",
+    "upper respiratory infections",
+    "upper respiratory tract infections"
+   ],
+   "parents": [
+    "MONDO:0005550",
+    "MONDO:0005087"
+   ],
+   "children": [
+    "MONDO:0024352",
+    "MONDO:0018469",
+    "MONDO:0021783",
+    "MONDO:0021804",
+    "MONDO:0005922",
+    "MONDO:0000744",
+    "MONDO:0001024",
+    "MONDO:0005819",
+    "MONDO:0005990",
+    "MONDO:0005249",
+    "MONDO:0005766",
+    "MONDO:0020863",
+    "MONDO:0020866",
+    "MONDO:0021953"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0024644": {
+   "id": "MONDO:0024644",
+   "label": "myocardial ischemia",
+   "description": "A disorder of cardiac function caused by insufficient blood flow to the muscle tissue of the heart. The decreased blood flow may be due to narrowing of the coronary arteries (coronary artery disease), to obstruction by a thrombus (coronary thrombosis), or less commonly, to diffuse narrowing of arterioles and other small vessels within the heart. Severe interruption of the blood supply to the myocardial tissue may result in necrosis of cardiac muscle (myocardial infarction).",
+   "synonyms": [
+    "IHD",
+    "ischaemic disease of myocardium",
+    "ischaemic heart disease",
+    "ischemic disease of myocardium",
+    "ischemic heart disease",
+    "myocardium ischaemic disease",
+    "myocardium ischemic disease"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0024643",
+    "MONDO:0005053"
+   ],
+   "children": [
+    "MONDO:0005542"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0042981": {
+   "id": "MONDO:0042981",
+   "label": "aortic valve stenosis",
+   "description": "Aortic valve stenosis (AVS) is a condition characterized by narrowing of the heart's aortic valve opening. This narrowing prevents the valve from opening fully, which obstructs blood flow from the heart into the aorta, and onward to the rest of the body. AVS can range from mild to severe. Signs and symptoms typically develop when the narrowing of the opening is severe and may include chest pain (angina) or tightness; shortness of breath or fatigue (especially during exertion); feeling faint or fainting; heart palpitations; and heart murmur. Individuals with less severe congenital AVS (present at birth) may not develop symptoms until adulthood. Individuals with severe cases may faint without warning. AVS can have several causes including abnormal development before birth (such as having 1 or 2 valve leaflets instead of 3); calcium build-up on the valve in adulthood; and rheumatic fever.",
+   "synonyms": [
+    "AS",
+    "aortic stenosis"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "rheumatic aortic stenosis",
+    "rheumatic aortic valve stenosis"
+   ],
+   "parents": [
+    "MONDO:0021147",
+    "MONDO:0003803"
+   ],
+   "children": [
+    "MONDO:0022471",
+    "MONDO:0006987",
+    "MONDO:0008504",
+    "MONDO:0017735"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0100078": {
+   "id": "MONDO:0100078",
+   "label": "resistant hypertension",
+   "description": "A severe medical condition which is estimated to appear in 9-18% of hypertensive patients, in which treatment with 3 or more antihypertensive drugs including diuretics are ineffective.",
+   "synonyms": [
+    "drug resistant hypertension"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005044"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:0850282": {
+   "id": "MONDO:0850282",
+   "label": "chronic asthma",
+   "description": "An asthma that is characterized by the development of persistent airway inflammation and recurrent attacks of breathlessness and wheezing, which vary in severity and frequency.",
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [
+    "adult-onset severe asthma",
+    "persistent mild asthma",
+    "persistent moderate asthma",
+    "persistent severe asthma"
+   ],
+   "parents": [
+    "MONDO:0004979"
+   ],
+   "children": [
+    "MONDO:0850284",
+    "MONDO:0956971",
+    "MONDO:0956975",
+    "MONDO:0956976",
+    "MONDO:0956979"
+   ],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "MONDO:1030007": {
+   "id": "MONDO:1030007",
+   "label": "hypertensive urgency",
+   "description": "A hypertensive disorder that is characterized by marked elevation in blood pressure, such as systolic blood pressure greater than 180 mmHg or diastolic blood pressure greater than 110 mmHg, and without evidence of target organ damage, such as pulmonary edema, cardiac ischemia, neurologic deficits, or acute renal failure.",
+   "synonyms": [
+    "hypertensive crisis without acute organ damage",
+    "severely elevated blood pressure without acute organ damage"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "MONDO:0005044"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "MONDO"
+  },
+  "NCBITaxon:9606": {
+   "id": "NCBITaxon:9606",
+   "label": "Homo sapiens",
+   "description": null,
+   "synonyms": [
+    "human"
+   ],
+   "synonyms_exact": false,
+   "source": "ols",
+   "vocabulary": "NCBITaxon"
+  },
+  "NDFRT:N0000175421": {
+   "id": "NDFRT:N0000175421",
+   "label": "Dihydropyridine calcium channel blocker",
+   "description": null,
+   "synonyms": [],
+   "source": "rxclass",
+   "vocabulary": "EPC"
+  },
+  "OBA:1001086": {
+   "id": "OBA:1001086",
+   "label": "QRS duration",
+   "description": null,
+   "synonyms": [],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "PATO:0001309",
+    "OBA:0000001"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:1001087": {
+   "id": "OBA:1001087",
+   "label": "heart rate",
+   "description": "The rate of a heart contraction.",
+   "synonyms": [
+    "rate of heart contraction"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "PATO:0000161",
+    "OBA:1000258"
+   ],
+   "children": [
+    "OBA:0003652"
+   ],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:2045303": {
+   "id": "OBA:2045303",
+   "label": "natriuretic peptides B level",
+   "description": "The amount of a natriuretic peptides B when measured in anatomical entity.",
+   "synonyms": [
+    "BNP quantity",
+    "anatomical entity natriuretic peptides B amount",
+    "brain natriuretic peptide 32 level"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "OBA:VT0010120"
+   ],
+   "children": [
+    "OBA:2100274",
+    "OBA:2081978",
+    "OBA:2045349"
+   ],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:2045443": {
+   "id": "OBA:2045443",
+   "label": "oxygen concentration in blood",
+   "description": "The concentration of of a oxygen atom when measured in blood.",
+   "synonyms": [
+    "blood oxygen atom concentration of"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "OBA:1000981",
+    "OBA:2045211",
+    "PATO:0000033"
+   ],
+   "children": [
+    "OBA:2045445",
+    "OBA:2045447",
+    "OBA:2045446"
+   ],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:2050075": {
+   "id": "OBA:2050075",
+   "label": "serum alpha-1-antitrypsin amount",
+   "description": "The amount of a alpha-1-antitrypsin when measured in blood serum.",
+   "synonyms": [
+    "blood serum alpha-1-antitrypsin amount"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "OBA:2050071"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:2050108": {
+   "id": "OBA:2050108",
+   "label": "carotid artery thickness",
+   "description": "The thickness of a carotid artery segment.",
+   "synonyms": [
+    "thickness of carotid artery segment"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "OBA:0003926",
+    "PATO:0000915",
+    "OBA:0000032"
+   ],
+   "children": [
+    "OBA:2050107"
+   ],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:2060174": {
+   "id": "OBA:2060174",
+   "label": "amount of insulin in blood",
+   "description": "The amount of a insulin when measured in blood.",
+   "synonyms": [
+    "blood insulin amount"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "OBA:1000947",
+    "OBA:VT0005418"
+   ],
+   "children": [
+    "OBA:VT0001560",
+    "OBA:2090001"
+   ],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:VT0000188": {
+   "id": "OBA:VT0000188",
+   "label": "blood glucose amount",
+   "description": "The amount of a glucose when measured in blood.",
+   "synonyms": [
+    "blood glucose amount"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "OBA:2050078"
+   ],
+   "children": [
+    "OBA:2090000",
+    "OBA:2045372",
+    "OBA:2045396"
+   ],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OBA:VT2000000": {
+   "id": "OBA:VT2000000",
+   "label": "arterial blood pressure trait",
+   "description": "The pressure of a arterial blood.",
+   "synonyms": [
+    "pressure of arterial blood"
+   ],
+   "synonyms_exact": true,
+   "narrow_synonyms": [],
+   "parents": [
+    "OBA:VT0000183"
+   ],
+   "children": [],
+   "source": "monarch",
+   "vocabulary": "OBA"
+  },
+  "OMOP:1242799": {
+   "id": "OMOP:1242799",
+   "label": "Operation on carotid artery",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Procedure",
+   "standard": "S"
+  },
+  "OMOP:3000905": {
+   "id": "OMOP:3000905",
+   "label": "Leukocytes [#/volume] in Blood by Automated count",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:3007070": {
+   "id": "OMOP:3007070",
+   "label": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:3013682": {
+   "id": "OMOP:3013682",
+   "label": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:3025315": {
+   "id": "OMOP:3025315",
+   "label": "Body weight",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:3036277": {
+   "id": "OMOP:3036277",
+   "label": "Body height",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:3038553": {
+   "id": "OMOP:3038553",
+   "label": "Body mass index (BMI) [Ratio]",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:37393605": {
+   "id": "OMOP:37393605",
+   "label": "D-dimer level",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:37396400": {
+   "id": "OMOP:37396400",
+   "label": "Apnea Hypopnea Index",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:38003563": {
+   "id": "OMOP:38003563",
+   "label": "Hispanic or Latino",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Ethnicity",
+   "domain": "Ethnicity",
+   "standard": "S"
+  },
+  "OMOP:38003564": {
+   "id": "OMOP:38003564",
+   "label": "Not Hispanic or Latino",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Ethnicity",
+   "domain": "Ethnicity",
+   "standard": "S"
+  },
+  "OMOP:38003615": {
+   "id": "OMOP:38003615",
+   "label": "Middle Eastern or North African",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "standard": "S"
+  },
+  "OMOP:4006788": {
+   "id": "OMOP:4006788",
+   "label": "Percutaneous transluminal coronary angioplasty",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Procedure",
+   "standard": "S"
+  },
+  "OMOP:4021291": {
+   "id": "OMOP:4021291",
+   "label": "Troponin measurement",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4044550": {
+   "id": "OMOP:4044550",
+   "label": "Dilation - action",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "standard": "S"
+  },
+  "OMOP:4102124": {
+   "id": "OMOP:4102124",
+   "label": "Carotid atherosclerosis",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Condition",
+   "standard": "S"
+  },
+  "OMOP:4138462": {
+   "id": "OMOP:4138462",
+   "label": "Carotid intima media thickness",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4152194": {
+   "id": "OMOP:4152194",
+   "label": "Systolic blood pressure",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4154790": {
+   "id": "OMOP:4154790",
+   "label": "Diastolic blood pressure",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4156660": {
+   "id": "OMOP:4156660",
+   "label": "Fasting blood glucose measurement",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4166120": {
+   "id": "OMOP:4166120",
+   "label": "Calcium volume",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4176265": {
+   "id": "OMOP:4176265",
+   "label": "Forced vital capacity",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4178405": {
+   "id": "OMOP:4178405",
+   "label": "Revascularization - action",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "standard": "S"
+  },
+  "OMOP:4184637": {
+   "id": "OMOP:4184637",
+   "label": "Hemoglobin A1c measurement",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4184832": {
+   "id": "OMOP:4184832",
+   "label": "Coronary angioplasty",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Procedure",
+   "standard": "S"
+  },
+  "OMOP:4189511": {
+   "id": "OMOP:4189511",
+   "label": "N terminal pro-brain natriuretic peptide level",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4208414": {
+   "id": "OMOP:4208414",
+   "label": "C-reactive protein measurement",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4223020": {
+   "id": "OMOP:4223020",
+   "label": "Cardiac catheterization",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Procedure",
+   "standard": "S"
+  },
+  "OMOP:4230556": {
+   "id": "OMOP:4230556",
+   "label": "Alive",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "standard": "S"
+  },
+  "OMOP:4241837": {
+   "id": "OMOP:4241837",
+   "label": "Forced expired volume in 1 second",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:4273021": {
+   "id": "OMOP:4273021",
+   "label": "QRS complex - finding",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Condition",
+   "standard": "S"
+  },
+  "OMOP:4273023": {
+   "id": "OMOP:4273023",
+   "label": "QT interval - finding",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Condition",
+   "standard": "S"
+  },
+  "OMOP:4274406": {
+   "id": "OMOP:4274406",
+   "label": "PR interval - finding",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Condition",
+   "standard": "S"
+  },
+  "OMOP:4277283": {
+   "id": "OMOP:4277283",
+   "label": "Natural mother",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "standard": "S"
+  },
+  "OMOP:42872742": {
+   "id": "OMOP:42872742",
+   "label": "Coronary artery calcium score",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "standard": "S"
+  },
+  "OMOP:43020498": {
+   "id": "OMOP:43020498",
+   "label": "Left carotid artery stenosis",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Condition",
+   "standard": "S"
+  },
+  "OMOP:43021859": {
+   "id": "OMOP:43021859",
+   "label": "Right carotid artery stenosis",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Condition",
+   "standard": "S"
+  },
+  "OMOP:4321888": {
+   "id": "OMOP:4321888",
+   "label": "Natural father",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "standard": "S"
+  },
+  "OMOP:4336464": {
+   "id": "OMOP:4336464",
+   "label": "Coronary artery bypass graft",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Procedure",
+   "standard": "S"
+  },
+  "OMOP:434489": {
+   "id": "OMOP:434489",
+   "label": "Dead",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "standard": "S"
+  },
+  "OMOP:45772840": {
+   "id": "OMOP:45772840",
+   "label": "Implantable cardiac pacemaker",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Device",
+   "standard": "S"
+  },
+  "OMOP:8507": {
+   "id": "OMOP:8507",
+   "label": "MALE",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Gender",
+   "domain": "Gender",
+   "standard": "S"
+  },
+  "OMOP:8515": {
+   "id": "OMOP:8515",
+   "label": "Asian",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "standard": "S"
+  },
+  "OMOP:8516": {
+   "id": "OMOP:8516",
+   "label": "Black or African American",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "standard": "S"
+  },
+  "OMOP:8527": {
+   "id": "OMOP:8527",
+   "label": "White",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "standard": "S"
+  },
+  "OMOP:8532": {
+   "id": "OMOP:8532",
+   "label": "FEMALE",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Gender",
+   "domain": "Gender",
+   "standard": "S"
+  },
+  "OMOP:8557": {
+   "id": "OMOP:8557",
+   "label": "Native Hawaiian or Other Pacific Islander",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "standard": "S"
+  },
+  "OMOP:8657": {
+   "id": "OMOP:8657",
+   "label": "American Indian or Alaska Native",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "standard": "S"
+  },
+  "OMOP:8842": {
+   "id": "OMOP:8842",
+   "label": "nanogram per milliliter",
+   "description": null,
+   "synonyms": [],
+   "source": "ohdsi",
+   "vocabulary": "UCUM",
+   "domain": "Unit",
+   "standard": "S"
+  },
+  "RxCUI:11170": {
+   "id": "RxCUI:11170",
+   "label": "verapamil",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:151890": {
+   "id": "RxCUI:151890",
+   "label": "Inderal",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:17767": {
+   "id": "RxCUI:17767",
+   "label": "amlodipine",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:1998": {
+   "id": "RxCUI:1998",
+   "label": "captopril",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:2404": {
+   "id": "RxCUI:2404",
+   "label": "chlorpropamide",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:25789": {
+   "id": "RxCUI:25789",
+   "label": "glimepiride",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:2599": {
+   "id": "RxCUI:2599",
+   "label": "clonidine",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:29046": {
+   "id": "RxCUI:29046",
+   "label": "lisinopril",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:3443": {
+   "id": "RxCUI:3443",
+   "label": "diltiazem",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:4815": {
+   "id": "RxCUI:4815",
+   "label": "glyburide",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:4821": {
+   "id": "RxCUI:4821",
+   "label": "glipizide",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:5470": {
+   "id": "RxCUI:5470",
+   "label": "hydralazine",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:6809": {
+   "id": "RxCUI:6809",
+   "label": "metformin",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:6876": {
+   "id": "RxCUI:6876",
+   "label": "methyldopa",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:72610": {
+   "id": "RxCUI:72610",
+   "label": "troglitazone",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:73044": {
+   "id": "RxCUI:73044",
+   "label": "repaglinide",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:7417": {
+   "id": "RxCUI:7417",
+   "label": "nifedipine",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:84108": {
+   "id": "RxCUI:84108",
+   "label": "rosiglitazone",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:8787": {
+   "id": "RxCUI:8787",
+   "label": "propranolol",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  },
+  "RxCUI:9997": {
+   "id": "RxCUI:9997",
+   "label": "spironolactone",
+   "description": null,
+   "synonyms": [],
+   "source": "rxnav",
+   "vocabulary": "RxNorm"
+  }
+ },
+ "unresolved": []
+}
