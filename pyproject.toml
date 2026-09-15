@@ -33,6 +33,7 @@ target-version = "py312"
 line-length = 120
 include = [
     "api/**/*.py",
+    "ontology/**/*.py",
     "synthetic/**/*.py",
 ]
 
@@ -59,6 +60,7 @@ unfixable = []
 
 [tool.ruff.lint.per-file-ignores]
 "api/tests/**/*.py" = ["D"]
+"ontology/tests/**/*.py" = ["D"]
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
@@ -69,8 +71,8 @@ count = ""
 quiet-level = 3
 
 [tool.coverage.run]
-source = ["api"]
-omit = ["api/tests/*", "*/__init__.py"]
+source = ["api", "ontology"]
+omit = ["api/tests/*", "ontology/tests/*", "*/__init__.py"]
 
 [tool.coverage.report]
 show_missing = true
