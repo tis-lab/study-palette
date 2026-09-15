@@ -1,0 +1,6 @@
+# Generated corpus — reproducible from SEED, so not committed
+data/
+output/
+# dbGaP digest cache, populated by generate.py on first run
+.dbgap-cache/
+__pycache__/
