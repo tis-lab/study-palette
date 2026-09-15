@@ -6,10 +6,12 @@ respiratory variables are where cross-study querying has to work first.
 Hypertension and Type 2 diabetes are the two conditions the synthetic corpus
 models in depth, which makes them the pair that can be demonstrated end to end.
 
-Names are BDC-VarLib slot names. Several are near-duplicates of each other
-(`hist_hrtfail` and `hist_heart_failure`, `hrt_rt` and `hrtrt`) because the
-variable library carries both spellings; they are all listed so the wireframes
-show what a user would actually encounter.
+These are trans-spec filenames, and they are used for one thing: deciding
+which spec files to read. They are not concepts and never reach the output,
+which is keyed on the CURIEs those specs emit. Several are near-duplicates of
+each other (`hist_hrtfail` and `hist_heart_failure`, `hrt_rt` and `hrtrt`)
+because RTI's authoring carries both spellings — another reason they are no
+basis for identity.
 """
 
 FOCUS_AREAS = {

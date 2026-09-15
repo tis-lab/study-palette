@@ -1,129 +1,113 @@
 """
-Build the harmonized term list: CURIE, ontology label, and where the label came from.
+Build the harmonized term list: every concept CURIE, with the label its own
+vocabulary publishes.
 
-This is the list the wireframes are built against. Every label is fetched from
-the service that owns the vocabulary — nothing here is written by hand, and a
-term that does not resolve is reported as unresolved rather than filled in.
+The unit is the CURIE. A CURIE is what the trans-specs emit into BDCHM's
+concept slots, what lands in harmonized data, and what a query filters on, so
+it is what the interface shows and what the wireframes are built against.
 
-    python ontology/build.py --varlib path/to/BDC-VarLib/docs/schema/bdc_varlib.yaml
+Variable names are not terms. `hist_cvd` is a spec filename covering ten
+different conditions; it appears nowhere in BDCHM and nowhere in the data.
+It is carried here as provenance — which variable and study a term is reached
+through — and is used at build time to scope which specs are read. Nothing
+downstream should key on it or display it.
 
-Resolved terms are cached in ontology/.cache.json so a rebuild does not
-re-request the whole list. Delete it to force a refresh.
+    python ontology/build.py --specs path/to/NHLBI-BDC-DMC-HV/priority_variables_transform
+
+Resolved terms are cached in ontology/.cache.json; delete it to refresh.
 """
 
 import argparse
 import json
-import re
 from pathlib import Path
 
-import yaml
-
+from extract import CONCEPT_SLOTS, from_specs
 from focus import FOCUS_AREAS, area_of
-from labels import choose
 from resolve import resolve_all
 
 HERE = Path(__file__).parent
 
-CURIE = re.compile(r"\b(MONDO|HP|OBA|OMOP|ATC|RxCUI|NDFRT|MMO|NCBITaxon):[A-Za-z0-9._-]+")
+# OMOP mixes units and metadata in with clinical concepts. A unit appearing in
+# a concept slot is a defect in the source mapping, not something to resolve
+# around, so these are surfaced rather than filtered out.
+NON_CLINICAL_DOMAINS = {"Unit", "Metadata", "Type Concept"}
+
+# Order the BDCHM classes are presented in.
+CLASS_ORDER = ["Condition", "MeasurementObservation", "Procedure", "DrugExposure"]
 
 
-def load_varlib(path):
-    """Flatten the VarLib schema into concepts carrying their ontology mappings."""
-    with open(path) as fh:
-        schema = yaml.safe_load(fh)
-
-    category_of = {}
-    for cls_name, cls in (schema.get("classes") or {}).items():
-        for slot_name in cls.get("slots") or []:
-            category_of[slot_name] = cls_name
-
-    concepts = []
-    for name, slot in (schema.get("slots") or {}).items():
-        concepts.append({
-            "name": name,
-            "title": slot.get("title") or name,
-            "description": slot.get("description") or "",
-            "category": category_of.get(name, "Uncategorized"),
-            "mappings": slot.get("exact_mappings") or [],
-        })
-    return concepts
+def sort_key(record):
+    return (record["label"] or "~").lower()
 
 
-def synthetic_curies(root):
-    """
-    Every CURIE the synthetic corpus codes with.
-
-    The corpus is generated from these, so they have to resolve for the demo
-    data to be describable at all.
-    """
-    if not root.exists():
-        return set()
-    found = set()
-    for path in sorted(root.rglob("*")):
-        if path.suffix in (".py", ".yaml", ".yml") and path.is_file():
-            found.update(m.group(0) for m in CURIE.finditer(path.read_text()))
-    return found
-
-
-def markdown(rows, unresolved_terms):
-    """The human-readable handoff, grouped by focus area."""
-    out = ["# Harmonized terms — cardiac, lung, hypertension, diabetes", ""]
+def markdown(records, unresolved, suspect):
+    out = ["# Harmonized concept terms", ""]
     out.append(
-        "CURIEs come from the BDC harmonized-variable trans-specs by way of "
-        "BDC-VarLib. Labels are fetched from the vocabulary that owns each "
-        "term (OLS for OBO ontologies, the OHDSI WebAPI for OMOP, RxClass for "
-        "ATC). Nothing in the Label column was written by hand."
+        "Every row is a concept CURIE emitted by the BDC harmonized-variable "
+        "trans-specs, with the label published by the vocabulary that owns it. "
+        "Labels are fetched, never written by hand: Monarch for MONDO/HP/OBA, "
+        "OLS4 for other OBO ontologies, the OHDSI WebAPI for OMOP, RxNav "
+        "RxClass for ATC and NDFRT, RxNav for RxCUI."
     )
     out.append("")
     out.append(
-        "**Use the Label column for display.** Where a row has no label, the "
-        "CURIE did not resolve and the wireframe should show the gap rather "
-        "than a placeholder."
+        "**The CURIE is the identity and the Label is what to display.** The "
+        "`Via` column lists the harmonized variables a term is reached "
+        "through; it is provenance only. Those names are spec filenames — they "
+        "are not concepts, they do not appear in harmonized data, and nothing "
+        "should key on them or show them to a user."
     )
     out.append("")
 
-    for area in FOCUS_AREAS:
-        in_area = [r for r in rows if r["area"] == area]
-        if not in_area:
-            continue
-        resolved = [r for r in in_area if r["label"]]
-        out.append(f"## {area}")
+    concepts = [r for r in records if r["concept"]]
+    by_class = {}
+    for record in concepts:
+        for cls in record["bdchm_classes"] or ["Uncategorized"]:
+            by_class.setdefault(cls, []).append(record)
+
+    ordered = [c for c in CLASS_ORDER if c in by_class]
+    ordered += sorted(c for c in by_class if c not in CLASS_ORDER)
+
+    for cls in ordered:
+        rows = sorted(by_class[cls], key=sort_key)
+        out.append(f"## {cls}")
         out.append("")
-        out.append(f"{len(resolved)} of {len(in_area)} resolved.")
+        out.append(f"{len(rows)} terms.")
         out.append("")
-        out.append("| Variable | CURIE | Label | Source | Matched on |")
+        out.append("| CURIE | Label | Vocabulary | Studies | Via |")
         out.append("|---|---|---|---|---|")
-        for row in sorted(in_area, key=lambda r: r["name"]):
+        for row in rows:
             label = row["label"] or "_unresolved_"
-            curie = row["curie"] or ", ".join(row["mappings"]) or "_none_"
+            via = ", ".join(f"`{v}`" for v in row["variables"][:3])
+            if len(row["variables"]) > 3:
+                via += f" +{len(row['variables']) - 3}"
             out.append(
-                f"| `{row['name']}` | `{curie}` | {label} "
-                f"| {row['label_source'] or '—'} | {row.get('matched_on') or '—'} |"
+                f"| `{row['curie']}` | {label} | {row.get('vocabulary') or '—'} "
+                f"| {len(row['studies'])} | {via} |"
             )
         out.append("")
 
-    contested = [r for r in rows if r["competing"]]
-    if contested:
-        out.append("## Mappings needing review")
+    if suspect:
+        out.append("## Mappings to report upstream")
         out.append("")
         out.append(
-            "These concepts resolve to more than one term in the same "
-            "vocabulary. The chosen label is a best guess and the alternative "
-            "is shown beside it; a curator should decide which is correct."
+            "These CURIEs sit in a concept slot but do not name a clinical "
+            "concept — a unit or a metadata code where a condition or "
+            "measurement belongs. They come through the trans-specs, so the "
+            "fix is upstream at RTI."
         )
         out.append("")
-        out.append("| Variable | Chosen | Also maps to |")
-        out.append("|---|---|---|")
-        for row in sorted(contested, key=lambda r: r["name"]):
-            others = "; ".join(
-                f"`{c['id']}` {c['label']}" for c in row["competing"]
-            )
+        out.append("| CURIE | Label | Domain | Slot | Via |")
+        out.append("|---|---|---|---|---|")
+        for row in sorted(suspect, key=sort_key):
             out.append(
-                f"| `{row['name']}` | `{row['curie']}` {row['ontology_label']} | {others} |"
+                f"| `{row['curie']}` | {row['label']} | {row.get('domain')} "
+                f"| {', '.join(row['slots'])} "
+                f"| {', '.join(f'`{v}`' for v in row['variables'])} |"
             )
         out.append("")
 
-    if unresolved_terms:
+    if unresolved:
         out.append("## Unresolved CURIEs")
         out.append("")
         out.append(
@@ -131,7 +115,7 @@ def markdown(rows, unresolved_terms):
             "ranges rather than concepts, so they are expected here."
         )
         out.append("")
-        for curie in sorted(unresolved_terms):
+        for curie in sorted(unresolved):
             out.append(f"- `{curie}`")
         out.append("")
 
@@ -141,59 +125,61 @@ def markdown(rows, unresolved_terms):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--varlib", type=Path, required=True,
-        help="BDC-VarLib LinkML schema, docs/schema/bdc_varlib.yaml in that repo",
-    )
-    parser.add_argument(
-        "--synthetic", type=Path, default=HERE.parent / "synthetic",
-        help="synthetic corpus source tree, scanned for the CURIEs it codes with",
+        "--specs", type=Path, required=True,
+        help="priority_variables_transform/ in the NHLBI-BDC-DMC-HV repo",
     )
     parser.add_argument("--cache", type=Path, default=HERE / ".cache.json")
     parser.add_argument("--json-out", type=Path, default=HERE / "terms.json")
     parser.add_argument("--md-out", type=Path, default=HERE / "TERMS.md")
     parser.add_argument(
         "--all", action="store_true",
-        help="resolve every VarLib concept, not just the focus areas",
+        help="read every spec, not just the proof-of-concept focus areas",
     )
     args = parser.parse_args()
 
-    concepts = load_varlib(args.varlib)
-    print(f"VarLib: {len(concepts)} concepts")
+    scope = None if args.all else set()
+    if not args.all:
+        for names in FOCUS_AREAS.values():
+            scope.update(names)
 
-    wanted = [c for c in concepts if args.all or area_of(c["name"])]
-    print(f"  {len(wanted)} in scope")
-
-    corpus_curies = synthetic_curies(args.synthetic)
-    print(f"Synthetic corpus: {len(corpus_curies)} CURIEs coded")
-
-    curies = {m for c in wanted for m in c["mappings"]} | corpus_curies
-    print(f"Resolving {len(curies)} distinct CURIEs")
+    extracted = from_specs(args.specs, variables=scope)
+    concepts = {c: r for c, r in extracted.items() if r["concept"]}
+    print(f"Trans-specs: {len(extracted)} CURIEs, {len(concepts)} in concept slots")
 
     cache = json.loads(args.cache.read_text()) if args.cache.exists() else {}
-    terms, unresolved = resolve_all(curies, cache=cache, progress=print)
+    terms, unresolved = resolve_all(extracted, cache=cache, progress=print)
     args.cache.write_text(json.dumps(cache, indent=1, sort_keys=True))
     print(f"  {len(terms)} resolved, {len(unresolved)} unresolved")
 
-    rows = []
-    for concept in wanted:
-        picked = choose(concept, terms)
-        rows.append({
-            "name": concept["name"],
-            "area": area_of(concept["name"]),
-            "category": concept["category"],
-            "description": concept["description"],
-            "mappings": concept["mappings"],
-            **picked,
+    records = []
+    for curie, record in extracted.items():
+        term = terms.get(curie) or {}
+        records.append({
+            **record,
+            "label": term.get("label"),
+            "definition": term.get("description"),
+            "synonyms": term.get("synonyms") or [],
+            "label_source": term.get("source"),
+            "vocabulary": term.get("vocabulary"),
+            "domain": term.get("domain"),
+            "areas": sorted({
+                a for a in (area_of(v) for v in record["variables"]) if a
+            }),
         })
 
-    resolved_rows = [r for r in rows if r["label"]]
-    print(f"  {len(resolved_rows)}/{len(rows)} concepts labelled")
+    suspect = [
+        r for r in records
+        if r["concept"] and r.get("domain") in NON_CLINICAL_DOMAINS
+    ]
+    labelled = sum(1 for r in records if r["concept"] and r["label"])
+    print(f"  {labelled}/{len(concepts)} concept terms labelled")
+    if suspect:
+        print(f"  {len(suspect)} non-clinical CURIEs in concept slots")
 
     args.json_out.write_text(json.dumps(
-        {"concepts": rows, "terms": terms, "unresolved": sorted(unresolved)},
-        indent=1,
+        {"terms": records, "unresolved": sorted(unresolved)}, indent=1
     ))
-    args.md_out.write_text(markdown(rows, unresolved))
+    args.md_out.write_text(markdown(records, unresolved, suspect))
     print(f"\n{args.json_out}\n{args.md_out}")
 
 

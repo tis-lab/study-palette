@@ -1,159 +1,234 @@
-# Harmonized terms — cardiac, lung, hypertension, diabetes
+# Harmonized concept terms
 
-CURIEs come from the BDC harmonized-variable trans-specs by way of BDC-VarLib. Labels are fetched from the vocabulary that owns each term (OLS for OBO ontologies, the OHDSI WebAPI for OMOP, RxClass for ATC). Nothing in the Label column was written by hand.
+Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs, with the label published by the vocabulary that owns it. Labels are fetched, never written by hand: Monarch for MONDO/HP/OBA, OLS4 for other OBO ontologies, the OHDSI WebAPI for OMOP, RxNav RxClass for ATC and NDFRT, RxNav for RxCUI.
 
-**Use the Label column for display.** Where a row has no label, the CURIE did not resolve and the wireframe should show the gap rather than a placeholder.
+**The CURIE is the identity and the Label is what to display.** The `Via` column lists the harmonized variables a term is reached through; it is provenance only. Those names are spec filenames — they are not concepts, they do not appear in harmonized data, and nothing should key on them or show them to a user.
 
-## Cardiac
+## Condition
 
-44 of 44 resolved.
+73 terms.
 
-| Variable | CURIE | Label | Source | Matched on |
+| CURIE | Label | Vocabulary | Studies | Via |
 |---|---|---|---|---|
-| `afib` | `MONDO:0004981` | Atrial fibrillation | monarch | synonym |
-| `angina` | `HP:0001681` | Angina pectoris | monarch | priority |
-| `blood_clots` | `MONDO:0000831` | Thrombotic disease | monarch | synonym |
-| `bnp` | `OBA:2045303` | Natriuretic peptides B level | monarch | priority |
-| `cac_score` | `OMOP:42872742` | Coronary artery calcium score | ohdsi | priority |
-| `cac_volume` | `OMOP:4166120` | Calcium volume | ohdsi | priority |
-| `carotid_imt` | `OBA:2050108` | Carotid artery thickness | monarch | priority |
-| `carotid_plaque` | `OMOP:4102124` | Carotid atherosclerosis | ohdsi | priority |
-| `carotid_sten_left` | `OMOP:43020498` | Left carotid artery stenosis | ohdsi | priority |
-| `carotid_sten_right` | `OMOP:43021859` | Right carotid artery stenosis | ohdsi | priority |
-| `chd` | `MONDO:0005010` | Coronary artery disorder | monarch | priority |
-| `chf` | `MONDO:0005009` | Congestive heart failure | monarch | synonym |
-| `crp` | `OMOP:4208414` | C-reactive protein measurement | ohdsi | priority |
-| `cvd` | `MONDO:0004995` | Cardiovascular disorder | monarch | priority |
-| `d_dimer` | `OMOP:37393605` | D-dimer level | ohdsi | priority |
-| `hist_cor_angio` | `OMOP:1242799` | History of operation on carotid artery | ohdsi | priority |
-| `hist_cor_art_dis` | `MONDO:0005010` | History of coronary artery disorder | monarch | priority |
-| `hist_cor_bypg` | `OMOP:4336464` | History of coronary artery bypass graft | ohdsi | priority |
-| `hist_coronary_bypass` | `OMOP:4336464` | History of coronary artery bypass graft | ohdsi | priority |
-| `hist_cvd` | `MONDO:0000745` | History of cardiac arrest | monarch | priority |
-| `hist_heart_disease` | `MONDO:0005267` | History of heart disorder | monarch | priority |
-| `hist_heart_failure` | `MONDO:0005009` | History of congestive heart failure | monarch | priority |
-| `hist_hrt_failure` | `MONDO:0005009` | History of congestive heart failure | monarch | priority |
-| `hist_hrtdis` | `MONDO:0001302` | History of hypertensive heart disease | monarch | priority |
-| `hist_hrtfail` | `MONDO:0005009` | History of congestive heart failure | monarch | priority |
-| `hist_mi` | `MONDO:0005068` | History of myocardial infarction | monarch | priority |
-| `hist_my_inf` | `MONDO:0005068` | History of myocardial infarction | monarch | priority |
-| `history_cvd` | `MONDO:0005009` | Congestive heart failure | monarch | priority |
-| `hrt_rt` | `OBA:1001087` | Heart rate | monarch | priority |
-| `hrtrt` | `OBA:1001087` | Heart rate | monarch | priority |
-| `lvh_ekg` | `HP:0001712` | Left ventricular hypertrophy | monarch | priority |
-| `nt_bnp` | `OBA:2045303` | Natriuretic peptides B level | monarch | priority |
-| `pacem_stat` | `OMOP:45772840` | Implantable cardiac pacemaker | ohdsi | priority |
-| `pad` | `MONDO:0005386` | Peripheral arterial disease | monarch | synonym |
-| `pr_ekg` | `OMOP:4274406` | PR interval - finding | ohdsi | priority |
-| `pr_qrs_qt` | `OMOP:4273023` | QT interval - finding | ohdsi | priority |
-| `qrs_ekg` | `OBA:1001086` | QRS duration | monarch | priority |
-| `qt_ekg` | `OMOP:4273023` | QT interval - finding | ohdsi | priority |
-| `spo2` | `OBA:2045443` | Oxygen concentration in blood | monarch | priority |
-| `stroke` | `HP:0001297` | Stroke | monarch | label |
-| `stroke_isch_atk` | `MONDO:0005264` | Transient ischemic attack | monarch | priority |
-| `troponin` | `OMOP:4021291` | Troponin measurement | ohdsi | priority |
-| `valv_hrtdis` | `MONDO:0002869` | Heart valve disorder | monarch | priority |
-| `ven_thromb` | `MONDO:0000831` | Thrombotic disease | monarch | priority |
+| `MONDO:0005350` | abdominal aortic aneurysm | MONDO | 1 | `pad` |
+| `MONDO:0004784` | allergic asthma | MONDO | 1 | `asthma` |
+| `HP:0003193` | Allergic rhinitis | HP | 1 | `asthma` |
+| `HP:0012393` | Allergy | HP | 1 | `asthma` |
+| `HP:0001681` | Angina pectoris | HP | 9 | `angina`, `hist_cvd` |
+| `MONDO:0003803` | aortic valve disorder | MONDO | 1 | `hist_hrtdis` |
+| `MONDO:0005648` | aortic valve insufficiency | MONDO | 1 | `valv_hrtdis` |
+| `MONDO:0042981` | aortic valve stenosis | MONDO | 1 | `valv_hrtdis` |
+| `HP:0004420` | Arterial thrombosis | HP | 1 | `pad` |
+| `MONDO:0004979` | asthma | MONDO | 10 | `asthma`, `asthma_md` |
+| `HP:0002621` | Atherosclerosis | HP | 2 | `hist_cvd`, `pad` |
+| `MONDO:0005311` | atherosclerosis | MONDO | 1 | `cvd` |
+| `MONDO:0004981` | atrial fibrillation | MONDO | 8 | `afib` |
+| `MONDO:0005310` | atrial flutter | MONDO | 1 | `afib` |
+| `MONDO:0005394` | brain infarction | MONDO | 2 | `stroke` |
+| `MONDO:0000745` | cardiac arrest | MONDO | 1 | `hist_cvd` |
+| `MONDO:0004995` | cardiovascular disorder | MONDO | 5 | `cvd`, `hist_cvd` |
+| `MONDO:0004911` | cardiovascular syphilis | MONDO | 1 | `hist_hrtdis` |
+| `OMOP:4102124` | Carotid atherosclerosis | SNOMED | 4 | `carotid_plaque` |
+| `HP:0001342` | Cerebral hemorrhage | HP | 1 | `stroke` |
+| `MONDO:0002679` | cerebral infarction | MONDO | 1 | `stroke` |
+| `MONDO:0011057` | cerebrovascular disorder | MONDO | 2 | `stroke` |
+| `MONDO:0850282` | chronic asthma | MONDO | 1 | `asthma` |
+| `MONDO:0005607` | chronic bronchitis | MONDO | 5 | `bronchitis`, `bronchitis_md`, `chr_bronchitis` |
+| `MONDO:0005002` | chronic obstructive pulmonary disease | MONDO | 9 | `chr_bronchitis`, `copd` |
+| `MONDO:0005453` | congenital heart disease | MONDO | 3 | `hist_cvd`, `hist_hrtdis` |
+| `MONDO:0005009` | congestive heart failure | MONDO | 8 | `chf`, `hist_cvd`, `hist_heart_failure` +3 |
+| `OMOP:4336464` | Coronary artery bypass graft | SNOMED | 8 | `hist_cor_bypg`, `hist_coronary_bypass` |
+| `MONDO:0005010` | coronary artery disorder | MONDO | 8 | `chd`, `hist_cor_art_dis`, `hist_cvd` +1 |
+| `HP:0002625` | Deep venous thrombosis | HP | 5 | `ven_thromb` |
+| `MONDO:0005015` | diabetes mellitus | MONDO | 11 | `diabetes` |
+| `MONDO:0005267` | heart disorder | MONDO | 5 | `hist_heart_disease`, `hist_hrtdis` |
+| `MONDO:0005252` | heart failure | MONDO | 6 | `chf`, `hist_hrtfail`, `ven_thromb` |
+| `MONDO:0002869` | heart valve disorder | MONDO | 5 | `hist_cvd`, `hist_hrtdis`, `valv_hrtdis` |
+| `MONDO:1060199` | hemorrhagic stroke | MONDO | 1 | `stroke` |
+| `HP:0000822` | Hypertension | HP | 10 | `hypert_trt`, `hyperten`, `hypertension` |
+| `MONDO:0001302` | hypertensive heart disease | MONDO | 2 | `hist_hrtdis` |
+| `HP:0025691` | Impaired fasting glucose | HP | 1 | `diabetes` |
+| `HP:0040270` | Impaired glucose tolerance | HP | 1 | `diabetes` |
+| `MONDO:0006803` | inferior myocardial infarction | MONDO | 1 | `hist_my_inf` |
+| `HP:0004417` | Intermittent claudication | HP | 1 | `pad` |
+| `MONDO:0013792` | intracerebral hemorrhage | MONDO | 4 | `stroke` |
+| `MONDO:0006809` | intracranial embolism | MONDO | 2 | `stroke` |
+| `HP:0002170` | Intracranial hemorrhage | HP | 2 | `stroke` |
+| `HP:0002140` | Ischemic stroke | HP | 2 | `stroke` |
+| `HP:0001712` | Left ventricular hypertrophy | HP | 5 | `lvh_ekg` |
+| `MONDO:0000270` | lower respiratory tract disorder | MONDO | 1 | `copd` |
+| `HP:0001653` | Mitral regurgitation | HP | 1 | `valv_hrtdis` |
+| `HP:0001718` | Mitral stenosis | HP | 1 | `valv_hrtdis` |
+| `MONDO:0003767` | mitral valve disorder | MONDO | 1 | `hist_hrtdis` |
+| `MONDO:0005068` | myocardial infarction | MONDO | 9 | `hist_cvd`, `hist_mi`, `hist_my_inf` |
+| `MONDO:0024644` | myocardial ischemia | MONDO | 1 | `hist_hrtdis` |
+| `MONDO:0005386` | peripheral arterial disease | MONDO | 7 | `pad` |
+| `MONDO:0005294` | peripheral vascular disease | MONDO | 4 | `hist_cvd`, `pad` |
+| `MONDO:0006920` | prediabetes syndrome | MONDO | 2 | `diabetes` |
+| `MONDO:0005279` | pulmonary embolism | MONDO | 6 | `hist_cvd`, `ven_thromb` |
+| `MONDO:0004849` | pulmonary emphysema | MONDO | 4 | `emphysema` |
+| `MONDO:0002771` | pulmonary fibrosis | MONDO | 1 | `pulmonary_fibrosis` |
+| `MONDO:0005149` | pulmonary hypertension | MONDO | 1 | `hyperten` |
+| `MONDO:0024355` | respiratory tract infectious disorder | MONDO | 1 | `asthma` |
+| `MONDO:0006955` | rheumatic heart disease | MONDO | 4 | `hist_hrtdis` |
+| `HP:0010535` | Sleep apnea | HP | 3 | `slp_ap` |
+| `MONDO:0005296` | sleep apnea syndrome | MONDO | 1 | `slp_ap` |
+| `HP:0001297` | Stroke | HP | 9 | `stroke` |
+| `MONDO:0005099` | subarachnoid hemorrhage | MONDO | 4 | `stroke` |
+| `HP:0031664` | Systolic heart murmur | HP | 1 | `hist_hrtdis` |
+| `MONDO:0000831` | thrombotic disease | MONDO | 2 | `blood_clots`, `ven_thromb` |
+| `MONDO:0005264` | transient ischemic attack | MONDO | 6 | `stroke`, `stroke_isch_atk` |
+| `MONDO:0004848` | ulcerative stomatitis | MONDO | 1 | `emphysema` |
+| `MONDO:0005492` | urticaria | MONDO | 1 | `asthma` |
+| `MONDO:0005399` | venous thromboembolism | MONDO | 5 | `ven_thromb` |
+| `HP:0001714` | Ventricular hypertrophy | HP | 1 | `lvh_ekg` |
+| `HP:0030828` | Wheezing | HP | 1 | `asthma` |
 
-## Lung
+## MeasurementObservation
 
-14 of 14 resolved.
+27 terms.
 
-| Variable | CURIE | Label | Source | Matched on |
+| CURIE | Label | Vocabulary | Studies | Via |
 |---|---|---|---|---|
-| `alpha1_antitrypsin` | `OBA:2050075` | Serum alpha-1-antitrypsin amount | monarch | priority |
-| `apnea_hypop_index` | `OMOP:37396400` | Apnea Hypopnea Index | ohdsi | priority |
-| `asthma` | `MONDO:0004979` | Asthma | monarch | label |
-| `asthma_md` | `MONDO:0004979` | Asthma | monarch | priority |
-| `bronchitis` | `MONDO:0005607` | Chronic bronchitis | monarch | priority |
-| `bronchitis_md` | `MONDO:0005607` | Chronic bronchitis | monarch | priority |
-| `chr_bronchitis` | `MONDO:0005607` | Chronic bronchitis | monarch | priority |
-| `copd` | `MONDO:0005002` | Chronic obstructive pulmonary disease | monarch | synonym |
-| `emphysema` | `MONDO:0004849` | Pulmonary emphysema | monarch | synonym |
-| `pulmonary_fibrosis` | `MONDO:0002771` | Pulmonary fibrosis | monarch | label |
-| `slp_ap` | `MONDO:0005296` | Sleep apnea syndrome | monarch | priority |
-| `spirometry` | `OMOP:4176265` | Forced vital capacity | ohdsi | priority |
-| `spirometry_post_bd` | `OMOP:4176265` | Forced vital capacity | ohdsi | priority |
-| `spirometry_pre_bd` | `OMOP:4176265` | Forced vital capacity | ohdsi | priority |
+| `OBA:2060174` | amount of insulin in blood | OBA | 8 | `insulin_blood`, `insulin_in_blood` |
+| `OMOP:37396400` | Apnea Hypopnea Index | SNOMED | 3 | `apnea_hypop_index` |
+| `OBA:VT2000000` | arterial blood pressure trait | OBA | 4 | `mean_art_press`, `mn_art_pres` |
+| `OBA:VT0000188` | blood glucose amount | OBA | 7 | `glucose_bld` |
+| `OMOP:4208414` | C-reactive protein measurement | SNOMED | 7 | `crp` |
+| `OMOP:4166120` | Calcium volume | SNOMED | 2 | `cac_volume` |
+| `OBA:2050108` | carotid artery thickness | OBA | 1 | `carotid_imt` |
+| `OMOP:4138462` | Carotid intima media thickness | SNOMED | 4 | `carotid_imt` |
+| `OMOP:42872742` | Coronary artery calcium score | SNOMED | 5 | `cac_score` |
+| `OMOP:37393605` | D-dimer level | SNOMED | 4 | `d_dimer` |
+| `OMOP:4156660` | Fasting blood glucose measurement | SNOMED | 7 | `fast_gluc_bld`, `fasting_blood_gluc` |
+| `OBA:1001087` | heart rate | OBA | 10 | `hrt_rt`, `hrtrt` |
+| `OMOP:4184637` | Hemoglobin A1c measurement | SNOMED | 5 | `hemo_a1c` |
+| `OMOP:45772840` | Implantable cardiac pacemaker | SNOMED | 4 | `pacem_stat` |
+| `OMOP:43020498` | Left carotid artery stenosis | SNOMED | 4 | `carotid_sten_left` |
+| `OMOP:4189511` | N terminal pro-brain natriuretic peptide level | SNOMED | 1 | `nt_bnp` |
+| `OMOP:8842` | nanogram per milliliter | UCUM | 1 | `troponin` |
+| `OBA:2045303` | natriuretic peptides B level | OBA | 5 | `bnp`, `nt_bnp` |
+| `OBA:2045443` | oxygen concentration in blood | OBA | 4 | `spo2` |
+| `OMOP:4274406` | PR interval - finding | SNOMED | 5 | `pr_ekg` |
+| `OMOP:4273021` | QRS complex - finding | SNOMED | 1 | `qrs_ekg` |
+| `OBA:1001086` | QRS duration | OBA | 6 | `qrs_ekg` |
+| `OMOP:4273023` | QT interval - finding | SNOMED | 6 | `pr_qrs_qt`, `qt_ekg` |
+| `OMOP:43021859` | Right carotid artery stenosis | SNOMED | 4 | `carotid_sten_right` |
+| `OBA:2050075` | serum alpha-1-antitrypsin amount | OBA | 1 | `alpha1_antitrypsin` |
+| `OMOP:4152194` | Systolic blood pressure | SNOMED | 10 | `blood_pressure` |
+| `OMOP:4021291` | Troponin measurement | SNOMED | 3 | `troponin` |
 
-## Hypertension
+## Procedure
 
-16 of 16 resolved.
+8 terms.
 
-| Variable | CURIE | Label | Source | Matched on |
+| CURIE | Label | Vocabulary | Studies | Via |
 |---|---|---|---|---|
-| `blood_pressure` | `OMOP:4152194` | Systolic blood pressure | ohdsi | priority |
-| `hypert_trt` | `ATC:C02` | Antihypertensives | rxclass | priority |
-| `hyperten` | `MONDO:0005149` | Pulmonary hypertension | monarch | priority |
-| `hypertension` | `HP:0000822` | Hypertension | monarch | label |
-| `mean_art_press` | `OBA:VT2000000` | Arterial blood pressure trait | monarch | priority |
-| `mn_art_pres` | `OBA:VT2000000` | Arterial blood pressure trait | monarch | priority |
-| `tak_aceinhib` | `ATC:C02` | Antihypertensives | rxclass | priority |
-| `tak_aldorecepblk` | `ATC:C03DA` | Aldosterone antagonists | rxclass | priority |
-| `tak_alphablk` | `ATC:C02` | Antihypertensives | rxclass | priority |
-| `tak_angiorecepblk` | `ATC:C09C` | Angiotensin ii receptor blockers (arbs), plain | rxclass | priority |
-| `tak_antihypertensives` | `ATC:C02` | Antihypertensives | rxclass | priority |
-| `tak_betablk` | `ATC:C07A` | Beta blocking agents | rxclass | priority |
-| `tak_calchanblk` | `ATC:C08` | Calcium channel blockers | rxclass | priority |
-| `tak_cenactag` | `RxCUI:2599` | Clonidine | rxnav | priority |
-| `tak_diuret` | `ATC:C03` | Diuretics | rxclass | priority |
-| `tak_vasodil` | `ATC:C01D` | Vasodilators used in cardiac diseases | rxclass | priority |
+| `OMOP:4223020` | Cardiac catheterization | SNOMED | 1 | `hist_cor_angio` |
+| `OMOP:4184832` | Coronary angioplasty | SNOMED | 6 | `hist_cor_angio` |
+| `OMOP:4336464` | Coronary artery bypass graft | SNOMED | 8 | `hist_cor_bypg`, `hist_coronary_bypass` |
+| `OMOP:4044550` | Dilation - action | SNOMED | 1 | `hist_cor_angio` |
+| `OMOP:45772840` | Implantable cardiac pacemaker | SNOMED | 4 | `pacem_stat` |
+| `OMOP:1242799` | Operation on carotid artery | SNOMED | 1 | `hist_cor_angio` |
+| `OMOP:4006788` | Percutaneous transluminal coronary angioplasty | SNOMED | 1 | `hist_cor_angio` |
+| `OMOP:4178405` | Revascularization - action | SNOMED | 1 | `hist_cor_angio` |
 
-## Diabetes
+## DrugExposure
 
-9 of 10 resolved.
+60 terms.
 
-| Variable | CURIE | Label | Source | Matched on |
+| CURIE | Label | Vocabulary | Studies | Via |
 |---|---|---|---|---|
-| `diabetes` | `MONDO:0005015` | Diabetes mellitus | monarch | synonym |
-| `fast_gluc_bld` | `OMOP:4156660` | Fasting blood glucose measurement | ohdsi | priority |
-| `fasting_blood_gluc` | `OMOP:4156660` | Fasting blood glucose measurement | ohdsi | priority |
-| `glucose_bld` | `OBA:VT0000188` | Blood glucose amount | monarch | priority |
-| `hemo_a1c` | `OMOP:4184637` | Hemoglobin A1c measurement | ohdsi | priority |
-| `insulin_blood` | `OBA:2060174` | Amount of insulin in blood | monarch | priority |
-| `insulin_in_blood` | `OBA:2060174` | Amount of insulin in blood | monarch | priority |
-| `tak_insulin` | `_none_` | _unresolved_ | — | — |
-| `tak_med_diab` | `ATC:A10` | Drugs used in diabetes | rxclass | priority |
-| `tak_orlhypoag` | `RxCUI:2404` | Chlorpropamide | rxnav | priority |
+| `ATC:C09BA` | Ace inhibitors and diuretics | ATC1-4 | 3 | `tak_aceinhib` |
+| `ATC:C09A` | Ace inhibitors, plain | ATC1-4 | 6 | `tak_aceinhib` |
+| `RxCUI:149` | acebutolol | RxNorm | 1 | `tak_betablk` |
+| `NDFRT:N0000175557` | Aldosterone antagonist | EPC | 2 | `tak_aldorecepblk` |
+| `ATC:C03DA` | Aldosterone antagonists | ATC1-4 | 1 | `tak_aldorecepblk` |
+| `NDFRT:N0000175553` | Alpha-adrenergic blocker | EPC | 1 | `tak_alphablk` |
+| `RxCUI:17767` | amlodipine | RxNorm | 3 | `tak_calchanblk` |
+| `NDFRT:N0000175562` | Angiotensin converting enzyme inhibitor | EPC | 1 | `tak_aceinhib`, `tak_alphablk` |
+| `ATC:C09DA` | Angiotensin ii receptor blockers (arbs) and diuretics | ATC1-4 | 2 | `tak_angiorecepblk` |
+| `ATC:C09C` | Angiotensin ii receptor blockers (arbs), plain | ATC1-4 | 6 | `tak_aceinhib`, `tak_angiorecepblk` |
+| `ATC:C02` | Antihypertensives | ATC1-4 | 9 | `hypert_trt`, `tak_aceinhib`, `tak_alphablk` +1 |
+| `ATC:C02L` | Antihypertensives and diuretics in combination | ATC1-4 | 3 | `tak_vasodil` |
+| `RxCUI:1202` | atenolol | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:1436` | bepridil | RxNorm | 1 | `tak_calchanblk` |
+| `ATC:C07A` | Beta blocking agents | ATC1-4 | 7 | `tak_betablk` |
+| `ATC:C07D` | Beta blocking agents, thiazides and other diuretics | ATC1-4 | 1 | `tak_betablk` |
+| `ATC:A10B` | Blood glucose lowering drugs, excl. insulins | ATC1-4 | 1 | `tak_med_diab` |
+| `ATC:C08` | Calcium channel blockers | ATC1-4 | 5 | `tak_calchanblk` |
+| `RxCUI:1998` | captopril | RxNorm | 1 | `hypert_trt` |
+| `NDFRT:N0000175554` | Central alpha-2 adrenergic agonist | EPC | 1 | `tak_cenactag` |
+| `RxCUI:2404` | chlorpropamide | RxNorm | 1 | `tak_orlhypoag` |
+| `RxCUI:2599` | clonidine | RxNorm | 1 | `tak_cenactag` |
+| `RxCUI:151549` | Corgard | RxNorm | 1 | `tak_betablk` |
+| `NDFRT:N0000175421` | Dihydropyridine calcium channel blocker | EPC | 1 | `tak_calchanblk` |
+| `RxCUI:3443` | diltiazem | RxNorm | 4 | `tak_calchanblk` |
+| `ATC:C03` | Diuretics | ATC1-4 | 8 | `hypert_trt`, `tak_alphablk`, `tak_diuret` |
+| `ATC:A10` | Drugs used in diabetes | ATC1-4 | 5 | `tak_med_diab` |
+| `RxCUI:4316` | felodipine | RxNorm | 1 | `tak_calchanblk` |
+| `RxCUI:25789` | glimepiride | RxNorm | 1 | `tak_orlhypoag` |
+| `RxCUI:4821` | glipizide | RxNorm | 1 | `tak_orlhypoag` |
+| `RxCUI:4815` | glyburide | RxNorm | 1 | `tak_orlhypoag` |
+| `RxCUI:5470` | hydralazine | RxNorm | 2 | `tak_vasodil` |
+| `RxCUI:5487` | hydrochlorothiazide | RxNorm | 1 | `hypert_trt` |
+| `RxCUI:5764` | indapamide | RxNorm | 1 | `hypert_trt` |
+| `RxCUI:151890` | Inderal | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:33910` | isradipine | RxNorm | 1 | `tak_calchanblk` |
+| `RxCUI:6185` | labetalol | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:29046` | lisinopril | RxNorm | 1 | `tak_aceinhib` |
+| `RxCUI:203344` | Lopressor | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:6809` | metformin | RxNorm | 1 | `tak_orlhypoag` |
+| `RxCUI:6876` | methyldopa | RxNorm | 1 | `tak_cenactag` |
+| `RxCUI:6918` | metoprolol | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:7226` | nadolol | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:7396` | nicardipine | RxNorm | 1 | `tak_calchanblk` |
+| `RxCUI:7417` | nifedipine | RxNorm | 1 | `tak_calchanblk` |
+| `RxCUI:7435` | nisoldipine | RxNorm | 1 | `tak_calchanblk` |
+| `ATC:C04` | Peripheral vasodilators | ATC1-4 | 4 | `tak_vasodil` |
+| `RxCUI:8332` | pindolol | RxNorm | 1 | `hypert_trt`, `tak_betablk` |
+| `NDFRT:N0000175418` | Potassium-sparing diuretic | EPC | 3 | `tak_aldorecepblk`, `tak_diuret` |
+| `RxCUI:8787` | propranolol | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:73044` | repaglinide | RxNorm | 1 | `tak_orlhypoag` |
+| `RxCUI:84108` | rosiglitazone | RxNorm | 1 | `tak_orlhypoag` |
+| `RxCUI:9997` | spironolactone | RxNorm | 1 | `tak_aldorecepblk` |
+| `RxCUI:152413` | Tenormin | RxNorm | 1 | `tak_betablk` |
+| `NDFRT:N0000175419` | Thiazide diuretic | EPC | 4 | `tak_diuret` |
+| `RxCUI:10600` | timolol | RxNorm | 1 | `tak_betablk` |
+| `RxCUI:152440` | Trandate | RxNorm | 1 | `hypert_trt` |
+| `RxCUI:72610` | troglitazone | RxNorm | 1 | `tak_orlhypoag` |
+| `ATC:C01D` | Vasodilators used in cardiac diseases | ATC1-4 | 3 | `tak_vasodil` |
+| `RxCUI:11170` | verapamil | RxNorm | 4 | `tak_calchanblk` |
 
-## Mappings needing review
+## MeasurementObservationSet
 
-These concepts resolve to more than one term in the same vocabulary. The chosen label is a best guess and the alternative is shown beside it; a curator should decide which is correct.
+11 terms.
 
-| Variable | Chosen | Also maps to |
-|---|---|---|
-| `asthma` | `MONDO:0004979` asthma | `HP:0012393` Allergy; `MONDO:0005492` urticaria; `HP:0003193` Allergic rhinitis; `HP:0030828` Wheezing; `MONDO:0850282` chronic asthma; `MONDO:0004784` allergic asthma; `MONDO:0024355` respiratory tract infectious disorder |
-| `carotid_imt` | `OBA:2050108` carotid artery thickness | `OMOP:4138462` Carotid intima media thickness |
-| `chf` | `MONDO:0005009` congestive heart failure | `MONDO:0005252` heart failure |
-| `chr_bronchitis` | `MONDO:0005607` chronic bronchitis | `MONDO:0005002` chronic obstructive pulmonary disease |
-| `copd` | `MONDO:0005002` chronic obstructive pulmonary disease | `MONDO:0000270` lower respiratory tract disorder |
-| `cvd` | `MONDO:0004995` cardiovascular disorder | `MONDO:0005311` atherosclerosis |
-| `emphysema` | `MONDO:0004849` pulmonary emphysema | `MONDO:0004848` ulcerative stomatitis |
-| `hist_cor_angio` | `OMOP:1242799` Operation on carotid artery | `OMOP:4184832` Coronary angioplasty; `OMOP:4044550` Dilation - action; `OMOP:4178405` Revascularization - action; `OMOP:4223020` Cardiac catheterization; `OMOP:4006788` Percutaneous transluminal coronary angioplasty |
-| `hist_cvd` | `MONDO:0000745` cardiac arrest | `HP:0001681` Angina pectoris; `MONDO:0005010` coronary artery disorder; `MONDO:0005453` congenital heart disease; `MONDO:0005294` peripheral vascular disease; `MONDO:0004995` cardiovascular disorder; `MONDO:0005009` congestive heart failure; `MONDO:0005068` myocardial infarction; `HP:0002621` Atherosclerosis; `MONDO:0005279` pulmonary embolism; `MONDO:0002869` heart valve disorder |
-| `hist_hrtdis` | `MONDO:0001302` hypertensive heart disease | `MONDO:0002869` heart valve disorder; `MONDO:0005267` heart disorder; `MONDO:0024644` myocardial ischemia; `MONDO:0005010` coronary artery disorder; `MONDO:0005453` congenital heart disease; `MONDO:0006955` rheumatic heart disease; `MONDO:0003803` aortic valve disorder; `MONDO:0003767` mitral valve disorder |
-| `hist_hrtfail` | `MONDO:0005009` congestive heart failure | `MONDO:0005252` heart failure |
-| `hist_my_inf` | `MONDO:0005068` myocardial infarction | `MONDO:0006803` inferior myocardial infarction |
-| `hypert_trt` | `ATC:C02` Antihypertensives | `HP:0000822` Hypertension; `ATC:C03` Diuretics; `RxCUI:1998` captopril |
-| `hyperten` | `MONDO:0005149` pulmonary hypertension | `HP:0000822` Hypertension |
-| `lvh_ekg` | `HP:0001712` Left ventricular hypertrophy | `HP:0001714` Ventricular hypertrophy |
-| `nt_bnp` | `OBA:2045303` natriuretic peptides B level | `OMOP:4189511` N terminal pro-brain natriuretic peptide level |
-| `pad` | `MONDO:0005386` peripheral arterial disease | `MONDO:0005294` peripheral vascular disease; `HP:0004417` Intermittent claudication |
-| `qrs_ekg` | `OBA:1001086` QRS duration | `OMOP:4273021` QRS complex - finding |
-| `slp_ap` | `MONDO:0005296` sleep apnea syndrome | `HP:0010535` Sleep apnea |
-| `spirometry` | `OMOP:4176265` Forced vital capacity | `OMOP:4241837` Forced expired volume in 1 second |
-| `spirometry_post_bd` | `OMOP:4176265` Forced vital capacity | `OMOP:4241837` Forced expired volume in 1 second |
-| `spirometry_pre_bd` | `OMOP:4176265` Forced vital capacity | `OMOP:4241837` Forced expired volume in 1 second |
-| `stroke` | `HP:0001297` Stroke | `HP:0002140` Ischemic stroke; `MONDO:0005264` transient ischemic attack; `MONDO:0011057` cerebrovascular disorder; `MONDO:0005394` brain infarction; `HP:0002170` Intracranial hemorrhage; `MONDO:0005099` subarachnoid hemorrhage; `HP:0001342` Cerebral hemorrhage; `MONDO:0006809` intracranial embolism |
-| `tak_aceinhib` | `ATC:C02` Antihypertensives | `ATC:C09A` Ace inhibitors, plain; `ATC:C09BA` Ace inhibitors and diuretics; `RxCUI:29046` lisinopril; `ATC:C09C` Angiotensin ii receptor blockers (arbs), plain |
-| `tak_aldorecepblk` | `ATC:C03DA` Aldosterone antagonists | `RxCUI:9997` spironolactone |
-| `tak_alphablk` | `ATC:C02` Antihypertensives | `ATC:C03` Diuretics |
-| `tak_angiorecepblk` | `ATC:C09C` Angiotensin ii receptor blockers (arbs), plain | `ATC:C09DA` Angiotensin ii receptor blockers (arbs) and diuretics |
-| `tak_betablk` | `ATC:C07A` Beta blocking agents | `RxCUI:151890` Inderal; `ATC:C07D` Beta blocking agents, thiazides and other diuretics; `RxCUI:8787` propranolol |
-| `tak_calchanblk` | `ATC:C08` Calcium channel blockers | `RxCUI:17767` amlodipine; `RxCUI:3443` diltiazem; `RxCUI:11170` verapamil |
-| `tak_cenactag` | `RxCUI:2599` clonidine | `RxCUI:6876` methyldopa |
-| `tak_med_diab` | `ATC:A10` Drugs used in diabetes | `ATC:A10B` Blood glucose lowering drugs, excl. insulins |
-| `tak_orlhypoag` | `RxCUI:2404` chlorpropamide | `RxCUI:6809` metformin; `RxCUI:72610` troglitazone; `RxCUI:4821` glipizide; `RxCUI:4815` glyburide; `RxCUI:84108` rosiglitazone; `RxCUI:73044` repaglinide; `RxCUI:25789` glimepiride |
-| `tak_vasodil` | `ATC:C01D` Vasodilators used in cardiac diseases | `ATC:C04` Peripheral vasodilators; `ATC:C02L` Antihypertensives and diuretics in combination; `RxCUI:5470` hydralazine |
-| `valv_hrtdis` | `MONDO:0002869` heart valve disorder | `MONDO:0042981` aortic valve stenosis; `MONDO:0005648` aortic valve insufficiency; `HP:0001653` Mitral regurgitation; `HP:0001718` Mitral stenosis |
-| `ven_thromb` | `MONDO:0000831` thrombotic disease | `MONDO:0005279` pulmonary embolism; `HP:0002625` Deep venous thrombosis; `MONDO:0005399` venous thromboembolism; `MONDO:0005252` heart failure |
+| CURIE | Label | Vocabulary | Studies | Via |
+|---|---|---|---|---|
+| `OMOP:4154790` | Diastolic blood pressure | SNOMED | 10 | `blood_pressure` |
+| `OMOP:3011708` | FEV1 measured/predicted | LOINC | 4 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:3022891` | FEV1 Predicted | LOINC | 6 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:3011505` | FEV1/FVC | LOINC | 9 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:4196583` | FEV1/FVC percent | SNOMED | 4 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:3024594` | FEV1/FVC Predicted | LOINC | 6 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:4241837` | Forced expired volume in 1 second | SNOMED | 10 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:4176265` | Forced vital capacity | SNOMED | 10 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:3002094` | Forced vital capacity [Volume] Respiratory system Predicted | LOINC | 6 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:3005600` | FVC measured/predicted | LOINC | 4 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
+| `OMOP:4152194` | Systolic blood pressure | SNOMED | 10 | `blood_pressure` |
+
+## Mappings to report upstream
+
+These CURIEs sit in a concept slot but do not name a clinical concept — a unit or a metadata code where a condition or measurement belongs. They come through the trans-specs, so the fix is upstream at RTI.
+
+| CURIE | Label | Domain | Slot | Via |
+|---|---|---|---|---|
+| `OMOP:8842` | nanogram per milliliter | Unit | observation_type | `troponin` |
+
+## Unresolved CURIEs
+
+No public service resolves these. ICD10CM entries are chapter ranges rather than concepts, so they are expected here.
+
+- `OMOP:4822126`
+- `OMOP:4822160`
