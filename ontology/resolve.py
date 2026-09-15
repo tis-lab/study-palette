@@ -213,6 +213,20 @@ def from_rxnav(curie):
 
 RESOLVERS = (from_monarch, from_ols, from_ohdsi, from_rxclass, from_rxnav)
 
+# Prefixes some resolver above will at least attempt. Anything else — ICD10CM,
+# LOINC, a bare accession — reaches no service, so there is nothing to request
+# and nothing to throttle.
+ROUTABLE = (
+    {p.rstrip(":") for p in MONARCH_PREFIXES}
+    | set(OLS_ONTOLOGIES)
+    | {"OMOP", "ATC", "NDFRT", "RxCUI"}
+)
+
+
+def routes_somewhere(curie):
+    """Whether any resolver claims this CURIE's vocabulary."""
+    return curie.split(":", 1)[0] in ROUTABLE
+
 
 def resolve(curie, cache=None, delay=0.05):
     """
@@ -225,12 +239,15 @@ def resolve(curie, cache=None, delay=0.05):
         return cache[curie]
 
     term = None
-    for resolver in RESOLVERS:
-        term = resolver(curie)
-        if term and term.get("label"):
-            break
-        term = None
-    time.sleep(delay)
+    if routes_somewhere(curie):
+        for resolver in RESOLVERS:
+            term = resolver(curie)
+            if term and term.get("label"):
+                break
+            term = None
+        # Only after a request was actually made. The delay paces the services;
+        # a vocabulary nothing resolves never touched one.
+        time.sleep(delay)
 
     if cache is not None:
         cache[curie] = term

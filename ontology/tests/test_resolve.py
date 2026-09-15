@@ -128,16 +128,35 @@ def test_unknown_vocabulary_resolves_to_nothing(monkeypatch):
 
 
 def test_cache_records_misses_so_they_are_not_refetched(monkeypatch):
+    """
+    A CURIE that reached a service and came back empty must not be re-requested.
+
+    This uses RxCUI rather than ICD10CM deliberately: ICD10CM routes to no
+    resolver, so no request is ever made and the assertion below would hold
+    trivially without proving anything.
+    """
     calls = []
     stub(monkeypatch, {}, calls=calls)
     cache = {}
 
-    assert R.resolve("ICD10CM:R99", cache=cache) is None
-    attempted = len(calls)
-    assert "ICD10CM:R99" in cache
+    assert R.resolve("RxCUI:99999999", cache=cache) is None
+    assert len(calls) == 1, "the first attempt should reach the service"
+    assert "RxCUI:99999999" in cache
 
-    assert R.resolve("ICD10CM:R99", cache=cache) is None
-    assert len(calls) == attempted, "a cached miss should not be requested again"
+    assert R.resolve("RxCUI:99999999", cache=cache) is None
+    assert len(calls) == 1, "a cached miss should not be requested again"
+
+
+def test_an_unroutable_vocabulary_is_never_requested(monkeypatch):
+    """ICD10CM reaches no service, so it should cost neither a call nor a wait."""
+    calls = []
+    stub(monkeypatch, {}, calls=calls)
+    slept = []
+    monkeypatch.setattr(R.time, "sleep", lambda d: slept.append(d))
+
+    assert R.resolve("ICD10CM:I20-I25") is None
+    assert calls == []
+    assert slept == [], "nothing was requested, so there is nothing to throttle"
 
 
 def test_cache_hit_skips_the_network(monkeypatch):

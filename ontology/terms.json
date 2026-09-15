@@ -447,6 +447,23 @@
    ]
   },
   {
+   "curie": "HP:0000819",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Diabetes mellitus",
+   "definition": "A group of abnormalities characterized by hyperglycemia and glucose intolerance.",
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "HP",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "HP:0000822",
    "bdchm_classes": [
     "Condition"
@@ -555,6 +572,23 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "HP:0001409",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Portal hypertension",
+   "definition": "Increased pressure in the portal vein.",
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "HP",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "HP:0001653",
@@ -708,6 +742,26 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "HP:0002092",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Pulmonary arterial hypertension",
+   "definition": "Pulmonary hypertension is defined mean pulmonary artery pressure of 25mmHg or more and pulmonary capillary wedge pressure of 15mmHg or less when measured by right heart catheterisation at rest and in a supine position.",
+   "synonyms": [
+    "Increased blood pressure in blood vessels of lungs",
+    "Pulmonary artery hypertension"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "HP",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "HP:0002140",
@@ -917,6 +971,33 @@
    ]
   },
   {
+   "curie": "HP:0005978",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Type II diabetes mellitus",
+   "definition": "A type of diabetes mellitus initially characterized by insulin resistance and hyperinsulinemia and subsequently by glucose interolerance and hyperglycemia.",
+   "synonyms": [
+    "Diabetes mellitus Type II",
+    "Diabetes mellitus, noninsulin-dependent",
+    "NIDDM",
+    "NIDDM diabetes mellitus",
+    "Non-insulin dependent diabetes",
+    "Noninsulin dependent diabetes mellitus",
+    "Noninsulin-dependent diabetes",
+    "Type 2 diabetes",
+    "Type II diabetes"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "HP",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "HP:0010535",
    "bdchm_classes": [
     "Condition"
@@ -1086,6 +1167,80 @@
    ]
   },
   {
+   "curie": "HP:0100735",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Hypertensive crisis",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "HP",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "HP:0100817",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Renovascular hypertension",
+   "definition": "The presence of hypertension related to stenosis of the renal artery.",
+   "synonyms": [
+    "Hypertension due to renal artery hyperplasia"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "HP",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "MMO:0000133",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "serum high-density lipoprotein-cholesterol measurement test",
+   "definition": "A test which determines the amount of cholesterol carried in high-density lipoprotein (HDL) particles in a sample of serum, the clear liquid that separates from blood after it has clotted completely, i.e. blood plasma from which fibrinogen has been removed.",
+   "synonyms": [
+    "serum HDL-cholesterol test"
+   ],
+   "label_source": "ols",
+   "vocabulary": "MMO",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "MMO:0000533",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "white blood cell counting method",
+   "definition": "Any method, manual or automated, by which the number, specifically of white blood cells (leukocytes), in a sample of blood is assessed and a value assigned. Leukocytes are largely colorless blood corpuscles capable of ameboid movement, whose chief function is to protect the body against microorganisms and other disease-causing entities.",
+   "synonyms": [
+    "blood leukocyte counting method"
+   ],
+   "label_source": "ols",
+   "vocabulary": "MMO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0000270",
    "bdchm_classes": [
     "Condition"
@@ -1181,6 +1336,60 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "MONDO:0001105",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "renal hypertension",
+   "definition": "Hypertension caused by the kidney's hormonal response to narrowing or occlusion of the renal arteries.",
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "MONDO:0001134",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "essential hypertension",
+   "definition": "Hypertension that presents without an identifiable cause.",
+   "synonyms": [
+    "idiopathic hypertension",
+    "primary hypertension"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "MONDO:0001200",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "secondary hypertension",
+   "definition": "High blood pressure caused by an underlying medical condition.",
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "MONDO:0001302",
@@ -1793,6 +2002,31 @@
    ]
   },
   {
+   "curie": "MONDO:0005044",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "hypertensive disorder",
+   "definition": "Persistently high systemic arterial blood pressure. Based on multiple readings (blood pressure determination), hypertension is currently defined as when systolic pressure is consistently greater than 140 mm Hg or when diastolic pressure is consistently 90 mm Hg or more.",
+   "synonyms": [
+    "blood pressure, high",
+    "blood pressure, increased",
+    "high blood pressure",
+    "hypertensive disease",
+    "increased blood pressure",
+    "pressure, high blood",
+    "vascular hypertensive disorder"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0005068",
    "bdchm_classes": [
     "Condition"
@@ -1839,6 +2073,48 @@
    ]
   },
   {
+   "curie": "MONDO:0005080",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "portal hypertension",
+   "definition": "Increased blood pressure in the portal venous system. It is most commonly caused by cirrhosis. Other causes include portal vein thrombosis, Budd-Chiari syndrome, and right heart failure. Complications include ascites, esophageal varices, encephalopathy, and splenomegaly.",
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "MONDO:0005081",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "preeclampsia",
+   "definition": "Preeclampsia is a hypertensive disorder of pregnancy that is characterized by new-onset hypertension with proteinuria presenting after 20 weeks of gestation, and depending on mild or severe forms may initially present with severe headache, visual disturbances, and hyperreflexia.",
+   "synonyms": [
+    "pre-eclampsia",
+    "pre-eclamptic toxaemia",
+    "pre-eclamptic toxemia",
+    "preeclampsia",
+    "preeclampsia/eclampsia",
+    "pregnancy toxaemia",
+    "proteinuric hypertension of pregnancy"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0005099",
    "bdchm_classes": [
     "Condition"
@@ -1871,6 +2147,48 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "MONDO:0005148",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "type 2 diabetes mellitus",
+   "definition": "A type of diabetes mellitus that is characterized by insulin resistance or desensitization and increased blood glucose levels. This is a chronic disease that can develop gradually over the life of a patient and can be linked to both environmental factors and heredity.",
+   "synonyms": [
+    "NIDDM",
+    "T2D",
+    "T2DM",
+    "T2DM - type 2 diabetes mellitus",
+    "adult onset diabetes",
+    "adult-onset diabetes",
+    "diabetes mellitis type 2",
+    "diabetes mellitis type II",
+    "diabetes mellitus, noninsulin-dependent",
+    "diabetes mellitus, noninsulin-dependent, association with",
+    "diabetes mellitus, noninsulin-dependent, late onset",
+    "diabetes mellitus, type 2",
+    "diabetes mellitus, type II",
+    "diabetes, type 2",
+    "insulin resistance, severe, digenic",
+    "non-insulin dependent diabetes",
+    "non-insulin dependent diabetes mellitus",
+    "noninsulin dependent diabetes",
+    "noninsulin-dependent diabetes mellitus",
+    "type 2 diabetes",
+    "type 2 diabetes mellitus",
+    "type 2 diabetes mellitus non-insulin dependent",
+    "type II diabetes",
+    "type II diabetes mellitus"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "MONDO:0005149",
@@ -2439,6 +2757,43 @@
    ]
   },
   {
+   "curie": "MONDO:0005827",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "lipoatrophic diabetes",
+   "definition": "A rare syndrome characterized by almost complete absence of body fat, accentuated muscularity, insulin-resistant diabetes, hyperlipidemia, hepatomegaly, and hypermetabolism.",
+   "synonyms": [
+    "diabete, lipoatrophic",
+    "lipoatrophic diabetes"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "MONDO:0006796",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "hypertensive encephalopathy",
+   "definition": "Encephalopathy resulting from hypertension.",
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0006803",
    "bdchm_classes": [
     "Condition"
@@ -2494,6 +2849,27 @@
    ]
   },
   {
+   "curie": "MONDO:0006846",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "malignant hypertension",
+   "definition": "Severe hypertension that is characterized by rapid onset of extremely high blood pressure and hypertension-mediated organ damage.",
+   "synonyms": [
+    "accelerated-malignant hypertension",
+    "hypertensive emergency",
+    "malignant phase hypertension"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0006920",
    "bdchm_classes": [
     "Condition"
@@ -2522,6 +2898,26 @@
    "areas": [
     "Diabetes"
    ]
+  },
+  {
+   "curie": "MONDO:0006947",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "renovascular hypertension",
+   "definition": "High blood pressure secondary to renal artery stenosis.",
+   "synonyms": [
+    "renovascular hypertension",
+    "renovascular hypertension (disease)"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "MONDO:0006955",
@@ -2621,6 +3017,26 @@
    ]
   },
   {
+   "curie": "MONDO:0015924",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "pulmonary arterial hypertension",
+   "definition": "Pulmonary arterial hypertension (PAH) is a group of diseases characterized by mean pulmonary artery pressure >20 mmHg and elevated pulmonary arterial resistance leading to right heart failure. PAH is progressive and potentially fatal. PAH may be idiopathic and/ or familial, have overt features of venous/capillary involvement (pulmonary veno-occlusive disease, PVOD/pulmonary capillary hemangiomatosis, PCH), induced by drug or toxin (drug-or toxin-induced PAH), or associated with other diseases like congenital heart disease, connective tissue disease, HIV, schistosomiasis, portal hypertension (PAH associated with other disease).",
+   "synonyms": [
+    "PAH",
+    "pulmonary arterial hypertension"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0024355",
    "bdchm_classes": [
     "Condition"
@@ -2710,6 +3126,25 @@
    ]
   },
   {
+   "curie": "MONDO:0100078",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "resistant hypertension",
+   "definition": "A severe medical condition which is estimated to appear in 9-18% of hypertensive patients, in which treatment with 3 or more antihypertensive drugs including diuretics are ineffective.",
+   "synonyms": [
+    "drug resistant hypertension"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0850282",
    "bdchm_classes": [
     "Condition"
@@ -2734,6 +3169,26 @@
    "areas": [
     "Lung"
    ]
+  },
+  {
+   "curie": "MONDO:1030007",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "hypertensive urgency",
+   "definition": "A hypertensive disorder that is characterized by marked elevation in blood pressure, such as systolic blood pressure greater than 180 mmHg or diastolic blood pressure greater than 110 mmHg, and without evidence of target organ damage, such as pulmonary edema, cardiac ischemia, neurologic deficits, or acute renal failure.",
+   "synonyms": [
+    "hypertensive crisis without acute organ damage",
+    "severely elevated blood pressure without acute organ damage"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "MONDO:1060199",
@@ -2762,6 +3217,25 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "NCBITaxon:9606",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Homo sapiens",
+   "definition": null,
+   "synonyms": [
+    "human"
+   ],
+   "label_source": "ols",
+   "vocabulary": "NCBITaxon",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "NDFRT:N0000175418",
@@ -3274,6 +3748,23 @@
    ]
   },
   {
+   "curie": "OMOP:3000905",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Leukocytes [#/volume] in Blood by Automated count",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
    "curie": "OMOP:3002094",
    "bdchm_classes": [
     "MeasurementObservationSet"
@@ -3336,6 +3827,23 @@
    "areas": [
     "Lung"
    ]
+  },
+  {
+   "curie": "OMOP:3007070",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:3011505",
@@ -3405,6 +3913,23 @@
    ]
   },
   {
+   "curie": "OMOP:3013682",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Urea nitrogen [Mass/volume] in Serum or Plasma",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
    "curie": "OMOP:3022891",
    "bdchm_classes": [
     "MeasurementObservationSet"
@@ -3471,6 +3996,57 @@
    ]
   },
   {
+   "curie": "OMOP:3025315",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Body weight",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:3036277",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Body height",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:3038553",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Body mass index (BMI) [Ratio]",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
    "curie": "OMOP:37393605",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -3526,6 +4102,57 @@
    "areas": [
     "Lung"
    ]
+  },
+  {
+   "curie": "OMOP:38003563",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Hispanic or Latino",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Ethnicity",
+   "domain": "Ethnicity",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:38003564",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Not Hispanic or Latino",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Ethnicity",
+   "domain": "Ethnicity",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:38003615",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Middle Eastern or North African",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "areas": []
   },
   {
    "curie": "OMOP:4006788",
@@ -4066,6 +4693,23 @@
    ]
   },
   {
+   "curie": "OMOP:4230556",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Alive",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
    "curie": "OMOP:4241837",
    "bdchm_classes": [
     "MeasurementObservationSet"
@@ -4191,6 +4835,23 @@
    ]
   },
   {
+   "curie": "OMOP:4277283",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Natural mother",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "areas": []
+  },
+  {
    "curie": "OMOP:42872742",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -4279,6 +4940,23 @@
    ]
   },
   {
+   "curie": "OMOP:4321888",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Natural father",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "areas": []
+  },
+  {
    "curie": "OMOP:4336464",
    "bdchm_classes": [
     "Condition",
@@ -4313,6 +4991,23 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OMOP:434489",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Dead",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
   },
   {
    "curie": "OMOP:45772840",
@@ -4396,6 +5091,125 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OMOP:8507",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "MALE",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Gender",
+   "domain": "Gender",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:8515",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Asian",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:8516",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Black or African American",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:8527",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "White",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:8532",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "FEMALE",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Gender",
+   "domain": "Gender",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:8557",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "Native Hawaiian or Other Pacific Islander",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:8657",
+   "bdchm_classes": [],
+   "slots": [],
+   "studies": [],
+   "variables": [],
+   "occurrences": 0,
+   "concept": true,
+   "from_corpus": true,
+   "label": "American Indian or Alaska Native",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "areas": []
   },
   {
    "curie": "OMOP:8842",
@@ -5422,820 +6236,6 @@
    "areas": [
     "Hypertension"
    ]
-  },
-  {
-   "curie": "HP:0000819",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Diabetes mellitus",
-   "definition": "A group of abnormalities characterized by hyperglycemia and glucose intolerance.",
-   "synonyms": [],
-   "label_source": "monarch",
-   "vocabulary": "HP",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "HP:0001409",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Portal hypertension",
-   "definition": "Increased pressure in the portal vein.",
-   "synonyms": [],
-   "label_source": "monarch",
-   "vocabulary": "HP",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "HP:0002092",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Pulmonary arterial hypertension",
-   "definition": "Pulmonary hypertension is defined mean pulmonary artery pressure of 25mmHg or more and pulmonary capillary wedge pressure of 15mmHg or less when measured by right heart catheterisation at rest and in a supine position.",
-   "synonyms": [
-    "Increased blood pressure in blood vessels of lungs",
-    "Pulmonary artery hypertension"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "HP",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "HP:0005978",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Type II diabetes mellitus",
-   "definition": "A type of diabetes mellitus initially characterized by insulin resistance and hyperinsulinemia and subsequently by glucose interolerance and hyperglycemia.",
-   "synonyms": [
-    "Diabetes mellitus Type II",
-    "Diabetes mellitus, noninsulin-dependent",
-    "NIDDM",
-    "NIDDM diabetes mellitus",
-    "Non-insulin dependent diabetes",
-    "Noninsulin dependent diabetes mellitus",
-    "Noninsulin-dependent diabetes",
-    "Type 2 diabetes",
-    "Type II diabetes"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "HP",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "HP:0100735",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Hypertensive crisis",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "monarch",
-   "vocabulary": "HP",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "HP:0100817",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Renovascular hypertension",
-   "definition": "The presence of hypertension related to stenosis of the renal artery.",
-   "synonyms": [
-    "Hypertension due to renal artery hyperplasia"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "HP",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MMO:0000133",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "serum high-density lipoprotein-cholesterol measurement test",
-   "definition": "A test which determines the amount of cholesterol carried in high-density lipoprotein (HDL) particles in a sample of serum, the clear liquid that separates from blood after it has clotted completely, i.e. blood plasma from which fibrinogen has been removed.",
-   "synonyms": [
-    "serum HDL-cholesterol test"
-   ],
-   "label_source": "ols",
-   "vocabulary": "MMO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MMO:0000533",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "white blood cell counting method",
-   "definition": "Any method, manual or automated, by which the number, specifically of white blood cells (leukocytes), in a sample of blood is assessed and a value assigned. Leukocytes are largely colorless blood corpuscles capable of ameboid movement, whose chief function is to protect the body against microorganisms and other disease-causing entities.",
-   "synonyms": [
-    "blood leukocyte counting method"
-   ],
-   "label_source": "ols",
-   "vocabulary": "MMO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0001105",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "renal hypertension",
-   "definition": "Hypertension caused by the kidney's hormonal response to narrowing or occlusion of the renal arteries.",
-   "synonyms": [],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0001134",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "essential hypertension",
-   "definition": "Hypertension that presents without an identifiable cause.",
-   "synonyms": [
-    "idiopathic hypertension",
-    "primary hypertension"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0001200",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "secondary hypertension",
-   "definition": "High blood pressure caused by an underlying medical condition.",
-   "synonyms": [],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0005044",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "hypertensive disorder",
-   "definition": "Persistently high systemic arterial blood pressure. Based on multiple readings (blood pressure determination), hypertension is currently defined as when systolic pressure is consistently greater than 140 mm Hg or when diastolic pressure is consistently 90 mm Hg or more.",
-   "synonyms": [
-    "blood pressure, high",
-    "blood pressure, increased",
-    "high blood pressure",
-    "hypertensive disease",
-    "increased blood pressure",
-    "pressure, high blood",
-    "vascular hypertensive disorder"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0005080",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "portal hypertension",
-   "definition": "Increased blood pressure in the portal venous system. It is most commonly caused by cirrhosis. Other causes include portal vein thrombosis, Budd-Chiari syndrome, and right heart failure. Complications include ascites, esophageal varices, encephalopathy, and splenomegaly.",
-   "synonyms": [],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0005081",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "preeclampsia",
-   "definition": "Preeclampsia is a hypertensive disorder of pregnancy that is characterized by new-onset hypertension with proteinuria presenting after 20 weeks of gestation, and depending on mild or severe forms may initially present with severe headache, visual disturbances, and hyperreflexia.",
-   "synonyms": [
-    "pre-eclampsia",
-    "pre-eclamptic toxaemia",
-    "pre-eclamptic toxemia",
-    "preeclampsia",
-    "preeclampsia/eclampsia",
-    "pregnancy toxaemia",
-    "proteinuric hypertension of pregnancy"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0005148",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "type 2 diabetes mellitus",
-   "definition": "A type of diabetes mellitus that is characterized by insulin resistance or desensitization and increased blood glucose levels. This is a chronic disease that can develop gradually over the life of a patient and can be linked to both environmental factors and heredity.",
-   "synonyms": [
-    "NIDDM",
-    "T2D",
-    "T2DM",
-    "T2DM - type 2 diabetes mellitus",
-    "adult onset diabetes",
-    "adult-onset diabetes",
-    "diabetes mellitis type 2",
-    "diabetes mellitis type II",
-    "diabetes mellitus, noninsulin-dependent",
-    "diabetes mellitus, noninsulin-dependent, association with",
-    "diabetes mellitus, noninsulin-dependent, late onset",
-    "diabetes mellitus, type 2",
-    "diabetes mellitus, type II",
-    "diabetes, type 2",
-    "insulin resistance, severe, digenic",
-    "non-insulin dependent diabetes",
-    "non-insulin dependent diabetes mellitus",
-    "noninsulin dependent diabetes",
-    "noninsulin-dependent diabetes mellitus",
-    "type 2 diabetes",
-    "type 2 diabetes mellitus",
-    "type 2 diabetes mellitus non-insulin dependent",
-    "type II diabetes",
-    "type II diabetes mellitus"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0005827",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "lipoatrophic diabetes",
-   "definition": "A rare syndrome characterized by almost complete absence of body fat, accentuated muscularity, insulin-resistant diabetes, hyperlipidemia, hepatomegaly, and hypermetabolism.",
-   "synonyms": [
-    "diabete, lipoatrophic",
-    "lipoatrophic diabetes"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0006796",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "hypertensive encephalopathy",
-   "definition": "Encephalopathy resulting from hypertension.",
-   "synonyms": [],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0006846",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "malignant hypertension",
-   "definition": "Severe hypertension that is characterized by rapid onset of extremely high blood pressure and hypertension-mediated organ damage.",
-   "synonyms": [
-    "accelerated-malignant hypertension",
-    "hypertensive emergency",
-    "malignant phase hypertension"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0006947",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "renovascular hypertension",
-   "definition": "High blood pressure secondary to renal artery stenosis.",
-   "synonyms": [
-    "renovascular hypertension",
-    "renovascular hypertension (disease)"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0015924",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "pulmonary arterial hypertension",
-   "definition": "Pulmonary arterial hypertension (PAH) is a group of diseases characterized by mean pulmonary artery pressure >20 mmHg and elevated pulmonary arterial resistance leading to right heart failure. PAH is progressive and potentially fatal. PAH may be idiopathic and/ or familial, have overt features of venous/capillary involvement (pulmonary veno-occlusive disease, PVOD/pulmonary capillary hemangiomatosis, PCH), induced by drug or toxin (drug-or toxin-induced PAH), or associated with other diseases like congenital heart disease, connective tissue disease, HIV, schistosomiasis, portal hypertension (PAH associated with other disease).",
-   "synonyms": [
-    "PAH",
-    "pulmonary arterial hypertension"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:0100078",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "resistant hypertension",
-   "definition": "A severe medical condition which is estimated to appear in 9-18% of hypertensive patients, in which treatment with 3 or more antihypertensive drugs including diuretics are ineffective.",
-   "synonyms": [
-    "drug resistant hypertension"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "MONDO:1030007",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "hypertensive urgency",
-   "definition": "A hypertensive disorder that is characterized by marked elevation in blood pressure, such as systolic blood pressure greater than 180 mmHg or diastolic blood pressure greater than 110 mmHg, and without evidence of target organ damage, such as pulmonary edema, cardiac ischemia, neurologic deficits, or acute renal failure.",
-   "synonyms": [
-    "hypertensive crisis without acute organ damage",
-    "severely elevated blood pressure without acute organ damage"
-   ],
-   "label_source": "monarch",
-   "vocabulary": "MONDO",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "NCBITaxon:9606",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Homo sapiens",
-   "definition": null,
-   "synonyms": [
-    "human"
-   ],
-   "label_source": "ols",
-   "vocabulary": "NCBITaxon",
-   "domain": null,
-   "areas": []
-  },
-  {
-   "curie": "OMOP:3000905",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Leukocytes [#/volume] in Blood by Automated count",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "LOINC",
-   "domain": "Measurement",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:3007070",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "LOINC",
-   "domain": "Measurement",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:3013682",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Urea nitrogen [Mass/volume] in Serum or Plasma",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "LOINC",
-   "domain": "Measurement",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:3025315",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Body weight",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "LOINC",
-   "domain": "Measurement",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:3036277",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Body height",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "LOINC",
-   "domain": "Measurement",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:3038553",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Body mass index (BMI) [Ratio]",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "LOINC",
-   "domain": "Measurement",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:38003563",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Hispanic or Latino",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Ethnicity",
-   "domain": "Ethnicity",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:38003564",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Not Hispanic or Latino",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Ethnicity",
-   "domain": "Ethnicity",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:38003615",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Middle Eastern or North African",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Race",
-   "domain": "Race",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:4230556",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Alive",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "SNOMED",
-   "domain": "Observation",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:4277283",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Natural mother",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "SNOMED",
-   "domain": "Relationship",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:4321888",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Natural father",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "SNOMED",
-   "domain": "Relationship",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:434489",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Dead",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "SNOMED",
-   "domain": "Observation",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:8507",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "MALE",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Gender",
-   "domain": "Gender",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:8515",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Asian",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Race",
-   "domain": "Race",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:8516",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Black or African American",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Race",
-   "domain": "Race",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:8527",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "White",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Race",
-   "domain": "Race",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:8532",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "FEMALE",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Gender",
-   "domain": "Gender",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:8557",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "Native Hawaiian or Other Pacific Islander",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Race",
-   "domain": "Race",
-   "areas": []
-  },
-  {
-   "curie": "OMOP:8657",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
-   "from_corpus": true,
-   "label": "American Indian or Alaska Native",
-   "definition": null,
-   "synonyms": [],
-   "label_source": "ohdsi",
-   "vocabulary": "Race",
-   "domain": "Race",
-   "areas": []
   }
  ],
  "unresolved": [

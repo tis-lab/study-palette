@@ -180,12 +180,16 @@ def main():
     print(f"Synthetic corpus: {len(corpus)} CURIEs, {len(added)} not in any spec")
 
     cache = json.loads(args.cache.read_text()) if args.cache.exists() else {}
-    terms, unresolved = resolve_all(extracted, cache=cache, progress=print)
+    terms, unresolved = resolve_all(extracted.keys(), cache=cache, progress=print)
     args.cache.write_text(json.dumps(cache, indent=1, sort_keys=True))
     print(f"  {len(terms)} resolved, {len(unresolved)} unresolved")
 
+    # Sorted by CURIE rather than left in insertion order: terms.json is a
+    # committed artifact, and insertion order shifts whenever the corpus
+    # contributes a different set, which would churn the diff for no reason.
     records = []
-    for curie, record in extracted.items():
+    for curie in sorted(extracted):
+        record = extracted[curie]
         term = terms.get(curie) or {}
         records.append({
             **record,
