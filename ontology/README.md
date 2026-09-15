@@ -42,6 +42,16 @@ Specs under `_archive/` are skipped. They carry stale and occasionally
 malformed codes — `RxCUI:C02` is an ATC class written under the wrong prefix —
 that no current harmonization emits.
 
+## The synthetic corpus contributes terms too
+
+The corpus codes participants with concepts no trans-spec emits. The
+hypertension and Type 2 diabetes subtypes come from the BDC cohort-readiness
+code-set reference and live as constants in `synthetic/vocab.py`; the generated
+specs reach them through `populated_from`, so they appear in the data but never
+as a literal in a spec. Those are the proof-of-concept conditions, so the
+synthetic tree is scanned as a second source and its terms are grouped under
+"Synthetic corpus only" with `from_corpus` set on the record.
+
 ## Building
 
 ```

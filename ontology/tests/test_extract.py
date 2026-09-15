@@ -10,7 +10,7 @@ import textwrap
 
 import yaml
 
-from ontology.extract import from_specs, walk
+from ontology.extract import from_specs, scan_tree, walk
 
 
 def parse(text):
@@ -111,6 +111,30 @@ def test_provenance_records_variable_and_study(tmp_path):
     assert record["studies"] == ["ARIC"]
     assert record["variables"] == ["emphysema"]
     assert record["concept"] is True
+
+
+def test_scan_tree_finds_concepts_no_spec_emits(tmp_path):
+    """
+    The corpus subtypes live as Python constants, not as spec values.
+
+    `synthetic/vocab.py` carries the hypertension and Type 2 diabetes subtypes
+    from the code-set reference; the generated specs reach them through
+    `populated_from`, so walking spec structure alone never sees them.
+    """
+    (tmp_path / "vocab.py").write_text(textwrap.dedent('''
+        """Coded values used by the synthetic corpus."""
+        ESSENTIAL_HYPERTENSION = "MONDO:0001134"
+        TYPE_2_DIABETES = "MONDO:0005148"
+        STATUS = "PRESENT"
+        TABLE = "pht000115"
+    '''))
+
+    found = scan_tree(tmp_path)
+    assert found == {"MONDO:0001134", "MONDO:0005148"}
+
+
+def test_scan_tree_on_a_missing_directory_is_empty(tmp_path):
+    assert scan_tree(tmp_path / "nope") == set()
 
 
 def test_scope_filters_files_not_output(tmp_path):

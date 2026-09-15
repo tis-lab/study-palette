@@ -218,6 +218,56 @@ Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs,
 | `OMOP:3005600` | FVC measured/predicted | LOINC | 4 | `spirometry`, `spirometry_post_bd`, `spirometry_pre_bd` |
 | `OMOP:4152194` | Systolic blood pressure | SNOMED | 10 | `blood_pressure` |
 
+## Synthetic corpus only
+
+43 terms.
+
+| CURIE | Label | Vocabulary | Studies | Via |
+|---|---|---|---|---|
+| `OMOP:4230556` | Alive | SNOMED | 0 | synthetic corpus |
+| `OMOP:8657` | American Indian or Alaska Native | Race | 0 | synthetic corpus |
+| `OMOP:8515` | Asian | Race | 0 | synthetic corpus |
+| `OMOP:8516` | Black or African American | Race | 0 | synthetic corpus |
+| `OMOP:3036277` | Body height | LOINC | 0 | synthetic corpus |
+| `OMOP:3038553` | Body mass index (BMI) [Ratio] | LOINC | 0 | synthetic corpus |
+| `OMOP:3025315` | Body weight | LOINC | 0 | synthetic corpus |
+| `OMOP:3007070` | Cholesterol in HDL [Mass/volume] in Serum or Plasma | LOINC | 0 | synthetic corpus |
+| `OMOP:434489` | Dead | SNOMED | 0 | synthetic corpus |
+| `HP:0000819` | Diabetes mellitus | HP | 0 | synthetic corpus |
+| `MONDO:0001134` | essential hypertension | MONDO | 0 | synthetic corpus |
+| `OMOP:8532` | FEMALE | Gender | 0 | synthetic corpus |
+| `OMOP:38003563` | Hispanic or Latino | Ethnicity | 0 | synthetic corpus |
+| `NCBITaxon:9606` | Homo sapiens | NCBITaxon | 0 | synthetic corpus |
+| `HP:0100735` | Hypertensive crisis | HP | 0 | synthetic corpus |
+| `MONDO:0005044` | hypertensive disorder | MONDO | 0 | synthetic corpus |
+| `MONDO:0006796` | hypertensive encephalopathy | MONDO | 0 | synthetic corpus |
+| `MONDO:1030007` | hypertensive urgency | MONDO | 0 | synthetic corpus |
+| `OMOP:3000905` | Leukocytes [#/volume] in Blood by Automated count | LOINC | 0 | synthetic corpus |
+| `MONDO:0005827` | lipoatrophic diabetes | MONDO | 0 | synthetic corpus |
+| `OMOP:8507` | MALE | Gender | 0 | synthetic corpus |
+| `MONDO:0006846` | malignant hypertension | MONDO | 0 | synthetic corpus |
+| `OMOP:38003615` | Middle Eastern or North African | Race | 0 | synthetic corpus |
+| `OMOP:8557` | Native Hawaiian or Other Pacific Islander | Race | 0 | synthetic corpus |
+| `OMOP:4321888` | Natural father | SNOMED | 0 | synthetic corpus |
+| `OMOP:4277283` | Natural mother | SNOMED | 0 | synthetic corpus |
+| `OMOP:38003564` | Not Hispanic or Latino | Ethnicity | 0 | synthetic corpus |
+| `HP:0001409` | Portal hypertension | HP | 0 | synthetic corpus |
+| `MONDO:0005080` | portal hypertension | MONDO | 0 | synthetic corpus |
+| `MONDO:0005081` | preeclampsia | MONDO | 0 | synthetic corpus |
+| `HP:0002092` | Pulmonary arterial hypertension | HP | 0 | synthetic corpus |
+| `MONDO:0015924` | pulmonary arterial hypertension | MONDO | 0 | synthetic corpus |
+| `MONDO:0001105` | renal hypertension | MONDO | 0 | synthetic corpus |
+| `HP:0100817` | Renovascular hypertension | HP | 0 | synthetic corpus |
+| `MONDO:0006947` | renovascular hypertension | MONDO | 0 | synthetic corpus |
+| `MONDO:0100078` | resistant hypertension | MONDO | 0 | synthetic corpus |
+| `MONDO:0001200` | secondary hypertension | MONDO | 0 | synthetic corpus |
+| `MMO:0000133` | serum high-density lipoprotein-cholesterol measurement test | MMO | 0 | synthetic corpus |
+| `MONDO:0005148` | type 2 diabetes mellitus | MONDO | 0 | synthetic corpus |
+| `HP:0005978` | Type II diabetes mellitus | HP | 0 | synthetic corpus |
+| `OMOP:3013682` | Urea nitrogen [Mass/volume] in Serum or Plasma | LOINC | 0 | synthetic corpus |
+| `OMOP:8527` | White | Race | 0 | synthetic corpus |
+| `MMO:0000533` | white blood cell counting method | MMO | 0 | synthetic corpus |
+
 ## Mappings to report upstream
 
 These CURIEs sit in a concept slot but do not name a clinical concept — a unit or a metadata code where a condition or measurement belongs. They come through the trans-specs, so the fix is upstream at RTI.

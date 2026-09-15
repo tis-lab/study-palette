@@ -95,6 +95,30 @@ def walk(node, bdchm_class=None):
             yield from walk(value, bdchm_class)
 
 
+def scan_tree(root):
+    """
+    Every CURIE written literally anywhere under a source tree.
+
+    The synthetic corpus codes participants with concepts that no trans-spec
+    emits — the hypertension and Type 2 diabetes subtypes come from the BDC
+    cohort-readiness code-set reference and are written as constants in
+    `synthetic/vocab.py`. Its own specs reach them through `populated_from`,
+    so they appear in the generated data but never as a literal in a spec, and
+    walking spec structure alone misses them entirely.
+
+    This is a blunt text scan rather than a structural one, because the whole
+    point is to catch concepts the structure does not carry.
+    """
+    root = Path(root)
+    if not root.exists():
+        return set()
+    found = set()
+    for path in sorted(root.rglob("*")):
+        if path.suffix in (".py", ".yaml", ".yml") and path.is_file():
+            found |= curies_in(path.read_text())
+    return found
+
+
 def from_specs(root, variables=None):
     """
     Read every trans-spec under `root`, which holds one directory per study.

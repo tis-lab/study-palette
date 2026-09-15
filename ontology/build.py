@@ -22,7 +22,7 @@ import argparse
 import json
 from pathlib import Path
 
-from ontology.extract import from_specs
+from ontology.extract import from_specs, scan_tree
 from ontology.focus import FOCUS_AREAS, area_of
 from ontology.resolve import resolve_all
 
@@ -65,7 +65,10 @@ def markdown(records, unresolved, suspect):
     concepts = [r for r in records if r["concept"]]
     by_class = {}
     for record in concepts:
-        for cls in record["bdchm_classes"] or ["Uncategorized"]:
+        fallback = (
+            "Synthetic corpus only" if record.get("from_corpus") else "Uncategorized"
+        )
+        for cls in record["bdchm_classes"] or [fallback]:
             by_class.setdefault(cls, []).append(record)
 
     ordered = [c for c in CLASS_ORDER if c in by_class]
@@ -84,6 +87,8 @@ def markdown(records, unresolved, suspect):
             via = ", ".join(f"`{v}`" for v in row["variables"][:3])
             if len(row["variables"]) > 3:
                 via += f" +{len(row['variables']) - 3}"
+            if not via:
+                via = "synthetic corpus" if row.get("from_corpus") else "—"
             out.append(
                 f"| `{row['curie']}` | {label} | {row.get('vocabulary') or '—'} "
                 f"| {len(row['studies'])} | {via} |"
@@ -132,6 +137,10 @@ def main():
         "--specs", type=Path, required=True,
         help="priority_variables_transform/ in the NHLBI-BDC-DMC-HV repo",
     )
+    parser.add_argument(
+        "--synthetic", type=Path, default=HERE.parent / "synthetic",
+        help="synthetic corpus source tree, scanned for concepts it codes with",
+    )
     parser.add_argument("--cache", type=Path, default=HERE / ".cache.json")
     parser.add_argument("--json-out", type=Path, default=HERE / "terms.json")
     parser.add_argument("--md-out", type=Path, default=HERE / "TERMS.md")
@@ -149,6 +158,26 @@ def main():
     extracted = from_specs(args.specs, variables=scope)
     concepts = {c: r for c, r in extracted.items() if r["concept"]}
     print(f"Trans-specs: {len(extracted)} CURIEs, {len(concepts)} in concept slots")
+
+    # The corpus codes participants with subtypes the trans-specs never emit,
+    # and those are the proof-of-concept conditions, so they belong in the list
+    # whether or not RTI harmonizes to them yet.
+    corpus = scan_tree(args.synthetic)
+    added = sorted(corpus - set(extracted))
+    for curie in added:
+        extracted[curie] = {
+            "curie": curie,
+            "bdchm_classes": [],
+            "slots": [],
+            "studies": [],
+            "variables": [],
+            "occurrences": 0,
+            "concept": True,
+            "from_corpus": True,
+        }
+    for curie in corpus & set(extracted):
+        extracted[curie]["from_corpus"] = True
+    print(f"Synthetic corpus: {len(corpus)} CURIEs, {len(added)} not in any spec")
 
     cache = json.loads(args.cache.read_text()) if args.cache.exists() else {}
     terms, unresolved = resolve_all(extracted, cache=cache, progress=print)
@@ -175,8 +204,9 @@ def main():
         r for r in records
         if r["concept"] and r.get("domain") in NON_CLINICAL_DOMAINS
     ]
-    labelled = sum(1 for r in records if r["concept"] and r["label"])
-    print(f"  {labelled}/{len(concepts)} concept terms labelled")
+    in_concept_slots = [r for r in records if r["concept"]]
+    labelled = sum(1 for r in in_concept_slots if r["label"])
+    print(f"  {labelled}/{len(in_concept_slots)} concept terms labelled")
     if suspect:
         print(f"  {len(suspect)} non-clinical CURIEs in concept slots")
 
