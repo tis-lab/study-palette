@@ -56,4 +56,5 @@ def area_of(name):
 
 
 def all_names():
+    """Every spec name across the focus areas."""
     return [name for names in FOCUS_AREAS.values() for name in names]

@@ -1,6 +1,7 @@
 """
-Build the harmonized term list: every concept CURIE, with the label its own
-vocabulary publishes.
+Build the harmonized term list.
+
+Every concept CURIE, with the label its own vocabulary publishes.
 
 The unit is the CURIE. A CURIE is what the trans-specs emit into BDCHM's
 concept slots, what lands in harmonized data, and what a query filters on, so
@@ -21,7 +22,7 @@ import argparse
 import json
 from pathlib import Path
 
-from extract import CONCEPT_SLOTS, from_specs
+from extract import from_specs
 from focus import FOCUS_AREAS, area_of
 from resolve import resolve_all
 
@@ -37,10 +38,12 @@ CLASS_ORDER = ["Condition", "MeasurementObservation", "Procedure", "DrugExposure
 
 
 def sort_key(record):
+    """Order rows by label, with anything unresolved last."""
     return (record["label"] or "~").lower()
 
 
 def markdown(records, unresolved, suspect):
+    """Render the term list as the human-readable handoff."""
     out = ["# Harmonized concept terms", ""]
     out.append(
         "Every row is a concept CURIE emitted by the BDC harmonized-variable "
@@ -123,6 +126,7 @@ def markdown(records, unresolved, suspect):
 
 
 def main():
+    """Extract, resolve and write terms.json and TERMS.md."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--specs", type=Path, required=True,
