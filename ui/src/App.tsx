@@ -13,6 +13,7 @@ import {
 } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
+import { useUserContext } from "@tis-lab/context-providers";
 
 interface StudiesResponse {
   studies: Study[];
@@ -20,6 +21,7 @@ interface StudiesResponse {
 }
 
 function App() {
+  const context = useUserContext();
   const [mode, setMode] = useState<DataMode>("demo");
   const [studies, setStudies] = useState<Study[]>([]);
   const [loading, setLoading] = useState(false);
@@ -84,11 +86,7 @@ function App() {
     <div className="app">
       <header>
         <div className="brand-bar">
-          <img
-            className="brand-logo"
-            src="/branding/bdc-logo.svg"
-            alt=""
-          />
+          <img className="brand-logo" src="/branding/bdc-logo.svg" alt="" />
         </div>
         <div className="header-row">
           <div>
@@ -98,6 +96,7 @@ function App() {
               Builder & Query Tool
             </p>
           </div>
+          {context?.user?.profile?.firstName} {context?.user?.profile?.lastName}
           <div className="header-controls">
             <label className="palette-picker">
               <span>Figure palette</span>
