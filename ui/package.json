@@ -58,7 +58,6 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.2.0",
-    "@tis-lab/context-providers": "^0.0.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }
