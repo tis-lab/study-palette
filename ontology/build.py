@@ -42,12 +42,24 @@ def sort_key(record):
     return (record["label"] or "~").lower()
 
 
+def via(record, limit=3):
+    """Format the variables a term is reached through, for the Via column."""
+    names = ", ".join(f"`{v}`" for v in record["variables"][:limit])
+    if len(record["variables"]) > limit:
+        names += f" +{len(record['variables']) - limit}"
+    if names:
+        return names
+    return "synthetic corpus" if record.get("from_corpus") else "—"
+
+
 def markdown(records, unresolved, suspect):
     """Render the term list as the human-readable handoff."""
     out = ["# Harmonized concept terms", ""]
     out.append(
-        "Every row is a concept CURIE emitted by the BDC harmonized-variable "
+        "Every row is a CURIE emitted by the BDC harmonized-variable "
         "trans-specs, with the label published by the vocabulary that owns it. "
+        "The sections below cover the concepts a record is about; value-set "
+        "members that qualify a record are listed separately at the end. "
         "Labels are fetched, never written by hand: Monarch for MONDO/HP/OBA, "
         "OLS4 for other OBO ontologies, the OHDSI WebAPI for OMOP, RxNav "
         "RxClass for ATC and NDFRT, RxNav for RxCUI."
@@ -84,16 +96,45 @@ def markdown(records, unresolved, suspect):
         out.append("|---|---|---|---|---|")
         for row in rows:
             label = row["label"] or "_unresolved_"
-            via = ", ".join(f"`{v}`" for v in row["variables"][:3])
-            if len(row["variables"]) > 3:
-                via += f" +{len(row['variables']) - 3}"
-            if not via:
-                via = "synthetic corpus" if row.get("from_corpus") else "—"
             out.append(
                 f"| `{row['curie']}` | {label} | {row.get('vocabulary') or '—'} "
-                f"| {len(row['studies'])} | {via} |"
+                f"| {len(row['studies'])} | {via(row)} |"
             )
         out.append("")
+
+    # Terms in qualifier slots describe a record rather than name the thing it
+    # is about, so they are kept out of the tables above. They still need
+    # labels — race, sex and ethnicity are what drive the interface's filters —
+    # and listing them only under their BDCHM class would blur the distinction,
+    # so they are grouped by the slot they populate.
+    qualifiers = [r for r in records if not r["concept"]]
+    if qualifiers:
+        by_slot = {}
+        for record in qualifiers:
+            for slot in record["slots"] or ["(none)"]:
+                by_slot.setdefault(slot, []).append(record)
+
+        out.append("## Value sets and qualifiers")
+        out.append("")
+        out.append(
+            f"{len(qualifiers)} terms. These populate slots that qualify a "
+            "record rather than name the concept it is about, so they are not "
+            "browsable concepts — but they are real coded values and the "
+            "interface needs their labels."
+        )
+        out.append("")
+        for slot in sorted(by_slot):
+            out.append(f"### `{slot}`")
+            out.append("")
+            out.append("| CURIE | Label | Vocabulary | Via |")
+            out.append("|---|---|---|---|")
+            for row in sorted(by_slot[slot], key=sort_key):
+                label = row["label"] or "_unresolved_"
+                out.append(
+                    f"| `{row['curie']}` | {label} "
+                    f"| {row.get('vocabulary') or '—'} | {via(row)} |"
+                )
+            out.append("")
 
     if suspect:
         out.append("## Mappings to report upstream")
@@ -120,11 +161,23 @@ def markdown(records, unresolved, suspect):
         out.append("")
         out.append(
             "No public service resolves these. ICD10CM entries are chapter "
-            "ranges rather than concepts, so they are expected here."
+            "ranges rather than concepts, so they are expected here. The rest "
+            "are OMOP IDs that do not exist in the vocabulary and want fixing "
+            "upstream — the slot and variable are given so they can be traced."
         )
         out.append("")
+        out.append("| CURIE | Slot | Via |")
+        out.append("|---|---|---|")
+        # Keyed by CURIE because a term with no label has nothing else to sort
+        # on, and several of these appear in no table above.
+        found = {r["curie"]: r for r in records}
         for curie in sorted(unresolved):
-            out.append(f"- `{curie}`")
+            record = found.get(curie)
+            slots = ", ".join(f"`{s}`" for s in (record or {}).get("slots") or [])
+            out.append(
+                f"| `{curie}` | {slots or '—'} "
+                f"| {via(record) if record else '—'} |"
+            )
         out.append("")
 
     return "\n".join(out)
