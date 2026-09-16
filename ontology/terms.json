@@ -57,6 +57,30 @@
    ]
   },
   {
+   "curie": "ATC:C01A",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "CARDIAC GLYCOSIDES",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "ATC:C01D",
    "bdchm_classes": [
     "DrugExposure"
@@ -105,11 +129,12 @@
    ],
    "variables": [
     "hypert_trt",
+    "med_use",
     "tak_aceinhib",
     "tak_alphablk",
     "tak_antihypertensives"
    ],
-   "occurrences": 112,
+   "occurrences": 116,
    "concept": true,
    "label": "ANTIHYPERTENSIVES",
    "definition": null,
@@ -225,9 +250,10 @@
     "MESA"
    ],
    "variables": [
+    "med_use",
     "tak_vasodil"
    ],
-   "occurrences": 43,
+   "occurrences": 46,
    "concept": true,
    "label": "PERIPHERAL VASODILATORS",
    "definition": null,
@@ -257,9 +283,10 @@
     "WHI"
    ],
    "variables": [
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 63,
+   "occurrences": 71,
    "concept": true,
    "label": "BETA BLOCKING AGENTS",
    "definition": null,
@@ -313,9 +340,10 @@
     "JHS"
    ],
    "variables": [
+    "med_use",
     "tak_calchanblk"
    ],
-   "occurrences": 27,
+   "occurrences": 31,
    "concept": true,
    "from_corpus": true,
    "label": "CALCIUM CHANNEL BLOCKERS",
@@ -447,6 +475,237 @@
    ]
   },
   {
+   "curie": "ATC:C10A",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "med_use",
+    "tak_nstat_med",
+    "tak_statin"
+   ],
+   "occurrences": 50,
+   "concept": true,
+   "label": "LIPID MODIFYING AGENTS, PLAIN",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:C10AA",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS",
+    "WHI"
+   ],
+   "variables": [
+    "tak_nstat_med",
+    "tak_statin"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "HMG CoA reductase inhibitors",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:C10AB",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS",
+    "MESA"
+   ],
+   "variables": [
+    "tak_nstat_med",
+    "taking_non_statin_medication"
+   ],
+   "occurrences": 19,
+   "concept": true,
+   "label": "Fibrates",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:C10AC",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "taking_non_statin_medication"
+   ],
+   "occurrences": 8,
+   "concept": true,
+   "label": "Bile acid sequestrants",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:C10AD",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "taking_non_statin_medication"
+   ],
+   "occurrences": 8,
+   "concept": true,
+   "label": "Nicotinic acid and derivatives",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:H02A",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA",
+    "COPDGene",
+    "MESA"
+   ],
+   "variables": [
+    "tak_cort_steroid_oral",
+    "tak_steroid"
+   ],
+   "occurrences": 10,
+   "concept": true,
+   "label": "CORTICOSTEROIDS FOR SYSTEMIC USE, PLAIN",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:M04",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "ANTIGOUT PREPARATIONS",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:R03AK",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "COPDGene"
+   ],
+   "variables": [
+    "tak_adrenergics"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Adrenergics in combination with corticosteroids or other drugs, excl. anticholinergics",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "ATC:R03BA",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "COPDGene"
+   ],
+   "variables": [
+    "tak_cort_steroid_resp"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Glucocorticoids",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "ATC1-4",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "HP:0000819",
    "bdchm_classes": [],
    "slots": [],
@@ -514,6 +773,7 @@
    ],
    "studies": [
     "ARIC",
+    "CARDIA",
     "CHS",
     "COPDGene",
     "FHS",
@@ -524,9 +784,10 @@
     "WHI"
    ],
    "variables": [
+    "fam_stroke",
     "stroke"
    ],
-   "occurrences": 179,
+   "occurrences": 212,
    "concept": true,
    "label": "Stroke",
    "definition": "Sudden impairment of blood flow to a part of the brain due to occlusion or rupture of an artery to the brain.",
@@ -585,6 +846,33 @@
    "label": "Portal hypertension",
    "definition": "Increased pressure in the portal vein.",
    "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "HP",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "HP:0001513",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "condition_concept"
+   ],
+   "studies": [
+    "JHS"
+   ],
+   "variables": [
+    "obesity"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "Obesity",
+   "definition": "Accumulation of substantial excess body fat.",
+   "synonyms": [
+    "Having too much body fat",
+    "Obesity"
+   ],
    "label_source": "monarch",
    "vocabulary": "HP",
    "domain": null,
@@ -2200,6 +2488,31 @@
    ]
   },
   {
+   "curie": "MONDO:0005139",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "condition_concept"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS"
+   ],
+   "variables": [
+    "obesity"
+   ],
+   "occurrences": 14,
+   "concept": true,
+   "label": "morbid obesity",
+   "definition": "An excess of body weight, normally defined as an individual with a body mass index greater than 35 or a body weight greater than one hundred percent of ideal body weight.",
+   "synonyms": [],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0005148",
    "bdchm_classes": [],
    "slots": [],
@@ -3036,6 +3349,33 @@
    ]
   },
   {
+   "curie": "MONDO:0011122",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "condition_concept"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "obesity"
+   ],
+   "occurrences": 8,
+   "concept": true,
+   "label": "obesity disorder",
+   "definition": "A disorder involving an excessive amount of body fat.",
+   "synonyms": [
+    "obesity",
+    "obesity disease"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "MONDO",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "MONDO:0013792",
    "bdchm_classes": [
     "Condition"
@@ -3271,12 +3611,30 @@
   },
   {
    "curie": "NCBITaxon:9606",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Person"
+   ],
+   "slots": [
+    "species"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "person"
+   ],
+   "occurrences": 11,
+   "concept": false,
    "from_corpus": true,
    "label": "Homo sapiens",
    "definition": null,
@@ -3285,6 +3643,78 @@
    ],
    "label_source": "ols",
    "vocabulary": "NCBITaxon",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "NDFRT:N0000009917",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "Adrenergic alpha1-Agonists",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "MOA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "NDFRT:N0000009918",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Adrenergic alpha2-Agonists",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "MOA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "NDFRT:N0000175415",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "Nitrate Vasodilator",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "EPC",
    "domain": null,
    "areas": []
   },
@@ -3302,10 +3732,11 @@
     "MESA"
    ],
    "variables": [
+    "med_use",
     "tak_aldorecepblk",
     "tak_diuret"
    ],
-   "occurrences": 40,
+   "occurrences": 43,
    "concept": true,
    "label": "Potassium-sparing Diuretic",
    "definition": null,
@@ -3332,9 +3763,10 @@
     "MESA"
    ],
    "variables": [
+    "med_use",
     "tak_diuret"
    ],
-   "occurrences": 48,
+   "occurrences": 51,
    "concept": true,
    "label": "Thiazide Diuretic",
    "definition": null,
@@ -3385,9 +3817,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_alphablk"
    ],
-   "occurrences": 10,
+   "occurrences": 11,
    "concept": true,
    "label": "alpha-Adrenergic Blocker",
    "definition": null,
@@ -3464,10 +3897,11 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_aceinhib",
     "tak_alphablk"
    ],
-   "occurrences": 15,
+   "occurrences": 18,
    "concept": true,
    "label": "Angiotensin Converting Enzyme Inhibitor",
    "definition": null,
@@ -3478,6 +3912,291 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "NDFRT:N0000175589",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS"
+   ],
+   "variables": [
+    "med_use",
+    "tak_statin"
+   ],
+   "occurrences": 21,
+   "concept": true,
+   "label": "HMG-CoA Reductase Inhibitor",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "EPC",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "NDFRT:N0000175594",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CHS",
+    "FHS"
+   ],
+   "variables": [
+    "med_use",
+    "tak_nstat_med",
+    "taking_non_statin_medication"
+   ],
+   "occurrences": 30,
+   "concept": true,
+   "label": "Nicotinic Acid",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "EPC",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "NDFRT:N0000175690",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Opioid Agonist",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "EPC",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "NDFRT:N0000175980",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Anti-coagulant",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "EPC",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "NDFRT:N0000180292",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CHS",
+    "FHS"
+   ],
+   "variables": [
+    "med_use",
+    "tak_nstat_med",
+    "taking_non_statin_medication"
+   ],
+   "occurrences": 30,
+   "concept": true,
+   "label": "Bile Acid Sequestrant",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxclass",
+   "vocabulary": "EPC",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:0000061",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "fibrin"
+   ],
+   "occurrences": 24,
+   "concept": true,
+   "label": "circulating fibrinogen levels",
+   "definition": "The amount of a fibrinogen complex.",
+   "synonyms": [
+    "amount of fibrinogen complex"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:0003277",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS",
+    "JHS"
+   ],
+   "variables": [
+    "pmv"
+   ],
+   "occurrences": 5,
+   "concept": true,
+   "label": "platelet volume",
+   "definition": "The volume of a platelet.",
+   "synonyms": [
+    "volume of platelet"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:0003460",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "mcv"
+   ],
+   "occurrences": 13,
+   "concept": true,
+   "label": "erythrocyte volume",
+   "definition": "The volume of a erythrocyte.",
+   "synonyms": [
+    "volume of erythrocyte"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:1000032",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "WHI"
+   ],
+   "variables": [
+    "hip_circ"
+   ],
+   "occurrences": 48,
+   "concept": true,
+   "label": "hip circumference",
+   "definition": "The circumference of a hip.",
+   "synonyms": [
+    "circumference of hip",
+    "hip circumference trait"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:1001085",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "waist_circ"
+   ],
+   "occurrences": 70,
+   "concept": true,
+   "label": "waist circumference",
+   "definition": "The circumference of a abdominal segment of trunk.",
+   "synonyms": [
+    "circumference of abdominal segment of trunk"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "OBA:1001086",
@@ -3549,6 +4268,131 @@
    ]
   },
   {
+   "curie": "OBA:2040171",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "sleep_duration_daily"
+   ],
+   "occurrences": 41,
+   "concept": true,
+   "label": "sleep duration trait",
+   "definition": "The duration of a sleep.",
+   "synonyms": [
+    "duration of sleep"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2041535",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "WHI"
+   ],
+   "variables": [
+    "factor_7"
+   ],
+   "occurrences": 15,
+   "concept": true,
+   "label": "level of coagulation factor VII in blood serum",
+   "definition": "The amount of a coagulation factor VII when measured in blood serum.",
+   "synonyms": [
+    "blood serum coagulation factor VII amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2041536",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "MESA"
+   ],
+   "variables": [
+    "factor_8"
+   ],
+   "occurrences": 7,
+   "concept": true,
+   "label": "level of coagulation factor VIII in blood serum",
+   "definition": "The amount of a coagulation factor VIII when measured in blood serum.",
+   "synonyms": [
+    "blood serum coagulation factor VIII amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2045301",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS"
+   ],
+   "variables": [
+    "mch"
+   ],
+   "occurrences": 12,
+   "concept": true,
+   "label": "erythrocyte hemoglobin content trait",
+   "definition": "The amount of a hemoglobin when measured in erythrocyte.",
+   "synonyms": [
+    "corpuscular hemoglobin amount",
+    "corpuscular hemoglobin content",
+    "erythrocyte hemoglobin amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "OBA:2045303",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -3584,6 +4428,41 @@
    ]
   },
   {
+   "curie": "OBA:2045381",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "WHI"
+   ],
+   "variables": [
+    "hemat",
+    "labs_cbc"
+   ],
+   "occurrences": 40,
+   "concept": true,
+   "label": "hematocrit",
+   "definition": "The volume of a erythrocyte when measured in blood.",
+   "synonyms": [
+    "blood erythrocyte volume"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "OBA:2045443",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -3615,6 +4494,96 @@
    ]
   },
   {
+   "curie": "OBA:2045455",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "bmi"
+   ],
+   "occurrences": 74,
+   "concept": true,
+   "label": "body mass to height ratio",
+   "definition": "A compound attribute that is the ratio of body mass to body height.",
+   "synonyms": [
+    "the ratio of body mass to body height"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2050062",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "alt_sgpt"
+   ],
+   "occurrences": 4,
+   "concept": true,
+   "label": "serum alanine aminotransferase amount",
+   "definition": "The amount of a alanine aminotransferase when measured in blood serum.",
+   "synonyms": [
+    "blood serum alanine aminotransferase amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2050068",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS"
+   ],
+   "variables": [
+    "albumin_bld"
+   ],
+   "occurrences": 8,
+   "concept": true,
+   "label": "serum albumin amount",
+   "definition": "The amount of a albumin when measured in blood serum.",
+   "synonyms": [
+    "blood serum albumin amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "OBA:2050075",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -3643,6 +4612,37 @@
    ]
   },
   {
+   "curie": "OBA:2050096",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "WHI"
+   ],
+   "variables": [
+    "creat_bld"
+   ],
+   "occurrences": 74,
+   "concept": true,
+   "label": "serum creatinine amount",
+   "definition": "The amount of a creatinine when measured in blood serum.",
+   "synonyms": [
+    "blood serum creatinine amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "OBA:2050108",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -3669,6 +4669,200 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OBA:2051975",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "tnfa_r1"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "amount of tumor necrosis factor receptor superfamily member 1A (human) in blood",
+   "definition": "The amount of a tumor necrosis factor receptor superfamily member 1A (human) when measured in blood.",
+   "synonyms": [
+    "blood tumor necrosis factor receptor superfamily member 1A (human) amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2051979",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "tnfa"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "amount of tumor necrosis factor (human) in blood",
+   "definition": "The amount of a tumor necrosis factor (human) when measured in blood.",
+   "synonyms": [
+    "blood tumor necrosis factor (human) amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2052375",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS"
+   ],
+   "variables": [
+    "cysc_bld"
+   ],
+   "occurrences": 9,
+   "concept": true,
+   "label": "amount of cystatin-C (human) in blood",
+   "definition": "The amount of a cystatin-C (human) when measured in blood.",
+   "synonyms": [
+    "blood cystatin-C (human) amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2052701",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "JHS"
+   ],
+   "variables": [
+    "pselectin"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "amount of P-selectin (human) in blood",
+   "definition": "The amount of a P-selectin (human) when measured in blood.",
+   "synonyms": [
+    "blood P-selectin (human) amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2052741",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "FHS",
+    "MESA"
+   ],
+   "variables": [
+    "willeb_fac"
+   ],
+   "occurrences": 9,
+   "concept": true,
+   "label": "amount of von Willebrand factor (human) in blood",
+   "definition": "The amount of a von Willebrand factor (human) when measured in blood.",
+   "synonyms": [
+    "blood von Willebrand factor (human) amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2052778",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "eselectin"
+   ],
+   "occurrences": 5,
+   "concept": true,
+   "label": "amount of E-selectin (human) in blood",
+   "definition": "The amount of a E-selectin (human) when measured in blood.",
+   "synonyms": [
+    "blood E-selectin (human) amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:2052890",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "CHS",
+    "MESA"
+   ],
+   "variables": [
+    "il6"
+   ],
+   "occurrences": 6,
+   "concept": true,
+   "label": "amount of interleukin-6 (human) in blood",
+   "definition": "The amount of a interleukin-6 (human) when measured in blood.",
+   "synonyms": [
+    "blood interleukin-6 (human) amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "OBA:2060174",
@@ -3707,6 +4901,140 @@
    ]
   },
   {
+   "curie": "OBA:2060175",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "WHI"
+   ],
+   "variables": [
+    "hemo",
+    "labs_cbc"
+   ],
+   "occurrences": 28,
+   "concept": true,
+   "label": "amount of hemoglobin in blood",
+   "definition": "The amount of a hemoglobin when measured in blood.",
+   "synonyms": [
+    "blood hemoglobin amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0000180",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "tot_chol_bld"
+   ],
+   "occurrences": 71,
+   "concept": true,
+   "label": "blood cholesterol amount",
+   "definition": "The amount of a cholesterol when measured in blood.",
+   "synonyms": [
+    "blood cholesterol amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0000181",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "ldl"
+   ],
+   "occurrences": 68,
+   "concept": true,
+   "label": "blood LDL cholesterol amount",
+   "definition": "The amount of a low-density lipoprotein cholesterol when measured in blood.",
+   "synonyms": [
+    "blood low-density lipoprotein cholesterol amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0000184",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "hdl"
+   ],
+   "occurrences": 48,
+   "concept": true,
+   "label": "blood HDL cholesterol amount",
+   "definition": "The amount of a high-density lipoprotein cholesterol when measured in blood.",
+   "synonyms": [
+    "blood high-density lipoprotein cholesterol amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "OBA:VT0000188",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -3739,6 +5067,641 @@
    "areas": [
     "Diabetes"
    ]
+  },
+  {
+   "curie": "OBA:VT0000217",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "labs_cbc",
+    "lympho_ct",
+    "whtbld_ct"
+   ],
+   "occurrences": 22,
+   "concept": true,
+   "label": "leukocyte quantity",
+   "definition": "The amount of a leukocyte.",
+   "synonyms": [
+    "amount of leukocyte"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0000222",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "COPDGene",
+    "HCHS"
+   ],
+   "variables": [
+    "neutro_ct",
+    "neutrophil_ct"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "neutrophil quantity",
+   "definition": "The amount of a neutrophil.",
+   "synonyms": [
+    "amount of neutrophil"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0000223",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "MESA"
+   ],
+   "variables": [
+    "monocyte_ct",
+    "monocyte_ncnc_bld"
+   ],
+   "occurrences": 8,
+   "concept": true,
+   "label": "monocyte quantity",
+   "definition": "The amount of a monocyte.",
+   "synonyms": [
+    "amount of monocyte"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0000717",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "COPDGene",
+    "HCHS"
+   ],
+   "variables": [
+    "lympho_ct",
+    "lymphocyte_ct"
+   ],
+   "occurrences": 4,
+   "concept": true,
+   "label": "lymphocyte quantity",
+   "definition": "The has number of of a lymphocyte.",
+   "synonyms": [
+    "has number of of lymphocyte"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0001253",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "bdy_hgt",
+    "body_measures"
+   ],
+   "occurrences": 121,
+   "concept": true,
+   "label": "body height",
+   "definition": "The height of a multicellular organism.",
+   "synonyms": [
+    "height of multicellular organism"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0001259",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "bdy_wgt",
+    "body_measures"
+   ],
+   "occurrences": 105,
+   "concept": true,
+   "label": "body mass",
+   "definition": "The mass of a multicellular organism.",
+   "synonyms": [
+    "mass of multicellular organism"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0001586",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS"
+   ],
+   "variables": [
+    "rbc",
+    "rdbld_ct"
+   ],
+   "occurrences": 12,
+   "concept": true,
+   "label": "erythrocyte quantity",
+   "definition": "The amount of a erythrocyte.",
+   "synonyms": [
+    "amount of erythrocyte"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0001776",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "sodium_blood"
+   ],
+   "occurrences": 10,
+   "concept": true,
+   "label": "blood sodium amount",
+   "definition": "The amount of a sodium atom when measured in blood.",
+   "synonyms": [
+    "blood sodium atom amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0002602",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "COPDGene",
+    "FHS",
+    "HCHS"
+   ],
+   "variables": [
+    "eosinophil_ct",
+    "eosinophil_ncnc_bld"
+   ],
+   "occurrences": 5,
+   "concept": true,
+   "label": "eosinophil quantity",
+   "definition": "The amount of a eosinophil.",
+   "synonyms": [
+    "amount of eosinophil"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0002607",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "COPDGene",
+    "FHS",
+    "HCHS"
+   ],
+   "variables": [
+    "basophil_ct",
+    "basophil_ncnc_bld"
+   ],
+   "occurrences": 5,
+   "concept": true,
+   "label": "basophil quantity",
+   "definition": "The amount of a basophil.",
+   "synonyms": [
+    "amount of basophil"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0002644",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "triglyc_bld"
+   ],
+   "occurrences": 59,
+   "concept": true,
+   "label": "blood triglyceride amount",
+   "definition": "The amount of a triglyceride when measured in blood.",
+   "synonyms": [
+    "blood triglyceride amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0002668",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "potassium"
+   ],
+   "occurrences": 13,
+   "concept": true,
+   "label": "blood potassium amount",
+   "definition": "The amount of a potassium atom when measured in blood.",
+   "synonyms": [
+    "blood potassium atom amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0002871",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "albumin_urine"
+   ],
+   "occurrences": 31,
+   "concept": true,
+   "label": "urine albumin amount",
+   "definition": "The amount of a albumin type when measured in urine.",
+   "synonyms": [
+    "urine albumin type amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0003018",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "chloride_bld"
+   ],
+   "occurrences": 5,
+   "concept": true,
+   "label": "blood chloride amount",
+   "definition": "The amount of a chloride when measured in blood.",
+   "synonyms": [
+    "blood chloride amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0003179",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "platelet_ct"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "platelet quantity",
+   "definition": "The amount of a platelet.",
+   "synonyms": [
+    "amount of platelet"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0005265",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS",
+    "JHS",
+    "WHI"
+   ],
+   "variables": [
+    "bun"
+   ],
+   "occurrences": 7,
+   "concept": true,
+   "label": "blood urea nitrogen amount",
+   "definition": "The amount of a urea when measured in blood.",
+   "synonyms": [
+    "blood urea amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0005535",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "bdy_temp"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "body temperature trait",
+   "definition": "The temperature of a multicellular organism.",
+   "synonyms": [
+    "temperature of multicellular organism"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0010477",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "lactate_dehyd"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "blood lactate dehydrogenase amount",
+   "definition": "The amount of a lactate dehydrogenase complex when measured in blood.",
+   "synonyms": [
+    "blood lactate dehydrogenase complex amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0010513",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "HCHS",
+    "JHS"
+   ],
+   "variables": [
+    "ferritin"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "blood ferritin amount",
+   "definition": "The amount of a ferritin complex when measured in blood.",
+   "synonyms": [
+    "blood ferritin complex amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0010540",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "FHS",
+    "HCHS",
+    "JHS"
+   ],
+   "variables": [
+    "creat_urin"
+   ],
+   "occurrences": 20,
+   "concept": true,
+   "label": "urine creatinine amount",
+   "definition": "The amount of a creatinine when measured in urine.",
+   "synonyms": [
+    "urine creatinine amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OBA:VT0010616",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "lactate"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "blood lactate amount",
+   "definition": "The amount of a lactate when measured in blood.",
+   "synonyms": [
+    "blood lactate amount"
+   ],
+   "label_source": "monarch",
+   "vocabulary": "OBA",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "OBA:VT2000000",
@@ -3799,6 +5762,83 @@
    ]
   },
   {
+   "curie": "OMOP:21493059",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "fruit_serving"
+   ],
+   "occurrences": 36,
+   "concept": true,
+   "label": "Fruit servings 24 hour Estimated",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:2212186",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "albumin_bld"
+   ],
+   "occurrences": 6,
+   "concept": true,
+   "label": "Albumin; serum, plasma or whole blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "CPT4",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:2212294",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "creat_bld"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Creatinine; blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "CPT4",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
    "curie": "OMOP:3000905",
    "bdchm_classes": [],
    "slots": [],
@@ -3849,6 +5889,30 @@
    ]
   },
   {
+   "curie": "OMOP:3004578",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "il10"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Interleukin 10 [Mass/volume] in Serum or Plasma",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
    "curie": "OMOP:3005600",
    "bdchm_classes": [
     "MeasurementObservationSet"
@@ -3880,6 +5944,30 @@
    ]
   },
   {
+   "curie": "OMOP:3006315",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "basophil_ncnc_bld"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Basophils [#/volume] in Blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
    "curie": "OMOP:3007070",
    "bdchm_classes": [],
    "slots": [],
@@ -3889,6 +5977,30 @@
    "concept": true,
    "from_corpus": true,
    "label": "Cholesterol in HDL [Mass/volume] in Serum or Plasma",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:3007081",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "creat_urin"
+   ],
+   "occurrences": 6,
+   "concept": true,
+   "label": "Creatinine [Interpretation] in Urine",
    "definition": null,
    "synonyms": [],
    "label_source": "ohdsi",
@@ -3962,6 +6074,55 @@
    "areas": [
     "Lung"
    ]
+  },
+  {
+   "curie": "OMOP:3011888",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "MESA"
+   ],
+   "variables": [
+    "isoprostane_8_epi_pgf2a"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Prostaglandin F2 alpha [Mass/volume] in Urine",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:3013115",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "eosinophil_ncnc_bld"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Eosinophils [#/volume] in Blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:3013682",
@@ -4098,6 +6259,315 @@
    "areas": []
   },
   {
+   "curie": "OMOP:3041450",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CHS",
+    "MESA"
+   ],
+   "variables": [
+    "lppla2_mass"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Lipoprotein associated phospholipase A2 [Mass/volume] in Serum or Plasma",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:3043144",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "il18"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Interleukin 18 [Mass/volume] in Serum or Plasma",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:35609491",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "alcohol",
+    "alcohol_servings"
+   ],
+   "occurrences": 35,
+   "concept": true,
+   "label": "Alcohol units consumed per week",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:35811013",
+   "bdchm_classes": [
+    "Observation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "SPIROMICS"
+   ],
+   "variables": [
+    "cig_smok"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": null,
+   "definition": null,
+   "synonyms": [],
+   "label_source": null,
+   "vocabulary": null,
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "OMOP:36303297",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "cesd_score"
+   ],
+   "occurrences": 18,
+   "concept": true,
+   "label": "Center for Epidemiologic Studies Depression Scale-Revised total score [CESD-R]",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:36305170",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CHS",
+    "MESA"
+   ],
+   "variables": [
+    "lppla2_act"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Lipoprotein associated phospholipase A2 [Enzymatic activity/volume] in Serum or Plasma",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:37208635",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "egfr"
+   ],
+   "occurrences": 38,
+   "concept": true,
+   "label": "Estimated glomerular filtration rate by laboratory calculation",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:37208689",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "lympho_ct"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Lymphocyte count in blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:37208690",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS",
+    "HCHS",
+    "JHS"
+   ],
+   "variables": [
+    "lympho_pct"
+   ],
+   "occurrences": 6,
+   "concept": true,
+   "label": "Lymphocyte percent count in blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:37208698",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "HCHS"
+   ],
+   "variables": [
+    "neutro_pct"
+   ],
+   "occurrences": 4,
+   "concept": true,
+   "label": "Neutrophil percent count in blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:37208699",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "neutro_ct"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Neutrophil count in blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:37311566",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "vege_serving"
+   ],
+   "occurrences": 8,
+   "concept": true,
+   "label": "Estimated intake of vegetable servings in 24 hours",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
    "curie": "OMOP:37393605",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -4125,6 +6595,35 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OMOP:37393850",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "mchc"
+   ],
+   "occurrences": 11,
+   "concept": true,
+   "label": "MCHC - Mean corpuscular haemoglobin concentration",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:37396400",
@@ -4155,13 +6654,79 @@
    ]
   },
   {
-   "curie": "OMOP:38003563",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
+   "curie": "OMOP:37397924",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "FHS",
+    "HCHS"
+   ],
+   "variables": [
+    "rdw"
+   ],
+   "occurrences": 7,
    "concept": true,
+   "label": "Red blood cell distribution width",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:37398674",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "mch"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "MCH - Mean corpuscular haemoglobin",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:38003563",
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "ethnicity"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "HCHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 31,
+   "concept": false,
    "from_corpus": true,
    "label": "Hispanic or Latino",
    "definition": null,
@@ -4173,12 +6738,25 @@
   },
   {
    "curie": "OMOP:38003564",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "ethnicity"
+   ],
+   "studies": [
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "LTRC",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 13,
+   "concept": false,
    "from_corpus": true,
    "label": "Not Hispanic or Latino",
    "definition": null,
@@ -4260,6 +6838,256 @@
    ]
   },
   {
+   "curie": "OMOP:4022643",
+   "bdchm_classes": [
+    "Observation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CHS"
+   ],
+   "variables": [
+    "edu_lvl"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Educational achievement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4029630",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "relationship_to_participant"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "fam_stroke"
+   ],
+   "occurrences": 1,
+   "concept": false,
+   "label": "Natural parent",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4030871",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "rdbld_ct"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Red blood cell count",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4041557",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "hdl"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Serum fasting HDL cholesterol measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4041720",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CHS",
+    "FHS",
+    "MESA"
+   ],
+   "variables": [
+    "hdl"
+   ],
+   "occurrences": 36,
+   "concept": true,
+   "label": "Plasma fasting HDL cholesterol measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4041721",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS",
+    "MESA"
+   ],
+   "variables": [
+    "ldl"
+   ],
+   "occurrences": 4,
+   "concept": true,
+   "label": "Plasma fasting LDL cholesterol measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4041722",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CHS",
+    "FHS",
+    "MESA"
+   ],
+   "variables": [
+    "triglyc_bld"
+   ],
+   "occurrences": 12,
+   "concept": true,
+   "label": "Plasma fasting triglyceride measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4042061",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "ldl"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Serum fasting LDL cholesterol measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4042590",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "triglyc_bld"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "Serum fasting triglyceride measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4042886",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "vege_serving"
+   ],
+   "occurrences": 40,
+   "concept": true,
+   "label": "Vegetable",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
    "curie": "OMOP:4044550",
    "bdchm_classes": [
     "Procedure"
@@ -4284,6 +7112,141 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OMOP:4053608",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "relationship_to_participant"
+   ],
+   "studies": [
+    "ARIC",
+    "HCHS"
+   ],
+   "variables": [
+    "fam_stroke"
+   ],
+   "occurrences": 6,
+   "concept": false,
+   "label": "Blood relative",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:40761106",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "mmp9"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Matrix metallopeptidase 9 [Mass/volume] in Blood",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4076114",
+   "bdchm_classes": [
+    "Observation",
+    "SdohObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "fam_income"
+   ],
+   "occurrences": 35,
+   "concept": true,
+   "label": "Household income",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4087501",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "HCHS",
+    "JHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "waist_hip"
+   ],
+   "occurrences": 21,
+   "concept": true,
+   "label": "Waist/hip ratio",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4094758",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "hemo"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Hemoglobin finding",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:4102124",
@@ -4315,6 +7278,30 @@
    ]
   },
   {
+   "curie": "OMOP:4111665",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "hip_circ"
+   ],
+   "occurrences": 7,
+   "concept": true,
+   "label": "Hip circumference",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
    "curie": "OMOP:4132161",
    "bdchm_classes": [
     "DrugExposure"
@@ -4323,12 +7310,14 @@
     "route_concept"
    ],
    "studies": [
+    "COPDGene",
     "HCHS"
    ],
    "variables": [
-    "tak_betablk"
+    "tak_betablk",
+    "tak_cort_steroid_oral"
    ],
-   "occurrences": 1,
+   "occurrences": 2,
    "concept": false,
    "label": "Oral",
    "definition": null,
@@ -4339,6 +7328,30 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "OMOP:4136584",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "cysc_bld"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Blood cystatin C measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:4138462",
@@ -4368,6 +7381,30 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OMOP:4151358",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "hemat"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Hematocrit determination",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:4152194",
@@ -4405,6 +7442,33 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "OMOP:4154347",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "albumin_creatinine"
+   ],
+   "occurrences": 11,
+   "concept": true,
+   "label": "Urine albumin/creatinine ratio measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:4154790",
@@ -4629,6 +7693,31 @@
    ]
   },
   {
+   "curie": "OMOP:4186832",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "route_concept"
+   ],
+   "studies": [
+    "COPDGene"
+   ],
+   "variables": [
+    "tak_adrenergics",
+    "tak_cort_steroid_resp"
+   ],
+   "occurrences": 2,
+   "concept": false,
+   "label": "Endotracheopulmonary",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Route",
+   "areas": []
+  },
+  {
    "curie": "OMOP:4189511",
    "bdchm_classes": [
     "MeasurementObservation"
@@ -4718,6 +7807,55 @@
    ]
   },
   {
+   "curie": "OMOP:4209737",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "cd40"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Lymphocyte antigen CD40",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4218412",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "relationship_to_participant"
+   ],
+   "studies": [
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "fam_stroke"
+   ],
+   "occurrences": 3,
+   "concept": false,
+   "label": "Natural sibling",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "areas": []
+  },
+  {
    "curie": "OMOP:4223020",
    "bdchm_classes": [
     "Procedure"
@@ -4742,6 +7880,31 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OMOP:4230543",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "FHS"
+   ],
+   "variables": [
+    "bilirubin_tot"
+   ],
+   "occurrences": 7,
+   "concept": true,
+   "label": "Bilirubin, total measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:4230556",
@@ -4796,6 +7959,113 @@
    "areas": [
     "Lung"
    ]
+  },
+  {
+   "curie": "OMOP:4251326",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "relationship_to_participant"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "fam_stroke"
+   ],
+   "occurrences": 3,
+   "concept": false,
+   "label": "Natural sister",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:42528763",
+   "bdchm_classes": [
+    "SdohObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "HCHS",
+    "JHS"
+   ],
+   "variables": [
+    "edu_lvl"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Highest level of education",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4263457",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "FHS"
+   ],
+   "variables": [
+    "ast_sgot"
+   ],
+   "occurrences": 6,
+   "concept": true,
+   "label": "Aspartate aminotransferase measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4267147",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "labs_cbc",
+    "platelet_ct"
+   ],
+   "occurrences": 20,
+   "concept": true,
+   "label": "Platelet count",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
   },
   {
    "curie": "OMOP:4273021",
@@ -4887,12 +8157,22 @@
   },
   {
    "curie": "OMOP:4277283",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "relationship_to_participant"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "JHS"
+   ],
+   "variables": [
+    "fam_stroke"
+   ],
+   "occurrences": 8,
+   "concept": false,
    "from_corpus": true,
    "label": "Natural mother",
    "definition": null,
@@ -4900,6 +8180,65 @@
    "label_source": "ohdsi",
    "vocabulary": "SNOMED",
    "domain": "Relationship",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4282779",
+   "bdchm_classes": [
+    "Observation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "cig_smok"
+   ],
+   "occurrences": 98,
+   "concept": true,
+   "label": "Cigarette smoking tobacco",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4284103",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "CARDIA",
+    "CHS",
+    "MESA"
+   ],
+   "variables": [
+    "icam"
+   ],
+   "occurrences": 5,
+   "concept": true,
+   "label": "Lymphocyte antigen CD54",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
    "areas": []
   },
   {
@@ -4992,14 +8331,49 @@
   },
   {
    "curie": "OMOP:4321888",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "relationship_to_participant"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "JHS"
+   ],
+   "variables": [
+    "fam_stroke"
+   ],
+   "occurrences": 6,
+   "concept": false,
    "from_corpus": true,
    "label": "Natural father",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Relationship",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:4326600",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "relationship_to_participant"
+   ],
+   "studies": [
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "fam_stroke"
+   ],
+   "occurrences": 3,
+   "concept": false,
+   "label": "Natural child",
    "definition": null,
    "synonyms": [],
    "label_source": "ohdsi",
@@ -5044,6 +8418,31 @@
    ]
   },
   {
+   "curie": "OMOP:433736",
+   "bdchm_classes": [
+    "Condition"
+   ],
+   "slots": [
+    "condition_concept"
+   ],
+   "studies": [
+    "CHS",
+    "SPIROMICS"
+   ],
+   "variables": [
+    "obesity"
+   ],
+   "occurrences": 11,
+   "concept": true,
+   "label": "Obesity",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Condition",
+   "areas": []
+  },
+  {
    "curie": "OMOP:434489",
    "bdchm_classes": [],
    "slots": [],
@@ -5058,6 +8457,30 @@
    "label_source": "ohdsi",
    "vocabulary": "SNOMED",
    "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:44805650",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "bilirubin_con"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Conjugated bilirubin measurement",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
    "areas": []
   },
   {
@@ -5090,6 +8513,35 @@
    "areas": [
     "Cardiac"
    ]
+  },
+  {
+   "curie": "OMOP:45880900",
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "race"
+   ],
+   "studies": [
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "LTRC",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 12,
+   "concept": false,
+   "label": "More than one race",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "LOINC",
+   "domain": "Meas Value",
+   "areas": []
   },
   {
    "curie": "OMOP:4822126",
@@ -5144,13 +8596,83 @@
    ]
   },
   {
-   "curie": "OMOP:8507",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
+   "curie": "OMOP:606729",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "FHS",
+    "MESA",
+    "WHI"
+   ],
+   "variables": [
+    "sodium_intak"
+   ],
+   "occurrences": 21,
    "concept": true,
+   "label": "Sodium intake",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Observation",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:607590",
+   "bdchm_classes": [
+    "MeasurementObservation"
+   ],
+   "slots": [
+    "observation_type"
+   ],
+   "studies": [
+    "MESA"
+   ],
+   "variables": [
+    "bdy_hgt"
+   ],
+   "occurrences": 13,
+   "concept": true,
+   "label": "Body height",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "SNOMED",
+   "domain": "Measurement",
+   "areas": []
+  },
+  {
+   "curie": "OMOP:8507",
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "sex"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 61,
+   "concept": false,
    "from_corpus": true,
    "label": "MALE",
    "definition": null,
@@ -5162,12 +8684,27 @@
   },
   {
    "curie": "OMOP:8515",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "race"
+   ],
+   "studies": [
+    "ARIC",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 37,
+   "concept": false,
    "from_corpus": true,
    "label": "Asian",
    "definition": null,
@@ -5179,12 +8716,29 @@
   },
   {
    "curie": "OMOP:8516",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "race"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 51,
+   "concept": false,
    "from_corpus": true,
    "label": "Black or African American",
    "definition": null,
@@ -5196,12 +8750,28 @@
   },
   {
    "curie": "OMOP:8527",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "race"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 46,
+   "concept": false,
    "from_corpus": true,
    "label": "White",
    "definition": null,
@@ -5213,12 +8783,30 @@
   },
   {
    "curie": "OMOP:8532",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "sex"
+   ],
+   "studies": [
+    "ARIC",
+    "CARDIA",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "HCHS",
+    "JHS",
+    "LTRC",
+    "MESA",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 63,
+   "concept": false,
    "from_corpus": true,
    "label": "FEMALE",
    "definition": null,
@@ -5229,13 +8817,55 @@
    "areas": []
   },
   {
+   "curie": "OMOP:8552",
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "race"
+   ],
+   "studies": [
+    "ARIC",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "LTRC",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 19,
+   "concept": false,
+   "label": "Unknown",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "ohdsi",
+   "vocabulary": "Race",
+   "domain": "Race",
+   "areas": []
+  },
+  {
    "curie": "OMOP:8557",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "race"
+   ],
+   "studies": [
+    "COPDGene",
+    "FHS",
+    "LTRC",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 10,
+   "concept": false,
    "from_corpus": true,
    "label": "Native Hawaiian or Other Pacific Islander",
    "definition": null,
@@ -5247,12 +8877,26 @@
   },
   {
    "curie": "OMOP:8657",
-   "bdchm_classes": [],
-   "slots": [],
-   "studies": [],
-   "variables": [],
-   "occurrences": 0,
-   "concept": true,
+   "bdchm_classes": [
+    "Demography"
+   ],
+   "slots": [
+    "race"
+   ],
+   "studies": [
+    "ARIC",
+    "CHS",
+    "COPDGene",
+    "FHS",
+    "LTRC",
+    "SPIROMICS",
+    "WHI"
+   ],
+   "variables": [
+    "demography"
+   ],
+   "occurrences": 26,
+   "concept": false,
    "from_corpus": true,
    "label": "American Indian or Alaska Native",
    "definition": null,
@@ -5289,6 +8933,30 @@
    ]
   },
   {
+   "curie": "RxCUI:10572",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "thyroid (USP)",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:10600",
    "bdchm_classes": [
     "DrugExposure"
@@ -5300,9 +8968,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 8,
+   "occurrences": 11,
    "concept": true,
    "label": "timolol",
    "definition": null,
@@ -5344,6 +9013,34 @@
    ]
   },
   {
+   "curie": "RxCUI:1191",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA",
+    "CHS",
+    "HCHS",
+    "JHS",
+    "MESA"
+   ],
+   "variables": [
+    "aspirin"
+   ],
+   "occurrences": 43,
+   "concept": true,
+   "label": "aspirin",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:1202",
    "bdchm_classes": [
     "DrugExposure"
@@ -5355,9 +9052,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 10,
+   "occurrences": 13,
    "concept": true,
    "label": "atenolol",
    "definition": null,
@@ -5407,9 +9105,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 8,
+   "occurrences": 11,
    "concept": true,
    "label": "acebutolol",
    "definition": null,
@@ -5420,6 +9119,30 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "RxCUI:151533",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Colestid",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "RxCUI:151549",
@@ -5555,6 +9278,30 @@
    ]
   },
   {
+   "curie": "RxCUI:196503",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Zocor",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:1998",
    "bdchm_classes": [
     "DrugExposure"
@@ -5581,6 +9328,102 @@
    ]
   },
   {
+   "curie": "RxCUI:202582",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Questran",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "RxCUI:202908",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Proventil",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "RxCUI:202999",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 2,
+   "concept": true,
+   "label": "Lopid",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "RxCUI:203333",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "Pravachol",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:203344",
    "bdchm_classes": [
     "DrugExposure"
@@ -5605,6 +9448,30 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "RxCUI:2053495",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "fish oil (containing omega-3 acids)",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "RxCUI:2404",
@@ -5685,6 +9552,30 @@
    ]
   },
   {
+   "curie": "RxCUI:2683",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "colchicine",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:29046",
    "bdchm_classes": [
     "DrugExposure"
@@ -5709,6 +9600,54 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "RxCUI:316175",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "lovastatin 20 MG",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "RxCUI:316343",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "niacin 500 MG",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "RxCUI:33910",
@@ -5766,6 +9705,30 @@
    ]
   },
   {
+   "curie": "RxCUI:4100",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "estrogens",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:4316",
    "bdchm_classes": [
     "DrugExposure"
@@ -5790,6 +9753,30 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "RxCUI:4719",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "gemfibrozil",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "RxCUI:4815",
@@ -5844,6 +9831,30 @@
    ]
   },
   {
+   "curie": "RxCUI:4917",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "nitroglycerin",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:5470",
    "bdchm_classes": [
     "DrugExposure"
@@ -5879,12 +9890,14 @@
     "drug_concept"
    ],
    "studies": [
+    "CARDIA",
     "FHS"
    ],
    "variables": [
-    "hypert_trt"
+    "hypert_trt",
+    "tak_statin"
    ],
-   "occurrences": 1,
+   "occurrences": 2,
    "concept": true,
    "label": "hydrochlorothiazide",
    "definition": null,
@@ -5934,9 +9947,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 8,
+   "occurrences": 11,
    "concept": true,
    "label": "labetalol",
    "definition": null,
@@ -5947,6 +9961,30 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "RxCUI:6472",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "lovastatin",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "RxCUI:6809",
@@ -5986,9 +10024,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_cenactag"
    ],
-   "occurrences": 16,
+   "occurrences": 17,
    "concept": true,
    "label": "methyldopa",
    "definition": null,
@@ -6009,12 +10048,15 @@
     "drug_concept"
    ],
    "studies": [
+    "CARDIA",
     "FHS"
    ],
    "variables": [
-    "tak_betablk"
+    "med_use",
+    "tak_betablk",
+    "tak_statin"
    ],
-   "occurrences": 3,
+   "occurrences": 7,
    "concept": true,
    "label": "metoprolol",
    "definition": null,
@@ -6038,9 +10080,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 10,
+   "occurrences": 13,
    "concept": true,
    "label": "nadolol",
    "definition": null,
@@ -6103,6 +10146,31 @@
    "areas": [
     "Diabetes"
    ]
+  },
+  {
+   "curie": "RxCUI:7393",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_nstat_med",
+    "tak_statin"
+   ],
+   "occurrences": 3,
+   "concept": true,
+   "label": "niacin",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "RxCUI:7396",
@@ -6196,9 +10264,10 @@
    ],
    "variables": [
     "hypert_trt",
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 9,
+   "occurrences": 12,
    "concept": true,
    "label": "pindolol",
    "definition": null,
@@ -6237,6 +10306,54 @@
    ]
   },
   {
+   "curie": "RxCUI:8588",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "potassium",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
+   "curie": "RxCUI:8699",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "CARDIA"
+   ],
+   "variables": [
+    "tak_statin"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "probucol",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
+  },
+  {
    "curie": "RxCUI:8787",
    "bdchm_classes": [
     "DrugExposure"
@@ -6248,9 +10365,10 @@
     "FHS"
    ],
    "variables": [
+    "med_use",
     "tak_betablk"
    ],
-   "occurrences": 14,
+   "occurrences": 17,
    "concept": true,
    "label": "propranolol",
    "definition": null,
@@ -6261,6 +10379,30 @@
    "areas": [
     "Hypertension"
    ]
+  },
+  {
+   "curie": "RxCUI:9260",
+   "bdchm_classes": [
+    "DrugExposure"
+   ],
+   "slots": [
+    "drug_concept"
+   ],
+   "studies": [
+    "FHS"
+   ],
+   "variables": [
+    "med_use"
+   ],
+   "occurrences": 1,
+   "concept": true,
+   "label": "reserpine",
+   "definition": null,
+   "synonyms": [],
+   "label_source": "rxnav",
+   "vocabulary": "RxNorm",
+   "domain": null,
+   "areas": []
   },
   {
    "curie": "RxCUI:9997",
@@ -6293,6 +10435,7 @@
   "ICD10CM:I00-I99",
   "ICD10CM:I20-I25",
   "ICD10CM:R99",
+  "OMOP:35811013",
   "OMOP:4822126",
   "OMOP:4822160"
  ]
