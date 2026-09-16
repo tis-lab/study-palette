@@ -1,6 +1,6 @@
 # Harmonized concept terms
 
-Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs, with the label published by the vocabulary that owns it. Labels are fetched, never written by hand: Monarch for MONDO/HP/OBA, OLS4 for other OBO ontologies, the OHDSI WebAPI for OMOP, RxNav RxClass for ATC and NDFRT, RxNav for RxCUI.
+Every row is a CURIE emitted by the BDC harmonized-variable trans-specs, with the label published by the vocabulary that owns it. The sections below cover the concepts a record is about; value-set members that qualify a record are listed separately at the end. Labels are fetched, never written by hand: Monarch for MONDO/HP/OBA, OLS4 for other OBO ontologies, the OHDSI WebAPI for OMOP, RxNav RxClass for ATC and NDFRT, RxNav for RxCUI.
 
 **The CURIE is the identity and the Label is what to display.** The `Via` column lists the harmonized variables a term is reached through; it is provenance only. Those names are spec filenames — they are not concepts, they do not appear in harmonized data, and nothing should key on them or show them to a user.
 
@@ -412,6 +412,68 @@ Every row is a concept CURIE emitted by the BDC harmonized-variable trans-specs,
 | `ICD10CM:I20-I25` | _unresolved_ | — | 0 | synthetic corpus |
 | `ICD10CM:R99` | _unresolved_ | — | 0 | synthetic corpus |
 
+## Value sets and qualifiers
+
+23 terms. These populate slots that qualify a record rather than name the concept it is about, so they are not browsable concepts — but they are real coded values and the interface needs their labels.
+
+### `condition_provenance`
+
+| CURIE | Label | Vocabulary | Via |
+|---|---|---|---|
+| `OMOP:4822126` | _unresolved_ | — | `ven_thromb` |
+| `OMOP:4822160` | _unresolved_ | — | `ven_thromb` |
+
+### `ethnicity`
+
+| CURIE | Label | Vocabulary | Via |
+|---|---|---|---|
+| `OMOP:38003563` | Hispanic or Latino | Ethnicity | `demography` |
+| `OMOP:38003564` | Not Hispanic or Latino | Ethnicity | `demography` |
+
+### `race`
+
+| CURIE | Label | Vocabulary | Via |
+|---|---|---|---|
+| `OMOP:8657` | American Indian or Alaska Native | Race | `demography` |
+| `OMOP:8515` | Asian | Race | `demography` |
+| `OMOP:8516` | Black or African American | Race | `demography` |
+| `OMOP:45880900` | More than one race | LOINC | `demography` |
+| `OMOP:8557` | Native Hawaiian or Other Pacific Islander | Race | `demography` |
+| `OMOP:8552` | Unknown | Race | `demography` |
+| `OMOP:8527` | White | Race | `demography` |
+
+### `relationship_to_participant`
+
+| CURIE | Label | Vocabulary | Via |
+|---|---|---|---|
+| `OMOP:4053608` | Blood relative | SNOMED | `fam_stroke` |
+| `OMOP:4326600` | Natural child | SNOMED | `fam_stroke` |
+| `OMOP:4321888` | Natural father | SNOMED | `fam_stroke` |
+| `OMOP:4277283` | Natural mother | SNOMED | `fam_stroke` |
+| `OMOP:4029630` | Natural parent | SNOMED | `fam_stroke` |
+| `OMOP:4218412` | Natural sibling | SNOMED | `fam_stroke` |
+| `OMOP:4251326` | Natural sister | SNOMED | `fam_stroke` |
+
+### `route_concept`
+
+| CURIE | Label | Vocabulary | Via |
+|---|---|---|---|
+| `OMOP:4186832` | Endotracheopulmonary | SNOMED | `tak_adrenergics`, `tak_cort_steroid_resp` |
+| `OMOP:4132161` | Oral | SNOMED | `tak_betablk`, `tak_cort_steroid_oral` |
+
+### `sex`
+
+| CURIE | Label | Vocabulary | Via |
+|---|---|---|---|
+| `OMOP:8532` | FEMALE | Gender | `demography` |
+| `OMOP:8507` | MALE | Gender | `demography` |
+
+### `species`
+
+| CURIE | Label | Vocabulary | Via |
+|---|---|---|---|
+| `NCBITaxon:9606` | Homo sapiens | NCBITaxon | `person` |
+
 ## Mappings to report upstream
 
 These CURIEs sit in a concept slot but do not name a clinical concept — a unit or a metadata code where a condition or measurement belongs. They come through the trans-specs, so the fix is upstream at RTI.
@@ -422,11 +484,13 @@ These CURIEs sit in a concept slot but do not name a clinical concept — a unit
 
 ## Unresolved CURIEs
 
-No public service resolves these. ICD10CM entries are chapter ranges rather than concepts, so they are expected here.
+No public service resolves these. ICD10CM entries are chapter ranges rather than concepts, so they are expected here. The rest are OMOP IDs that do not exist in the vocabulary and want fixing upstream — the slot and variable are given so they can be traced.
 
-- `ICD10CM:I00-I99`
-- `ICD10CM:I20-I25`
-- `ICD10CM:R99`
-- `OMOP:35811013`
-- `OMOP:4822126`
-- `OMOP:4822160`
+| CURIE | Slot | Via |
+|---|---|---|
+| `ICD10CM:I00-I99` | — | synthetic corpus |
+| `ICD10CM:I20-I25` | — | synthetic corpus |
+| `ICD10CM:R99` | — | synthetic corpus |
+| `OMOP:35811013` | `observation_type` | `cig_smok` |
+| `OMOP:4822126` | `condition_provenance` | `ven_thromb` |
+| `OMOP:4822160` | `condition_provenance` | `ven_thromb` |
