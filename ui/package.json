@@ -1,7 +1,6 @@
 {
   "name": "@tis-lab/study-palette-ui",
-  "private": true,
-  "version": "0.0.1",
+  "version": "0.1.0",
   "type": "module",
   "files": [
     "dist"
@@ -11,7 +10,7 @@
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tis-lab/study-palette.git"
+    "url": "git+https://github.com/tis-lab/study-palette.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
@@ -20,6 +19,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "yalc:push": "yalc push --private",
+    "prepublishOnly": "npm run build",
     "preview": "vite preview",
     "start": "vite preview --host 0.0.0.0 --port 8080",
     "test": "vitest run",
@@ -55,7 +55,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.2.0",
-    "@tis-lab/context-providers": "^0.0.1",
+    "@tis-lab/context-providers": "^0.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   }
