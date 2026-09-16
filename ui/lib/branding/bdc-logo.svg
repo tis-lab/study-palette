@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 568.34 67.04" role="img" aria-label="Branding placeholder">
+  <rect x="1" y="1" width="566.34" height="65.04" rx="4" fill="#f4f4f6" stroke="#8a8a8a" stroke-width="2" stroke-dasharray="10 8"/>
+  <text x="284.17" y="30" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#616265" letter-spacing="1.5">BRANDING PLACEHOLDER</text>
+  <text x="284.17" y="51" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#8a8a8a">Replaced with the BDC logo on .gov deployments only</text>
+</svg>
