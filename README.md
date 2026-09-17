@@ -13,7 +13,7 @@ The system is organized into four layers:
 - **Metadata Index** — A LinkML-based "source of truth" generated during data ingestion, published as Parquet and queried with embedded DuckDB, enabling consistent cross-study search at the variable and participant levels
 - **External Integrations** — Monarch ontologies for entity resolution, DMC data ingestion, BDC analytic widgets, and foundational BDC services
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for the full architecture reference and [DEVELOPMENT.md](DEVELOPMENT.md) for the project roadmap.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the full architecture reference and [DEVELOPMENT.md](DEVELOPMENT.md) for how work here connects to the deliverable roadmap in [tis-lab/BDC-Portal](https://github.com/tis-lab/BDC-Portal/blob/main/DEVELOPMENT.md).
 
 ## Related Projects
 
