@@ -18,8 +18,9 @@ Closing an issue here advances its parent, which advances the deliverable. Nothi
 updating for a report to be correct — in particular, contributors close issues and do not set
 status on the [project board](https://github.com/orgs/tis-lab/projects/7).
 
-Work that genuinely isn't deliverable work gets the `Future` label and is excluded. That's a
-valid answer, not a gap.
+Work that genuinely isn't deliverable work gets `Unscoped` (or `Future`) and is excluded.
+That's a valid answer, not a gap — and labelling it keeps the decision from resurfacing on
+every report.
 
 # GitHub Labels
 
@@ -46,7 +47,13 @@ not what drives reporting — the link to BDC-Portal is.
 | `Tracking` | Depends on work in a repository we don't control; the reference is in the body |
 | `Infrastructure` | CI/CD, repo tooling, dev environment |
 | `Documentation` | Docs, architecture decisions, onboarding |
+| `Unscoped` | Deliberately outside deliverable reporting — excluded from the orphan check |
 | `Future` | Future work — not on current roadmap |
+
+`Unscoped` and `Future` are the only labels that exclude an issue from the roll-up.
+`Unscoped` is the catch-all: it records that excluding the issue was a decision, without
+saying why — the why belongs in the other labels or the body. Reach for it when an issue is
+real work that no single deliverable owns, rather than filing it under the nearest Epic.
 
 `Infrastructure` and `Documentation` are cross-cutting and can appear alongside an area label.
 An issue carrying only those still needs a BDC-Portal link if it serves a deliverable.
