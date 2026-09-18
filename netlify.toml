@@ -1,6 +1,6 @@
 [build]
   base = "ui/"
-  command = "bun install && bun run build && echo \"/api/* ${API_PROXY_URL}/api/:splat 200\" > dist/_redirects && echo \"/* /index.html 200\" >> dist/_redirects"
+  command = "npm ci && npm run build && echo \"/api/* ${API_PROXY_URL}/api/:splat 200\" > dist/_redirects && echo \"/* /index.html 200\" >> dist/_redirects"
   publish = "dist"
 
 [build.environment]
