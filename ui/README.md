@@ -22,9 +22,15 @@ code. The `.npmrc` committed here contains only the scope-to-registry mapping,
 which is not a secret.
 
 ```bash
-npm version <patch|minor|major>
+npm version <patch|minor|major> --no-git-tag-version
+git tag study-palette-ui-v<new version>
 npm publish
 ```
+
+`npm version` tags the whole repository, not `ui/`. Since this is one package
+inside a larger repo, `--no-git-tag-version` keeps it from creating a bare
+`v0.1.2` tag at the root, which would collide with releases of the repo itself;
+the namespaced tag matches the existing `synthetic-corpus-v*` convention.
 
 Published versions are **immutable** — a version number cannot be reused even
 after deleting it, so bump rather than republish.
