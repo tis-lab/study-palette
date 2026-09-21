@@ -13,7 +13,8 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for the full system architecture. Treat i
 ## Development Practices
 - Agile sprints (3-4 weeks)
 - All work tracked via GitHub Issues with labels matching project areas
-- See DEVELOPMENT.md for the project roadmap and milestone tracking
+- Issues roll up to funding deliverables by linking to an issue in `tis-lab/BDC-Portal`,
+  which holds the deliverable roadmap. See DEVELOPMENT.md for how that works and the labels.
 - Branch protection on `main`
 - PR reviews required before merge
 

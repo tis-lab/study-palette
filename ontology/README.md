@@ -55,15 +55,18 @@ synthetic tree is scanned as a second source and its terms are grouped under
 ## Building
 
 ```
-python -m ontology.build --specs path/to/NHLBI-BDC-DMC-HV/priority_variables_transform
+python -m ontology.build --all --specs path/to/NHLBI-BDC-DMC-HV/priority_variables_transform
 ```
 
 Run from the repository root — `ontology` is a package, so `build` imports its
 siblings by name rather than relying on the working directory.
 
 Writes `terms.json` (full records, for the UI) and `TERMS.md` (the human
-handoff). `--all` reads every spec rather than the proof-of-concept focus
-areas. Resolved terms are cached in `.cache.json`; delete it to refresh.
+handoff). The committed artifacts are built with `--all`, covering every spec.
+Dropping the flag narrows the build to the cardiac, lung, hypertension and
+diabetes focus areas in `focus.py`, which is faster when iterating on the
+resolver but is not what ships. Resolved terms are cached in `.cache.json`;
+delete it to refresh.
 
 ```
 pytest ontology/tests/
