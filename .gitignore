@@ -21,6 +21,7 @@ build/
 node_modules/
 .next/
 build/
+lib/
 *.tsbuildinfo
 
 # IDE
@@ -55,3 +56,7 @@ data/*.duckdb
 
 # Temporary workspaces
 .wt/tmp/
+
+# Yalc
+.yalc
+yalc.lock
