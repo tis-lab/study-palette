@@ -1,3 +1,4 @@
+# ruff: noqa: S311
 """
 Emit synthetic dbGaP-format tables for exactly the variables ARIC-ingest's specs name.
 

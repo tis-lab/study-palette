@@ -43,10 +43,13 @@ make schema-create    CONFIG=$ARIC_SYNTH/config.mk
 make variable-library CONFIG=$ARIC_SYNTH/config.mk
 ```
 
-`config.mk` is self-locating, so `CONFIG` is the only path you pass. It points
-`DM_TRANS_SPEC_DIR` at `~/Developer/NHLBI-BDC-DMC-HV/priority_variables_transform/ARIC-ingest`
-unmodified; override `ARIC_SPECS` if your checkout is elsewhere. Pass `--no-fetch` to
-`generate.py` to work from an already-populated cache.
+`config.mk` is self-locating, so `CONFIG` is the only path you pass to `make`.
+
+The specs directory defaults to
+`~/Developer/NHLBI-BDC-DMC-HV/priority_variables_transform/ARIC-ingest` in two places, and
+each is set separately if your checkout is elsewhere: `generate.py` takes `--specs DIR`, and
+`config.mk` reads `ARIC_SPECS` (`make schema-create CONFIG=... ARIC_SPECS=DIR`). Pass
+`--no-fetch` to `generate.py` to work from an already-populated cache.
 
 Observed 2026-09-10:
 
