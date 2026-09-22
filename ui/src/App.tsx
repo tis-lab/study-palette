@@ -84,11 +84,7 @@ function App() {
     <div className="app">
       <header>
         <div className="brand-bar">
-          <img
-            className="brand-logo"
-            src="/branding/bdc-logo.svg"
-            alt=""
-          />
+          <img className="brand-logo" src="/branding/bdc-logo.svg" alt="" />
         </div>
         <div className="header-row">
           <div>
