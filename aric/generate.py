@@ -56,10 +56,15 @@ NUMERIC = {"integer", "decimal", "float", "double", "numeric", "continuous", "re
 
 
 def bounds(var, fallback):
-    """Prefer what was observed over what was declared, and fall back to a sane range."""
+    """
+    Prefer what was observed over what was declared, and fall back to a sane range.
+
+    An equal pair is a constant-valued variable, not a missing range: every draw must land
+    on that one value, so it is kept rather than widened to the fallback.
+    """
     for lo, hi in ((var.stat_min, var.stat_max), (var.logical_min, var.logical_max)):
         try:
-            if lo is not None and hi is not None and float(lo) < float(hi):
+            if lo is not None and hi is not None and float(lo) <= float(hi):
                 return float(lo), float(hi)
         except (TypeError, ValueError):
             pass
@@ -118,18 +123,29 @@ def main():
     subjects = [(900000 + i, f"A{100000 + i}") for i in range(args.n)]
     undescribed = 0
 
+    # The study version and participant set come from the cohort manifest ("v8.p2")
+    study_version, participant_set = cohort.data_version.split(".", 1)
+
     # Write each pht table
     for pht, accs in sorted(wanted.items()):
         table = tables.get(pht)
-        name = (table.source_file.split(".")[4] if table else "UNKNOWN")
+        # The data_dict is named `phs000280.v8.pht001440.v6.ARIC_Subject.data_dict.xml`:
+        # the study, its version, the table and *its* version, then the table's name.
+        # Take those from the digest so the file is named for the dictionary that shaped it;
+        # a table dbGaP never described falls back to the cohort and a nominal version.
+        if table:
+            phs, phs_version, _, pht_version, name = table.source_file.split(".")[:5]
+        else:
+            phs, phs_version, pht_version, name = cohort.study_id, study_version, "v1", "UNKNOWN"
         # Subject-identifier columns repeat the study's own id rather than a drawn value.
         ids = {a for a in accs
                if table and (v := table.variables.get(a)) and "subject" in (v.name or "").lower()}
         undescribed += sum(1 for a in accs if not (table and a in table.variables))
 
-        path = args.out / f"{SYNTHETIC_MARKER}.phs000280.v8.{pht}.v1.p2.c1.{name}.txt.gz"
+        path = args.out / (f"{SYNTHETIC_MARKER}.{phs}.{phs_version}.{pht}.{pht_version}"
+                           f".{participant_set}.c1.{name}.txt.gz")
         with gzip.open(path, "wt", newline="") as fh:
-            fh.write(f"# Study accession: phs000280.{cohort.data_version}\n")
+            fh.write(f"# Study accession: {phs}.{phs_version}.{participant_set}\n")
             fh.write(f"# Table accession: {pht}\n")
             fh.write(f"# Table name: {name}\n")
             fh.write(f"# Citation: {CITATION}\n")
