@@ -57,6 +57,21 @@ Observed 2026-09-10:
 Nothing unclassified. 1298 of the 1312 carry dbGaP metadata — 226 with units, 558 with
 bounds, 472 with coded values.
 
+## Labelling and publication
+
+This corpus is the case `CLAUDE.md` singles out: **synthetic data generated against real
+transformation specs, which is never published.** Its tables carry real `phs`, `pht` and
+`phv` accessions, so a file that escaped would look exactly like an export of
+controlled-access data.
+
+It stays a transient local artifact. `data/`, `output/` and `.dbgap-cache/` are gitignored,
+nothing is committed, and nothing is attached to a release. Every raw table is named
+`SYNTHETIC.phs000280.…` and carries a header stating it is not derived from participant data,
+so a stray `.txt.gz` is identifiable without opening it.
+
+Contrast [`../synthetic`](../synthetic), which is built on fictional accessions and *is*
+publishable. The distinction is the accessions, not the data.
+
 ## The two gaps, both real
 
 - **`pht015212`** is named by the specs but dbGaP has never published a dictionary for it.

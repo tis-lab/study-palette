@@ -42,6 +42,12 @@ except ModuleNotFoundError as exc:  # pragma: no cover - an invocation error, no
 SEED = 20260910
 NULL_RATE = 0.005
 COHORT = "aric"
+# Required by the labelling policy in CLAUDE.md, and doubly so here: these tables carry real
+# dbGaP accessions, so an unlabelled file that escapes its directory looks exactly like an
+# export of controlled-access data. Same marker and placement as synthetic/generate.py, whose
+# comment covers why a prefix beats a suffix. dm-bip locates the table with an unanchored
+# search for `pht[0-9]+`, so this does not disturb the pipeline.
+SYNTHETIC_MARKER = "SYNTHETIC"
 CITATION = (
     "Synthetic records under real ARIC variable accessions. Not derived from participant "
     "data. Values are generated; the accessions, types and units are dbGaP's own."
@@ -121,7 +127,7 @@ def main():
                if table and (v := table.variables.get(a)) and "subject" in (v.name or "").lower()}
         undescribed += sum(1 for a in accs if not (table and a in table.variables))
 
-        path = args.out / f"phs000280.v8.{pht}.v1.p2.c1.{name}.txt.gz"
+        path = args.out / f"{SYNTHETIC_MARKER}.phs000280.v8.{pht}.v1.p2.c1.{name}.txt.gz"
         with gzip.open(path, "wt", newline="") as fh:
             fh.write(f"# Study accession: phs000280.{cohort.data_version}\n")
             fh.write(f"# Table accession: {pht}\n")
