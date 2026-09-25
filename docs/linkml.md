@@ -54,7 +54,7 @@ and says how each BDCHM slot is derived:
       slot_derivations:
         condition_concept:
           populated_from: phv10111510
-        ...
+        # ...
 ```
 
 Specs live under `priority_variables_transform/` in per-cohort directories (ARIC, CARDIA,
