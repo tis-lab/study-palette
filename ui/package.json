@@ -12,6 +12,9 @@
     "type": "git",
     "url": "git+https://github.com/tis-lab/study-palette.git"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
