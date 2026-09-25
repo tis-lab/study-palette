@@ -35,7 +35,7 @@ check_cmd() {
 
 check_cmd python3 "Install Python 3.11+ (mise install python)"
 check_cmd uv "Install uv (mise install uv)"
-check_cmd bun "Install bun (mise install bun)"
+check_cmd npm "Install Node.js 22+ (nvm install)"
 
 # --- Python backend setup ---
 
@@ -59,7 +59,7 @@ fi
 if [[ ! -d "$ROOT/ui/node_modules" ]]; then
     echo -e "${BLUE}[ui]${RESET} Installing frontend dependencies..."
     cd "$ROOT/ui"
-    bun install
+    npm ci
     cd - >/dev/null
 fi
 
@@ -76,7 +76,7 @@ echo ""
     | sed "s/^/$(printf "${BLUE}[api]${RESET} ")/") &
 
 # Start UI
-(cd "$ROOT/ui" && bun run dev --port "$UI_PORT" 2>&1 \
+(cd "$ROOT/ui" && npm run dev -- --port "$UI_PORT" 2>&1 \
     | sed "s/^/$(printf "${GREEN}[ui]${RESET}  ")/") &
 
 wait
