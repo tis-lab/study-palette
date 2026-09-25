@@ -97,24 +97,3 @@ Its output is what enters the study-palette build. Each stage is a LinkML tool:
    report (`src/dm_bip/map_data/validate_output.py`).
 
 dm-bip also uses the LinkML generators for its own mapping-provenance datamodel.
-
----
-
-## How they connect
-
-```
-dbGaP data dictionary + tables
-       │ schema-automator
-       ▼
-source schema (per study)                NHLBI-BDC-DMC-HM
-       │                                   bdchm.yaml (target schema)
-       │                                        │
-       │    NHLBI-BDC-DMC-HV / -AI              │
-       │      linkml-map specs                  │
-       ▼            │                           │
-dm-bip ◄────────────┴───────────────────────────┘
-  linkml-validate → linkml-map → linkml-validate
-       │
-       ▼
-BDCHM-conformant output → study-palette
-```
