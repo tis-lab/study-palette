@@ -29,10 +29,42 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Open Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+button {
+  font-family: "Montserrat", sans-serif;
+}
+
+/* MUI components: the `body` prefix makes these beat MUI's own styles */
+body .MuiTypography-root,
+body .MuiInputBase-root {
+  font-family: "Open Sans", sans-serif;
+}
+
+body .MuiTypography-h1,
+body .MuiTypography-h2,
+body .MuiTypography-h3,
+body .MuiTypography-h4,
+body .MuiTypography-h5,
+body .MuiTypography-h6,
+body .MuiButton-root {
+  font-family: "Montserrat", sans-serif;
 }
 
 .app {

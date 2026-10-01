@@ -37,6 +37,7 @@ const SearchbarStyle = styled("form", {
 const InputBaseStyle = styled(InputBase)(({ theme }) => ({
   padding: "10px 16px",
   typography: "body1", // font family/size come from the theme
+  fontSize: "14px",
   color: "text.primary",
   "& input": { padding: 0 },
   "& input::placeholder": { color: theme.palette.text.disabled, opacity: 1 },

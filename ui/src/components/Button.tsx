@@ -1,4 +1,5 @@
 import { Button as MuiButton, styled } from "@mui/material";
+import { ReactNode } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -7,7 +8,7 @@ const ButtonStyle = styled(MuiButton)({
   textTransform: "none",
   fontSize: "14px",
   backgroundColor: "#1A568C",
-  padding: "12px 24px",
+  padding: "10px 20px",
   borderRadius: "4px",
 });
 
@@ -19,6 +20,7 @@ interface Props {
   isSearch?: boolean;
   isDisabled?: boolean;
   formId?: string;
+  children: ReactNode;
 }
 
 // ----------------------------------------------------------------------
@@ -28,6 +30,7 @@ export default function Button({
   isSearch = false,
   isDisabled = false,
   formId,
+  children,
 }: Props) {
   return (
     <ButtonStyle
@@ -36,8 +39,9 @@ export default function Button({
       type={isSearch ? "submit" : "button"}
       disabled={isDisabled}
       form={formId}
+      disableElevation
     >
-      Button
+      {children}
     </ButtonStyle>
   );
 }
