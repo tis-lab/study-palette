@@ -1,0 +1,80 @@
+id: https://w3id.org/tis-lab/study-palette/terms
+name: study_palette_terms
+title: Study Palette term graph
+description: >-
+  The terms a summary refers to, each with its place in the hierarchy of the
+  ontology that owns it, and the cross-links between them. Built during
+  ingestion from the source ontologies and the knowledge graph and published
+  with the release, so that serving a summary never calls a vocabulary service.
+license: MIT
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  palette: https://w3id.org/tis-lab/study-palette/
+  biolink: https://w3id.org/biolink/vocab/
+
+default_prefix: palette
+default_range: string
+
+imports:
+  - linkml:types
+
+classes:
+  Term:
+    description: A concept from a source vocabulary, identified by the CURIE that vocabulary assigns it.
+    slots:
+      - curie
+      - label
+      - vocabulary
+      - parents
+
+  TermRelation:
+    description: >-
+      A link between two terms that is not part of either term's ontology
+      hierarchy, such as a disease and the measurement used to diagnose it.
+      Hierarchy is carried by Term.parents; this is everything else.
+    slots:
+      - subject
+      - predicate
+      - object
+      - relation_source
+
+slots:
+  curie:
+    identifier: true
+    range: uriorcurie
+  label:
+    description: The label published by the vocabulary that owns the term. Never written by hand.
+  vocabulary:
+    description: The vocabulary that owns the term, e.g. MONDO, HP, SNOMED.
+  parents:
+    description: >-
+      Direct parents in the owning ontology. Children are not stored: they are
+      the inverse of this slot, and storing both invites the two to disagree.
+    range: Term
+    multivalued: true
+    inlined: false
+  subject:
+    range: Term
+    inlined: false
+    required: true
+  predicate:
+    description: A Biolink predicate, e.g. biolink:has_biomarker.
+    range: uriorcurie
+    required: true
+  object:
+    range: Term
+    inlined: false
+    required: true
+  relation_source:
+    description: How we know the relation, so a curated assertion never looks like a published one.
+    range: RelationSourceEnum
+    required: true
+
+enums:
+  RelationSourceEnum:
+    permissible_values:
+      KG:
+        description: Published in the knowledge graph.
+      CURATED:
+        description: Asserted by this project and not yet published upstream.

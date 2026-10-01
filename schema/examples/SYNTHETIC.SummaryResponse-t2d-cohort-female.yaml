@@ -1,0 +1,96 @@
+# SYNTHETIC. Illustrative counts; not derived from participant data.
+#
+# The follow-up a client fetches in the background once the user selects
+# female in SYNTHETIC.SummaryResponse-t2d-cohort.yaml: the same cohort with
+# one criterion added. Merged by key, its cells extend that response one
+# level deeper around female and agree with it wherever the two overlap.
+
+release: example-release
+seed: MONDO:0005148
+cohort:
+  - palette:condition/MONDO_0005148
+  - palette:measurement/FAST_GLUC_BLD
+  - palette:demography/sex/FEMALE
+participant_count: 480
+min_cell_count: 10
+max_cell_criteria: 2
+
+terms:
+  - curie: MONDO:0005148
+    label: type 2 diabetes mellitus
+    vocabulary: MONDO
+    parents: [MONDO:0005015]
+  - curie: MONDO:0005015
+    label: diabetes mellitus
+    vocabulary: MONDO
+  - curie: MONDO:0005267
+    label: heart disorder
+    vocabulary: MONDO
+
+demographics:
+  - id: palette:demography/sex/FEMALE
+    sex: FEMALE
+  - id: palette:demography/race/WHITE
+    race: [WHITE]
+  - id: palette:demography/race/BLACK_OR_AFRICAN_AMERICAN
+    race: [BLACK_OR_AFRICAN_AMERICAN]
+  - id: palette:demography/race/ASIAN
+    race: [ASIAN]
+  - id: palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE
+    race: [AMERICAN_INDIAN_OR_ALASKA_NATIVE]
+  - id: palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN
+    race: [MIDDLE_EASTERN_OR_NORTH_AFRICAN]
+  - id: palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
+    race: [NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER]
+
+conditions:
+  - id: palette:condition/MONDO_0005148
+    condition_concept: MONDO:0005148
+  - id: palette:condition/MONDO_0005148/PRESENT
+    condition_concept: MONDO:0005148
+    condition_status: PRESENT
+  - id: palette:condition/MONDO_0005267/PRESENT
+    condition_concept: MONDO:0005267
+    condition_status: PRESENT
+
+measurements:
+  - id: palette:measurement/FAST_GLUC_BLD
+    observation_type: FAST_GLUC_BLD
+  - id: palette:measurement/FAST_GLUC_BLD/-70mg_dL
+    observation_type: FAST_GLUC_BLD
+    bin_high: 70
+    bin_unit: mg/dL
+  - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
+    observation_type: FAST_GLUC_BLD
+    bin_low: 126
+    bin_unit: mg/dL
+
+cells:
+  # Already in the base response as two-criterion cells, and equal there.
+  - criteria: [palette:condition/MONDO_0005148/PRESENT]
+    participant_count: 78
+  - criteria: [palette:condition/MONDO_0005267/PRESENT]
+    participant_count: 90
+  - criteria: [palette:measurement/FAST_GLUC_BLD/-70mg_dL]
+    participant_count: 20
+  - criteria: [palette:measurement/FAST_GLUC_BLD/126-mg_dL]
+    participant_count: 100
+
+  # New: the facets the base response could not carry for female alone.
+  - criteria: [palette:demography/race/WHITE]
+    participant_count: 265
+  - criteria: [palette:demography/race/BLACK_OR_AFRICAN_AMERICAN]
+    participant_count: 130
+  - criteria: [palette:demography/race/ASIAN]
+    participant_count: 25
+  - criteria: [palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE]
+    participant_count: 20
+  - criteria: [palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN]
+    participant_count: 20
+  - criteria: [palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER]
+    participant_count: 20
+  - criteria: [palette:measurement/FAST_GLUC_BLD/126-mg_dL, palette:condition/MONDO_0005148/PRESENT]
+    participant_count: 55
+  - criteria: [palette:condition/MONDO_0005267/PRESENT, palette:condition/MONDO_0005148/PRESENT]
+    participant_count: 30
+  # Low glucose with T2D among women is below min_cell_count, so absent.
