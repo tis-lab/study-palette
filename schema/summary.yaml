@@ -1,0 +1,327 @@
+id: https://w3id.org/tis-lab/study-palette/summary
+name: study_palette_summary
+title: Study Palette summary statistics
+description: >-
+  Study-level summaries of BDCHM-conformant data, built from two parts.
+
+
+  A criterion is a BDCHM record with the participant taken out: a
+  ConditionCriterion is a Condition, carrying BDCHM's slots, ranges, and
+  enums, that selects participants instead of describing one. A slot that is
+  set restricts the selection; a slot left unset matches any value, which is
+  why several slots BDCHM requires on a record are optional here. Because the
+  slots are BDCHM's own, moving from a criterion to the records it selects is
+  a filter on the same values.
+
+
+  A cell counts the participants matching every criterion it names, within
+  the response's cohort. A cell with one criterion is a marginal count; a
+  cell with two is a cross-tabulation. Cells are flat and refer to criteria
+  by id, so every combination appears at most once and a cell's key is the
+  set of its criterion ids together with the cohort's.
+
+
+  How to read a count:
+
+
+  - A participant matches a criterion when at least one of their records
+  does. One participant can therefore be counted under several values of
+  the same slot (two condition statuses, three glucose bins), and those
+  counts need not sum to the cohort.
+
+  - A concept's count includes participants coded to any of its descendants
+  in the term graph, so the counts of a term's children overlap and need not
+  sum to the term's own count.
+
+  - Measurement bins are facet buckets for selecting participants, not a
+  distribution. Histograms are a separate query.
+
+  - Counts are estimates. They are meant to be read as magnitudes, not
+  reconciled to the participant.
+
+
+  Responses are additive. A follow-up for a narrower cohort is another
+  SummaryResponse whose cohort adds criteria, and a client merges cells by
+  key. Two responses from the same release never disagree on a key, which
+  depends on criterion ids being derived deterministically from the
+  criterion's values.
+
+
+  A criterion is a subclass of the BDCHM record it is built from, so one
+  placed where a record is expected passes validation, and a record placed
+  where a criterion is expected does too. Criteria and participant-level
+  records must therefore never share a slot or a table.
+license: MIT
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  palette: https://w3id.org/tis-lab/study-palette/
+
+default_prefix: palette
+default_range: string
+
+imports:
+  - linkml:types
+  - ../synthetic/bdchm
+  - terms
+
+classes:
+  Criterion:
+    mixin: true
+    description: >-
+      Marks a class as a criterion. Its id is required by BDCHM and must be
+      derived from its slot values, so the same criterion has the same id in
+      every response from a release.
+    slots:
+      - id
+
+  Binned:
+    mixin: true
+    description: >-
+      Restricts a criterion to a half-open interval of one numeric value,
+      [bin_low, bin_high). Either end may be absent for an open-ended bin. Which
+      value is binned is fixed by the class that mixes this in.
+    slots:
+      - bin_low
+      - bin_high
+      - bin_unit
+
+  ParticipantCriterion:
+    is_a: Participant
+    mixins:
+      - Criterion
+      - Binned
+    description: Selects participants by study or by a bin of age_at_index.
+    slot_usage:
+      associated_person:
+        required: false
+      member_of_research_study:
+        required: false
+
+  DemographyCriterion:
+    is_a: Demography
+    mixins:
+      - Criterion
+    description: >-
+      Selects participants by sex, race, or ethnicity. race is multivalued in
+      BDCHM, so a participant recorded with two races matches each.
+    slot_usage:
+      associated_participant:
+        required: false
+
+  ConditionCriterion:
+    is_a: Condition
+    mixins:
+      - Criterion
+    description: Selects participants with a condition, optionally in a given status.
+    slot_usage:
+      associated_participant:
+        required: false
+      condition_provenance:
+        required: false
+      condition_status:
+        required: false
+      relationship_to_participant:
+        required: false
+
+  ProcedureCriterion:
+    is_a: Procedure
+    mixins:
+      - Criterion
+    description: Selects participants with a procedure.
+    slot_usage:
+      associated_participant:
+        required: false
+      procedure_provenance:
+        required: false
+      procedure_status:
+        required: false
+
+  DrugExposureCriterion:
+    is_a: DrugExposure
+    mixins:
+      - Criterion
+    description: Selects participants with a drug exposure.
+    slot_usage:
+      associated_participant:
+        required: false
+      exposure_provenance:
+        required: false
+
+  MeasurementObservationCriterion:
+    is_a: MeasurementObservation
+    mixins:
+      - Criterion
+      - Binned
+    description: >-
+      Selects participants with a measurement of observation_type, optionally
+      in a bin of value_quantity. range_low and range_high keep their BDCHM
+      meaning, a laboratory's reference range, and are not bins.
+    slot_usage:
+      associated_participant:
+        required: false
+
+  Cell:
+    description: >-
+      The participants in the cohort matching every criterion named. The
+      criteria are in addition to the cohort's own, which are not repeated.
+    slots:
+      - criteria
+      - participant_count
+      - record_count
+
+  SummaryResponse:
+    tree_root: true
+    description: >-
+      Counts around a seed term for one cohort: the criteria a client can
+      facet on, the cells counting them, and the term graph connecting them.
+    slots:
+      - release
+      - seed
+      - cohort
+      - participant_count
+      - min_cell_count
+      - max_cell_criteria
+      - terms
+      - relations
+      - participants
+      - demographics
+      - conditions
+      - procedures
+      - drug_exposures
+      - measurements
+      - cells
+      - records
+    slot_usage:
+      participant_count:
+        description: The number of participants in the cohort.
+
+  ParticipantRecords:
+    description: >-
+      Participant-level records returned alongside counts. Kept in their own
+      class so that no slot holds both records and criteria.
+    attributes:
+      record_conditions:
+        range: Condition
+        multivalued: true
+        inlined_as_list: true
+      record_demographics:
+        range: Demography
+        multivalued: true
+        inlined_as_list: true
+      record_measurements:
+        range: MeasurementObservation
+        multivalued: true
+        inlined_as_list: true
+
+slots:
+  criteria:
+    description: Ids of the criteria a cell counts, all of which must hold.
+    range: Criterion
+    multivalued: true
+    inlined: false
+    required: true
+  participant_count:
+    description: Estimated number of distinct participants matching.
+    range: integer
+    required: true
+    minimum_value: 0
+  record_count:
+    description: Estimated number of records matching.
+    range: integer
+    minimum_value: 0
+  bin_low:
+    description: Inclusive lower bound of the bin.
+    range: decimal
+  bin_high:
+    description: Exclusive upper bound of the bin.
+    range: decimal
+  bin_unit:
+    description: >-
+      Unit of bin_low and bin_high, which need not be the unit the binned
+      value is stored in; age_at_index is stored in days and binned in years.
+    range: UnitOfMeasurementEnum
+  release:
+    description: >-
+      The index release the counts come from. Cells merge across responses
+      only within one release.
+    required: true
+  seed:
+    description: The term the user searched on, which the rest of the response is organized around.
+    range: Term
+    inlined: false
+    required: true
+  cohort:
+    description: >-
+      Ids of the criteria selecting the cohort, all of which must hold. Every
+      cell counts within it.
+    range: Criterion
+    multivalued: true
+    inlined: false
+  min_cell_count:
+    description: >-
+      The smallest participant_count a cell in this response may carry. A
+      cell below it is omitted, so cross-tabulation stops where cells stop
+      being meaningful estimates, and a larger cohort is cross-tabulated more
+      deeply than a smaller one. An absent cell is therefore either below
+      this count or a combination the response did not compute.
+    range: integer
+    required: true
+    minimum_value: 1
+  max_cell_criteria:
+    description: >-
+      The most criteria any cell in this response names. A size bound, not the
+      stopping rule: min_cell_count decides how deep cross-tabulation goes, and
+      this caps it. Deeper combinations come from a follow-up response.
+    range: integer
+    required: true
+    minimum_value: 1
+  terms:
+    description: Every term the response refers to, so each CURIE resolves without a vocabulary lookup.
+    range: Term
+    multivalued: true
+    inlined_as_list: true
+  relations:
+    description: Cross-links between terms, beyond each term's hierarchy.
+    range: TermRelation
+    multivalued: true
+    inlined_as_list: true
+  participants:
+    description: Criteria on study and age.
+    range: ParticipantCriterion
+    multivalued: true
+    inlined_as_list: true
+  demographics:
+    description: Criteria on sex, race, and ethnicity.
+    range: DemographyCriterion
+    multivalued: true
+    inlined_as_list: true
+  conditions:
+    description: Criteria on conditions.
+    range: ConditionCriterion
+    multivalued: true
+    inlined_as_list: true
+  procedures:
+    description: Criteria on procedures.
+    range: ProcedureCriterion
+    multivalued: true
+    inlined_as_list: true
+  drug_exposures:
+    description: Criteria on drug exposures.
+    range: DrugExposureCriterion
+    multivalued: true
+    inlined_as_list: true
+  measurements:
+    description: Criteria on measurements.
+    range: MeasurementObservationCriterion
+    multivalued: true
+    inlined_as_list: true
+  cells:
+    description: Counts, one per combination of criteria.
+    range: Cell
+    multivalued: true
+    inlined_as_list: true
+  records:
+    description: Participant-level records, for a caller authorized to see them.
+    range: ParticipantRecords
+    inlined: true
