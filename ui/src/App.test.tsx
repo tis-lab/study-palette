@@ -3,6 +3,18 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import App from "./App";
 import { DEMO_PARTICIPANTS } from "./demoData";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+function renderApp() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>,
+  );
+}
 
 const mockStudies = {
   studies: [
@@ -37,12 +49,12 @@ describe("App", () => {
   });
 
   it("renders the header", () => {
-    render(<App />);
+    renderApp();
     expect(screen.getByText("Study Palette")).toBeInTheDocument();
   });
 
   it("defaults to demo mode with overview charts", () => {
-    render(<App />);
+    renderApp();
     expect(screen.getByText("Demo Data")).toBeInTheDocument();
     expect(screen.getByText("Conditions")).toBeInTheDocument();
     expect(screen.getByText("Procedures")).toBeInTheDocument();
@@ -69,7 +81,7 @@ describe("App", () => {
       } as Response);
     });
 
-    render(<App />);
+    renderApp();
     await userEvent.click(screen.getByText("Demo Data"));
     await waitFor(() => {
       expect(screen.getByText("Live API")).toBeInTheDocument();
@@ -78,7 +90,7 @@ describe("App", () => {
   });
 
   it("shows filter panel with hint in demo mode", () => {
-    render(<App />);
+    renderApp();
     expect(screen.getByText("Filters")).toBeInTheDocument();
     expect(
       screen.getByText("Click a chart segment to filter"),
@@ -86,7 +98,7 @@ describe("App", () => {
   });
 
   it("shows filter panel with no-filter hint and correct participant count", () => {
-    render(<App />);
+    renderApp();
     const filterPanel = screen
       .getByText("Filters")
       .closest<HTMLElement>(".filter-panel")!;
@@ -97,7 +109,7 @@ describe("App", () => {
   });
 
   it("offers both figure palettes and keeps charts rendering after a switch", async () => {
-    render(<App />);
+    renderApp();
     const picker = screen.getByLabelText("Figure palette");
     expect(picker).toHaveValue("tol");
 
@@ -114,7 +126,7 @@ describe("App", () => {
       json: () => Promise.resolve({}),
     } as Response);
 
-    render(<App />);
+    renderApp();
     await userEvent.click(screen.getByText("Demo Data"));
     await waitFor(() => {
       expect(screen.getByText(/Error/)).toBeInTheDocument();
