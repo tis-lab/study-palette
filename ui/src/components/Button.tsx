@@ -15,24 +15,18 @@ const StyledButton = styled(MuiButton)({
 /* Prop Types */
 interface Props extends Pick<
   ButtonProps,
-  "onClick" | "children" | "color" | "variant" | "sx"
+  "onClick" | "children" | "color" | "variant" | "sx" | "type"
 > {
-  isSearch?: boolean;
   isDisabled?: boolean;
   formId?: string;
 }
 
 // ----------------------------------------------------------------------
 
-export default function Button({
-  isSearch,
-  isDisabled,
-  formId,
-  ...rest
-}: Props) {
+export default function Button({ isDisabled, formId, ...rest }: Props) {
   return (
     <StyledButton
-      type={isSearch ? "submit" : "button"}
+      type={formId ? "submit" : "button"}
       disabled={isDisabled}
       form={formId}
       disableElevation

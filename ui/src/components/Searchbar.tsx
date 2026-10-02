@@ -36,7 +36,7 @@ const SearchbarStyle = styled("form", {
 
 const InputBaseStyle = styled(InputBase)(({ theme }) => ({
   padding: "10px 16px",
-  typography: "body1", // font family/size come from the theme
+  typography: "body1",
   fontSize: "14px",
   color: "text.primary",
   "& input": { padding: 0 },
@@ -74,7 +74,7 @@ export default function Searchbar({
   onSearch,
   placeholder,
   ariaLabel = "Search",
-  name = "q",
+  name,
   autoFocus = false,
   disabled = false,
   inputProps,

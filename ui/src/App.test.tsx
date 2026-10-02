@@ -17,7 +17,13 @@ const mockStudies = {
 };
 
 const mockConditions = {
-  conditions: [{ condition_concept: "MONDO:0004979", condition_status: "PRESENT", count: 30 }],
+  conditions: [
+    {
+      condition_concept: "MONDO:0004979",
+      condition_status: "PRESENT",
+      count: 30,
+    },
+  ],
 };
 
 const mockParticipants = {
@@ -46,12 +52,21 @@ describe("App", () => {
     vi.spyOn(global, "fetch").mockImplementation((url) => {
       const urlStr = String(url);
       if (urlStr.includes("/conditions")) {
-        return Promise.resolve({ ok: true, json: () => Promise.resolve(mockConditions) } as Response);
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockConditions),
+        } as Response);
       }
       if (urlStr.includes("/participants")) {
-        return Promise.resolve({ ok: true, json: () => Promise.resolve(mockParticipants) } as Response);
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(mockParticipants),
+        } as Response);
       }
-      return Promise.resolve({ ok: true, json: () => Promise.resolve(mockStudies) } as Response);
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockStudies),
+      } as Response);
     });
 
     render(<App />);
@@ -65,14 +80,18 @@ describe("App", () => {
   it("shows filter panel with hint in demo mode", () => {
     render(<App />);
     expect(screen.getByText("Filters")).toBeInTheDocument();
-    expect(screen.getByText("Click a chart segment to filter")).toBeInTheDocument();
+    expect(
+      screen.getByText("Click a chart segment to filter"),
+    ).toBeInTheDocument();
   });
 
   it("shows filter panel with no-filter hint and correct participant count", () => {
     render(<App />);
     const filterPanel = screen.getByText("Filters").closest(".filter-panel")!;
     expect(DEMO_PARTICIPANTS.length).toBe(1000);
-    expect(within(filterPanel).getByText("Click a chart segment to filter")).toBeInTheDocument();
+    expect(
+      within(filterPanel).getByText("Click a chart segment to filter"),
+    ).toBeInTheDocument();
   });
 
   it("offers both figure palettes and keeps charts rendering after a switch", async () => {
