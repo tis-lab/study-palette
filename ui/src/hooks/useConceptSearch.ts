@@ -14,7 +14,7 @@ interface ConceptSearchOptions {
 
 /**
  * Resolves `searchText` to BDC concepts. Runs only when the text is non-empty;
- * the caller decides when the text changes (on submit, while typing, ...).
+ * the caller controls when `searchText` changes.
  */
 export function useConceptSearch(
   searchText: string,
