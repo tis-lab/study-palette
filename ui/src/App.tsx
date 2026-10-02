@@ -13,6 +13,7 @@ import {
 } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
+import Search from "./containers/Search";
 
 interface StudiesResponse {
   studies: Study[];
@@ -93,7 +94,9 @@ function App() {
               NHLBI BioData Catalyst<sup>&reg;</sup> (BDC) Meta-Analysis Study
               Builder & Query Tool
             </p>
+            <Search />
           </div>
+
           <div className="header-controls">
             <label className="palette-picker">
               <span>Figure palette</span>
