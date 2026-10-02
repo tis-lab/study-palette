@@ -12,12 +12,8 @@ import type { Term } from "../api/graphql/queries/resolveTerms";
 // PrimaryButton is a project wrapper; replace it with a plain button so these
 // tests only exercise ConceptCard's behaviour.
 vi.mock("./Button", () => ({
-  PrimaryButton: ({
-    children,
-    variant: _variant,
-    ...props
-  }: ComponentProps<"button"> & { variant?: string }) => (
-    <button {...props}>{children}</button>
+  PrimaryButton: ({ children, onClick }: ComponentProps<"button">) => (
+    <button onClick={onClick}>{children}</button>
   ),
 }));
 
