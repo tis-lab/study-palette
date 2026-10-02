@@ -8,7 +8,7 @@ component → feature hook → useQuery → graphqlRequest() → GraphQL endpoin
 
 Components never call `fetch` or contain GraphQL documents themselves.
 
-## The pieces
+## Structure
 
 | File | Role |
 |------|------|
@@ -21,18 +21,14 @@ Both the standalone app (`main.tsx`) and the published package (`index.ts`) rend
 `CohortBuilder`, so a host application does not need to supply a provider or install
 TanStack Query.
 
-## Why `graphqlRequest()` exists
+## Request helper
 
 TanStack Query manages loading state, caching and refetching, but it does not send
 requests. It calls whatever function a hook gives it. `graphqlRequest()` is that function
 for GraphQL: it POSTs `{ query, variables }` as JSON to the endpoint and unwraps the
 response.
 
-This differs from Apollo Client (used in MetaCx, for example), where the library sends
-the requests itself and hooks pass it a `gql` document directly. The two libraries both
-export a `useQuery` hook, but they are unrelated.
-
-## Writing a feature hook
+## Adding a query
 
 Each feature defines its own operation, variable and response types, query key and hook,
 in `src/hooks/`:
