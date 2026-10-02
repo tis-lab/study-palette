@@ -22,16 +22,16 @@ const RADIUS = 12;
 const BORDER = "#D1D5DC";
 const NAVY = "#1E3A5F";
 
-const chipBase: SxProps<Theme> = {
-  fontWeight: 500,
-  fontSize: 12,
-  borderRadius: "999px",
-};
+// const chipBase: SxProps<Theme> = {
+//   fontWeight: 500,
+//   fontSize: 12,
+//   borderRadius: "999px",
+// };
 
-const chipStyles = {
-  harmonized: { bgcolor: "#D5F5E3", color: "#0E7A4B" },
-  parent: { bgcolor: "#C6E4FA", color: "#0B2545" },
-} as const;
+// const chipStyles = {
+//   harmonized: { bgcolor: "#D5F5E3", color: "#0E7A4B" },
+//   parent: { bgcolor: "#C6E4FA", color: "#0B2545" },
+// } as const;
 
 // ----------------------------------------------------------------------
 
