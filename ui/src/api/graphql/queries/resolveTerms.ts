@@ -1,4 +1,4 @@
-// Contract supplied by the BDC middleware team.
+/** Resolves free-text search terms to concepts, paginated by `limit` and `offset`. */
 export const RESOLVE_TERMS_QUERY = `
   query ResolveTerms($query: String!, $limit: Int!, $offset: Int!) {
     terms(query: $query, limit: $limit, offset: $offset) {
@@ -23,7 +23,7 @@ export interface ResolveTermsVariables {
   offset: number;
 }
 
-// Nullability follows the middleware schema (Term.description: String, Term.synonyms: [String!]).
+// Nullability mirrors the GraphQL schema.
 export interface Term {
   id: string;
   label: string;
