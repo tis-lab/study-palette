@@ -13,6 +13,7 @@ import {
 } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
+import { PrimaryButton } from "./components/Button";
 
 interface StudiesResponse {
   studies: Study[];
@@ -94,6 +95,7 @@ function App() {
               Builder & Query Tool
             </p>
           </div>
+          <PrimaryButton>Search</PrimaryButton>
           <div className="header-controls">
             <label className="palette-picker">
               <span>Figure palette</span>

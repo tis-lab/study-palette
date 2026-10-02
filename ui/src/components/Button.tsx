@@ -1,47 +1,53 @@
-import { Button as MuiButton, styled } from "@mui/material";
-import { ReactNode } from "react";
+import { Button as MuiButton, styled, ButtonProps } from "@mui/material";
 
 // ----------------------------------------------------------------------
 
 /* Styles */
-const ButtonStyle = styled(MuiButton)({
+const StyledButton = styled(MuiButton)({
   textTransform: "none",
-  fontSize: "14px",
-  backgroundColor: "#1A568C",
+  fontSize: 14,
   padding: "10px 20px",
-  borderRadius: "4px",
+  borderRadius: 4,
 });
 
 // ----------------------------------------------------------------------
 
 /* Prop Types */
-interface Props {
-  onClick?: () => void;
+interface Props extends Pick<
+  ButtonProps,
+  "onClick" | "children" | "color" | "variant" | "sx"
+> {
   isSearch?: boolean;
   isDisabled?: boolean;
   formId?: string;
-  children: ReactNode;
 }
 
 // ----------------------------------------------------------------------
 
 export default function Button({
-  onClick,
-  isSearch = false,
-  isDisabled = false,
+  isSearch,
+  isDisabled,
   formId,
-  children,
+  ...rest
 }: Props) {
   return (
-    <ButtonStyle
-      variant="contained"
-      onClick={onClick}
+    <StyledButton
       type={isSearch ? "submit" : "button"}
       disabled={isDisabled}
       form={formId}
       disableElevation
-    >
-      {children}
-    </ButtonStyle>
+      {...rest}
+    />
   );
 }
+
+export const PrimaryButton = (props: Props) => (
+  <Button
+    {...props}
+    variant="contained"
+    sx={{
+      backgroundColor: "#1A568C",
+      "&:hover": { backgroundColor: "#144470" },
+    }}
+  />
+);
