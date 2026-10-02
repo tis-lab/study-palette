@@ -87,7 +87,9 @@ describe("App", () => {
 
   it("shows filter panel with no-filter hint and correct participant count", () => {
     render(<App />);
-    const filterPanel = screen.getByText("Filters").closest(".filter-panel")!;
+    const filterPanel = screen
+      .getByText("Filters")
+      .closest<HTMLElement>(".filter-panel")!;
     expect(DEMO_PARTICIPANTS.length).toBe(1000);
     expect(
       within(filterPanel).getByText("Click a chart segment to filter"),
