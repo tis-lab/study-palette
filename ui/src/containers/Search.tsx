@@ -1,8 +1,9 @@
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import Searchbar from "../components/Searchbar";
 import { PrimaryButton } from "../components/Button";
 import { ChangeEvent, useState } from "react";
 import { useConceptSearch } from "../hooks/useConceptSearch";
+import ConceptCard from "../components/ConceptCard";
 
 export default function Search() {
   const [value, setValue] = useState("");
@@ -28,16 +29,49 @@ export default function Search() {
       {isLoading ? (
         <div>Loading...</div>
       ) : (
-        <Stack direction="row" spacing={2}>
-          <Searchbar
-            id="search"
-            name="search"
-            value={value}
-            onChange={onChange}
-            onSearch={onSearch}
-          />
-          <PrimaryButton formId="search">Search</PrimaryButton>
-        </Stack>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+          }}
+        >
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+            }}
+          >
+            <Searchbar
+              id="search"
+              name="search"
+              value={value}
+              onChange={onChange}
+              onSearch={onSearch}
+            />
+            <Box>
+              <PrimaryButton formId="search">Search</PrimaryButton>
+            </Box>
+          </Box>
+          {data?.items && data.items.length > 0 && (
+            <Typography sx={{ fontSize: 14 }}>
+              Showing {data.items.length} concepts matching <b>"{submitted}"</b>
+            </Typography>
+          )}
+          <Stack>
+            {data?.items &&
+              data?.items.map((c, i) => (
+                <ConceptCard
+                  key={c.id}
+                  concept={c}
+                  isFirst={i === 0}
+                  isLast={i === data.items.length - 1}
+                  // onInclude={onInclude}
+                  // onExclude={onExclude}
+                />
+              ))}
+          </Stack>
+        </Box>
       )}
     </Box>
   );

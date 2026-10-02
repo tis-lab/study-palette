@@ -26,6 +26,7 @@ export default defineConfig({
         "react-dom",
         "@emotion/react",
         "@emotion/styled",
+        "@mui/icons-material",
         "@mui/material",
         "@tis-lab/context-providers",
       ],

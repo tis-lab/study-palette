@@ -1,7 +1,6 @@
-import { type ChangeEvent, type FormEvent } from "react";
+import { ChangeEvent, FormEvent } from "react";
 import { InputBase, styled } from "@mui/material";
-import { type InputBaseComponentProps } from "@mui/material/InputBase";
-import { type SxProps, type Theme } from "@mui/material/styles";
+import { InputBaseComponentProps } from "@mui/material/InputBase";
 
 // ----------------------------------------------------------------------
 
@@ -59,8 +58,6 @@ export interface SearchBarProps {
   name?: string;
   autoFocus?: boolean;
   disabled?: boolean;
-  /** Style overrides for the outer container. */
-  sx?: SxProps<Theme>;
   /** Extra attributes passed to the underlying <input>. */
   inputProps?: InputBaseComponentProps;
 }

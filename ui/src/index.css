@@ -46,8 +46,7 @@ h2,
 h3,
 h4,
 h5,
-h6,
-button {
+h6 {
   font-family: "Montserrat", sans-serif;
 }
 
@@ -62,8 +61,7 @@ body .MuiTypography-h2,
 body .MuiTypography-h3,
 body .MuiTypography-h4,
 body .MuiTypography-h5,
-body .MuiTypography-h6,
-body .MuiButton-root {
+body .MuiTypography-h6 {
   font-family: "Montserrat", sans-serif;
 }
 

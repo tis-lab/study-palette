@@ -75,11 +75,11 @@ describe("PrimaryButton", () => {
     expect(screen.getByRole("button")).toHaveClass("MuiButton-contained");
   });
 
-  it("stays contained even if another variant is passed", () => {
-    render(<PrimaryButton variant="outlined">Save</PrimaryButton>);
+  it("renders as outlined when variant is outlined", () => {
+    render(<PrimaryButton variant="outlined">Include</PrimaryButton>);
     const button = screen.getByRole("button");
-    expect(button).toHaveClass("MuiButton-contained");
-    expect(button).not.toHaveClass("MuiButton-outlined");
+    expect(button).toHaveClass("MuiButton-outlined");
+    expect(button).not.toHaveClass("MuiButton-contained");
   });
 
   it("passes the regular Button props through", () => {
