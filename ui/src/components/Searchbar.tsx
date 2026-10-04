@@ -1,51 +1,23 @@
 import { ChangeEvent, FormEvent } from "react";
-import { InputBase, styled } from "@mui/material";
+import { InputAdornment, OutlinedInput, styled } from "@mui/material";
 import { InputBaseComponentProps } from "@mui/material/InputBase";
+import { Search } from "@mui/icons-material";
 
 // ----------------------------------------------------------------------
 
 /* Styles */
-interface SearchbarRootProps {
-  disabled?: boolean;
-}
-
-const SearchbarStyle = styled("form", {
-  shouldForwardProp: (prop) => prop !== "disabled",
-})<SearchbarRootProps>(({ theme, disabled }) => ({
+const SearchbarRoot = styled("form", {
+  name: "ConceptTermSearchbar",
+  slot: "Root",
+})({
   display: "flex",
-  alignItems: "center",
   width: "100%",
-  boxSizing: "border-box",
-  backgroundColor: theme.palette.background.paper,
-  border: "1px solid",
-  borderColor: "#D1D5DC",
-  borderRadius: "4px",
-
-  "&:hover": { borderColor: theme.palette.text.disabled },
-  "&:focus-within": {
-    borderColor: theme.palette.primary.main,
-  },
-  ...(disabled
-    ? {
-        backgroundColor: theme.palette.action.disabledBackground,
-        pointerEvents: "none" as const,
-      }
-    : {}),
-}));
-
-const InputBaseStyle = styled(InputBase)(({ theme }) => ({
-  padding: "10px 16px",
-  typography: "body1",
-  fontSize: "14px",
-  color: "text.primary",
-  "& input": { padding: 0 },
-  "& input::placeholder": { color: theme.palette.text.disabled, opacity: 1 },
-}));
+});
 
 // ----------------------------------------------------------------------
 
 /* Prop Types */
-export interface SearchBarProps {
+export interface Props {
   id: string;
   value: string;
   onChange: (
@@ -75,7 +47,7 @@ export default function Searchbar({
   autoFocus = false,
   disabled = false,
   inputProps,
-}: SearchBarProps) {
+}: Props) {
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
@@ -88,24 +60,24 @@ export default function Searchbar({
   };
 
   return (
-    <SearchbarStyle
-      id={id}
-      role="search"
-      onSubmit={handleSubmit}
-      disabled={disabled}
-      noValidate
-    >
-      <InputBaseStyle
+    <SearchbarRoot id={id} role="search" onSubmit={handleSubmit} noValidate>
+      <OutlinedInput
         type="search"
+        size="small"
         name={name}
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
         autoFocus={autoFocus}
         disabled={disabled}
+        startAdornment={
+          <InputAdornment position="start">
+            <Search fontSize="small" />
+          </InputAdornment>
+        }
         fullWidth
         inputProps={{ "aria-label": ariaLabel, ...inputProps }}
       />
-    </SearchbarStyle>
+    </SearchbarRoot>
   );
 }

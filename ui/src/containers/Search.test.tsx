@@ -1,320 +1,347 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { FormEvent } from "react";
 import Search from "./Search";
 import { useConceptSearch } from "../hooks/useConceptSearch";
+import { Term } from "../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
-// Mocks: Search is tested on its own, so its children are replaced with
-// minimal stand-ins that expose the props Search passes to them.
+
+/* Mocks */
 
 vi.mock("../hooks/useConceptSearch", () => ({
   useConceptSearch: vi.fn(),
 }));
 
-vi.mock("../components/Searchbar", () => ({
-  default: ({
-    id,
-    name,
-    value,
-    onChange,
-    onSearch,
-  }: {
-    id: string;
-    name: string;
-    value: string;
-    onChange: (v: string) => void;
-    onSearch: (v: string) => void;
-  }) => (
-    <form
-      id={id}
-      onSubmit={(e: FormEvent) => {
-        e.preventDefault();
-        onSearch(value);
-      }}
-    >
-      <input
-        aria-label="Search concepts"
-        name={name}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
-    </form>
-  ),
-}));
-
-vi.mock("../components/Button", () => ({
-  PrimaryButton: ({
-    children,
-    formId,
-  }: {
-    children: React.ReactNode;
-    formId?: string;
-  }) => (
-    <button type="submit" form={formId}>
-      {children}
-    </button>
-  ),
-}));
-
-vi.mock("../components/ConceptCard", () => ({
-  default: ({
-    concept,
-    isFirst,
-    isLast,
-  }: {
-    concept: { id: string; label: string };
-    isFirst: boolean;
-    isLast: boolean;
-  }) => (
-    <div
-      data-testid="concept-card"
-      data-first={String(isFirst)}
-      data-last={String(isLast)}
-    >
-      {concept.label}
-    </div>
-  ),
-}));
-
+// Stub so these tests don't depend on Notification's internals
 vi.mock("../components/Notification", () => ({
-  default: ({ open, message }: { open: boolean; message?: string }) =>
-    open ? <div role="alert">{message}</div> : null,
+  default: ({
+    open,
+    severity,
+    message,
+  }: {
+    open: boolean;
+    severity: string;
+    message?: string;
+  }) =>
+    open ? (
+      <div role="alert" data-severity={severity}>
+        {message}
+      </div>
+    ) : null,
 }));
 
-// ----------------------------------------------------------------------
+const mockedUseConceptSearch = vi.mocked(useConceptSearch);
 
-type HookResult = ReturnType<typeof useConceptSearch>;
-const mockedHook = vi.mocked(useConceptSearch);
+type SearchResult = ReturnType<typeof useConceptSearch>;
 
-const idle = {
+/** Only the fields Search reads; the rest of UseQueryResult is irrelevant here. */
+type SearchState = {
+  data: Pick<NonNullable<SearchResult["data"]>, "items"> | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  error: Error | null;
+};
+
+const idle: SearchState = {
   data: undefined,
   isLoading: false,
   isError: false,
   error: null,
-} as unknown as HookResult;
+};
 
-const withResults = (items: { id: string; label: string }[]) =>
-  ({ ...idle, data: { items } }) as unknown as HookResult;
+/**
+ * Returns `state` for any non-empty term and `idle` for "",
+ * mirroring a hook that only fetches once something is submitted.
+ */
+function mockSearch(state: Partial<SearchState>) {
+  mockedUseConceptSearch.mockImplementation(
+    (term: string) =>
+      // Cast once here instead of faking every UseQueryResult field
+      (term ? { ...idle, ...state } : idle) as unknown as SearchResult,
+  );
+}
 
-const ITEMS = [
-  { id: "HP:0000822", label: "Hypertension" },
-  { id: "MONDO:0001134", label: "Essential hypertension" },
-  { id: "MONDO:0005152", label: "Secondary hypertension" },
-];
+// ----------------------------------------------------------------------
 
-const input = () => screen.getByRole("textbox", { name: "Search concepts" });
-const searchButton = () => screen.getByRole("button", { name: "Search" });
+/* Fixtures & helpers */
 
-// Returns results only once something has been submitted, like the real hook.
-const resultsAfterSubmit = (items = ITEMS) =>
-  mockedHook.mockImplementation((q: string) => (q ? withResults(items) : idle));
+const makeTerm = (id: string, label: string): Term => ({
+  id,
+  label,
+  category: "Disease or Syndrome",
+  description: null,
+  synonyms: null,
+});
+
+const asthma = makeTerm("C0004096", "Asthma");
+const childhoodAsthma = makeTerm("C0264408", "Childhood asthma");
+
+const getInput = () => screen.getByRole("searchbox", { name: "Search" });
+const getSearchButton = () => screen.getByRole("button", { name: "Search" });
+const getStatus = () => screen.getByRole("status");
+const lastSearchedTerm = () => mockedUseConceptSearch.mock.lastCall?.[0];
+
+async function searchFor(term: string) {
+  const user = userEvent.setup();
+  await user.type(getInput(), `${term}{Enter}`);
+  return user;
+}
+
+beforeEach(() => {
+  mockedUseConceptSearch.mockReset();
+  mockSearch({});
+});
 
 // ----------------------------------------------------------------------
 
 describe("Search", () => {
-  beforeEach(() => {
-    mockedHook.mockReset();
-    mockedHook.mockReturnValue(idle);
-  });
-
-  afterEach(() => {
-    cleanup();
-  });
-
-  describe("searching", () => {
-    it("starts with an empty query", () => {
+  describe("initial state", () => {
+    it("renders the search box and Search button", () => {
       render(<Search />);
-
-      expect(input()).toHaveValue("");
-      expect(mockedHook).toHaveBeenLastCalledWith("");
+      expect(getInput()).toBeInTheDocument();
+      expect(getSearchButton()).toBeInTheDocument();
     });
 
-    it("updates the input as the user types without searching", async () => {
+    it("does not search before anything is submitted", () => {
+      render(<Search />);
+      expect(lastSearchedTerm()).toBe("");
+    });
+
+    it("shows no progress, summary, or results", () => {
+      render(<Search />);
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(getStatus()).toBeEmptyDOMElement();
+      expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    });
+
+    it("keeps the status live region mounted even when empty", () => {
+      render(<Search />);
+      expect(getStatus()).toHaveAttribute("aria-live", "polite");
+    });
+  });
+
+  describe("submitting", () => {
+    it("does not search while typing", async () => {
       const user = userEvent.setup();
       render(<Search />);
 
-      await user.type(input(), "hyp");
+      await user.type(getInput(), "asthma");
 
-      expect(input()).toHaveValue("hyp");
-      expect(mockedHook).not.toHaveBeenCalledWith("hyp");
-      expect(mockedHook).toHaveBeenLastCalledWith("");
+      expect(lastSearchedTerm()).toBe("");
     });
 
-    it("searches when Enter is pressed", async () => {
-      const user = userEvent.setup();
+    it("searches with the trimmed term on Enter", async () => {
       render(<Search />);
 
-      await user.type(input(), "hypertension{Enter}");
+      await searchFor("  asthma  ");
 
-      expect(mockedHook).toHaveBeenLastCalledWith("hypertension");
+      expect(lastSearchedTerm()).toBe("asthma");
     });
 
     it("searches when the Search button is clicked", async () => {
       const user = userEvent.setup();
       render(<Search />);
 
-      await user.type(input(), "hypertension");
-      await user.click(searchButton());
+      await user.type(getInput(), "asthma");
+      await user.click(getSearchButton());
 
-      expect(mockedHook).toHaveBeenLastCalledWith("hypertension");
+      expect(lastSearchedTerm()).toBe("asthma");
     });
 
-    it("searches with the latest value on a second search", async () => {
-      const user = userEvent.setup();
+    it("links the Search button to the search form", () => {
+      render(<Search />);
+      const formId = screen.getByRole("search").getAttribute("id");
+      expect(formId).toBeTruthy();
+      expect(getSearchButton()).toHaveAttribute("form", formId);
+    });
+
+    it("keeps the typed value after searching", async () => {
+      mockSearch({ data: { items: [asthma] } });
       render(<Search />);
 
-      await user.type(input(), "hyp{Enter}");
-      await user.clear(input());
-      await user.type(input(), "diabetes{Enter}");
+      await searchFor("asthma");
 
-      expect(mockedHook).toHaveBeenLastCalledWith("diabetes");
+      expect(getInput()).toHaveValue("asthma");
     });
   });
 
   describe("loading", () => {
-    it("shows a loading message in place of the search bar", () => {
-      mockedHook.mockReturnValue({ ...idle, isLoading: true } as HookResult);
-      render(<Search />);
+    beforeEach(() => mockSearch({ isLoading: true }));
 
-      expect(screen.getByText("Loading...")).toBeInTheDocument();
+    it("shows an accessible progress indicator", async () => {
+      render(<Search />);
+      await searchFor("asthma");
+
       expect(
-        screen.queryByRole("textbox", { name: "Search concepts" }),
-      ).not.toBeInTheDocument();
-      expect(screen.queryByTestId("concept-card")).not.toBeInTheDocument();
+        screen.getByRole("progressbar", { name: "Searching concepts" }),
+      ).toBeInTheDocument();
     });
 
-    it("keeps the typed value after loading finishes", async () => {
-      const user = userEvent.setup();
-      const { rerender } = render(<Search />);
-      await user.type(input(), "hyp");
+    it("keeps the search controls mounted, enabled, and focused", async () => {
+      render(<Search />);
+      await searchFor("asthma");
 
-      mockedHook.mockReturnValue({ ...idle, isLoading: true } as HookResult);
-      rerender(<Search />);
-      mockedHook.mockReturnValue(idle);
-      rerender(<Search />);
+      expect(getInput()).toHaveValue("asthma");
+      expect(getInput()).toBeEnabled();
+      expect(getInput()).toHaveFocus();
+      expect(getSearchButton()).toBeInTheDocument();
+    });
 
-      expect(input()).toHaveValue("hyp");
+    it("hides the summary and results", async () => {
+      render(<Search />);
+      await searchFor("asthma");
+
+      expect(getStatus()).toBeEmptyDOMElement();
+      expect(screen.queryByRole("heading")).not.toBeInTheDocument();
     });
   });
 
   describe("results", () => {
-    it("shows no results before searching", () => {
+    it("shows a plural summary and one card per result, in order", async () => {
+      mockSearch({ data: { items: [asthma, childhoodAsthma] } });
       render(<Search />);
 
-      expect(screen.queryByTestId("concept-card")).not.toBeInTheDocument();
-      expect(screen.queryByText(/Showing/)).not.toBeInTheDocument();
+      await searchFor("asthma");
+
+      expect(getStatus()).toHaveTextContent(
+        'Showing 2 concepts matching "asthma"',
+      );
+      const headings = screen
+        .getAllByRole("heading", { level: 2 })
+        .map((h) => h.textContent);
+      expect(headings).toEqual(["Asthma", "Childhood asthma"]);
     });
 
-    it("shows a card for each concept", async () => {
-      resultsAfterSubmit();
-      const user = userEvent.setup();
+    it("uses the singular for one result", async () => {
+      mockSearch({ data: { items: [asthma] } });
       render(<Search />);
 
-      await user.type(input(), "hypertension{Enter}");
+      await searchFor("asthma");
 
-      const cards = screen.getAllByTestId("concept-card");
-      expect(cards).toHaveLength(3);
-      expect(cards.map((c) => c.textContent)).toEqual([
-        "Hypertension",
-        "Essential hypertension",
-        "Secondary hypertension",
-      ]);
-    });
-
-    it("shows the result count and the submitted query", async () => {
-      resultsAfterSubmit();
-      const user = userEvent.setup();
-      render(<Search />);
-
-      await user.type(input(), "hypertension{Enter}");
-
-      expect(screen.getByText(/Showing 3 concepts matching/)).toHaveTextContent(
-        'Showing 3 concepts matching "hypertension"',
+      expect(getStatus()).toHaveTextContent(
+        'Showing 1 concept matching "asthma"',
       );
     });
 
-    it("keeps the summary on the submitted query while the user keeps typing", async () => {
-      resultsAfterSubmit();
-      const user = userEvent.setup();
+    it("emphasizes the searched term", async () => {
+      mockSearch({ data: { items: [asthma] } });
       render(<Search />);
 
-      await user.type(input(), "hypertension{Enter}");
-      await user.type(input(), " type 2");
+      await searchFor("asthma");
 
-      expect(screen.getByText(/Showing/)).toHaveTextContent('"hypertension"');
+      const strong = within(getStatus()).getByText('"asthma"');
+      expect(strong.tagName).toBe("STRONG");
     });
 
-    it("marks only the first and last cards for rounded corners", async () => {
-      resultsAfterSubmit();
-      const user = userEvent.setup();
+    it("shows the submitted term, not what is currently typed", async () => {
+      mockSearch({ data: { items: [asthma] } });
       render(<Search />);
+      const user = await searchFor("asthma");
 
-      await user.type(input(), "hypertension{Enter}");
+      await user.type(getInput(), " attack");
 
-      const [first, middle, last] = screen.getAllByTestId("concept-card");
-      expect(first).toHaveAttribute("data-first", "true");
-      expect(first).toHaveAttribute("data-last", "false");
-      expect(middle).toHaveAttribute("data-first", "false");
-      expect(middle).toHaveAttribute("data-last", "false");
-      expect(last).toHaveAttribute("data-first", "false");
-      expect(last).toHaveAttribute("data-last", "true");
+      expect(getStatus()).toHaveTextContent('matching "asthma"');
+      expect(getStatus()).not.toHaveTextContent("attack");
     });
 
-    it("marks a single result as both first and last", async () => {
-      resultsAfterSubmit([ITEMS[0]]);
-      const user = userEvent.setup();
+    it("hides the progress indicator", async () => {
+      mockSearch({ data: { items: [asthma] } });
       render(<Search />);
 
-      await user.type(input(), "hypertension{Enter}");
+      await searchFor("asthma");
 
-      const card = screen.getByTestId("concept-card");
-      expect(card).toHaveAttribute("data-first", "true");
-      expect(card).toHaveAttribute("data-last", "true");
-    });
-
-    it("shows no summary or cards when nothing matches", async () => {
-      resultsAfterSubmit([]);
-      const user = userEvent.setup();
-      render(<Search />);
-
-      await user.type(input(), "zzz{Enter}");
-
-      expect(screen.queryByText(/Showing/)).not.toBeInTheDocument();
-      expect(screen.queryByTestId("concept-card")).not.toBeInTheDocument();
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
     });
   });
 
-  describe("errors", () => {
-    it("does not show a notification when there is no error", () => {
+  describe("no results", () => {
+    it("shows an empty-state message", async () => {
+      mockSearch({ data: { items: [] } });
+      render(<Search />);
+
+      await searchFor("zzzz");
+
+      expect(getStatus()).toHaveTextContent(
+        'No concepts match "zzzz". Try a different term.',
+      );
+      expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+    });
+
+    it("treats missing data the same as an empty list", async () => {
+      mockSearch({ data: undefined });
+      render(<Search />);
+
+      await searchFor("zzzz");
+
+      expect(getStatus()).toHaveTextContent('No concepts match "zzzz"');
+    });
+  });
+
+  describe("error", () => {
+    beforeEach(() =>
+      mockSearch({ isError: true, error: new Error("Network down") }),
+    );
+
+    it("opens an error notification with the error message", async () => {
+      render(<Search />);
+      await searchFor("asthma");
+
+      const alert = screen.getByRole("alert");
+      expect(alert).toHaveTextContent("Network down");
+      expect(alert).toHaveAttribute("data-severity", "error");
+    });
+
+    it("does not show the empty-state message on error", async () => {
+      render(<Search />);
+      await searchFor("asthma");
+
+      expect(getStatus()).toBeEmptyDOMElement();
+    });
+
+    it("does not show a notification before an error", () => {
+      mockSearch({});
       render(<Search />);
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
+  });
 
-    it("shows the error message in a notification", () => {
-      mockedHook.mockReturnValue({
-        ...idle,
-        isError: true,
-        error: new Error("Network request failed"),
-      } as HookResult);
-      render(<Search />);
-
-      expect(screen.getByRole("alert")).toHaveTextContent(
-        "Network request failed",
+  describe("multiple instances", () => {
+    it("gives each instance its own form id", () => {
+      render(
+        <>
+          <Search />
+          <Search />
+        </>,
       );
+      const ids = screen
+        .getAllByRole("search")
+        .map((form) => form.getAttribute("id"));
+      expect(new Set(ids).size).toBe(2);
     });
 
-    it("still shows the search bar so the user can retry", () => {
-      mockedHook.mockReturnValue({
-        ...idle,
-        isError: true,
-        error: new Error("Network request failed"),
-      } as HookResult);
-      render(<Search />);
+    it("each Search button submits only its own form", async () => {
+      const user = userEvent.setup();
+      render(
+        <>
+          <Search />
+          <Search />
+        </>,
+      );
+      const [firstInput, secondInput] = screen.getAllByRole("searchbox");
+      const [, secondButton] = screen.getAllByRole("button", {
+        name: "Search",
+      });
 
-      expect(input()).toBeInTheDocument();
-      expect(searchButton()).toBeInTheDocument();
+      await user.type(firstInput, "first");
+      await user.type(secondInput, "second");
+      await user.click(secondButton);
+
+      const searchedTerms = mockedUseConceptSearch.mock.calls.map(
+        ([term]) => term,
+      );
+      expect(searchedTerms).toContain("second");
+      expect(searchedTerms).not.toContain("first");
     });
   });
 });

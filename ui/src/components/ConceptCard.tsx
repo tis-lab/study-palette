@@ -1,37 +1,58 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useId, useState } from "react";
 import {
   Box,
+  Button,
   Card,
   CardContent,
-  // Chip,
-  Button,
-  Typography,
   Collapse,
   Stack,
+  Typography,
+  styled,
   type SxProps,
   type Theme,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
-import { PrimaryButton } from "./Button";
 import { Term } from "../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
 /* Styles */
-const RADIUS = 12;
-const BORDER = "#D1D5DC";
-const NAVY = "#1E3A5F";
+interface ConceptCardRootProps {
+  isFirst: boolean;
+  isLast: boolean;
+}
 
-// const chipBase: SxProps<Theme> = {
-//   fontWeight: 500,
-//   fontSize: 12,
-//   borderRadius: "999px",
-// };
+const ConceptCardRoot = styled(Card, {
+  name: "CohortConceptCard",
+  slot: "Root",
+  shouldForwardProp: (prop) => prop !== "isFirst" && prop !== "isLast",
+})<ConceptCardRootProps>(({ isFirst, isLast }) => ({
+  // Outer corners inherit the theme's Card radius; only flatten inner corners
+  ...(!isFirst && {
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    borderTop: "none", // adjacent cards share a single line
+  }),
+  ...(!isLast && {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+  }),
+}));
 
-// const chipStyles = {
-//   harmonized: { bgcolor: "#D5F5E3", color: "#0E7A4B" },
-//   parent: { bgcolor: "#C6E4FA", color: "#0B2545" },
-// } as const;
+const ConceptCardDetails = styled("dl", {
+  name: "CohortConceptCard",
+  slot: "Details",
+})(({ theme }) => ({
+  margin: 0,
+  padding: theme.spacing(1.5),
+  display: "grid",
+  gap: theme.spacing(1),
+  ...theme.typography.body2,
+  color: theme.palette.text.primary,
+  backgroundColor: theme.palette.action.hover,
+  border: `1px solid ${theme.palette.divider}`,
+  borderRadius: theme.shape.borderRadius,
+}));
 
 // ----------------------------------------------------------------------
 
@@ -54,29 +75,25 @@ interface DetailFieldProps {
 
 // ----------------------------------------------------------------------
 
+/** Must be rendered inside a <dl> (e.g. ConceptCardDetails). */
 export function DetailField({ label, value, sx }: DetailFieldProps) {
   return (
     <Box sx={[{ minWidth: 0 }, ...(Array.isArray(sx) ? sx : [sx])]}>
       <Typography
         component="dt"
-        sx={{
-          fontSize: 12,
-          lineHeight: 1.4,
-          letterSpacing: "0.04em",
-          textTransform: "uppercase",
-          color: "#9CA3AF",
-        }}
+        variant="overline"
+        color="text.secondary"
+        sx={{ lineHeight: 1.4 }}
       >
         {label}
       </Typography>
       <Typography
         component="dd"
+        variant="body2"
         sx={{
           m: 0,
           mt: 0.25,
-          fontSize: 14,
-          fontWeight: 600,
-          color: "#1F2937",
+          fontWeight: "fontWeightMedium",
           overflowWrap: "anywhere",
         }}
       >
@@ -94,6 +111,7 @@ export default function ConceptCard({
   onExclude,
 }: ConceptCardProps) {
   const [open, setOpen] = useState(false);
+  const detailsId = useId();
 
   const actions: { label: string; onClick?: ConceptAction }[] = [
     { label: "+ Include", onClick: onInclude },
@@ -101,19 +119,7 @@ export default function ConceptCard({
   ];
 
   return (
-    <Card
-      elevation={0}
-      sx={{
-        border: `1px solid ${BORDER}`,
-        // Only the outer corners of the group are rounded
-        borderTopLeftRadius: isFirst ? RADIUS : 0,
-        borderTopRightRadius: isFirst ? RADIUS : 0,
-        borderBottomLeftRadius: isLast ? RADIUS : 0,
-        borderBottomRightRadius: isLast ? RADIUS : 0,
-        // Collapse shared borders so adjacent cards show a single 1px line
-        ...(!isFirst && { borderTop: "none" }),
-      }}
-    >
+    <ConceptCardRoot variant="outlined" isFirst={isFirst} isLast={isLast}>
       <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
         <Box
           sx={{
@@ -133,69 +139,51 @@ export default function ConceptCard({
               useFlexGap
             >
               <Typography
-                variant="h2"
-                sx={{ fontWeight: 700, fontSize: 14, color: "#101828" }}
+                component="h2"
+                variant="subtitle2"
+                sx={{ fontWeight: "fontWeightBold" }}
               >
                 {concept.label}
               </Typography>
-              {/* {concept?.harmonized && (
-                <Chip
-                  label="Harmonized Variable"
-                  size="small"
-                  sx={[chipBase, chipStyles.harmonized] as SxProps<Theme>}
-                />
-              )}
-              {concept?.parent && (
-                <Chip
-                  label="Parent Concept"
-                  size="small"
-                  sx={[chipBase, chipStyles.parent] as SxProps<Theme>}
-                />
-              )} */}
             </Stack>
 
-            <Typography sx={{ mt: 0.75, fontSize: 12, color: "#6A7282" }}>
-              {concept.id} · {/*  {concept?.studies ?? 0} studies */}
+            <Typography
+              component="p"
+              variant="caption"
+              color="text.secondary"
+              sx={{ mt: 0.75 }}
+            >
+              {concept.id}
+              {/* · {concept?.studies ?? 0} studies */}
             </Typography>
 
             <Button
+              size="small"
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
+              aria-controls={detailsId}
               startIcon={
                 <ChevronRight
-                  sx={{
-                    transition: "transform 150ms",
+                  sx={(theme) => ({
+                    transition: theme.transitions.create("transform", {
+                      duration: theme.transitions.duration.shortest,
+                    }),
                     transform: open ? "rotate(90deg)" : "none",
-                  }}
+                  })}
                 />
               }
               sx={{
                 mt: 1.5,
                 ml: -1,
                 px: 1,
-                textTransform: "none",
-                color: NAVY,
-                fontFamily: '"Open Sans", sans-serif',
-                fontWeight: 600,
-                fontSize: 13,
                 "& .MuiButton-startIcon": { mr: 0.5 },
               }}
             >
               Details
             </Button>
 
-            <Collapse in={open} unmountOnExit>
-              <Box
-                sx={{
-                  p: 1.5,
-                  color: "#374151",
-                  fontSize: 14,
-                  backgroundColor: "#F8FAFC",
-                  border: `1px solid #F1F5F9`,
-                  borderRadius: "12px",
-                  width: "100%",
-                }}
-              >
+            <Collapse in={open} id={detailsId} unmountOnExit>
+              <ConceptCardDetails>
                 {concept?.category && (
                   <DetailField label="category" value={concept.category} />
                 )}
@@ -205,23 +193,23 @@ export default function ConceptCard({
                     value={concept.description}
                   />
                 )}
-              </Box>
+              </ConceptCardDetails>
             </Collapse>
           </Box>
 
           <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
             {actions.map((a) => (
-              <PrimaryButton
+              <Button
                 key={a.label}
                 variant="outlined"
                 onClick={() => a.onClick?.(concept)}
               >
                 {a.label}
-              </PrimaryButton>
+              </Button>
             ))}
           </Stack>
         </Box>
       </CardContent>
-    </Card>
+    </ConceptCardRoot>
   );
 }
