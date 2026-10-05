@@ -1,21 +1,17 @@
-import { ReactNode, useId, useState } from "react";
+import { useId, useState } from "react";
 import {
   Box,
   Button,
   Card,
   CardContent,
-  Chip,
   Collapse,
   Stack,
-  Tooltip,
   Typography,
   styled,
-  type SxProps,
-  type Theme,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
 import { Term } from "../api/graphql/queries/resolveTerms";
-import parseCurie from "../utils/parseCurie";
+import ConceptCardDetails from "./ConceptCardDetails";
 
 // ----------------------------------------------------------------------
 
@@ -42,21 +38,6 @@ const ConceptCardRoot = styled(Card, {
   }),
 }));
 
-const ConceptCardDetails = styled("dl", {
-  name: "CohortConceptCard",
-  slot: "Details",
-})(({ theme }) => ({
-  margin: 0,
-  padding: theme.spacing(1.5),
-  display: "grid",
-  gap: theme.spacing(1),
-  ...theme.typography.body2,
-  color: theme.palette.text.primary,
-  backgroundColor: theme.palette.action.hover,
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: theme.shape.borderRadius,
-}));
-
 // ----------------------------------------------------------------------
 
 /* Prop Types */
@@ -70,94 +51,7 @@ interface ConceptCardProps {
   onExclude?: ConceptAction;
 }
 
-interface DetailFieldProps {
-  label: string;
-  value: ReactNode;
-  sx?: SxProps<Theme>;
-}
-
-const SOURCES: Record<string, { name: string; url?: (id: string) => string }> =
-  {
-    biolink: {
-      name: "Biolink Model",
-      url: (id) => `https://biolink.github.io/biolink-model/${id}`,
-    },
-  };
-
 // ----------------------------------------------------------------------
-
-/** Must be rendered inside a <dl> (e.g. ConceptCardDetails). */
-export function DetailField({ label, value, sx }: DetailFieldProps) {
-  return (
-    <Box sx={[{ minWidth: 0 }, ...(Array.isArray(sx) ? sx : [sx])]}>
-      <Typography
-        component="dt"
-        variant="overline"
-        color="text.secondary"
-        sx={{ lineHeight: 1.4 }}
-      >
-        {label}
-      </Typography>
-      <Box
-        component="dd"
-        sx={(theme) => ({
-          ...theme.typography.body2,
-          m: 0,
-          mt: 0.25,
-          fontWeight: theme.typography.fontWeightMedium,
-          overflowWrap: "anywhere",
-        })}
-      >
-        {value}
-      </Box>
-    </Box>
-  );
-}
-
-export function CategoryValue({ value }: { value: string }) {
-  const parsed = parseCurie(value);
-  if (!parsed) return <>{value}</>;
-
-  const source = SOURCES[parsed.source];
-  const href = source?.url?.(parsed.id);
-
-  return (
-    <Box
-      component="span"
-      sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: 1,
-        flexWrap: "wrap",
-      }}
-    >
-      <span>{parsed.label}</span>
-      {parsed.source && (
-        <Tooltip title={`${source?.name ?? parsed.source} · ${parsed.raw}`}>
-          <Chip
-            label={parsed.source}
-            size="small"
-            variant="outlined"
-            clickable={Boolean(href)}
-            {...(href && {
-              component: "a",
-              href,
-              target: "_blank",
-              rel: "noreferrer",
-            })}
-            sx={{
-              height: 20,
-              fontSize: "0.6875rem",
-              fontWeight: "fontWeightMedium",
-              color: "text.secondary",
-              textTransform: "lowercase",
-            }}
-          />
-        </Tooltip>
-      )}
-    </Box>
-  );
-}
 
 export default function ConceptCard({
   concept,
@@ -239,20 +133,10 @@ export default function ConceptCard({
             </Button>
 
             <Collapse in={open} id={detailsId} unmountOnExit>
-              <ConceptCardDetails>
-                {concept?.category && (
-                  <DetailField
-                    label="category"
-                    value={<CategoryValue value={concept.category} />}
-                  />
-                )}
-                {concept?.description && (
-                  <DetailField
-                    label="description"
-                    value={concept.description}
-                  />
-                )}
-              </ConceptCardDetails>
+              <ConceptCardDetails
+                category={concept?.category}
+                description={concept?.description}
+              />
             </Collapse>
           </Box>
 

@@ -7,7 +7,8 @@ import {
   createTheme,
   type ThemeOptions,
 } from "@mui/material/styles";
-import ConceptCard, { DetailField } from "./ConceptCard";
+import ConceptCard from "./ConceptCard";
+import { DetailField } from "./ConceptCardDetails";
 import { Term } from "../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
