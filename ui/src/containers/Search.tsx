@@ -25,6 +25,8 @@ export default function Search() {
   const items = data?.items ?? [];
   const showSummary = submitted !== "" && !isLoading && !isError;
 
+  console.log(data);
+
   return (
     <Stack spacing={1}>
       <Notification open={isError} severity="error" message={error?.message} />
@@ -56,7 +58,7 @@ export default function Search() {
           <Typography variant="body2" color="text.secondary">
             {items.length > 0 ? (
               <>
-                Showing {items.length}{" "}
+                Showing {items.length} of {data?.total ?? 0}{" "}
                 {items.length === 1 ? "concept" : "concepts"} matching{" "}
                 <strong>"{submitted}"</strong>
               </>
