@@ -24,9 +24,10 @@ description: >-
 
   - UNKNOWN is a recorded value. Recorded is not the same as known.
 
-  - PRESENT rolls up the term hierarchy and ABSENT rolls down: present for a
-  term is present for its ancestors, absent for a term is absent for its
-  descendants. Where the two conflict, PRESENT wins.
+  - Each study is counted at the granularity it was harmonized to, which may
+  differ between studies (subtypes in one, the parent term in another).
+  Rolling counts up to compare such studies is out of scope for now; note
+  that only PRESENT can roll up from a subtype to its parent.
 
   - Repeated measurements are out of scope for now; a participant is binned
   by their most recent value.

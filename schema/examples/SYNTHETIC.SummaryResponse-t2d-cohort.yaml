@@ -2,8 +2,9 @@
 # participant data.
 #
 # A search for type 2 diabetes, over participants with a fasting glucose
-# measurement. Glucose is related through a curated biomarker link; heart
-# disorder and two of its subtypes are offered for drill-down.
+# measurement. Glucose is related through a curated biomarker link. Study One
+# records heart conditions as subtypes and Study Two as heart disorder, so
+# comparing them would need a roll-up, which this draft leaves out.
 
 release: example-release
 seed: MONDO:0005148
@@ -146,18 +147,6 @@ studies:
             condition_concept: MONDO:0005148
             condition_status: ABSENT
             participant_count: 380
-      - id: palette:condition/MONDO_0005267
-        condition_concept: MONDO:0005267
-        participant_count: 480
-        values:
-          - id: palette:condition/MONDO_0005267/PRESENT
-            condition_concept: MONDO:0005267
-            condition_status: PRESENT
-            participant_count: 115
-          - id: palette:condition/MONDO_0005267/ABSENT
-            condition_concept: MONDO:0005267
-            condition_status: ABSENT
-            participant_count: 365
       - id: palette:condition/MONDO_0005068
         condition_concept: MONDO:0005068
         participant_count: 480
@@ -217,14 +206,14 @@ studies:
         participant_count: 40
       - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:demography/sex/MALE]
         participant_count: 50
-      - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:condition/MONDO_0005267/PRESENT]
-        participant_count: 35
+      - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:condition/MONDO_0005068/PRESENT]
+        participant_count: 15
       - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:measurement/FAST_GLUC_BLD/126-mg_dL]
         participant_count: 60
-      - criteria: [palette:condition/MONDO_0005267/PRESENT, palette:demography/sex/FEMALE]
-        participant_count: 45
-      - criteria: [palette:condition/MONDO_0005267/PRESENT, palette:demography/sex/MALE]
-        participant_count: 70
+      - criteria: [palette:condition/MONDO_0005068/PRESENT, palette:demography/sex/FEMALE]
+        participant_count: 15
+      - criteria: [palette:condition/MONDO_0005068/PRESENT, palette:demography/sex/MALE]
+        participant_count: 25
       # Low glucose among men is below min_cell_count, so not shown.
       - criteria: [palette:measurement/FAST_GLUC_BLD/-70mg_dL, palette:demography/sex/FEMALE]
         participant_count: 11
@@ -237,7 +226,7 @@ studies:
       - criteria: [palette:participant/age_at_index/45-55a, palette:demography/sex/MALE]
         participant_count: 60
       # Crossing two concepts counts participants with both recorded.
-      - criteria: [palette:condition/MONDO_0005148, palette:condition/MONDO_0005267]
+      - criteria: [palette:condition/MONDO_0005148, palette:condition/MONDO_0005068]
         participant_count: 470
 
   - research_study: palette:study_two
@@ -343,30 +332,6 @@ studies:
             condition_concept: MONDO:0005267
             condition_status: ABSENT
             participant_count: 365
-      - id: palette:condition/MONDO_0005068
-        condition_concept: MONDO:0005068
-        participant_count: 460
-        values:
-          - id: palette:condition/MONDO_0005068/PRESENT
-            condition_concept: MONDO:0005068
-            condition_status: PRESENT
-            participant_count: 35
-          - id: palette:condition/MONDO_0005068/ABSENT
-            condition_concept: MONDO:0005068
-            condition_status: ABSENT
-            participant_count: 425
-      - id: palette:condition/MONDO_0005252
-        condition_concept: MONDO:0005252
-        participant_count: 460
-        values:
-          - id: palette:condition/MONDO_0005252/PRESENT
-            condition_concept: MONDO:0005252
-            condition_status: PRESENT
-            participant_count: 25
-          - id: palette:condition/MONDO_0005252/ABSENT
-            condition_concept: MONDO:0005252
-            condition_status: ABSENT
-            participant_count: 435
 
     measurements:
       - id: palette:measurement/FAST_GLUC_BLD

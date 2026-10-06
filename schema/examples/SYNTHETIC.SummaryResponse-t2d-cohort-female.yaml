@@ -24,6 +24,14 @@ terms:
   - curie: MONDO:0005267
     label: heart disorder
     vocabulary: MONDO
+  - curie: MONDO:0024643
+    label: myocardial disorder
+    vocabulary: MONDO
+    parents: [MONDO:0005267]
+  - curie: MONDO:0005068
+    label: myocardial infarction
+    vocabulary: MONDO
+    parents: [MONDO:0024643]
 
 research_studies:
   - id: palette:study_one
@@ -84,18 +92,18 @@ studies:
             condition_concept: MONDO:0005148
             condition_status: ABSENT
             participant_count: 185
-      - id: palette:condition/MONDO_0005267
-        condition_concept: MONDO:0005267
+      - id: palette:condition/MONDO_0005068
+        condition_concept: MONDO:0005068
         participant_count: 230
         values:
-          - id: palette:condition/MONDO_0005267/PRESENT
-            condition_concept: MONDO:0005267
+          - id: palette:condition/MONDO_0005068/PRESENT
+            condition_concept: MONDO:0005068
             condition_status: PRESENT
-            participant_count: 45
-          - id: palette:condition/MONDO_0005267/ABSENT
-            condition_concept: MONDO:0005267
+            participant_count: 15
+          - id: palette:condition/MONDO_0005068/ABSENT
+            condition_concept: MONDO:0005068
             condition_status: ABSENT
-            participant_count: 185
+            participant_count: 215
 
     measurements:
       - id: palette:measurement/FAST_GLUC_BLD
@@ -128,8 +136,7 @@ studies:
     cells:
       - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:measurement/FAST_GLUC_BLD/126-mg_dL]
         participant_count: 28
-      - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:condition/MONDO_0005267/PRESENT]
-        participant_count: 15
+      # T2D with MI among women is below min_cell_count, so not shown.
 
   - research_study: palette:study_two
     participant_count: 250

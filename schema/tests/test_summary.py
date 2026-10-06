@@ -113,6 +113,21 @@ def test_a_cell_never_exceeds_a_summary_it_crosses(example):
                 assert cell["participant_count"] <= defined[criterion]["participant_count"], cell["criteria"]
 
 
+def test_a_study_counts_one_granularity(example):
+    parents = {t["curie"]: t.get("parents") or [] for t in example.get("terms") or []}
+
+    def ancestors(curie):
+        found, stack = set(), list(parents.get(curie, []))
+        while stack:
+            found.add(term := stack.pop())
+            stack.extend(parents.get(term, []))
+        return found
+
+    for study in example["studies"]:
+        concepts = {s["condition_concept"] for s, _ in summaries(study) if "condition_concept" in s}
+        assert {c: ancestors(c) & concepts for c in concepts if ancestors(c) & concepts} == {}, study["research_study"]
+
+
 def test_values_repeat_their_concept(example):
     for study in example["studies"]:
         for summary, parent in summaries(study):
