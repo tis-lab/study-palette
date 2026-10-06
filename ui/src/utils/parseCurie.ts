@@ -1,4 +1,4 @@
-type ParsedCategory = {
+type ParsedCurie = {
   raw: string;
   source: string;
   id: string;
@@ -12,9 +12,10 @@ function humanize(id: string): string {
     .trim();
 }
 
-export default function parseCurie(raw: string): ParsedCategory {
+export default function parseCurie(input: string): ParsedCurie {
+  const raw = input.trim();
   const idx = raw.indexOf(":");
-  const source = idx > -1 ? raw.slice(0, idx) : "";
-  const id = idx > -1 ? raw.slice(idx + 1) : raw;
+  const source = idx > -1 ? raw.slice(0, idx).trim() : "";
+  const id = (idx > -1 ? raw.slice(idx + 1) : raw).trim();
   return { raw, source, id, label: humanize(id) };
 }

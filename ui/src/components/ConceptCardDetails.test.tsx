@@ -25,6 +25,7 @@ const parsed = (overrides: Partial<ParsedCurie> = {}) =>
   ({
     label: "Disease",
     source: "biolink",
+    id: "Disease",
     raw: "biolink:Disease",
     ...overrides,
   }) as ParsedCurie;
@@ -45,9 +46,8 @@ function getFields(container: HTMLElement) {
 
 beforeEach(() => {
   mockedParseCurie.mockReset();
-  // Default: treat the value as plain text with no source prefix
   mockedParseCurie.mockImplementation((value) =>
-    parsed({ label: value, source: undefined, raw: value }),
+    parsed({ label: value, source: "", id: value, raw: value }),
   );
 });
 
