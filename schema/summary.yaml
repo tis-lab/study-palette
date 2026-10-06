@@ -2,59 +2,45 @@ id: https://w3id.org/tis-lab/study-palette/summary
 name: study_palette_summary
 title: Study Palette summary statistics
 description: >-
-  Study-level summaries of BDCHM-conformant data, built by extending the BDCHM
-  classes themselves. A ConditionSummary is a Condition with the participant
-  taken out and a count put in: it carries BDCHM's slots, ranges, and enums,
-  so anything that reads a Condition reads a ConditionSummary, and moving from
-  a summary to the records behind it is a filter on the same slot values.
+  Counts per study in place of rows per participant.
 
 
-  Shape. A response holds one StudySummary per study. In BDCHM a record
-  reaches its study through associated_participant and then
-  member_of_research_study; a summary has no participant, so the study is
-  carried by the block it sits in. Within a block, each concept has one
-  summary counting the participants with any value recorded for it, and that
-  summary's values break the count down by value. Crosses between summaries
-  are cells, which refer to summaries by id. The response lists the studies
-  themselves as plain BDCHM ResearchStudy instances, since a study is already
-  study-level and has no participant to take out.
+  Each summary class extends the BDCHM class it summarizes: a ConditionSummary
+  is a Condition with the participant replaced by a count, so it uses BDCHM's
+  slots and enums unchanged.
 
 
-  How to read a count:
+  A response has one StudySummary per study. In it, each concept has a summary
+  counting the participants with any value recorded, and that summary's values
+  split the count by value. Cells count crosses between summaries.
 
 
-  - A concept summary counts participants with at least one record of the
-  concept, whatever its value. UNKNOWN is a recorded value with its own
-  count, so recorded is not the same as known.
-
-  - A value's count is out of its concept's. A participant is counted under
-  every value one of their records carries, so values can overlap (absent
-  before an incident diagnosis, present after) and need not sum to the
-  concept.
-
-  - Hierarchy rolls up for PRESENT and down for ABSENT. Present for a term
-  is present for every ancestor; absent for a term is absent for every
-  descendant, so a participant screened negative at the root of a hierarchy
-  is recorded for every term beneath it. Counts of a term's children
-  therefore overlap and need not sum to the term's own.
-
-  - Measurement bins are facet buckets for selecting participants, not a
-  distribution. Histograms are a separate query.
-
-  - Counts are estimates. They are meant to be read as magnitudes, not
-  reconciled to the participant.
+  Reading the counts:
 
 
-  Identity. A summary's id is derived from its BDCHM slot values, never from
-  its counts or its study, so the same question has the same id in every
-  study and every response from a release. A count is keyed by the release,
-  the response's cohort, the study, and the summary ids it names; responses
-  for narrower cohorts are additive, merged by that key.
+  - Each participant is counted under one value: the first of PRESENT,
+  HISTORICAL, ABSENT, UNKNOWN they have, or for a measurement the bin of their
+  most recent value. Values therefore never sum to more than their concept,
+  except race, which BDCHM allows more than one of.
+
+  - UNKNOWN is a recorded value. Recorded is not the same as known.
+
+  - PRESENT rolls up the term hierarchy and ABSENT rolls down: present for a
+  term is present for its ancestors, absent for a term is absent for its
+  descendants.
+
+  - Counts below min_cell_count are left out.
+
+  - Counts are estimates.
 
 
-  A summary is a subclass of the BDCHM record it summarizes, so one placed
-  where a record is expected passes validation. Summaries and
-  participant-level records must therefore never share a slot or a table.
+  A summary's id depends only on what it counts, so the same summary has the
+  same id in every study and every response from a release. A follow-up
+  response for a narrower cohort merges with the first by id.
+
+
+  Because summaries subclass BDCHM records, the validator accepts a summary
+  where a record belongs. Keep them in separate slots.
 license: MIT
 
 prefixes:
@@ -72,9 +58,7 @@ imports:
 classes:
   Summary:
     mixin: true
-    description: >-
-      What every summary carries, whichever BDCHM class it extends. Its id is
-      required by BDCHM and must be derived from its slot values.
+    description: The fields every summary adds to its BDCHM class.
     slots:
       - id
       - participant_count
@@ -83,10 +67,7 @@ classes:
 
   Binned:
     mixin: true
-    description: >-
-      Restricts a summary to a half-open interval of one numeric value,
-      [bin_low, bin_high). Either end may be absent for an open-ended bin. Which
-      value is binned is fixed by the class that mixes this in.
+    description: A bin [bin_low, bin_high); either end may be left open.
     slots:
       - bin_low
       - bin_high
@@ -97,9 +78,7 @@ classes:
     mixins:
       - Summary
       - Binned
-    description: >-
-      Participants by age_at_index: recorded at the top, bins as its values.
-      Study is not summarized here; it is the StudySummary.
+    description: Participants by age_at_index, binned.
     slots:
       - summarized_slot
     slot_usage:
@@ -114,10 +93,7 @@ classes:
     is_a: Demography
     mixins:
       - Summary
-    description: >-
-      Participants by one Demography slot, named by summarized_slot: recorded
-      at the top, each value of the slot below. race is multivalued in BDCHM,
-      so a participant recorded with two races is counted under each.
+    description: Participants by sex, race, or ethnicity.
     slots:
       - summarized_slot
     slot_usage:
@@ -130,7 +106,7 @@ classes:
     is_a: Condition
     mixins:
       - Summary
-    description: Participants with a condition recorded, and by condition_status.
+    description: Participants with a condition recorded, by condition_status.
     slot_usage:
       associated_participant:
         required: false
@@ -147,7 +123,7 @@ classes:
     is_a: Procedure
     mixins:
       - Summary
-    description: Participants with a procedure recorded, and by procedure_status.
+    description: Participants with a procedure recorded, by procedure_status.
     slot_usage:
       associated_participant:
         required: false
@@ -177,9 +153,9 @@ classes:
       - Summary
       - Binned
     description: >-
-      Participants with a measurement of observation_type, and by bins of
-      value_quantity. range_low and range_high keep their BDCHM meaning, a
-      laboratory's reference range, and are not bins.
+      Participants with a measurement recorded, by bin of value_quantity.
+      range_low and range_high keep their BDCHM meaning (a lab's reference
+      range) and are not bins.
     slot_usage:
       associated_participant:
         required: false
@@ -187,10 +163,7 @@ classes:
         range: MeasurementObservationSummary
 
   Cell:
-    description: >-
-      The participants in a study, within the response's cohort, matching
-      every summary named: a cross-tabulation. A single summary's count is on
-      the summary itself, so a cell always names at least two.
+    description: Participants matching all of two or more summaries.
     slots:
       - criteria
       - participant_count
@@ -198,9 +171,9 @@ classes:
 
   StudySummary:
     description: >-
-      Everything counted in one study. It refers to the study rather than
-      extending it, because its counts depend on the response's cohort and
-      the study does not.
+      The counts for one study. It refers to a BDCHM ResearchStudy rather than
+      extending one, because its counts depend on the cohort and the study
+      does not.
     slots:
       - research_study
       - participant_count
@@ -211,15 +184,10 @@ classes:
       - drug_exposures
       - measurements
       - cells
-    slot_usage:
-      participant_count:
-        description: The number of the study's participants in the cohort.
 
   SummaryResponse:
     tree_root: true
-    description: >-
-      Counts around a seed term for one cohort, study by study, with the term
-      graph connecting the concepts counted.
+    description: Counts for one cohort, study by study, around the term searched for.
     slots:
       - release
       - seed
@@ -233,174 +201,145 @@ classes:
       - records
 
   ParticipantRecords:
-    description: >-
-      Participant-level records returned alongside summaries. Kept in their own
-      class so that no slot holds both records and summaries.
+    description: Participant-level records, kept apart from summaries.
     attributes:
       record_conditions:
-        description: Participant-level Condition records.
+        description: Condition records.
         range: Condition
         multivalued: true
         inlined_as_list: true
       record_demographics:
-        description: Participant-level Demography records.
+        description: Demography records.
         range: Demography
         multivalued: true
         inlined_as_list: true
       record_measurements:
-        description: Participant-level MeasurementObservation records.
+        description: MeasurementObservation records.
         range: MeasurementObservation
         multivalued: true
         inlined_as_list: true
 
 slots:
   participant_count:
-    description: Estimated number of distinct participants matching.
+    description: How many participants match.
     range: integer
     required: true
     minimum_value: 0
   record_count:
-    description: Estimated number of records matching.
+    description: How many records match.
     range: integer
     minimum_value: 0
   values:
-    description: >-
-      The summary broken down by value: the same concept, or the same
-      summarized_slot, with one value set. Each value repeats its parent's
-      concept so that it is a complete record on its own.
+    description: The summary split by value. Each value repeats its parent's concept.
     range: Summary
     multivalued: true
     inlined: true
     inlined_as_list: true
   summarized_slot:
-    description: >-
-      The BDCHM slot a summary counts, for classes with no concept slot to say
-      so. A summary leaving the slot unset counts participants with any value
-      recorded for it.
+    description: The BDCHM slot summarized, for classes with no concept slot.
     range: SummarizedSlotEnum
     required: true
   bin_low:
-    description: Inclusive lower bound of the bin.
+    description: Lower bound, inclusive.
     range: decimal
   bin_high:
-    description: Exclusive upper bound of the bin.
+    description: Upper bound, exclusive.
     range: decimal
   bin_unit:
-    description: >-
-      Unit of bin_low and bin_high, which need not be the unit the binned
-      value is stored in; age_at_index is stored in days and binned in years.
+    description: Unit of the bounds, which may differ from the stored value's (ages are stored in days).
     range: UnitOfMeasurementEnum
   criteria:
-    description: Ids of the summaries a cell crosses, all of which must hold.
+    description: Ids of the summaries a cell crosses.
     range: Summary
     multivalued: true
     inlined: false
     required: true
     minimum_cardinality: 2
   research_study:
-    description: The study a StudySummary counts.
+    description: The study counted.
     range: ResearchStudy
     inlined: false
     required: true
   release:
-    description: >-
-      The index release the counts come from. Counts merge across responses
-      only within one release.
+    description: The index release counted. Responses merge only within a release.
     required: true
   seed:
-    description: The term the user searched on, which the rest of the response is organized around.
+    description: The term searched for.
     range: Term
     inlined: false
     required: true
   cohort:
-    description: >-
-      Ids of the summaries selecting the cohort, all of which must hold. Each
-      is defined in every study block, and every count is within it.
+    description: Ids of the summaries every participant counted must match.
     range: Summary
     multivalued: true
     inlined: false
   min_cell_count:
     description: >-
-      The smallest participant_count a summary or cell in this response may
-      carry. Anything below it is omitted, so cross-tabulation stops where
-      counts stop being meaningful estimates, and a larger cohort is
-      cross-tabulated more deeply than a smaller one. An absent count is
-      therefore either below this or a combination the response did not
-      compute.
+      The smallest count reported. It also decides how far crosses go: they
+      stop where counts fall below it.
     range: integer
     required: true
     minimum_value: 1
   max_cell_criteria:
-    description: >-
-      The most summaries any cell in this response crosses. A size bound, not
-      the stopping rule: min_cell_count decides how deep cross-tabulation
-      goes, and this caps it. Deeper crosses come from a follow-up response.
+    description: The most summaries a cell crosses. Deeper crosses need a follow-up response.
     range: integer
     required: true
     minimum_value: 2
   terms:
-    description: Every term the response refers to, so each CURIE resolves without a vocabulary lookup.
+    description: Every term referred to, so no CURIE needs a lookup.
     range: Term
     multivalued: true
     inlined_as_list: true
   relations:
-    description: Cross-links between terms, beyond each term's hierarchy.
+    description: Links between terms beyond their hierarchy.
     range: TermRelation
     multivalued: true
     inlined_as_list: true
   research_studies:
-    description: The studies counted, as BDCHM ResearchStudy instances.
+    description: The studies counted.
     range: ResearchStudy
     multivalued: true
     inlined_as_list: true
   studies:
-    description: Counts, one block per study.
+    description: One block of counts per study.
     range: StudySummary
     multivalued: true
     inlined_as_list: true
   participants:
-    description: Summaries of age.
     range: ParticipantSummary
     multivalued: true
     inlined_as_list: true
   demographics:
-    description: Summaries of sex, race, and ethnicity.
     range: DemographySummary
     multivalued: true
     inlined_as_list: true
   conditions:
-    description: Summaries of conditions.
     range: ConditionSummary
     multivalued: true
     inlined_as_list: true
   procedures:
-    description: Summaries of procedures.
     range: ProcedureSummary
     multivalued: true
     inlined_as_list: true
   drug_exposures:
-    description: Summaries of drug exposures.
     range: DrugExposureSummary
     multivalued: true
     inlined_as_list: true
   measurements:
-    description: Summaries of measurements.
     range: MeasurementObservationSummary
     multivalued: true
     inlined_as_list: true
   cells:
-    description: Cross-tabulations among the study's summaries.
     range: Cell
     multivalued: true
     inlined_as_list: true
   records:
-    description: Participant-level records, for a caller authorized to see them.
+    description: Participant-level records, for callers authorized to see them.
     range: ParticipantRecords
     inlined: true
 
 enums:
   SummarizedSlotEnum:
-    description: BDCHM slots summarized without a concept slot of their own.
     permissible_values:
       sex:
       race:

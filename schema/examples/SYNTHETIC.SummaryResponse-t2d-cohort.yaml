@@ -1,12 +1,9 @@
-# SYNTHETIC. Illustrative counts shaped like the synthetic corpus's two
-# fictional studies; not derived from participant data and not computed from
-# the corpus. Exists to show the schema can carry this response, not to
-# report numbers.
+# SYNTHETIC: illustrative counts for two fictional studies, not derived from
+# participant data.
 #
-# A user searched "type 2 diabetes". The cohort is participants with at least
-# one fasting glucose measurement. Related terms come from the term graph:
-# T2D's parent diabetes mellitus has fasting glucose as a curated biomarker,
-# and the heart disorder subtree is offered for drill-down.
+# A search for type 2 diabetes, over participants with a fasting glucose
+# measurement. Glucose is related through a curated biomarker link; heart
+# disorder and two of its subtypes are offered for drill-down.
 
 release: example-release
 seed: MONDO:0005148
@@ -36,10 +33,6 @@ terms:
     parents: [MONDO:0024643]
   - curie: MONDO:0005252
     label: heart failure
-    vocabulary: MONDO
-    parents: [MONDO:0005267]
-  - curie: MONDO:0001302
-    label: hypertensive heart disease
     vocabulary: MONDO
     parents: [MONDO:0005267]
   - curie: OMOP:4156660
@@ -93,8 +86,7 @@ studies:
             participant_count: 185
 
     demographics:
-      # Five participants with sex recorded as UNKNOWN are below
-      # min_cell_count, so that value is omitted: 475 of 480 shown.
+      # 5 participants have sex UNKNOWN, below min_cell_count, so not shown.
       - id: palette:demography/sex
         summarized_slot: sex
         participant_count: 480
@@ -107,7 +99,6 @@ studies:
             summarized_slot: sex
             sex: MALE
             participant_count: 245
-      # Race is missing for ten participants: recorded for 470 of 480.
       - id: palette:demography/race
         summarized_slot: race
         participant_count: 470
@@ -142,8 +133,6 @@ studies:
             participant_count: 410
 
     conditions:
-      # Recorded for 470 of 480. PRESENT and ABSENT overlap by the 15
-      # participants diagnosed mid-study.
       - id: palette:condition/MONDO_0005148
         condition_concept: MONDO:0005148
         participant_count: 470
@@ -156,10 +145,7 @@ studies:
           - id: palette:condition/MONDO_0005148/ABSENT
             condition_concept: MONDO:0005148
             condition_status: ABSENT
-            participant_count: 395
-      # Rolled up over the subtree: PRESENT from any descendant, ABSENT
-      # carried down to every descendant, so each child below is recorded
-      # for everyone heart disorder is.
+            participant_count: 380
       - id: palette:condition/MONDO_0005267
         condition_concept: MONDO:0005267
         participant_count: 480
@@ -171,7 +157,7 @@ studies:
           - id: palette:condition/MONDO_0005267/ABSENT
             condition_concept: MONDO:0005267
             condition_status: ABSENT
-            participant_count: 380
+            participant_count: 365
       - id: palette:condition/MONDO_0005068
         condition_concept: MONDO:0005068
         participant_count: 480
@@ -196,22 +182,8 @@ studies:
             condition_concept: MONDO:0005252
             condition_status: ABSENT
             participant_count: 445
-      - id: palette:condition/MONDO_0001302
-        condition_concept: MONDO:0001302
-        participant_count: 480
-        values:
-          - id: palette:condition/MONDO_0001302/PRESENT
-            condition_concept: MONDO:0001302
-            condition_status: PRESENT
-            participant_count: 60
-          - id: palette:condition/MONDO_0001302/ABSENT
-            condition_concept: MONDO:0001302
-            condition_status: ABSENT
-            participant_count: 420
 
     measurements:
-      # Everyone in the cohort has one, by construction. Bins overlap: a
-      # participant is in every bin one of their measurements falls in.
       - id: palette:measurement/FAST_GLUC_BLD
         observation_type: FAST_GLUC_BLD
         participant_count: 480
@@ -227,13 +199,13 @@ studies:
             bin_low: 70
             bin_high: 100
             bin_unit: mg/dL
-            participant_count: 350
+            participant_count: 240
           - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 100
             bin_high: 126
             bin_unit: mg/dL
-            participant_count: 215
+            participant_count: 112
           - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 126
@@ -253,7 +225,7 @@ studies:
         participant_count: 45
       - criteria: [palette:condition/MONDO_0005267/PRESENT, palette:demography/sex/MALE]
         participant_count: 70
-      # Low glucose among men is below min_cell_count, so only women appear.
+      # Low glucose among men is below min_cell_count, so not shown.
       - criteria: [palette:measurement/FAST_GLUC_BLD/-70mg_dL, palette:demography/sex/FEMALE]
         participant_count: 11
       - criteria: [palette:measurement/FAST_GLUC_BLD/126-mg_dL, palette:demography/sex/FEMALE]
@@ -264,7 +236,7 @@ studies:
         participant_count: 70
       - criteria: [palette:participant/age_at_index/45-55a, palette:demography/sex/MALE]
         participant_count: 60
-      # Concept-level crosses are co-availability: both recorded.
+      # Crossing two concepts counts participants with both recorded.
       - criteria: [palette:condition/MONDO_0005148, palette:condition/MONDO_0005267]
         participant_count: 470
 
@@ -342,7 +314,6 @@ studies:
             participant_count: 390
 
     conditions:
-      # Recorded for everyone, but 15 answered UNKNOWN: recorded is not known.
       - id: palette:condition/MONDO_0005148
         condition_concept: MONDO:0005148
         participant_count: 460
@@ -355,7 +326,7 @@ studies:
           - id: palette:condition/MONDO_0005148/ABSENT
             condition_concept: MONDO:0005148
             condition_status: ABSENT
-            participant_count: 370
+            participant_count: 365
           - id: palette:condition/MONDO_0005148/UNKNOWN
             condition_concept: MONDO:0005148
             condition_status: UNKNOWN
@@ -371,7 +342,7 @@ studies:
           - id: palette:condition/MONDO_0005267/ABSENT
             condition_concept: MONDO:0005267
             condition_status: ABSENT
-            participant_count: 370
+            participant_count: 365
       - id: palette:condition/MONDO_0005068
         condition_concept: MONDO:0005068
         participant_count: 460
@@ -396,18 +367,6 @@ studies:
             condition_concept: MONDO:0005252
             condition_status: ABSENT
             participant_count: 435
-      - id: palette:condition/MONDO_0001302
-        condition_concept: MONDO:0001302
-        participant_count: 460
-        values:
-          - id: palette:condition/MONDO_0001302/PRESENT
-            condition_concept: MONDO:0001302
-            condition_status: PRESENT
-            participant_count: 50
-          - id: palette:condition/MONDO_0001302/ABSENT
-            condition_concept: MONDO:0001302
-            condition_status: ABSENT
-            participant_count: 410
 
     measurements:
       - id: palette:measurement/FAST_GLUC_BLD
@@ -425,13 +384,13 @@ studies:
             bin_low: 70
             bin_high: 100
             bin_unit: mg/dL
-            participant_count: 340
+            participant_count: 230
           - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 100
             bin_high: 126
             bin_unit: mg/dL
-            participant_count: 205
+            participant_count: 93
           - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 126
@@ -460,8 +419,7 @@ studies:
       - criteria: [palette:condition/MONDO_0005148, palette:condition/MONDO_0005267]
         participant_count: 460
 
-# Participant-level records, for a caller authorized to see them. Never in
-# the same slot as a summary.
+# Participant-level records sit apart from summaries, for authorized callers.
 records:
   record_conditions:
     - id: palette:example/condition-1
@@ -477,10 +435,8 @@ records:
       race: [WHITE]
       ethnicity: NOT_HISPANIC_OR_LATINO
   record_measurements:
+    # No value_quantity: BDCHM v1.3.0 doesn't declare it inlined (an upstream fix).
     - id: palette:example/glucose-1
       associated_participant: palette:example/participant-1
       observation_type: FAST_GLUC_BLD
       age_at_observation: 22280
-      # value_quantity omitted: BDCHM v1.3.0 does not declare it inlined, so a
-      # strict validator expects a Quantity id where real data nests the
-      # Quantity. An upstream fix, not one to work around here.

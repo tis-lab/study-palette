@@ -1,9 +1,9 @@
-# SYNTHETIC. Illustrative counts; not derived from participant data.
+# SYNTHETIC: illustrative counts for two fictional studies, not derived from
+# participant data.
 #
-# The follow-up a client fetches in the background once the user selects
-# female in SYNTHETIC.SummaryResponse-t2d-cohort.yaml: the same cohort with
-# one summary added. Merged by key, it extends that response one level deeper
-# around female and agrees with it wherever the two overlap.
+# The follow-up fetched when the user selects female in
+# SYNTHETIC.SummaryResponse-t2d-cohort.yaml: the same cohort, narrowed to
+# female. It merges with that response by id, and their shared counts agree.
 
 release: example-release
 seed: MONDO:0005148
@@ -76,7 +76,6 @@ studies:
         condition_concept: MONDO:0005148
         participant_count: 225
         values:
-          # Equal to the base response's T2D present x female cell.
           - id: palette:condition/MONDO_0005148/PRESENT
             condition_concept: MONDO:0005148
             condition_status: PRESENT
@@ -84,7 +83,7 @@ studies:
           - id: palette:condition/MONDO_0005148/ABSENT
             condition_concept: MONDO:0005148
             condition_status: ABSENT
-            participant_count: 192
+            participant_count: 185
       - id: palette:condition/MONDO_0005267
         condition_concept: MONDO:0005267
         participant_count: 230
@@ -96,7 +95,7 @@ studies:
           - id: palette:condition/MONDO_0005267/ABSENT
             condition_concept: MONDO:0005267
             condition_status: ABSENT
-            participant_count: 190
+            participant_count: 185
 
     measurements:
       - id: palette:measurement/FAST_GLUC_BLD
@@ -113,13 +112,13 @@ studies:
             bin_low: 70
             bin_high: 100
             bin_unit: mg/dL
-            participant_count: 168
+            participant_count: 115
           - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 100
             bin_high: 126
             bin_unit: mg/dL
-            participant_count: 103
+            participant_count: 54
           - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 126
@@ -127,7 +126,6 @@ studies:
             participant_count: 50
 
     cells:
-      # Three-way in the base response's terms: what this follow-up adds.
       - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:measurement/FAST_GLUC_BLD/126-mg_dL]
         participant_count: 28
       - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:condition/MONDO_0005267/PRESENT]
@@ -167,7 +165,7 @@ studies:
             participant_count: 24
 
     conditions:
-      # UNKNOWN among women is below min_cell_count, so omitted.
+      # 8 women have T2D UNKNOWN, below min_cell_count, so not shown.
       - id: palette:condition/MONDO_0005148
         condition_concept: MONDO:0005148
         participant_count: 250
@@ -179,7 +177,7 @@ studies:
           - id: palette:condition/MONDO_0005148/ABSENT
             condition_concept: MONDO:0005148
             condition_status: ABSENT
-            participant_count: 205
+            participant_count: 204
       - id: palette:condition/MONDO_0005267
         condition_concept: MONDO:0005267
         participant_count: 250
@@ -191,7 +189,7 @@ studies:
           - id: palette:condition/MONDO_0005267/ABSENT
             condition_concept: MONDO:0005267
             condition_status: ABSENT
-            participant_count: 200
+            participant_count: 205
 
     measurements:
       - id: palette:measurement/FAST_GLUC_BLD
@@ -208,13 +206,13 @@ studies:
             bin_low: 70
             bin_high: 100
             bin_unit: mg/dL
-            participant_count: 180
+            participant_count: 120
           - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 100
             bin_high: 126
             bin_unit: mg/dL
-            participant_count: 110
+            participant_count: 70
           - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
             observation_type: FAST_GLUC_BLD
             bin_low: 126

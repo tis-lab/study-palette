@@ -2,10 +2,9 @@ id: https://w3id.org/tis-lab/study-palette/terms
 name: study_palette_terms
 title: Study Palette term graph
 description: >-
-  The terms a summary refers to, each with its place in the hierarchy of the
-  ontology that owns it, and the cross-links between them. Built during
-  ingestion from the source ontologies and the knowledge graph and published
-  with the release, so that serving a summary never calls a vocabulary service.
+  The terms summaries refer to, their hierarchy, and the links between them.
+  Built at ingestion and published with each release, so serving a summary
+  never calls a vocabulary service.
 license: MIT
 
 prefixes:
@@ -21,7 +20,7 @@ imports:
 
 classes:
   Term:
-    description: A concept from a source vocabulary, identified by the CURIE that vocabulary assigns it.
+    description: A concept from a source vocabulary.
     slots:
       - curie
       - label
@@ -29,10 +28,7 @@ classes:
       - parents
 
   TermRelation:
-    description: >-
-      A link between two terms that is not part of either term's ontology
-      hierarchy, such as a disease and the measurement used to diagnose it.
-      Hierarchy is carried by Term.parents; this is everything else.
+    description: A link between two terms outside their hierarchy, such as a disease and its biomarker.
     slots:
       - subject
       - predicate
@@ -44,13 +40,11 @@ slots:
     identifier: true
     range: uriorcurie
   label:
-    description: The label published by the vocabulary that owns the term. Never written by hand.
+    description: The label the owning vocabulary publishes.
   vocabulary:
-    description: The vocabulary that owns the term, e.g. MONDO, HP, SNOMED.
+    description: The owning vocabulary, e.g. MONDO.
   parents:
-    description: >-
-      Direct parents in the owning ontology. Children are not stored: they are
-      the inverse of this slot, and storing both invites the two to disagree.
+    description: Direct parents in the owning ontology. Children are the inverse, so are not stored.
     range: Term
     multivalued: true
     inlined: false
@@ -67,7 +61,7 @@ slots:
     inlined: false
     required: true
   relation_source:
-    description: How we know the relation, so a curated assertion never looks like a published one.
+    description: Where the link comes from, so a curated link never passes for a published one.
     range: RelationSourceEnum
     required: true
 
@@ -77,4 +71,4 @@ enums:
       KG:
         description: Published in the knowledge graph.
       CURATED:
-        description: Asserted by this project and not yet published upstream.
+        description: Asserted by this project.
