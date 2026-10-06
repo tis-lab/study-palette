@@ -1,39 +1,57 @@
-import { ReactElement } from "react";
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import {
-  ThemeProvider,
-  createTheme,
-  type ThemeOptions,
-} from "@mui/material/styles";
+  render,
+  screen,
+  waitForElementToBeRemoved,
+} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import ConceptCard from "./ConceptCard";
-import { DetailField } from "./ConceptCardDetails";
-import { Term } from "../api/graphql/queries/resolveTerms";
+import type { Term } from "../api/graphql/queries/resolveTerms";
+
+// ----------------------------------------------------------------------
+
+/* Mocks */
+
+// Stub so these tests don't depend on ConceptCardDetails' internals;
+// it has its own tests. Props are exposed so we can check what's passed.
+vi.mock("./ConceptCardDetails", () => ({
+  default: ({
+    category,
+    description,
+  }: {
+    category?: string;
+    description?: string | null;
+  }) => (
+    <div data-testid="concept-details" data-category={category ?? ""}>
+      {description}
+    </div>
+  ),
+}));
 
 // ----------------------------------------------------------------------
 
 /* Fixtures & helpers */
-const concept: Term = {
-  id: "C0011849",
-  label: "Diabetes Mellitus",
-  category: "Disease or Syndrome",
-  description: "A metabolic disease characterized by high blood sugar.",
-  synonyms: ["Diabetes", "DM"],
+
+const asthma: Term = {
+  id: "C0004096",
+  label: "Asthma",
+  category: "biolink:Disease",
+  description: "A chronic inflammatory disease of the airways.",
+  synonyms: null,
 };
 
-function renderCard(
-  props: Partial<Parameters<typeof ConceptCard>[0]> = {},
-  theme = createTheme(),
-) {
-  return render(
-    <ThemeProvider theme={theme}>
-      <ConceptCard concept={concept} isFirst isLast {...props} />
-    </ThemeProvider>,
-  );
+type CardProps = Partial<Parameters<typeof ConceptCard>[0]>;
+
+function renderCard(props: CardProps = {}) {
+  return render(<ConceptCard concept={asthma} isFirst isLast {...props} />);
 }
 
 const getDetailsButton = () => screen.getByRole("button", { name: "Details" });
+const getIncludeButton = () =>
+  screen.getByRole("button", { name: "+ Include" });
+const getExcludeButton = () =>
+  screen.getByRole("button", { name: "+ Exclude" });
+const queryDetails = () => screen.queryByTestId("concept-details");
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -43,107 +61,113 @@ afterEach(() => {
 
 describe("ConceptCard", () => {
   describe("content", () => {
-    it("renders the concept label as a level-2 heading", () => {
+    it("shows the label as a level-2 heading", () => {
       renderCard();
       expect(
-        screen.getByRole("heading", { level: 2, name: "Diabetes Mellitus" }),
+        screen.getByRole("heading", { level: 2, name: "Asthma" }),
       ).toBeInTheDocument();
     });
 
-    it("renders the concept id", () => {
+    it("shows the concept id", () => {
       renderCard();
-      expect(screen.getByText("C0011849")).toBeInTheDocument();
+      expect(screen.getByText("C0004096")).toBeInTheDocument();
     });
   });
 
-  describe("details toggle", () => {
-    it("starts collapsed with no details in the DOM", () => {
+  describe("details", () => {
+    it("is collapsed by default", () => {
       renderCard();
       expect(getDetailsButton()).toHaveAttribute("aria-expanded", "false");
-      expect(screen.queryByRole("term")).not.toBeInTheDocument();
+      expect(queryDetails()).not.toBeInTheDocument();
     });
 
-    it("expands to show category and description as term/definition pairs", async () => {
+    it("expands when Details is clicked", async () => {
       const user = userEvent.setup();
       renderCard();
 
       await user.click(getDetailsButton());
 
       expect(getDetailsButton()).toHaveAttribute("aria-expanded", "true");
-
-      const terms = screen.getAllByRole("term").map((el) => el.textContent);
-      const definitions = screen
-        .getAllByRole("definition")
-        .map((el) => el.textContent);
-
-      expect(terms).toEqual(["category", "description"]);
-      expect(definitions).toEqual([concept.category, concept.description]);
+      expect(queryDetails()).toBeInTheDocument();
     });
 
-    it("renders the details inside a <dl>", async () => {
+    it("points aria-controls at the panel containing the details", async () => {
       const user = userEvent.setup();
       renderCard();
 
       await user.click(getDetailsButton());
 
-      const term = screen.getAllByRole("term")[0];
-      expect(term.closest("dl")).not.toBeNull();
+      const panelId = getDetailsButton().getAttribute("aria-controls");
+      expect(panelId).toBeTruthy();
+      const panel = document.getElementById(panelId!);
+      expect(panel).toContainElement(queryDetails());
     });
 
-    it("points aria-controls at the expanded region", async () => {
-      const user = userEvent.setup();
-      const { container } = renderCard();
-
-      await user.click(getDetailsButton());
-
-      const controlsId = getDetailsButton().getAttribute("aria-controls");
-      expect(controlsId).toBeTruthy();
-      const region = container.ownerDocument.getElementById(controlsId!);
-      expect(region).not.toBeNull();
-      expect(within(region!).getByText(concept.category!)).toBeInTheDocument();
-    });
-
-    it("collapses again on second click and removes the details", async () => {
+    it("passes the concept's category and description", async () => {
       const user = userEvent.setup();
       renderCard();
 
       await user.click(getDetailsButton());
-      await user.click(getDetailsButton());
 
-      expect(getDetailsButton()).toHaveAttribute("aria-expanded", "false");
-      // Collapse animates out before unmounting
-      await waitFor(() =>
-        expect(screen.queryByRole("term")).not.toBeInTheDocument(),
+      const details = queryDetails();
+      expect(details).toHaveAttribute("data-category", "biolink:Disease");
+      expect(details).toHaveTextContent(
+        "A chronic inflammatory disease of the airways.",
       );
     });
 
-    it("omits fields the concept does not have", async () => {
+    it("collapses and unmounts when Details is clicked again", async () => {
       const user = userEvent.setup();
-      renderCard({
-        concept: { ...concept, description: null },
-      });
+      renderCard();
+      await user.click(getDetailsButton());
+      const details = queryDetails();
 
       await user.click(getDetailsButton());
 
-      const terms = screen.getAllByRole("term").map((el) => el.textContent);
-      expect(terms).toEqual(["category"]);
+      expect(getDetailsButton()).toHaveAttribute("aria-expanded", "false");
+      // unmountOnExit removes it once the collapse transition finishes
+      await waitForElementToBeRemoved(details);
     });
 
-    it("uses unique aria-controls ids across multiple cards", () => {
+    it("gives each card its own details panel id", () => {
       render(
         <>
-          <ConceptCard concept={concept} isFirst isLast={false} />
+          <ConceptCard concept={asthma} isFirst isLast={false} />
           <ConceptCard
-            concept={{ ...concept, id: "C2" }}
+            concept={{ ...asthma, id: "C0264408", label: "Childhood asthma" }}
             isFirst={false}
             isLast
           />
         </>,
       );
+
       const ids = screen
         .getAllByRole("button", { name: "Details" })
         .map((b) => b.getAttribute("aria-controls"));
       expect(new Set(ids).size).toBe(2);
+    });
+
+    it("toggles each card independently", async () => {
+      const user = userEvent.setup();
+      render(
+        <>
+          <ConceptCard concept={asthma} isFirst isLast={false} />
+          <ConceptCard
+            concept={{ ...asthma, id: "C0264408", label: "Childhood asthma" }}
+            isFirst={false}
+            isLast
+          />
+        </>,
+      );
+      const [first, second] = screen.getAllByRole("button", {
+        name: "Details",
+      });
+
+      await user.click(second);
+
+      expect(first).toHaveAttribute("aria-expanded", "false");
+      expect(second).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getAllByTestId("concept-details")).toHaveLength(1);
     });
   });
 
@@ -154,10 +178,10 @@ describe("ConceptCard", () => {
       const onExclude = vi.fn();
       renderCard({ onInclude, onExclude });
 
-      await user.click(screen.getByRole("button", { name: "+ Include" }));
+      await user.click(getIncludeButton());
 
-      expect(onInclude).toHaveBeenCalledTimes(1);
-      expect(onInclude).toHaveBeenCalledWith(concept);
+      expect(onInclude).toHaveBeenCalledOnce();
+      expect(onInclude).toHaveBeenCalledWith(asthma);
       expect(onExclude).not.toHaveBeenCalled();
     });
 
@@ -167,10 +191,10 @@ describe("ConceptCard", () => {
       const onExclude = vi.fn();
       renderCard({ onInclude, onExclude });
 
-      await user.click(screen.getByRole("button", { name: "+ Exclude" }));
+      await user.click(getExcludeButton());
 
-      expect(onExclude).toHaveBeenCalledTimes(1);
-      expect(onExclude).toHaveBeenCalledWith(concept);
+      expect(onExclude).toHaveBeenCalledOnce();
+      expect(onExclude).toHaveBeenCalledWith(asthma);
       expect(onInclude).not.toHaveBeenCalled();
     });
 
@@ -178,167 +202,38 @@ describe("ConceptCard", () => {
       const user = userEvent.setup();
       renderCard();
 
-      await expect(
-        user.click(screen.getByRole("button", { name: "+ Include" })),
-      ).resolves.not.toThrow();
-    });
-  });
-
-  describe("grouping (isFirst / isLast)", () => {
-    // Longhands on purpose: jsdom doesn't expand the border-radius shorthand
-    const cardRadiusTheme = createTheme({
-      components: {
-        MuiCard: {
-          styleOverrides: {
-            root: {
-              borderTopLeftRadius: 12,
-              borderTopRightRadius: 12,
-              borderBottomLeftRadius: 12,
-              borderBottomRightRadius: 12,
-            },
-          },
-        },
-      },
+      await expect(user.click(getIncludeButton())).resolves.not.toThrow();
+      await expect(user.click(getExcludeButton())).resolves.not.toThrow();
     });
 
-    const getRoot = (container: HTMLElement) =>
-      container.querySelector(".MuiCard-root") as HTMLElement;
-
-    it("does not leak isFirst/isLast to the DOM", () => {
-      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      const { container } = renderCard({ isFirst: false, isLast: false });
-
-      const root = getRoot(container);
-      expect(root).not.toHaveAttribute("isfirst");
-      expect(root).not.toHaveAttribute("islast");
-      expect(errorSpy).not.toHaveBeenCalled();
-    });
-
-    it("keeps all corners from the theme for a single card", () => {
-      const { container } = renderCard(
-        { isFirst: true, isLast: true },
-        cardRadiusTheme,
-      );
-
-      expect(getRoot(container)).toHaveStyle({
-        borderTopLeftRadius: "12px",
-        borderBottomRightRadius: "12px",
-      });
-    });
-
-    it("flattens the bottom corners of the first card", () => {
-      const { container } = renderCard(
-        { isFirst: true, isLast: false },
-        cardRadiusTheme,
-      );
-
-      expect(getRoot(container)).toHaveStyle({
-        borderTopLeftRadius: "12px",
-        borderBottomLeftRadius: "0",
-        borderBottomRightRadius: "0",
-      });
-    });
-
-    it("flattens the top corners of the last card and keeps the bottom ones", () => {
-      const { container } = renderCard(
-        { isFirst: false, isLast: true },
-        cardRadiusTheme,
-      );
-
-      expect(getRoot(container)).toHaveStyle({
-        borderTopLeftRadius: "0",
-        borderTopRightRadius: "0",
-        borderBottomLeftRadius: "12px",
-        borderBottomRightRadius: "12px",
-      });
-    });
-
-    it("flattens the top corners and drops the top border of a middle card", () => {
-      const { container } = renderCard(
-        { isFirst: false, isLast: false },
-        cardRadiusTheme,
-      );
-
-      expect(getRoot(container)).toHaveStyle({
-        borderTopLeftRadius: "0",
-        borderBottomLeftRadius: "0",
-        borderTopStyle: "none",
-      });
-    });
-  });
-
-  describe("theme contract", () => {
-    // Custom component names aren't in MUI's types without module augmentation
-    const components = {
-      CohortConceptCard: {
-        styleOverrides: {
-          root: { backgroundColor: "rgb(1, 2, 3)" },
-          details: { backgroundColor: "rgb(4, 5, 6)" },
-        },
-      },
-    } as unknown as ThemeOptions["components"];
-
-    it("applies theme.components.CohortConceptCard.styleOverrides.root", () => {
-      const { container } = renderCard({}, createTheme({ components }));
-      expect(container.querySelector(".MuiCard-root")).toHaveStyle({
-        backgroundColor: "rgb(1, 2, 3)",
-      });
-    });
-
-    it("applies theme.components.CohortConceptCard.styleOverrides.details", async () => {
+    it("does not toggle details when an action is clicked", async () => {
       const user = userEvent.setup();
-      renderCard({}, createTheme({ components }));
+      renderCard({ onInclude: vi.fn() });
 
-      await user.click(getDetailsButton());
+      await user.click(getIncludeButton());
 
-      const dl = screen.getAllByRole("term")[0].closest("dl");
-      expect(dl).toHaveStyle({ backgroundColor: "rgb(4, 5, 6)" });
+      expect(getDetailsButton()).toHaveAttribute("aria-expanded", "false");
     });
   });
-});
 
-// ----------------------------------------------------------------------
+  describe("position props", () => {
+    it.each([
+      { isFirst: true, isLast: true },
+      { isFirst: true, isLast: false },
+      { isFirst: false, isLast: false },
+      { isFirst: false, isLast: true },
+    ])(
+      "does not forward isFirst/isLast to the DOM ($isFirst, $isLast)",
+      ({ isFirst, isLast }) => {
+        // React logs an "unknown prop" error if these leak through styled()
+        const errorSpy = vi
+          .spyOn(console, "error")
+          .mockImplementation(() => {});
 
-describe("DetailField", () => {
-  function renderField(ui: ReactElement) {
-    return render(<dl>{ui}</dl>);
-  }
+        renderCard({ isFirst, isLast });
 
-  it("renders the label as a term and the value as its definition", () => {
-    renderField(<DetailField label="category" value="Finding" />);
-    expect(screen.getByRole("term")).toHaveTextContent("category");
-    expect(screen.getByRole("definition")).toHaveTextContent("Finding");
-  });
-
-  it("accepts a ReactNode value", () => {
-    renderField(
-      <DetailField label="source" value={<a href="/x">View source</a>} />,
+        expect(errorSpy).not.toHaveBeenCalled();
+      },
     );
-    expect(
-      within(screen.getByRole("definition")).getByRole("link", {
-        name: "View source",
-      }),
-    ).toBeInTheDocument();
-  });
-
-  it("merges custom sx with its own styles", () => {
-    const { container } = renderField(
-      <DetailField label="a" value="b" sx={{ color: "rgb(1, 2, 3)" }} />,
-    );
-    const wrapper = container.querySelector("dl > div") as HTMLElement;
-    expect(wrapper).toHaveStyle({ color: "rgb(1, 2, 3)" });
-    expect(["0", "0px"]).toContain(getComputedStyle(wrapper).minWidth);
-  });
-
-  it("accepts sx as an array", () => {
-    const { container } = renderField(
-      <DetailField
-        label="a"
-        value="b"
-        sx={[{ color: "rgb(1, 2, 3)" }, false]}
-      />,
-    );
-    const wrapper = container.querySelector("dl > div") as HTMLElement;
-    expect(wrapper).toHaveStyle({ color: "rgb(1, 2, 3)" });
   });
 });

@@ -1,8 +1,9 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import {
   Box,
   Button,
   CircularProgress,
+  Pagination,
   Stack,
   Typography,
 } from "@mui/material";
@@ -13,25 +14,36 @@ import { useConceptSearch } from "../hooks/useConceptSearch";
 
 // ----------------------------------------------------------------------
 
+const PAGE_SIZE = 20;
+
 export default function Search() {
-  // Unique per instance, so it can't collide with ids in the host app
+  // Unique per instance, so it can't collide with ids in the app
   const searchId = useId();
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState("");
+  const [page, setPage] = useState(1);
 
   // Top level: runs on every render, fetches only when `submitted` changes
-  const { data, isLoading, isError, error } = useConceptSearch(submitted);
+  const { data, isLoading, isError, error } = useConceptSearch(submitted, {
+    limit: PAGE_SIZE,
+    offset: (page - 1) * PAGE_SIZE,
+  });
 
   const items = data?.items ?? [];
   const showSummary = submitted !== "" && !isLoading && !isError;
+  const pageCount = data ? Math.ceil(data.total / data.limit) : 0;
 
-  console.log(data);
+  const start = data && data.offset + 1;
+  const end = data && data.offset + data.items.length;
+
+  useEffect(() => {
+    setPage(1);
+  }, [submitted]);
 
   return (
     <Stack spacing={1}>
       <Notification open={isError} severity="error" message={error?.message} />
 
-      {/* Search controls stay mounted while results load */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Searchbar
           id={searchId}
@@ -50,41 +62,65 @@ export default function Search() {
         </Button>
       </Box>
 
-      {isLoading && <CircularProgress aria-label="Searching concepts" />}
+      {isLoading ? (
+        <CircularProgress aria-label="Searching concepts" />
+      ) : (
+        <>
+          {showSummary && (
+            <Box role="status" aria-live="polite">
+              <Typography variant="body2" color="text.secondary">
+                {items.length > 0 ? (
+                  <>
+                    Showing {start?.toLocaleString()}–{end?.toLocaleString()} of{" "}
+                    {data?.total.toLocaleString()}{" "}
+                    {data?.total === 1 ? "concept" : "concepts"} matching{" "}
+                    <strong>"{submitted}"</strong>
+                  </>
+                ) : (
+                  <>
+                    No concepts match <strong>"{submitted}"</strong>. Try a
+                    different term.
+                  </>
+                )}
+              </Typography>
+            </Box>
+          )}
 
-      {/* Always mounted so screen readers announce changes */}
-      <Box role="status" aria-live="polite">
-        {showSummary && (
-          <Typography variant="body2" color="text.secondary">
-            {items.length > 0 ? (
-              <>
-                Showing {items.length} of {data?.total ?? 0}{" "}
-                {items.length === 1 ? "concept" : "concepts"} matching{" "}
-                <strong>"{submitted}"</strong>
-              </>
-            ) : (
-              <>
-                No concepts match <strong>"{submitted}"</strong>. Try a
-                different term.
-              </>
-            )}
-          </Typography>
-        )}
-      </Box>
-
-      {!isLoading && items.length > 0 && (
-        <Stack>
-          {items.map((c, i) => (
-            <ConceptCard
-              key={c.id}
-              concept={c}
-              isFirst={i === 0}
-              isLast={i === items.length - 1}
-              // onInclude={onInclude}
-              // onExclude={onExclude}
-            />
-          ))}
-        </Stack>
+          {items.length > 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
+              }}
+            >
+              <Stack width="100%">
+                {items.map((c, i) => (
+                  <ConceptCard
+                    key={c.id}
+                    concept={c}
+                    isFirst={i === 0}
+                    isLast={i === items.length - 1}
+                    // onInclude={onInclude}
+                    // onExclude={onExclude}
+                  />
+                ))}
+              </Stack>
+              {pageCount > 1 && (
+                <Pagination
+                  count={pageCount}
+                  page={page}
+                  onChange={(_, value) => {
+                    setPage(value);
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  color="primary"
+                />
+              )}
+            </Box>
+          )}
+        </>
       )}
     </Stack>
   );

@@ -3,7 +3,7 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Search from "./Search";
 import { useConceptSearch } from "../hooks/useConceptSearch";
-import { Term } from "../api/graphql/queries/resolveTerms";
+import type { Term } from "../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
@@ -31,17 +31,28 @@ vi.mock("../components/Notification", () => ({
     ) : null,
 }));
 
+// jsdom doesn't implement scrollTo; stub it so page changes don't log errors
+const scrollToSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+
 const mockedUseConceptSearch = vi.mocked(useConceptSearch);
 
 type SearchResult = ReturnType<typeof useConceptSearch>;
 
+/** Only the fields Search reads from the response. */
+type SearchData = Pick<
+  NonNullable<SearchResult["data"]>,
+  "items" | "total" | "limit" | "offset"
+>;
+
 /** Only the fields Search reads; the rest of UseQueryResult is irrelevant here. */
 type SearchState = {
-  data: Pick<NonNullable<SearchResult["data"]>, "items"> | undefined;
+  data: SearchData | undefined;
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
 };
+
+const PAGE_SIZE = 20;
 
 const idle: SearchState = {
   data: undefined,
@@ -62,6 +73,24 @@ function mockSearch(state: Partial<SearchState>) {
   );
 }
 
+/**
+ * Serves `all` one page at a time, honoring the limit/offset Search
+ * passes in, like the real server would.
+ */
+function mockPagedSearch(all: Term[]) {
+  mockedUseConceptSearch.mockImplementation((term, options) => {
+    if (!term) return idle as unknown as SearchResult;
+    const { limit = PAGE_SIZE, offset = 0 } = options ?? {};
+    const data: SearchData = {
+      items: all.slice(offset, offset + limit),
+      total: all.length,
+      limit,
+      offset,
+    };
+    return { ...idle, data } as unknown as SearchResult;
+  });
+}
+
 // ----------------------------------------------------------------------
 
 /* Fixtures & helpers */
@@ -74,13 +103,37 @@ const makeTerm = (id: string, label: string): Term => ({
   synonyms: null,
 });
 
+const makeTerms = (count: number) =>
+  Array.from({ length: count }, (_, i) =>
+    makeTerm(`C${String(i + 1).padStart(7, "0")}`, `Concept ${i + 1}`),
+  );
+
+/** A single-page response containing `items`. */
+const resultsOf = (
+  items: Term[],
+  overrides: Partial<SearchData> = {},
+): SearchData => ({
+  items,
+  total: items.length,
+  limit: PAGE_SIZE,
+  offset: 0,
+  ...overrides,
+});
+
 const asthma = makeTerm("C0004096", "Asthma");
 const childhoodAsthma = makeTerm("C0264408", "Childhood asthma");
 
 const getInput = () => screen.getByRole("searchbox", { name: "Search" });
 const getSearchButton = () => screen.getByRole("button", { name: "Search" });
 const getStatus = () => screen.getByRole("status");
+const queryStatus = () => screen.queryByRole("status");
+const queryPagination = () =>
+  screen.queryByRole("navigation", { name: "pagination navigation" });
+const getCardTitles = () =>
+  screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+
 const lastSearchedTerm = () => mockedUseConceptSearch.mock.lastCall?.[0];
+const lastSearchOptions = () => mockedUseConceptSearch.mock.lastCall?.[1];
 
 async function searchFor(term: string) {
   const user = userEvent.setup();
@@ -90,6 +143,7 @@ async function searchFor(term: string) {
 
 beforeEach(() => {
   mockedUseConceptSearch.mockReset();
+  scrollToSpy.mockClear();
   mockSearch({});
 });
 
@@ -108,16 +162,17 @@ describe("Search", () => {
       expect(lastSearchedTerm()).toBe("");
     });
 
-    it("shows no progress, summary, or results", () => {
+    it("requests the first page", () => {
       render(<Search />);
-      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
-      expect(getStatus()).toBeEmptyDOMElement();
-      expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+      expect(lastSearchOptions()).toEqual({ limit: PAGE_SIZE, offset: 0 });
     });
 
-    it("keeps the status live region mounted even when empty", () => {
+    it("shows no progress, summary, results, or pagination", () => {
       render(<Search />);
-      expect(getStatus()).toHaveAttribute("aria-live", "polite");
+      expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+      expect(queryStatus()).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+      expect(queryPagination()).not.toBeInTheDocument();
     });
   });
 
@@ -157,7 +212,7 @@ describe("Search", () => {
     });
 
     it("keeps the typed value after searching", async () => {
-      mockSearch({ data: { items: [asthma] } });
+      mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);
 
       await searchFor("asthma");
@@ -188,44 +243,53 @@ describe("Search", () => {
       expect(getSearchButton()).toBeInTheDocument();
     });
 
-    it("hides the summary and results", async () => {
+    it("hides the summary, results, and pagination", async () => {
       render(<Search />);
       await searchFor("asthma");
 
-      expect(getStatus()).toBeEmptyDOMElement();
+      expect(queryStatus()).not.toBeInTheDocument();
       expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+      expect(queryPagination()).not.toBeInTheDocument();
     });
   });
 
   describe("results", () => {
     it("shows a plural summary and one card per result, in order", async () => {
-      mockSearch({ data: { items: [asthma, childhoodAsthma] } });
+      mockSearch({ data: resultsOf([asthma, childhoodAsthma]) });
       render(<Search />);
 
       await searchFor("asthma");
 
       expect(getStatus()).toHaveTextContent(
-        'Showing 2 concepts matching "asthma"',
+        'Showing 1–2 of 2 concepts matching "asthma"',
       );
-      const headings = screen
-        .getAllByRole("heading", { level: 2 })
-        .map((h) => h.textContent);
-      expect(headings).toEqual(["Asthma", "Childhood asthma"]);
+      expect(getCardTitles()).toEqual(["Asthma", "Childhood asthma"]);
     });
 
     it("uses the singular for one result", async () => {
-      mockSearch({ data: { items: [asthma] } });
+      mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);
 
       await searchFor("asthma");
 
       expect(getStatus()).toHaveTextContent(
-        'Showing 1 concept matching "asthma"',
+        'Showing 1–1 of 1 concept matching "asthma"',
+      );
+    });
+
+    it("formats large totals with thousands separators", async () => {
+      mockSearch({ data: resultsOf(makeTerms(PAGE_SIZE), { total: 3531 }) });
+      render(<Search />);
+
+      await searchFor("hyper");
+
+      expect(getStatus()).toHaveTextContent(
+        'Showing 1–20 of 3,531 concepts matching "hyper"',
       );
     });
 
     it("emphasizes the searched term", async () => {
-      mockSearch({ data: { items: [asthma] } });
+      mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);
 
       await searchFor("asthma");
@@ -234,8 +298,17 @@ describe("Search", () => {
       expect(strong.tagName).toBe("STRONG");
     });
 
+    it("exposes the summary as a polite live region", async () => {
+      mockSearch({ data: resultsOf([asthma]) });
+      render(<Search />);
+
+      await searchFor("asthma");
+
+      expect(getStatus()).toHaveAttribute("aria-live", "polite");
+    });
+
     it("shows the submitted term, not what is currently typed", async () => {
-      mockSearch({ data: { items: [asthma] } });
+      mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);
       const user = await searchFor("asthma");
 
@@ -246,7 +319,7 @@ describe("Search", () => {
     });
 
     it("hides the progress indicator", async () => {
-      mockSearch({ data: { items: [asthma] } });
+      mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);
 
       await searchFor("asthma");
@@ -257,7 +330,7 @@ describe("Search", () => {
 
   describe("no results", () => {
     it("shows an empty-state message", async () => {
-      mockSearch({ data: { items: [] } });
+      mockSearch({ data: resultsOf([]) });
       render(<Search />);
 
       await searchFor("zzzz");
@@ -266,6 +339,7 @@ describe("Search", () => {
         'No concepts match "zzzz". Try a different term.',
       );
       expect(screen.queryByRole("heading")).not.toBeInTheDocument();
+      expect(queryPagination()).not.toBeInTheDocument();
     });
 
     it("treats missing data the same as an empty list", async () => {
@@ -292,17 +366,122 @@ describe("Search", () => {
       expect(alert).toHaveAttribute("data-severity", "error");
     });
 
-    it("does not show the empty-state message on error", async () => {
+    it("does not show the summary or empty-state message on error", async () => {
       render(<Search />);
       await searchFor("asthma");
 
-      expect(getStatus()).toBeEmptyDOMElement();
+      expect(queryStatus()).not.toBeInTheDocument();
     });
 
     it("does not show a notification before an error", () => {
       mockSearch({});
       render(<Search />);
       expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("pagination", () => {
+    it("is hidden when all results fit on one page", async () => {
+      mockPagedSearch(makeTerms(PAGE_SIZE));
+      render(<Search />);
+
+      await searchFor("concept");
+
+      expect(queryPagination()).not.toBeInTheDocument();
+    });
+
+    it("shows one button per page, starting on page 1", async () => {
+      mockPagedSearch(makeTerms(45)); // 3 pages
+      render(<Search />);
+
+      await searchFor("concept");
+
+      expect(queryPagination()).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "page 1" })).toHaveAttribute(
+        "aria-current",
+      );
+      expect(
+        screen.getByRole("button", { name: "Go to page 3" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Go to page 4" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("requests the selected page's offset", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      expect(lastSearchedTerm()).toBe("concept");
+      expect(lastSearchOptions()).toEqual({ limit: PAGE_SIZE, offset: 20 });
+    });
+
+    it("shows the range and results for the current page", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      expect(getStatus()).toHaveTextContent(
+        'Showing 21–40 of 45 concepts matching "concept"',
+      );
+      const titles = getCardTitles();
+      expect(titles).toHaveLength(20);
+      expect(titles[0]).toBe("Concept 21");
+      expect(titles[19]).toBe("Concept 40");
+    });
+
+    it("shows a partial range on the last page", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+
+      await user.click(screen.getByRole("button", { name: "Go to page 3" }));
+
+      expect(getStatus()).toHaveTextContent("Showing 41–45 of 45 concepts");
+      expect(getCardTitles()).toHaveLength(5);
+    });
+
+    it("marks the selected page as current", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      expect(screen.getByRole("button", { name: "page 2" })).toHaveAttribute(
+        "aria-current",
+      );
+    });
+
+    it("scrolls back to the top on page change", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      expect(scrollToSpy).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+    });
+
+    it("returns to page 1 on a new search", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      await user.clear(getInput());
+      await user.type(getInput(), "asthma{Enter}");
+
+      expect(lastSearchedTerm()).toBe("asthma");
+      expect(lastSearchOptions()).toEqual({ limit: PAGE_SIZE, offset: 0 });
+      expect(screen.getByRole("button", { name: "page 1" })).toHaveAttribute(
+        "aria-current",
+      );
     });
   });
 

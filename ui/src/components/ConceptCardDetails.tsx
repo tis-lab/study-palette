@@ -78,7 +78,6 @@ export function DetailField({ label, value, sx }: DetailFieldProps) {
 
 export function CategoryValue({ value }: { value: string }) {
   const parsed = parseCurie(value);
-  if (!parsed) return <>{value}</>;
 
   return (
     <Box
