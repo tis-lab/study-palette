@@ -5,7 +5,6 @@ The schema imports BDCHM from synthetic/bdchm.yaml, which is fetched rather
 than committed; run synthetic/fetch-bdchm.sh first.
 """
 
-import copy
 import json
 from pathlib import Path
 
@@ -17,8 +16,12 @@ from linkml_runtime import SchemaView
 SCHEMA_DIR = Path(__file__).resolve().parent.parent
 EXAMPLES_DIR = SCHEMA_DIR / "examples"
 EXAMPLES = sorted(EXAMPLES_DIR.glob("*.yaml"))
+BASE = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort.yaml"
+FOLLOW_UP = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort-female.yaml"
 
-CRITERION_SLOTS = ("participants", "demographics", "conditions", "procedures", "drug_exposures", "measurements")
+SUMMARY_SLOTS = ("participants", "demographics", "conditions", "procedures", "drug_exposures", "measurements")
+COUNT_SLOTS = ("participant_count", "record_count", "values")
+CONCEPT_SLOTS = ("condition_concept", "procedure_concept", "drug_concept", "observation_type", "summarized_slot")
 
 pytestmark = pytest.mark.skipif(
     not (SCHEMA_DIR.parent / "synthetic" / "bdchm.yaml").exists(),
@@ -51,26 +54,53 @@ def load(path):
     return yaml.safe_load(path.read_text())
 
 
-def criteria(response):
-    """Every criterion the response defines, by id."""
-    return {c["id"]: c for slot in CRITERION_SLOTS for c in response.get(slot) or []}
+def summaries(study):
+    """Every summary in a study block, values included, with its parent."""
+    stack = [(s, None) for slot in SUMMARY_SLOTS for s in study.get(slot) or []]
+    while stack:
+        summary, parent = stack.pop()
+        yield summary, parent
+        stack.extend((v, summary) for v in summary.get("values") or [])
 
 
-def key(response, cell):
-    """A cell's identity: its criteria together with the cohort's."""
-    return frozenset(response.get("cohort") or []) | frozenset(cell["criteria"])
+def by_id(study):
+    return {s["id"]: s for s, _ in summaries(study)}
+
+
+def identity(summary):
+    """What a summary asks, without what it answers."""
+    return json.dumps({k: v for k, v in summary.items() if k not in COUNT_SLOTS}, sort_keys=True)
+
+
+def counts(response):
+    """Every count in the response, keyed by (cohort, study, summary ids)."""
+    cohort = frozenset(response.get("cohort") or [])
+    for study in response["studies"]:
+        where = study["research_study"]
+        yield (cohort, where, frozenset()), study["participant_count"]
+        for summary, _ in summaries(study):
+            yield (cohort, where, frozenset([summary["id"]])), summary["participant_count"]
+        for cell in study.get("cells") or []:
+            yield (cohort, where, frozenset(cell["criteria"])), cell["participant_count"]
+
+
+def merge_key(key):
+    """A count's identity across responses: the cohort and its criteria are one set."""
+    cohort, study, criteria = key
+    return study, cohort | criteria
 
 
 def misplaced(response):
     """
-    Criteria in record slots, and records in criterion slots.
+    Summaries in record slots, and records among summaries.
 
-    The validator catches neither: a ConditionCriterion is a Condition, so each
-    validates wherever the other is expected.
+    The validator rejects a record among summaries, which lacks a count, but
+    not a summary in a record slot: a ConditionSummary is a Condition.
     """
     records = [r for rs in (response.get("records") or {}).values() for r in rs]
+    every_summary = [s for study in response["studies"] for s, _ in summaries(study)]
     return [r["id"] for r in records if "associated_participant" not in r] + [
-        c["id"] for c in criteria(response).values() if "associated_participant" in c
+        s["id"] for s in every_summary if "associated_participant" in s
     ]
 
 
@@ -87,43 +117,69 @@ def test_example_validates(example, errors):
     assert errors(example) == []
 
 
-def test_example_keeps_records_and_criteria_apart(example):
+def test_example_keeps_records_and_summaries_apart(example):
     assert misplaced(example) == []
 
 
-def test_example_cells_refer_to_defined_criteria(example):
-    defined = criteria(example).keys()
-    referenced = {c for cell in example["cells"] for c in cell["criteria"]} | set(example.get("cohort") or [])
-    assert referenced - defined == set()
+def test_example_studies_resolve(example):
+    defined = {s["id"] for s in example["research_studies"]}
+    assert {s["research_study"] for s in example["studies"]} - defined == set()
 
 
-def test_example_has_one_cell_per_key(example):
-    keys = [key(example, cell) for cell in example["cells"]]
+def test_example_counts_each_study_once(example):
+    studies = [s["research_study"] for s in example["studies"]]
+    assert len(studies) == len(set(studies))
+
+
+def test_example_cohort_is_defined_in_every_study(example):
+    cohort = set(example.get("cohort") or [])
+    assert {s["research_study"]: cohort - by_id(s).keys() for s in example["studies"]} == {
+        s["research_study"]: set() for s in example["studies"]
+    }
+
+
+def test_example_cells_cross_summaries_in_their_own_study(example):
+    for study in example["studies"]:
+        defined = by_id(study).keys()
+        referenced = {c for cell in study.get("cells") or [] for c in cell["criteria"]}
+        assert referenced - defined == set(), study["research_study"]
+
+
+def test_example_has_one_count_per_key(example):
+    keys = [key for key, _ in counts(example)]
     assert len(keys) == len(set(keys))
 
 
 def test_example_cells_do_not_repeat_the_cohort(example):
     cohort = set(example.get("cohort") or [])
-    assert [cell for cell in example["cells"] if cohort & set(cell["criteria"])] == []
+    cells = [cell for study in example["studies"] for cell in study.get("cells") or []]
+    assert [cell for cell in cells if cohort & set(cell["criteria"])] == []
 
 
-def test_example_criteria_ids_are_determined_by_their_values(example):
-    def values(criterion):
-        return json.dumps({k: v for k, v in criterion.items() if k != "id"}, sort_keys=True)
-
-    by_values = {}
-    for criterion in criteria(example).values():
-        by_values.setdefault(values(criterion), set()).add(criterion["id"])
-    assert [ids for ids in by_values.values() if len(ids) > 1] == []
+def test_example_ids_are_determined_by_what_is_asked(example):
+    asked = {}
+    for study in example["studies"]:
+        for summary, _ in summaries(study):
+            asked.setdefault(summary["id"], set()).add(identity(summary))
+    assert {i: q for i, q in asked.items() if len(q) > 1} == {}
 
 
-def test_example_omits_cells_below_its_minimum(example):
-    small = [cell["criteria"] for cell in example["cells"] if cell["participant_count"] < example["min_cell_count"]]
+def test_example_values_repeat_their_concept(example):
+    for study in example["studies"]:
+        for summary, parent in summaries(study):
+            if parent is not None:
+                concept = {k: parent[k] for k in CONCEPT_SLOTS if k in parent}
+                assert concept and {k: summary.get(k) for k in concept} == concept, summary["id"]
+
+
+def test_example_omits_counts_below_its_minimum(example):
+    small = [key for key, n in counts(example) if n < example["min_cell_count"]]
     assert small == []
 
 
 def test_example_respects_its_criteria_bound(example):
-    assert max(len(cell["criteria"]) for cell in example["cells"]) <= example["max_cell_criteria"]
+    sizes = [len(cell["criteria"]) for study in example["studies"] for cell in study.get("cells") or []]
+    assert max(sizes) <= example["max_cell_criteria"]
 
 
 def test_example_concepts_resolve_in_its_terms(example):
@@ -131,68 +187,58 @@ def test_example_concepts_resolve_in_its_terms(example):
     referenced = {example["seed"]}
     referenced |= {p for t in terms.values() for p in t.get("parents") or []}
     referenced |= {r[end] for r in example.get("relations") or [] for end in ("subject", "object")}
-    referenced |= {c["condition_concept"] for c in criteria(example).values() if "condition_concept" in c}
+    referenced |= {
+        s["condition_concept"] for study in example["studies"] for s, _ in summaries(study) if "condition_concept" in s
+    }
     assert referenced - terms.keys() == set()
 
 
 def test_a_follow_up_merges_without_conflict():
-    base = load(EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort.yaml")
-    follow_up = load(EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort-female.yaml")
+    base, follow_up = load(BASE), load(FOLLOW_UP)
     assert base["release"] == follow_up["release"]
 
-    counts = {}
+    merged = {}
     for response in (base, follow_up):
-        counts.setdefault(frozenset(response["cohort"]), set()).add(response["participant_count"])
-        for cell in response["cells"]:
-            counts.setdefault(key(response, cell), set()).add(cell["participant_count"])
+        for key, n in counts(response):
+            merged.setdefault(merge_key(key), set()).add(n)
 
-    assert {k: v for k, v in counts.items() if len(v) > 1} == {}
-    overlap = {key(base, c) for c in base["cells"]} & {key(follow_up, c) for c in follow_up["cells"]}
-    assert overlap, "the examples should overlap, or this test proves nothing"
-
-
-def test_a_follow_up_criterion_means_the_same_in_both():
-    base = criteria(load(EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort.yaml"))
-    follow_up = criteria(load(EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort-female.yaml"))
-    assert [i for i in base.keys() & follow_up.keys() if base[i] != follow_up[i]] == []
+    assert {k: v for k, v in merged.items() if len(v) > 1} == {}
+    shared = {merge_key(k) for k, _ in counts(base)} & {merge_key(k) for k, _ in counts(follow_up)}
+    assert len(shared) > 5, "the examples should overlap, or this test proves nothing"
 
 
-def test_a_criterion_in_a_record_slot_is_caught_by_the_guard_not_the_validator(example, errors):
-    response = copy.deepcopy(example)
-    criterion = response["conditions"][0]
-    response.setdefault("records", {}).setdefault("record_conditions", []).append(criterion)
+def test_the_same_id_asks_the_same_question_across_responses():
+    asked = {}
+    for response in (load(BASE), load(FOLLOW_UP)):
+        for study in response["studies"]:
+            for summary, _ in summaries(study):
+                asked.setdefault(summary["id"], set()).add(identity(summary))
+    assert {i: q for i, q in asked.items() if len(q) > 1} == {}
+
+
+def test_a_summary_in_a_record_slot_is_caught_by_the_guard_not_the_validator(errors):
+    response = load(BASE)
+    summary = response["studies"][0]["conditions"][0]["values"][0]
+    response["records"]["record_conditions"].append(summary)
     assert errors(response) == []
-    assert criterion["id"] in misplaced(response)
+    assert summary["id"] in misplaced(response)
 
 
-def test_a_record_in_a_criterion_slot_is_caught_by_the_guard_not_the_validator(errors):
-    response = load(EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort.yaml")
-    record = response["records"]["record_conditions"][0]
-    response["conditions"].append(record)
-    assert errors(response) == []
-    assert record["id"] in misplaced(response)
+def test_a_record_among_summaries_is_rejected(errors):
+    response = load(BASE)
+    response["studies"][0]["conditions"].append(response["records"]["record_conditions"][0])
+    assert any("participant_count" in e for e in errors(response))
 
 
-def test_unset_record_slots_are_allowed_on_a_criterion(errors):
-    response = {
-        "release": "test",
-        "seed": "MONDO:0005148",
-        "participant_count": 10,
-        "min_cell_count": 1,
-        "max_cell_criteria": 1,
-        "conditions": [{"id": "palette:condition/MONDO_0005148", "condition_concept": "MONDO:0005148"}],
-        "cells": [{"criteria": ["palette:condition/MONDO_0005148"], "participant_count": 4}],
-    }
-    assert errors(response) == []
+def test_a_cell_needs_two_criteria(errors):
+    response = load(BASE)
+    response["studies"][0]["cells"].append(
+        {"criteria": ["palette:condition/MONDO_0005148/PRESENT"], "participant_count": 90}
+    )
+    assert any("too short" in e for e in errors(response))
 
 
-def test_a_cell_requires_a_count(errors):
-    response = {
-        "release": "test",
-        "seed": "MONDO:0005148",
-        "participant_count": 10,
-        "min_cell_count": 1,
-        "max_cell_criteria": 1,
-        "cells": [{"criteria": ["palette:condition/MONDO_0005148"]}],
-    }
+def test_a_summary_requires_a_count(errors):
+    response = load(BASE)
+    del response["studies"][0]["conditions"][0]["participant_count"]
     assert any("participant_count" in e for e in errors(response))
