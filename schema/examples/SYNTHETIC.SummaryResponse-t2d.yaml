@@ -8,7 +8,7 @@
 
 release: example-release
 seed: MONDO:0005148
-cohort:
+filter:
   - palette:measurement/FAST_GLUC_BLD
 min_cell_count: 10
 max_cell_criteria: 2

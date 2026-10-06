@@ -2,12 +2,12 @@
 # participant data.
 #
 # The follow-up fetched when the user selects female in
-# SYNTHETIC.SummaryResponse-t2d-cohort.yaml: the same cohort, narrowed to
-# female. It merges with that response by id, and their shared counts agree.
+# SYNTHETIC.SummaryResponse-t2d.yaml: the same filter, narrowed to female.
+# It merges with that response by id, and their shared counts agree.
 
 release: example-release
 seed: MONDO:0005148
-cohort:
+filter:
   - palette:measurement/FAST_GLUC_BLD
   - palette:demography/sex/FEMALE
 min_cell_count: 10

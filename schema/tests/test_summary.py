@@ -15,8 +15,8 @@ from linkml_runtime import SchemaView
 SCHEMA_DIR = Path(__file__).resolve().parent.parent
 EXAMPLES_DIR = SCHEMA_DIR / "examples"
 EXAMPLES = sorted(EXAMPLES_DIR.glob("*.yaml"))
-BASE = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort.yaml"
-FOLLOW_UP = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-cohort-female.yaml"
+BASE = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d.yaml"
+FOLLOW_UP = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-female.yaml"
 
 SUMMARY_SLOTS = ("participants", "demographics", "conditions", "procedures", "drug_exposures", "measurements")
 COUNT_SLOTS = ("participant_count", "record_count", "values")
@@ -69,15 +69,15 @@ def question(summary):
 
 
 def counts(response):
-    """Every count, keyed by study and the full set of ids it matches, cohort included."""
-    cohort = frozenset(response.get("cohort") or [])
+    """Every count, keyed by study and the full set of ids it matches, filter included."""
+    applied = frozenset(response.get("filter") or [])
     for study in response["studies"]:
         where = study["research_study"]
-        yield (where, cohort), study["participant_count"]
+        yield (where, applied), study["participant_count"]
         for summary, _ in summaries(study):
-            yield (where, cohort | {summary["id"]}), summary["participant_count"]
+            yield (where, applied | {summary["id"]}), summary["participant_count"]
         for cell in study.get("cells") or []:
-            yield (where, cohort | set(cell["criteria"])), cell["participant_count"]
+            yield (where, applied | set(cell["criteria"])), cell["participant_count"]
 
 
 def misplaced(response):
@@ -142,15 +142,15 @@ def test_cells_cross_summaries_in_their_own_study(example):
         assert referenced - by_id(study).keys() == set(), study["research_study"]
 
 
-def test_cells_do_not_repeat_the_cohort(example):
-    cohort = set(example.get("cohort") or [])
+def test_cells_do_not_repeat_the_filter(example):
+    applied = set(example.get("filter") or [])
     cells = [cell for study in example["studies"] for cell in study.get("cells") or []]
-    assert [cell for cell in cells if cohort & set(cell["criteria"])] == []
+    assert [cell for cell in cells if applied & set(cell["criteria"])] == []
 
 
-def test_the_cohort_is_defined_in_every_study(example):
-    cohort = set(example.get("cohort") or [])
-    assert all(cohort <= by_id(study).keys() for study in example["studies"])
+def test_the_filter_is_defined_in_every_study(example):
+    applied = set(example.get("filter") or [])
+    assert all(applied <= by_id(study).keys() for study in example["studies"])
 
 
 def test_studies_resolve_and_appear_once(example):

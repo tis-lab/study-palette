@@ -39,7 +39,7 @@ description: >-
 
   A summary's id depends only on what it counts, so the same summary has the
   same id in every study and every response from a release. A follow-up
-  response for a narrower cohort merges with the first by id.
+  response with a narrower filter merges with the first by id.
 
 
   Because summaries subclass BDCHM records, the validator accepts a summary
@@ -175,7 +175,7 @@ classes:
   StudySummary:
     description: >-
       The counts for one study. It refers to a BDCHM ResearchStudy rather than
-      extending one, because its counts depend on the cohort and the study
+      extending one, because its counts depend on the filter and the study
       does not.
     slots:
       - research_study
@@ -190,11 +190,11 @@ classes:
 
   SummaryResponse:
     tree_root: true
-    description: Counts for one cohort, study by study, around the term searched for.
+    description: Counts of the participants matching one filter, study by study, around the term searched for.
     slots:
       - release
       - seed
-      - cohort
+      - filter
       - min_cell_count
       - max_cell_criteria
       - terms
@@ -271,8 +271,10 @@ slots:
     range: Term
     inlined: false
     required: true
-  cohort:
-    description: Ids of the summaries every participant counted must match.
+  filter:
+    description: >-
+      Ids of the summaries every participant counted must match. Each study's
+      participant_count is how many of its participants pass.
     range: Summary
     multivalued: true
     inlined: false

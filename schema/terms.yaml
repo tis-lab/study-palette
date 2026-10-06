@@ -42,7 +42,10 @@ slots:
   label:
     description: The label the owning vocabulary publishes.
   vocabulary:
-    description: The owning vocabulary, e.g. MONDO.
+    description: >-
+      The vocabulary that owns the term. Usually the CURIE's prefix, but an
+      OMOP concept id wraps a term from another vocabulary, so OMOP:4156660 is
+      SNOMED's.
   parents:
     description: Direct parents in the owning ontology. Children are the inverse, so are not stored.
     range: Term
