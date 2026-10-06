@@ -18,16 +18,18 @@ description: >-
   Reading the counts:
 
 
-  - Each participant is counted under one value: the first of PRESENT,
-  HISTORICAL, ABSENT, UNKNOWN they have, or for a measurement the bin of their
-  most recent value. Values therefore never sum to more than their concept,
-  except race, which BDCHM allows more than one of.
+  - A participant has one record per concept, so is counted under one value,
+  and values never sum to more than their concept. Race is the exception:
+  BDCHM allows more than one.
 
   - UNKNOWN is a recorded value. Recorded is not the same as known.
 
   - PRESENT rolls up the term hierarchy and ABSENT rolls down: present for a
   term is present for its ancestors, absent for a term is absent for its
-  descendants.
+  descendants. Where the two conflict, PRESENT wins.
+
+  - Repeated measurements are out of scope for now; a participant is binned
+  by their most recent value.
 
   - Counts below min_cell_count are left out.
 
