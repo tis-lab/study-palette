@@ -55,9 +55,8 @@ describe("App", () => {
     });
 
     render(<App />);
-    await userEvent.click(screen.getByText("Demo Data"));
+    await userEvent.click(screen.getByText("Live API"));
     await waitFor(() => {
-      expect(screen.getByText("Live API")).toBeInTheDocument();
       expect(screen.getByText("Test Study")).toBeInTheDocument();
     });
   });
@@ -94,7 +93,7 @@ describe("App", () => {
     } as Response);
 
     render(<App />);
-    await userEvent.click(screen.getByText("Demo Data"));
+    await userEvent.click(screen.getByText("Live API"));
     await waitFor(() => {
       expect(screen.getByText(/Error/)).toBeInTheDocument();
     });
