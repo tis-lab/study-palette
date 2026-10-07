@@ -4,11 +4,14 @@ Synthetic data for the **real** transformation specs of any BDC cohort, so the d
 library chain runs end to end — `make schema-create` through `make variable-library` with live
 dbGaP enrichment — without any participant data.
 
-The specs are the fixed input. A corpus exists to give them something to run against.
+The specs are the fixed input, pulled from the [NHLBI-BDC-DMC-HV repository](https://github.com/RTIInternational/NHLBI-BDC-DMC-HV). A corpus exists to give them something to run against.
 
 Distinct from [`../synthetic`](../synthetic), which invents its own accessions and models a
-population. These declare a cohort's real accessions so dbGaP's own dictionaries describe their
+population, these declare a cohort's real accessions so dbGaP's own dictionaries describe their
 columns, and they depend on dm-bip to read the specs and fetch those dictionaries.
+
+The `generate.py` script lives within `study-palette/cohorts`, it depends upon `dm-bip` and should
+be run from inside a `dm-bip`checkout, as outlined in the [Running It](#running-it) section below.
 
 ## Nothing here is authored by hand
 
@@ -17,9 +20,12 @@ columns, and they depend on dm-bip to read the specs and fetch those dictionarie
 - **which tables and columns** — from the specs. `collect_variables` over the cohort's
   `*-ingest` directory names the variables; each table gets exactly the `phv` columns its specs
   name.
-- **each column's type, unit, bounds and code set** — from the `data_dict`/`var_report` pair
-  dbGaP publishes for that table. Coded variables draw from their real codes; numeric ones
-  draw inside the observed `stat_min`/`stat_max`, falling back to declared logical bounds.
+- **each column's type, unit, bounds and code set** — from schema-automator's canonical
+  data dictionary rendering of the `data_dict`/`var_report` pair dbGaP publishes for that
+  table, the same adapter the pipeline's `adapt-digests` target runs. Coded variables draw
+  from their real codes; numeric ones draw inside the `var_report`'s observed min/max, and
+  inside 0–100 when it reports none (the adapter does not yet carry dbGaP's declared
+  logical bounds).
 - **the cell values** — the only invented part. Deterministic given `SEED`, the specs and the
   cached digests.
 
@@ -51,14 +57,18 @@ downloads are common to all of them.
 
 The generator reads the specs and the digests through dm-bip, so every step runs from the
 dm-bip checkout — `uv run` resolves the project from the working directory, and standing
-anywhere else picks up the wrong environment.
+anywhere else picks up the wrong environment. Until [linkml/dm-bip#376][dm-bip-376] merges,
+that checkout has to be on its `variable-mapping-rb` branch: `main` has the digest fetcher
+but not the spec reader the generator imports.
+
+[dm-bip-376]: https://github.com/linkml/dm-bip/pull/376
 
 ```sh
 SYNTH=/path/to/study-palette/cohorts
-SPECS=/path/to/NHLBI-BDC-DMC-HV/priority_variables_transform/ARIC-ingest
+SPECS=/path/to/NHLBI-BDC-DMC-HV/priority_variables_transform/
 
 cd /path/to/dm-bip
-# ~3 min cold for ARIC: fetches 326 digests, writes 164 tables
+# ~4 min cold for ARIC: fetches 326 digests, writes 163 tables
 uv run python $SYNTH/generate.py --cohort aric --specs $SPECS
 
 make schema-create    CONFIG=$SYNTH/config.mk COHORT=aric
@@ -90,6 +100,10 @@ Observed 2026-09-25, both cohorts run through `make variable-library`:
 Nothing unclassified in either. For ARIC, 1298 of the 1312 entries carry dbGaP metadata;
 for JHS all 456 do.
 
+Regenerated 2026-10-06 against HV `53f03e3`: the ARIC specs now name 1287 variables across
+163 datasets, every one with a dbGaP dictionary, and JHS is unchanged at 456 across 45. The
+variable-library columns above are from the September run.
+
 ## Labelling and publication
 
 These corpora are the case `CLAUDE.md` singles out: **synthetic data generated against real
@@ -107,10 +121,19 @@ publishable. The distinction is the accessions, not the data.
 
 ## The two gaps, both real
 
-- **A table dbGaP never described** comes out carrying identity only. In ARIC that is
-  `pht015212`, named by the specs but with no published dictionary; its 14 variables are
-  emitted as plain integers. This is the same table the chain documentation counts as "one of
-  which dbGaP never published a dictionary for". JHS has no such table.
+- **A variable the specs file under two datasets** collapses to one — `sole_dataset` takes
+  the lower accession — and when that dataset's dictionary does not declare it, the column
+  comes out as plain integers under its bare `phv` name. In ARIC that is `phv00516587`,
+  PFTB's subject id (`pht012835`), which two PULM21 (`pht004148`) blocks in
+  `spirometry.yaml` reference in place of PULM21's own `phv00209123`. The spec error is
+  reported as [NHLBI-BDC-DMC-HV#880][hv-880]; [#59][sp-59] proposes that the generator stop
+  collapsing and emit the column into every dataset that names it, which is what the specs
+  will read anyway. A table dbGaP never described would come out the same way, carrying
+  identity only; ARIC's `pht015212`, which earlier spec revisions named, is no longer in the
+  specs as of HV `53f03e3`. JHS has neither case.
+
+[hv-880]: https://github.com/RTIInternational/NHLBI-BDC-DMC-HV/issues/880
+[sp-59]: https://github.com/tis-lab/study-palette/issues/59
 - Values are drawn independently per column, so nothing is internally consistent: BMI does
   not follow from height and weight, and a participant's exam-2 measures bear no relation to
   their exam-1 ones. The corpora exercise the *metadata* path, not analysis.

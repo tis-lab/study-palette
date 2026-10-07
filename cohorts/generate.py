@@ -4,8 +4,10 @@ Emit synthetic dbGaP-format tables for exactly the variables a cohort's specs na
 
 The transformation specs are the fixed input — this corpus exists to give them data to run
 against. Nothing here is authored by hand: the tables and columns come from the specs, and
-each column's type, unit, bounds and code set come from the ``data_dict``/``var_report`` pair
-dbGaP publishes for that table. Only the cell values are invented.
+each column's type, unit, bounds and code set come from schema-automator's canonical data
+dictionary (DD) rendering of the ``data_dict``/``var_report`` pair dbGaP publishes for that
+table — the same adapter the dm-bip pipeline's ``adapt-digests`` target runs. Only the cell
+values are invented.
 
 That makes the whole chain runnable with no participant data: schema-create over this corpus
 produces a real schema-automator product typing the real accessions, and extraction with
@@ -17,16 +19,26 @@ produces a real schema-automator product typing the real accessions, and extract
 """
 
 import argparse
+import datetime
 import gzip
+import logging
 import random
+import re
 import sys
+from dataclasses import dataclass, field
 from pathlib import Path
 
 try:
     from dm_bip.mapping_prov.extract import collect_spec_paths
-    from dm_bip.prepare_study.fetch_digests import cached_digests, fetch_digests, load_cohorts, pair_digests
-    from dm_bip.variable_lib.dbgap import load_tables
+    from dm_bip.prepare_study.fetch_digests import (
+        cached_digests,
+        fetch_digests,
+        load_cohorts,
+        pair_digests,
+        pht_from_filename,
+    )
     from dm_bip.variable_lib.extract import collect_variables
+    from schema_automator.adapters.dbgap import dbgap_to_dd
 except ModuleNotFoundError as exc:  # pragma: no cover - an invocation error, not a code path
     sys.exit(
         f"{exc}\n\n"
@@ -50,41 +62,119 @@ CITATION = (
     "Synthetic records under real {cohort} variable accessions. Not derived from participant "
     "data. Values are generated; the accessions, types and units are dbGaP's own."
 )
-NUMERIC = {"integer", "decimal", "float", "double", "numeric", "continuous", "real"}
+# The canonical DD type vocabulary, as `schemauto adapt-dbgap` resolves dbGaP's declared and
+# calculated types. Anything else (string, uri, ...) is drawn as free numeric text.
+NUMERIC = {"integer", "decimal"}
+TEMPORAL = {"date", "datetime"}
+EPOCH, SPAN_DAYS = datetime.date(1987, 1, 1), 34 * 365
+
+# `dbgap:phv00000001.v1` -> phv00000001. The adapter writes the versioned id as a CURIE;
+# transformation specs name variables unversioned, so the join needs the bare stem.
+_ACCESSION_RE = re.compile(r"(?:^|:)(phv\d+)")
+
+
+@dataclass
+class Variable:
+    """One DD entry, reduced to what a draw needs."""
+
+    name: str | None
+    kind: str
+    codes: list[str] = field(default_factory=list)
+    min: float | None = None
+    max: float | None = None
+
+
+@dataclass
+class Table:
+    """One pheno table's DD, keyed by bare ``phv`` accession."""
+
+    source_file: str
+    variables: dict[str, Variable] = field(default_factory=dict)
+
+
+def resolve_specs(specs: Path, cohort: str) -> Path:
+    """
+    Return the cohort's ``*-ingest`` directory under ``specs``, or ``specs`` itself.
+
+    ``--specs`` may name the ``priority_variables_transform`` directory, in which case the
+    cohort key picks the subdirectory. The match is case-insensitive because the directories
+    are not uniformly cased (``COPDGene-ingest``), and falls back to the key's stem before
+    an underscore because one key carries a suffix its directory does not (``hchs_sol`` ->
+    ``HCHS-ingest``). A path that is already an ingest directory is used as given.
+    """
+    candidates = {p.name.lower(): p for p in specs.iterdir() if p.is_dir()} if specs.is_dir() else {}
+    for key in (cohort, cohort.split("_")[0]):
+        if (match := candidates.get(f"{key.lower()}-ingest")) is not None:
+            return match
+    return specs
+
+
+def _number(value) -> float | None:
+    """Return a bound as a float, or None when the DD declares none or something unparsable."""
+    try:
+        return None if value in (None, "", "none") else float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def load_tables(pairs) -> dict[str, Table]:
+    """
+    Run the adapter over each data_dict/var_report pair and index the result by ``pht``.
+
+    Reads the adapter's canonical DD in memory rather than through its TSV serialization,
+    which rejects a value dbGaP publishes with no code attribute (``<value>1986</value>``).
+    The DD grammar reads such a bareword as the value itself, so it is kept as the code.
+    """
+    tables: dict[str, Table] = {}
+    for data_dict, var_report in pairs:
+        dataset = pht_from_filename(data_dict.name)
+        if dataset is None or dataset in tables:
+            continue
+        table = Table(source_file=data_dict.name)
+        for entry in dbgap_to_dd(str(data_dict), str(var_report)).get("entries", []):
+            match = _ACCESSION_RE.search(entry.get("uri") or "")
+            if match is None:
+                continue
+            codes = [c.get("code") or c.get("label") for c in entry.get("codes") or []]
+            table.variables[match.group(1)] = Variable(
+                name=entry.get("name"),
+                kind=(entry.get("type") or "").strip().lower(),
+                codes=[c for c in codes if c not in (None, "")],
+                min=_number(entry.get("min")),
+                max=_number(entry.get("max")),
+            )
+        tables[dataset] = table
+    return tables
 
 
 def bounds(var, fallback):
     """
-    Prefer what was observed over what was declared, and fall back to a sane range.
+    Use the bounds the var_report observed, or fall back to a sane range.
 
     An equal pair is a constant-valued variable, not a missing range: every draw must land
     on that one value, so it is kept rather than widened to the fallback.
     """
-    for lo, hi in ((var.stat_min, var.stat_max), (var.logical_min, var.logical_max)):
-        try:
-            if lo is not None and hi is not None and float(lo) <= float(hi):
-                return float(lo), float(hi)
-        except (TypeError, ValueError):
-            pass
+    if var.min is not None and var.max is not None and var.min <= var.max:
+        return var.min, var.max
     return fallback
 
 
 def draw(rng, var):
-    """Draw one plausible cell for this variable, respecting what dbGaP declares about it."""
+    """Draw one plausible cell for this variable, respecting what the DD declares about it."""
     if var is None:
         return str(rng.randint(1, 999))
-    if var.values:
-        return rng.choice([v.code for v in var.values if v.code not in (None, "")] or ["1"])
-    kind = (var.calculated_type or var.reported_type or "").strip().lower()
-    if kind.startswith("enum"):
-        return str(rng.randint(0, 3))
-    if any(w in kind for w in NUMERIC):
-        lo, hi = bounds(var, (0.0, 100.0))
-        mid, spread = (lo + hi) / 2, max((hi - lo) / 6, 1e-6)
-        value = min(max(rng.gauss(mid, spread), lo), hi)
-        return str(int(round(value))) if "int" in kind else f"{value:.2f}"
+    if var.kind == "permissible_values":
+        return rng.choice(var.codes or ["1"])
+    if var.kind == "boolean":
+        return rng.choice(["0", "1"])
+    if var.kind in TEMPORAL:
+        return (EPOCH + datetime.timedelta(days=rng.randint(0, SPAN_DAYS))).isoformat()
     lo, hi = bounds(var, (0.0, 100.0))
-    return f"{min(max(rng.gauss((lo + hi) / 2, max((hi - lo) / 6, 1e-6)), lo), hi):.1f}"
+    mid, spread = (lo + hi) / 2, max((hi - lo) / 6, 1e-6)
+    value = min(max(rng.gauss(mid, spread), lo), hi)
+    if var.kind == "integer":
+        return str(int(round(value)))
+    return f"{value:.2f}" if var.kind in NUMERIC else f"{value:.1f}"
 
 
 def main():
@@ -93,7 +183,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--cohort", required=True, help="cohort key from the manifest, e.g. aric or jhs")
     ap.add_argument("--specs", type=Path, required=True,
-                    help="path to cohort specs, e.g. NHLBI-BDC-DMC-HV/priority_variables_transform/ARIC-ingest")
+                    help="NHLBI-BDC-DMC-HV/priority_variables_transform, or one cohort's *-ingest directory")
     ap.add_argument("--out", type=Path, help="defaults to <this directory>/<cohort>/data/raw")
     ap.add_argument("--cache", type=Path, default=here / ".dbgap-cache")
     ap.add_argument("--n", type=int, default=500)
@@ -101,9 +191,14 @@ def main():
     args = ap.parse_args()
     # Each cohort gets its own tree, so two cohorts never mix tables in one directory.
     out = args.out or here / args.cohort / "data" / "raw"
+    # The adapter's linkml-map layer warns once per DD entry about ranges it cannot map;
+    # that is its concern, not a problem with the digests.
+    logging.getLogger("linkml_map").setLevel(logging.ERROR)
 
     # Read the specs
-    records = collect_variables(collect_spec_paths([args.specs]))
+    specs = resolve_specs(args.specs, args.cohort)
+    print(f"specs: {specs}")
+    records = collect_variables(collect_spec_paths([specs]))
     wanted: dict[str, list[str]] = {}
     for acc, rec in records.items():
         wanted.setdefault(rec.sole_dataset(), []).append(acc)
