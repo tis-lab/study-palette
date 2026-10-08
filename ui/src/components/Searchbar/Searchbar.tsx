@@ -20,7 +20,7 @@ export interface Props {
   value: string;
   /**
    * Called whenever the input text changes. `reason` is "input" when the user
-   * typed, and "reset" when the text was replaced by a selected option.
+   * typed, and "selectOption" when the text was replaced by a selected option.
    */
   onChange: (value: string, reason: AutocompleteInputChangeReason) => void;
   /** Called when the form is submitted (Search button or Enter). */

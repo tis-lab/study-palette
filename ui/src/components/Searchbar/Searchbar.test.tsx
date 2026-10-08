@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Searchbar, { Props } from "./Searchbar";
-import { Term } from "../api/graphql/queries/resolveTerms";
+import type { Term } from "../../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
@@ -74,13 +74,13 @@ describe("Searchbar", () => {
     it("uses a custom aria label", () => {
       renderStatic({ ariaLabel: "Search concepts" });
       expect(
-        screen.getByRole("searchbox", { name: "Search concepts" }),
+        screen.getByRole("combobox", { name: "Search concepts" }),
       ).toBeInTheDocument();
     });
 
     it("renders placeholder, name and type=search", () => {
       renderStatic({ placeholder: "e.g. diabetes", name: "q" });
-      const input = screen.getByRole("searchbox");
+      const input = getInput();
       expect(input).toHaveAttribute("placeholder", "e.g. diabetes");
       expect(input).toHaveAttribute("name", "q");
       expect(input).toHaveAttribute("type", "search");
@@ -96,12 +96,12 @@ describe("Searchbar", () => {
 
     it("focuses the input when autoFocus is set", () => {
       renderStatic({ autoFocus: true });
-      expect(screen.getByRole("searchbox")).toHaveFocus();
+      expect(getInput()).toHaveFocus();
     });
 
     it("does not focus the input by default", () => {
       renderStatic();
-      expect(screen.getByRole("searchbox")).not.toHaveFocus();
+      expect(getInput()).not.toHaveFocus();
     });
   });
 
@@ -121,16 +121,15 @@ describe("Searchbar", () => {
       const onChange = vi.fn();
       render(<ControlledSearchbar onChange={onChange} />);
 
-      const input = screen.getByRole("searchbox");
-      await user.type(input, "asthma");
+      await user.type(getInput(), "asthma");
 
-      expect(input).toHaveValue("asthma");
-      expect(onChange).toHaveBeenLastCalledWith("asthma", expect.anything());
+      expect(getInput()).toHaveValue("asthma");
+      expect(onChange).toHaveBeenLastCalledWith("asthma", "input");
     });
 
     it("displays the value prop", () => {
       renderStatic({ value: "heart failure" });
-      expect(screen.getByRole("searchbox")).toHaveValue("heart failure");
+      expect(getInput()).toHaveValue("heart failure");
     });
   });
 
@@ -242,7 +241,7 @@ describe("Searchbar", () => {
       expect(onSearch).not.toHaveBeenCalled();
     });
 
-    it('fills the input with the label, reported with reason "reset"', async () => {
+    it('fills the input with the label, reported with reason "selectOption"', async () => {
       const user = userEvent.setup();
       const onChange = vi.fn();
       render(<ControlledSearchbar options={OPTIONS} onChange={onChange} />);
@@ -251,7 +250,10 @@ describe("Searchbar", () => {
       await user.click(screen.getByRole("option", { name: /allergic asthma/ }));
 
       expect(getInput()).toHaveValue("allergic asthma");
-      expect(onChange).toHaveBeenLastCalledWith("allergic asthma", "reset");
+      expect(onChange).toHaveBeenLastCalledWith(
+        "allergic asthma",
+        "selectOption",
+      );
     });
 
     it("closes the dropdown after a selection", async () => {
@@ -291,7 +293,7 @@ describe("Searchbar", () => {
       const onSearch = vi.fn();
       render(<ControlledSearchbar onSearch={onSearch} />);
 
-      await user.type(screen.getByRole("searchbox"), "asthma{Enter}");
+      await user.type(getInput(), "asthma{Enter}");
 
       expect(onSearch).toHaveBeenCalledTimes(1);
       expect(onSearch).toHaveBeenCalledWith("asthma");
@@ -333,7 +335,7 @@ describe("Searchbar", () => {
       const onSearch = vi.fn();
       render(<ControlledSearchbar onSearch={onSearch} />);
 
-      await user.type(screen.getByRole("searchbox"), "  asthma  {Enter}");
+      await user.type(getInput(), "  asthma  {Enter}");
 
       expect(onSearch).toHaveBeenCalledWith("asthma");
     });
@@ -344,7 +346,7 @@ describe("Searchbar", () => {
       const onSearch = vi.fn();
       render(<ControlledSearchbar onSearch={onSearch} />);
 
-      await user.type(screen.getByRole("searchbox"), "   {Enter}");
+      await user.type(getInput(), "   {Enter}");
 
       expect(onSearch).toHaveBeenCalledWith("");
     });
@@ -384,7 +386,7 @@ describe("Searchbar", () => {
       render(<ControlledSearchbar />);
 
       await expect(
-        user.type(screen.getByRole("searchbox"), "asthma{Enter}"),
+        user.type(getInput(), "asthma{Enter}"),
       ).resolves.not.toThrow();
     });
 
@@ -402,25 +404,30 @@ describe("Searchbar", () => {
   describe("disabled", () => {
     it("disables the input", () => {
       renderStatic({ disabled: true });
-      expect(screen.getByRole("searchbox")).toBeDisabled();
+      expect(getInput()).toBeDisabled();
     });
 
-    it("does not call onChange or onSearch when disabled", async () => {
+    it("does not call onChange, onSearch or onSelect when disabled", async () => {
       const user = userEvent.setup();
       const onChange = vi.fn();
       const onSearch = vi.fn();
+      const onSelect = vi.fn();
       render(
         <ControlledSearchbar
           disabled
+          options={OPTIONS}
           onChange={onChange}
           onSearch={onSearch}
+          onSelect={onSelect}
         />,
       );
 
-      await user.type(screen.getByRole("searchbox"), "asthma{Enter}");
+      await user.type(getInput(), "asthma{Enter}");
 
       expect(onChange).not.toHaveBeenCalled();
       expect(onSearch).not.toHaveBeenCalled();
+      expect(onSelect).not.toHaveBeenCalled();
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
   });
 
@@ -428,7 +435,7 @@ describe("Searchbar", () => {
     it("passes extra attributes to the underlying input", () => {
       renderStatic({ inputProps: { maxLength: 50, "data-testid": "q" } });
       const input = screen.getByTestId("q");
-      expect(input).toBe(screen.getByRole("searchbox"));
+      expect(input).toBe(getInput());
       expect(input).toHaveAttribute("maxlength", "50");
     });
 
@@ -436,7 +443,7 @@ describe("Searchbar", () => {
       // inputProps is spread after aria-label, so it wins
       renderStatic({ inputProps: { "aria-label": "Find a concept" } });
       expect(
-        screen.getByRole("searchbox", { name: "Find a concept" }),
+        screen.getByRole("combobox", { name: "Find a concept" }),
       ).toBeInTheDocument();
     });
 

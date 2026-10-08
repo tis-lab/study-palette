@@ -13,7 +13,7 @@ import parseCurie from "../../utils/parseCurie";
 
 // Parsing rules belong in parseCurie's own tests; here we only care
 // how each parse result is displayed.
-vi.mock("../utils/parseCurie", () => ({
+vi.mock("../../utils/parseCurie", () => ({
   default: vi.fn(),
 }));
 

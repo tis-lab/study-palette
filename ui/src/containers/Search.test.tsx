@@ -14,7 +14,7 @@ vi.mock("../hooks/useConceptSearch", () => ({
 }));
 
 // Stub so these tests don't depend on Notification's internals
-vi.mock("../components/Notification", () => ({
+vi.mock("../components/Notification/Notification", () => ({
   default: ({
     open,
     severity,
