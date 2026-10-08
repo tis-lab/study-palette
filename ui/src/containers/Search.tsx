@@ -23,6 +23,8 @@ export default function Search() {
   const [submitted, setSubmitted] = useState("");
   const [page, setPage] = useState(1);
 
+  const [dismissedError, setDismissedError] = useState<Error | null>(null);
+
   // Top level: runs on every render, fetches only when `submitted` changes
   const { data, isLoading, isError, error } = useConceptSearch(submitted, {
     limit: PAGE_SIZE,
@@ -43,7 +45,13 @@ export default function Search() {
 
   return (
     <Stack spacing={1}>
-      <Notification open={isError} severity="error" message={error?.message} />
+      {/* Search error */}
+      <Notification
+        open={isError && error !== dismissedError}
+        onClose={() => setDismissedError(error)}
+        severity="error"
+        message={error?.message}
+      />
 
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Searchbar

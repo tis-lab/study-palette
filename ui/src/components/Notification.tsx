@@ -2,7 +2,7 @@ import { Alert, AlertColor, Snackbar } from "@mui/material";
 
 interface Props {
   open: boolean;
-  onClose?: () => void;
+  onClose: () => void;
   message?: string;
   severity: AlertColor;
 }
@@ -17,7 +17,10 @@ export default function Notification({
     <Snackbar
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
       open={open}
-      onClose={onClose}
+      onClose={(_, reason) => {
+        if (reason === "clickaway") return;
+        onClose?.();
+      }}
       autoHideDuration={5000}
     >
       <Alert onClose={onClose} severity={severity}>
