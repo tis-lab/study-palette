@@ -482,6 +482,14 @@ describe("Search", () => {
       expect(screen.getByRole("button", { name: "page 1" })).toHaveAttribute(
         "aria-current",
       );
+
+      // The new term must never be requested with the old page's offset
+      const asthmaCalls = mockedUseConceptSearch.mock.calls.filter(
+        ([term]) => term === "asthma",
+      );
+      expect(asthmaCalls.every(([, options]) => options?.offset === 0)).toBe(
+        true,
+      );
     });
   });
 

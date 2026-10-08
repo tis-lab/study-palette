@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import {
   Box,
   Button,
@@ -36,9 +36,10 @@ export default function Search() {
   const start = data && data.offset + 1;
   const end = data && data.offset + data.items.length;
 
-  useEffect(() => {
+  const handleSearch = (text: string) => {
+    setSubmitted(text);
     setPage(1);
-  }, [submitted]);
+  };
 
   return (
     <Stack spacing={1}>
@@ -50,7 +51,7 @@ export default function Search() {
           name="search"
           value={value}
           onChange={setValue}
-          onSearch={setSubmitted}
+          onSearch={handleSearch}
         />
         <Button
           type="submit"
