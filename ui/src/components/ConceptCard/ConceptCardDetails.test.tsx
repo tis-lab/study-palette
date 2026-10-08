@@ -5,7 +5,7 @@ import ConceptCardDetails, {
   CategoryValue,
   DetailField,
 } from "./ConceptCardDetails";
-import parseCurie from "../utils/parseCurie";
+import parseCurie from "../../utils/parseCurie";
 
 // ----------------------------------------------------------------------
 

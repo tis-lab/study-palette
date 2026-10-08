@@ -1,6 +1,6 @@
 import { Alert, AlertColor, Snackbar } from "@mui/material";
 
-interface Props {
+export interface Props {
   open: boolean;
   onClose: () => void;
   message?: string;

@@ -7,7 +7,7 @@ import {
   type SxProps,
   type Theme,
 } from "@mui/material";
-import parseCurie from "../utils/parseCurie";
+import parseCurie from "../../utils/parseCurie";
 import { ReactNode } from "react";
 
 // ----------------------------------------------------------------------

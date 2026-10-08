@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Search from "./Search";
 import { useConceptSearch } from "../hooks/useConceptSearch";
@@ -37,6 +37,7 @@ const scrollToSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
 const mockedUseConceptSearch = vi.mocked(useConceptSearch);
 
 type SearchResult = ReturnType<typeof useConceptSearch>;
+type SearchOptions = Parameters<typeof useConceptSearch>[1];
 
 /** Only the fields Search reads from the response. */
 type SearchData = Pick<
@@ -48,47 +49,78 @@ type SearchData = Pick<
 type SearchState = {
   data: SearchData | undefined;
   isLoading: boolean;
+  isFetching: boolean;
   isError: boolean;
   error: Error | null;
 };
 
 const PAGE_SIZE = 20;
+const SUGGESTION_LIMIT = 10;
+const SUGGESTION_DELAY_MS = 300;
 
 const idle: SearchState = {
   data: undefined,
   isLoading: false,
+  isFetching: false,
   isError: false,
   error: null,
 };
 
-/**
- * Returns `state` for any non-empty term and `idle` for "",
- * mirroring a hook that only fetches once something is submitted.
+/*
+ * Search calls the hook twice per render: once for the results
+ * (limit PAGE_SIZE + offset) and once for the autocomplete suggestions
+ * (limit SUGGESTION_LIMIT). The mock routes each call by its limit, so
+ * results and suggestions can be set up independently.
  */
-function mockSearch(state: Partial<SearchState>) {
+type Responder = (term: string, options: SearchOptions) => SearchState;
+
+let respondToResults: Responder;
+let respondToSuggestions: Responder;
+
+const isSuggestionCall = (options: SearchOptions) =>
+  options?.limit === SUGGESTION_LIMIT;
+
+function installMock() {
   mockedUseConceptSearch.mockImplementation(
-    (term: string) =>
+    (term, options) =>
       // Cast once here instead of faking every UseQueryResult field
-      (term ? { ...idle, ...state } : idle) as unknown as SearchResult,
+      (isSuggestionCall(options)
+        ? respondToSuggestions(term, options)
+        : respondToResults(term, options)) as unknown as SearchResult,
   );
 }
 
 /**
- * Serves `all` one page at a time, honoring the limit/offset Search
- * passes in, like the real server would.
+ * Results: returns `state` for any non-empty term and `idle` for "",
+ * mirroring a hook that only fetches once something is submitted.
+ */
+function mockSearch(state: Partial<SearchState>) {
+  respondToResults = (term) => (term ? { ...idle, ...state } : idle);
+}
+
+/**
+ * Results: serves `all` one page at a time, honoring the limit/offset
+ * Search passes in, like the real server would.
  */
 function mockPagedSearch(all: Term[]) {
-  mockedUseConceptSearch.mockImplementation((term, options) => {
-    if (!term) return idle as unknown as SearchResult;
+  respondToResults = (term, options) => {
+    if (!term) return idle;
     const { limit = PAGE_SIZE, offset = 0 } = options ?? {};
-    const data: SearchData = {
-      items: all.slice(offset, offset + limit),
-      total: all.length,
-      limit,
-      offset,
+    return {
+      ...idle,
+      data: {
+        items: all.slice(offset, offset + limit),
+        total: all.length,
+        limit,
+        offset,
+      },
     };
-    return { ...idle, data } as unknown as SearchResult;
-  });
+  };
+}
+
+/** Suggestions: returns `state` for any non-empty typed text. */
+function mockSuggestions(state: Partial<SearchState>) {
+  respondToSuggestions = (term) => (term ? { ...idle, ...state } : idle);
 }
 
 // ----------------------------------------------------------------------
@@ -120,20 +152,35 @@ const resultsOf = (
   ...overrides,
 });
 
+/** A suggestions response containing `items`. */
+const suggestionsOf = (items: Term[]): SearchData =>
+  resultsOf(items, { limit: SUGGESTION_LIMIT });
+
 const asthma = makeTerm("C0004096", "Asthma");
 const childhoodAsthma = makeTerm("C0264408", "Childhood asthma");
 
-const getInput = () => screen.getByRole("searchbox", { name: "Search" });
+// MUI's Autocomplete gives the input role="combobox"
+const getInput = () => screen.getByRole("combobox", { name: "Search" });
 const getSearchButton = () => screen.getByRole("button", { name: "Search" });
 const getStatus = () => screen.getByRole("status");
 const queryStatus = () => screen.queryByRole("status");
+const queryListbox = () => screen.queryByRole("listbox");
 const queryPagination = () =>
   screen.queryByRole("navigation", { name: "pagination navigation" });
 const getCardTitles = () =>
   screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
 
-const lastSearchedTerm = () => mockedUseConceptSearch.mock.lastCall?.[0];
-const lastSearchOptions = () => mockedUseConceptSearch.mock.lastCall?.[1];
+const resultCalls = () =>
+  mockedUseConceptSearch.mock.calls.filter(([, o]) => !isSuggestionCall(o));
+const suggestionCalls = () =>
+  mockedUseConceptSearch.mock.calls.filter(([, o]) => isSuggestionCall(o));
+const last = <T,>(list: T[]) => list[list.length - 1];
+
+const lastSearchedTerm = () => last(resultCalls())?.[0];
+const lastSearchOptions = () => last(resultCalls())?.[1];
+const lastSuggestionTerm = () => last(suggestionCalls())?.[0];
+const lastSuggestionOptions = () => last(suggestionCalls())?.[1];
+const suggestionTerms = () => new Set(suggestionCalls().map(([term]) => term));
 
 async function searchFor(term: string) {
   const user = userEvent.setup();
@@ -141,10 +188,20 @@ async function searchFor(term: string) {
   return user;
 }
 
+/** Types `text` and waits for the debounced suggestions to open. */
+async function typeAndWaitForSuggestions(text: string) {
+  const user = userEvent.setup();
+  await user.type(getInput(), text);
+  await screen.findByRole("listbox");
+  return user;
+}
+
 beforeEach(() => {
   mockedUseConceptSearch.mockReset();
   scrollToSpy.mockClear();
   mockSearch({});
+  mockSuggestions({});
+  installMock();
 });
 
 // ----------------------------------------------------------------------
@@ -167,12 +224,18 @@ describe("Search", () => {
       expect(lastSearchOptions()).toEqual({ limit: PAGE_SIZE, offset: 0 });
     });
 
-    it("shows no progress, summary, results, or pagination", () => {
+    it("does not request suggestions", () => {
+      render(<Search />);
+      expect(lastSuggestionTerm()).toBe("");
+    });
+
+    it("shows no progress, summary, results, pagination, or dropdown", () => {
       render(<Search />);
       expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
       expect(queryStatus()).not.toBeInTheDocument();
       expect(screen.queryByRole("heading")).not.toBeInTheDocument();
       expect(queryPagination()).not.toBeInTheDocument();
+      expect(queryListbox()).not.toBeInTheDocument();
     });
   });
 
@@ -218,6 +281,209 @@ describe("Search", () => {
       await searchFor("asthma");
 
       expect(getInput()).toHaveValue("asthma");
+    });
+  });
+
+  describe("autocomplete", () => {
+    beforeEach(() =>
+      mockSuggestions({ data: suggestionsOf([asthma, childhoodAsthma]) }),
+    );
+
+    it(`requests suggestions only after a ${SUGGESTION_DELAY_MS} ms pause`, async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.type(getInput(), "asthma");
+
+      // Typing is faster than the delay, so nothing has been requested yet
+      expect(lastSuggestionTerm()).toBe("");
+      await waitFor(() => expect(lastSuggestionTerm()).toBe("asthma"));
+    });
+
+    it("requests only the text after the pause, not every keystroke", async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.type(getInput(), "asthma");
+      await waitFor(() => expect(lastSuggestionTerm()).toBe("asthma"));
+
+      expect(suggestionTerms()).toEqual(new Set(["", "asthma"]));
+    });
+
+    it(`requests ${SUGGESTION_LIMIT} suggestions`, async () => {
+      render(<Search />);
+
+      await typeAndWaitForSuggestions("asth");
+
+      expect(lastSuggestionOptions()).toEqual({ limit: SUGGESTION_LIMIT });
+    });
+
+    it("shows each suggestion's label and id", async () => {
+      render(<Search />);
+
+      await typeAndWaitForSuggestions("asth");
+
+      const options = within(screen.getByRole("listbox")).getAllByRole(
+        "option",
+      );
+      expect(options).toHaveLength(2);
+      expect(options[0]).toHaveTextContent("Asthma");
+      expect(options[0]).toHaveTextContent("C0004096");
+      expect(options[1]).toHaveTextContent("Childhood asthma");
+      expect(options[1]).toHaveTextContent("C0264408");
+    });
+
+    it('shows "Searching…" while suggestions load', async () => {
+      mockSuggestions({ isFetching: true });
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.type(getInput(), "asth");
+
+      expect(await screen.findByText("Searching…")).toBeInTheDocument();
+    });
+
+    it("does not search while suggestions are shown", async () => {
+      render(<Search />);
+
+      await typeAndWaitForSuggestions("asth");
+
+      expect(lastSearchedTerm()).toBe("");
+      expect(queryStatus()).not.toBeInTheDocument();
+    });
+
+    it("does not show an error notification when suggestions fail", async () => {
+      mockSuggestions({ isError: true, error: new Error("Suggest failed") });
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.type(getInput(), "asth");
+      await waitFor(() => expect(lastSuggestionTerm()).toBe("asth"));
+
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("selecting a suggestion", () => {
+    beforeEach(() =>
+      mockSuggestions({ data: suggestionsOf([asthma, childhoodAsthma]) }),
+    );
+
+    it("searches for the selected label on click", async () => {
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.click(
+        screen.getByRole("option", { name: /Childhood asthma/ }),
+      );
+
+      expect(lastSearchedTerm()).toBe("Childhood asthma");
+      expect(lastSearchOptions()).toEqual({ limit: PAGE_SIZE, offset: 0 });
+    });
+
+    it("searches for the highlighted label on Enter", async () => {
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.keyboard("{ArrowDown}{ArrowDown}{Enter}");
+
+      expect(lastSearchedTerm()).toBe("Childhood asthma");
+    });
+
+    it("fills the input with the label and closes the dropdown", async () => {
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.click(
+        screen.getByRole("option", { name: /Childhood asthma/ }),
+      );
+
+      expect(getInput()).toHaveValue("Childhood asthma");
+      expect(queryListbox()).not.toBeInTheDocument();
+    });
+
+    it("shows the results for the selected label", async () => {
+      mockSearch({ data: resultsOf([childhoodAsthma]) });
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.click(
+        screen.getByRole("option", { name: /Childhood asthma/ }),
+      );
+
+      expect(getStatus()).toHaveTextContent(
+        'Showing 1–1 of 1 concept matching "Childhood asthma"',
+      );
+      expect(getCardTitles()).toEqual(["Childhood asthma"]);
+    });
+
+    it("does not request suggestions for the selected label", async () => {
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.click(
+        screen.getByRole("option", { name: /Childhood asthma/ }),
+      );
+      // Wait past the debounce delay
+      await new Promise((r) => setTimeout(r, SUGGESTION_DELAY_MS + 100));
+
+      expect(suggestionTerms()).not.toContain("Childhood asthma");
+    });
+
+    it("shows the previous suggestions again when the input is clicked", async () => {
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+      await user.click(
+        screen.getByRole("option", { name: /Childhood asthma/ }),
+      );
+      await user.click(document.body);
+
+      await user.click(getInput());
+
+      expect(
+        screen.getByRole("option", { name: /Childhood asthma/ }),
+      ).toBeInTheDocument();
+      expect(lastSuggestionTerm()).toBe("asth");
+    });
+
+    it("returns to page 1", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      await user.clear(getInput());
+      await user.type(getInput(), "asth");
+      await user.click(await screen.findByRole("option", { name: /^Asthma/ }));
+
+      expect(lastSearchedTerm()).toBe("Asthma");
+      expect(lastSearchOptions()).toEqual({ limit: PAGE_SIZE, offset: 0 });
+    });
+  });
+
+  describe("without selecting a suggestion", () => {
+    beforeEach(() =>
+      mockSuggestions({ data: suggestionsOf([asthma, childhoodAsthma]) }),
+    );
+
+    it("searches the typed text, not a suggestion, when Search is clicked", async () => {
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.click(getSearchButton());
+
+      expect(lastSearchedTerm()).toBe("asth");
+      expect(getInput()).toHaveValue("asth");
+      expect(queryListbox()).not.toBeInTheDocument();
+    });
+
+    it("searches the typed text on Enter when nothing is highlighted", async () => {
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.keyboard("{Enter}");
+
+      expect(lastSearchedTerm()).toBe("asth");
     });
   });
 
@@ -484,9 +750,7 @@ describe("Search", () => {
       );
 
       // The new term must never be requested with the old page's offset
-      const asthmaCalls = mockedUseConceptSearch.mock.calls.filter(
-        ([term]) => term === "asthma",
-      );
+      const asthmaCalls = resultCalls().filter(([term]) => term === "asthma");
       expect(asthmaCalls.every(([, options]) => options?.offset === 0)).toBe(
         true,
       );
@@ -515,7 +779,7 @@ describe("Search", () => {
           <Search />
         </>,
       );
-      const [firstInput, secondInput] = screen.getAllByRole("searchbox");
+      const [firstInput, secondInput] = screen.getAllByRole("combobox");
       const [, secondButton] = screen.getAllByRole("button", {
         name: "Search",
       });
@@ -524,9 +788,7 @@ describe("Search", () => {
       await user.type(secondInput, "second");
       await user.click(secondButton);
 
-      const searchedTerms = mockedUseConceptSearch.mock.calls.map(
-        ([term]) => term,
-      );
+      const searchedTerms = resultCalls().map(([term]) => term);
       expect(searchedTerms).toContain("second");
       expect(searchedTerms).not.toContain("first");
     });

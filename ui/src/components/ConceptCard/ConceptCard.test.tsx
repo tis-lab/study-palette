@@ -6,7 +6,7 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ConceptCard from "./ConceptCard";
-import type { Term } from "../api/graphql/queries/resolveTerms";
+import type { Term } from "../../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 

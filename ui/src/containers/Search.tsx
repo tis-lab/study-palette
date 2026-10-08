@@ -8,13 +8,17 @@ import {
   Typography,
 } from "@mui/material";
 import Searchbar from "../components/Searchbar";
-import ConceptCard from "../components/ConceptCard";
-import Notification from "../components/Notification";
+import ConceptCard from "../components/ConceptCard/ConceptCard";
+import Notification from "../components/Notification/Notification";
 import { useConceptSearch } from "../hooks/useConceptSearch";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import type { Term } from "../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
 const PAGE_SIZE = 20;
+const SUGGESTION_LIMIT = 10;
+const SUGGESTION_DELAY_MS = 300;
 
 export default function Search() {
   // Unique per instance, so it can't collide with ids in the app
@@ -22,13 +26,22 @@ export default function Search() {
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState("");
   const [page, setPage] = useState(1);
+  // Text the user typed. Kept apart from `value` so that filling the input
+  // with a selected option's label doesn't fetch suggestions for that label.
+  const [typed, setTyped] = useState("");
 
   const [dismissedError, setDismissedError] = useState<Error | null>(null);
 
-  // Top level: runs on every render, fetches only when `submitted` changes
+  // Actual search result: fetches only when `submitted` changes, controlled by searchbar and pagination
   const { data, isLoading, isError, error } = useConceptSearch(submitted, {
     limit: PAGE_SIZE,
     offset: (page - 1) * PAGE_SIZE,
+  });
+
+  // Autocomplete suggestions: same hook, first 10 matches for the debounced typed text
+  const suggestionText = useDebouncedValue(typed, SUGGESTION_DELAY_MS);
+  const suggestions = useConceptSearch(suggestionText, {
+    limit: SUGGESTION_LIMIT,
   });
 
   const items = data?.items ?? [];
@@ -43,6 +56,15 @@ export default function Search() {
     setPage(1);
   };
 
+  const handleChange = (text: string, reason: string) => {
+    setValue(text);
+    if (reason === "input") setTyped(text);
+  };
+
+  const handleSelect = (term: Term) => {
+    handleSearch(term.label);
+  };
+
   return (
     <Stack spacing={1}>
       {/* Search error */}
@@ -53,13 +75,17 @@ export default function Search() {
         message={error?.message}
       />
 
+      {/* Searchbar with button */}
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
         <Searchbar
           id={searchId}
           name="search"
           value={value}
-          onChange={setValue}
+          onChange={handleChange}
           onSearch={handleSearch}
+          onSelect={handleSelect}
+          options={suggestions.data?.items ?? []}
+          loading={suggestions.isFetching}
         />
         <Button
           type="submit"
@@ -71,10 +97,12 @@ export default function Search() {
         </Button>
       </Box>
 
+      {/* Search Result */}
       {isLoading ? (
         <CircularProgress aria-label="Searching concepts" />
       ) : (
         <>
+          {/* Search Summary */}
           {showSummary && (
             <Box role="status" aria-live="polite">
               <Typography variant="body2" color="text.secondary">
@@ -104,6 +132,7 @@ export default function Search() {
                 gap: 2,
               }}
             >
+              {/* Result Cards */}
               <Stack width="100%">
                 {items.map((c, i) => (
                   <ConceptCard
@@ -116,6 +145,8 @@ export default function Search() {
                   />
                 ))}
               </Stack>
+
+              {/* Pagination */}
               {pageCount > 1 && (
                 <Pagination
                   count={pageCount}

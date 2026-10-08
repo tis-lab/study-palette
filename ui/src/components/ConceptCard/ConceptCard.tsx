@@ -2,48 +2,22 @@ import { useId, useState } from "react";
 import {
   Box,
   Button,
-  Card,
   CardContent,
   Collapse,
   Stack,
   Typography,
-  styled,
 } from "@mui/material";
 import { ChevronRight } from "@mui/icons-material";
-import { Term } from "../api/graphql/queries/resolveTerms";
+import { Term } from "../../api/graphql/queries/resolveTerms";
 import ConceptCardDetails from "./ConceptCardDetails";
-
-// ----------------------------------------------------------------------
-
-/* Styles */
-interface ConceptCardRootProps {
-  isFirst: boolean;
-  isLast: boolean;
-}
-
-const ConceptCardRoot = styled(Card, {
-  name: "CohortConceptCard",
-  slot: "Root",
-  shouldForwardProp: (prop) => prop !== "isFirst" && prop !== "isLast",
-})<ConceptCardRootProps>(({ isFirst, isLast }) => ({
-  // Outer corners inherit the theme's Card radius; only flatten inner corners
-  ...(!isFirst && {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderTop: "none", // adjacent cards share a single line
-  }),
-  ...(!isLast && {
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
-  }),
-}));
+import { ConceptCardRoot } from "./ConceptCard.styles";
 
 // ----------------------------------------------------------------------
 
 /* Prop Types */
 type ConceptAction = (concept: Term) => void;
 
-interface ConceptCardProps {
+export interface Props {
   concept: Term;
   isFirst: boolean;
   isLast: boolean;
@@ -59,7 +33,7 @@ export default function ConceptCard({
   isLast,
   onInclude,
   onExclude,
-}: ConceptCardProps) {
+}: Props) {
   const [open, setOpen] = useState(false);
   const detailsId = useId();
 
