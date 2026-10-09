@@ -55,7 +55,8 @@ type SearchState = {
 };
 
 const PAGE_SIZE = 20;
-const SUGGESTION_LIMIT = 10;
+const SUGGESTION_LIMIT = 10; // names shown
+const SUGGESTION_FETCH_LIMIT = 30; // results requested, before de-duplication
 const SUGGESTION_DELAY_MS = 300;
 
 const idle: SearchState = {
@@ -69,7 +70,7 @@ const idle: SearchState = {
 /*
  * Search calls the hook twice per render: once for the results
  * (limit PAGE_SIZE + offset) and once for the autocomplete suggestions
- * (limit SUGGESTION_LIMIT). The mock routes each call by its limit, so
+ * (limit SUGGESTION_FETCH_LIMIT). The mock routes each call by its limit, so
  * results and suggestions can be set up independently.
  */
 type Responder = (term: string, options: SearchOptions) => SearchState;
@@ -78,7 +79,7 @@ let respondToResults: Responder;
 let respondToSuggestions: Responder;
 
 const isSuggestionCall = (options: SearchOptions) =>
-  options?.limit === SUGGESTION_LIMIT;
+  options?.limit === SUGGESTION_FETCH_LIMIT;
 
 function installMock() {
   mockedUseConceptSearch.mockImplementation(
@@ -154,7 +155,7 @@ const resultsOf = (
 
 /** A suggestions response containing `items`. */
 const suggestionsOf = (items: Term[]): SearchData =>
-  resultsOf(items, { limit: SUGGESTION_LIMIT });
+  resultsOf(items, { limit: SUGGESTION_FETCH_LIMIT });
 
 const asthma = makeTerm("C0004096", "Asthma");
 const childhoodAsthma = makeTerm("C0264408", "Childhood asthma");
@@ -310,15 +311,17 @@ describe("Search", () => {
       expect(suggestionTerms()).toEqual(new Set(["", "asthma"]));
     });
 
-    it(`requests ${SUGGESTION_LIMIT} suggestions`, async () => {
+    it(`requests ${SUGGESTION_FETCH_LIMIT} results to fill the list`, async () => {
       render(<Search />);
 
       await typeAndWaitForSuggestions("asth");
 
-      expect(lastSuggestionOptions()).toEqual({ limit: SUGGESTION_LIMIT });
+      expect(lastSuggestionOptions()).toEqual({
+        limit: SUGGESTION_FETCH_LIMIT,
+      });
     });
 
-    it("shows each suggestion's label and id", async () => {
+    it("shows each suggestion's name only, without its id", async () => {
       render(<Search />);
 
       await typeAndWaitForSuggestions("asth");
@@ -326,11 +329,52 @@ describe("Search", () => {
       const options = within(screen.getByRole("listbox")).getAllByRole(
         "option",
       );
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent("Asthma");
-      expect(options[0]).toHaveTextContent("C0004096");
-      expect(options[1]).toHaveTextContent("Childhood asthma");
-      expect(options[1]).toHaveTextContent("C0264408");
+      expect(options.map((o) => o.textContent)).toEqual([
+        "Asthma",
+        "Childhood asthma",
+      ]);
+      expect(screen.getByRole("listbox")).not.toHaveTextContent("C0004096");
+    });
+
+    it("shows a name once when several concepts share it", async () => {
+      mockSuggestions({
+        data: suggestionsOf([
+          makeTerm("MONDO:0005044", "hypertension"),
+          makeTerm("HP:0000822", "Hypertension"),
+          makeTerm("MONDO:0005149", "pulmonary hypertension"),
+          makeTerm("EFO:0000537", "hypertension"),
+        ]),
+      });
+      render(<Search />);
+
+      await typeAndWaitForSuggestions("hyper");
+
+      const options = screen.getAllByRole("option");
+      expect(options.map((o) => o.textContent)).toEqual([
+        "hypertension",
+        "pulmonary hypertension",
+      ]);
+    });
+
+    it(`shows at most ${SUGGESTION_LIMIT} distinct names`, async () => {
+      // 30 results, each name twice: 15 distinct names
+      const names = Array.from({ length: 15 }, (_, i) => `Concept ${i + 1}`);
+      mockSuggestions({
+        data: suggestionsOf(
+          names.flatMap((name, i) => [
+            makeTerm(`A:${i}`, name),
+            makeTerm(`B:${i}`, name),
+          ]),
+        ),
+      });
+      render(<Search />);
+
+      await typeAndWaitForSuggestions("concept");
+
+      const options = screen.getAllByRole("option");
+      expect(options.map((o) => o.textContent)).toEqual(
+        names.slice(0, SUGGESTION_LIMIT),
+      );
     });
 
     it('shows "Searching…" while suggestions load', async () => {
@@ -415,6 +459,23 @@ describe("Search", () => {
         'Showing 1–1 of 1 concept matching "Childhood asthma"',
       );
       expect(getCardTitles()).toEqual(["Childhood asthma"]);
+    });
+
+    it("shows every concept sharing the selected name in the results", async () => {
+      const shared = [
+        makeTerm("MONDO:0005044", "hypertension"),
+        makeTerm("HP:0000822", "hypertension"),
+      ];
+      mockSuggestions({ data: suggestionsOf(shared) });
+      mockSearch({ data: resultsOf(shared) });
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("hyper");
+
+      expect(screen.getAllByRole("option")).toHaveLength(1);
+      await user.click(screen.getByRole("option", { name: "hypertension" }));
+
+      expect(lastSearchedTerm()).toBe("hypertension");
+      expect(getCardTitles()).toEqual(["hypertension", "hypertension"]);
     });
 
     it("does not request suggestions for the selected label", async () => {

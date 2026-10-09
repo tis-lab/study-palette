@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -12,12 +12,13 @@ import ConceptCard from "../components/ConceptCard/ConceptCard";
 import Notification from "../components/Notification/Notification";
 import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
-import type { Term } from "../api/graphql/queries/resolveTerms";
+import { uniqueLabels } from "../utils/uniqueLabels";
 
 // ----------------------------------------------------------------------
 
 const PAGE_SIZE = 20;
-const SUGGESTION_LIMIT = 10;
+const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
+const SUGGESTION_FETCH_LIMIT = 30; // how many results to request
 const SUGGESTION_DELAY_MS = 300;
 
 export default function Search() {
@@ -38,11 +39,21 @@ export default function Search() {
     offset: (page - 1) * PAGE_SIZE,
   });
 
-  // Autocomplete suggestions: same hook, first 10 matches for the debounced typed text
+  // Autocomplete suggestions: same hook, first 30 matches for the debounced typed text
   const suggestionText = useDebouncedValue(typed, SUGGESTION_DELAY_MS);
   const suggestions = useConceptSearch(suggestionText, {
-    limit: SUGGESTION_LIMIT,
+    limit: SUGGESTION_FETCH_LIMIT,
   });
+  const suggestionItems = suggestions.data?.items;
+  // de-duplicate and use first 10 distinct terms
+  const suggestedNames = useMemo(
+    () =>
+      uniqueLabels(
+        (suggestionItems ?? []).map((term) => term.label),
+        SUGGESTION_LIMIT,
+      ),
+    [suggestionItems],
+  );
 
   const items = data?.items ?? [];
   const showSummary = submitted !== "" && !isLoading && !isError;
@@ -61,8 +72,8 @@ export default function Search() {
     if (reason === "input") setTyped(text);
   };
 
-  const handleSelect = (term: Term) => {
-    handleSearch(term.label);
+  const handleSelect = (name: string) => {
+    handleSearch(name);
   };
 
   return (
@@ -84,7 +95,7 @@ export default function Search() {
           onChange={handleChange}
           onSearch={handleSearch}
           onSelect={handleSelect}
-          options={suggestions.data?.items ?? []}
+          options={suggestedNames}
           loading={suggestions.isFetching}
         />
         <Button

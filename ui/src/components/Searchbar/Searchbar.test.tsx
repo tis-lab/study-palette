@@ -3,19 +3,11 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Searchbar, { Props } from "./Searchbar";
-import type { Term } from "../../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
 /* Fixtures */
-function term(id: string, label: string): Term {
-  return { id, label, category: "Disease", description: null, synonyms: null };
-}
-
-const OPTIONS: Term[] = [
-  term("MONDO:0004979", "asthma"),
-  term("MONDO:0004784", "allergic asthma"),
-];
+const OPTIONS = ["asthma", "allergic asthma"];
 
 // ----------------------------------------------------------------------
 
@@ -139,7 +131,7 @@ describe("Searchbar", () => {
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
 
-    it("shows each option's label and id once the user types", async () => {
+    it("shows each option's name, in order, once the user types", async () => {
       const user = userEvent.setup();
       render(<ControlledSearchbar options={OPTIONS} />);
 
@@ -148,43 +140,22 @@ describe("Searchbar", () => {
       const options = within(screen.getByRole("listbox")).getAllByRole(
         "option",
       );
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent("asthma");
-      expect(options[0]).toHaveTextContent("MONDO:0004979");
-      expect(options[1]).toHaveTextContent("allergic asthma");
-      expect(options[1]).toHaveTextContent("MONDO:0004784");
+      expect(options.map((o) => o.textContent)).toEqual([
+        "asthma",
+        "allergic asthma",
+      ]);
     });
 
     it("shows options as given, without filtering them by the typed text", async () => {
       // The server matches on synonyms too, so a label may not contain the input
       const user = userEvent.setup();
-      render(
-        <ControlledSearchbar
-          options={[term("MONDO:0005068", "myocardial infarction")]}
-        />,
-      );
+      render(<ControlledSearchbar options={["myocardial infarction"]} />);
 
       await user.type(getInput(), "heart attack");
 
       expect(
-        screen.getByRole("option", { name: /myocardial infarction/ }),
+        screen.getByRole("option", { name: "myocardial infarction" }),
       ).toBeInTheDocument();
-    });
-
-    it("renders options with the same label but different ids", async () => {
-      const user = userEvent.setup();
-      render(
-        <ControlledSearchbar
-          options={[term("A:1", "asthma"), term("B:2", "asthma")]}
-        />,
-      );
-
-      await user.type(getInput(), "ast");
-
-      const options = screen.getAllByRole("option");
-      expect(options).toHaveLength(2);
-      expect(options[0]).toHaveTextContent("A:1");
-      expect(options[1]).toHaveTextContent("B:2");
     });
 
     it('shows "Searching…" while loading with no options yet', async () => {

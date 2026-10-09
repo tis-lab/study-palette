@@ -2,14 +2,11 @@ import { FormEvent, useState } from "react";
 import {
   Autocomplete,
   AutocompleteInputChangeReason,
-  Box,
   InputAdornment,
   TextField,
-  Typography,
 } from "@mui/material";
 import { InputBaseComponentProps } from "@mui/material/InputBase";
 import { Search } from "@mui/icons-material";
-import { Term } from "../../api/graphql/queries/resolveTerms";
 import { SearchbarRoot } from "./Searchbar.styles";
 
 // ----------------------------------------------------------------------
@@ -26,9 +23,9 @@ export interface Props {
   /** Called when the form is submitted (Search button or Enter). */
   onSearch?: (value: string) => void;
   /** Called when the user picks a suggestion. */
-  onSelect?: (option: Term) => void;
+  onSelect?: (option: string) => void;
   /** Suggestions to show in the dropdown. */
-  options?: Term[];
+  options?: string[];
   /** True while suggestions are loading. */
   loading?: boolean;
   placeholder?: string;
@@ -67,7 +64,7 @@ export default function Searchbar({
 
   return (
     <SearchbarRoot id={id} role="search" onSubmit={handleSubmit} noValidate>
-      <Autocomplete<Term, false, true, true>
+      <Autocomplete<string, false, true, true>
         freeSolo
         disableClearable
         fullWidth
@@ -80,67 +77,15 @@ export default function Searchbar({
         loadingText="Searching…"
         // Show the exact result coming from server, do not filter again on the client side
         filterOptions={(x) => x}
-        getOptionLabel={(option) =>
-          typeof option === "string" ? option : option.label
-        }
-        // Key options by id; labels can repeat
-        getOptionKey={(option) =>
-          typeof option === "string" ? option : option.id
-        }
-        isOptionEqualToValue={(option, selected) => option.id === selected.id}
         inputValue={value}
         onInputChange={(_event, text, reason) => onChange(text, reason)}
         onChange={(_event, selected, reason) => {
           // Typed text + Enter arrives here as "createOption"; the form's
           // submit handler deals with it, so only react to picked options.
-          if (
-            reason === "selectOption" &&
-            selected &&
-            typeof selected !== "string"
-          ) {
+          if (reason === "selectOption" && selected) {
             setOpen(false);
             onSelect?.(selected);
           }
-        }}
-        renderOption={(props, option) => {
-          const { key, ...optionProps } = props;
-          return (
-            <li key={key} {...optionProps}>
-              <Box
-                sx={{
-                  display: "flex",
-                  // Stack label and id on small screens; side by side from `sm` up
-                  flexDirection: { xs: "column", sm: "row" },
-                  justifyContent: "space-between",
-                  alignItems: { xs: "flex-start", sm: "baseline" },
-                  gap: { xs: 0, sm: 2 },
-                  width: "100%",
-                  minWidth: 0,
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  sx={{
-                    // Wrap long labels when stacked; truncate when side by side
-                    maxWidth: "100%",
-                    overflowWrap: "anywhere",
-                    whiteSpace: { xs: "normal", sm: "nowrap" },
-                    overflow: { sm: "hidden" },
-                    textOverflow: { sm: "ellipsis" },
-                  }}
-                >
-                  {option.label}
-                </Typography>
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ flexShrink: 0 }}
-                >
-                  {option.id}
-                </Typography>
-              </Box>
-            </li>
-          );
         }}
         renderInput={(params) => (
           <TextField
