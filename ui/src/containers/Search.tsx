@@ -13,7 +13,7 @@ import Notification from "../components/Notification/Notification";
 import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
-import { useAutocomplete } from "../hooks/useAutocomplete";
+import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +49,8 @@ export default function Search() {
     offset: (page - 1) * PAGE_SIZE,
   });
 
+  console.log(searchData);
+
   // Autocomplete suggestions for the debounced typed text
   const suggestionText = useDebouncedValue(typed, SUGGESTION_DELAY_MS);
   const {
@@ -56,13 +58,14 @@ export default function Search() {
     isFetching: isFetchingSuggestions,
     isError: isSuggestionError,
     error: suggestionError,
-  } = useAutocomplete(suggestionText);
+  } = useConceptSuggestions(suggestionText);
 
   // The hook is disabled for empty text; ignore any data kept from the
   // previous query so the dropdown clears with the input
   const hasSuggestionQuery = suggestionText.trim() !== "";
-  const suggestionItems = hasSuggestionQuery ? suggestionData : undefined;
-
+  const suggestionItems = hasSuggestionQuery
+    ? suggestionData?.items
+    : undefined;
   // de-duplicate and use first 10 distinct terms
   const suggestedNames = useMemo(
     () =>

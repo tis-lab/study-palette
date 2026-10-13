@@ -1,16 +1,17 @@
 import { useId, useState } from "react";
-import {
-  Box,
-  Button,
-  CardContent,
-  Collapse,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { ChevronRight } from "@mui/icons-material";
+import { Button, Collapse, Stack } from "@mui/material";
 import { Term } from "../../api/graphql/queries/resolveTerms";
 import ConceptCardDetails from "./ConceptCardDetails";
-import { ConceptCardRoot } from "./ConceptCard.styles";
+import {
+  ConceptCardBody,
+  ConceptCardLayout,
+  ConceptCardMain,
+  ConceptCardRoot,
+  ConceptMeta,
+  ConceptTitle,
+  DetailsButton,
+  ExpandIcon,
+} from "./ConceptCard.styles";
 
 // ----------------------------------------------------------------------
 
@@ -44,17 +45,9 @@ export default function ConceptCard({
 
   return (
     <ConceptCardRoot variant="outlined" isFirst={isFirst} isLast={isLast}>
-      <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: 2,
-            flexWrap: { xs: "wrap", sm: "nowrap" },
-          }}
-        >
-          <Box sx={{ minWidth: 0, width: "100%" }}>
+      <ConceptCardBody>
+        <ConceptCardLayout>
+          <ConceptCardMain>
             <Stack
               direction="row"
               spacing={1}
@@ -62,49 +55,25 @@ export default function ConceptCard({
               flexWrap="wrap"
               useFlexGap
             >
-              <Typography
-                component="h2"
-                variant="subtitle2"
-                sx={{ fontWeight: "fontWeightBold" }}
-              >
+              <ConceptTitle component="h2" variant="subtitle2">
                 {concept.label}
-              </Typography>
+              </ConceptTitle>
             </Stack>
 
-            <Typography
-              component="p"
-              variant="caption"
-              color="text.secondary"
-              sx={{ mt: 0.75 }}
-            >
+            <ConceptMeta component="p" variant="caption" color="text.secondary">
               {concept.id}
               {/* · {concept?.studies ?? 0} studies */}
-            </Typography>
+            </ConceptMeta>
 
-            <Button
+            <DetailsButton
               size="small"
               onClick={() => setOpen((v) => !v)}
               aria-expanded={open}
               aria-controls={detailsId}
-              startIcon={
-                <ChevronRight
-                  sx={(theme) => ({
-                    transition: theme.transitions.create("transform", {
-                      duration: theme.transitions.duration.shortest,
-                    }),
-                    transform: open ? "rotate(90deg)" : "none",
-                  })}
-                />
-              }
-              sx={{
-                mt: 1.5,
-                ml: -1,
-                px: 1,
-                "& .MuiButton-startIcon": { mr: 0.5 },
-              }}
+              startIcon={<ExpandIcon open={open} />}
             >
               Details
-            </Button>
+            </DetailsButton>
 
             <Collapse in={open} id={detailsId} unmountOnExit>
               <ConceptCardDetails
@@ -112,9 +81,9 @@ export default function ConceptCard({
                 description={concept?.description}
               />
             </Collapse>
-          </Box>
+          </ConceptCardMain>
 
-          <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
+          <Stack direction="row" spacing={1} flexShrink={0}>
             {actions.map((a) => (
               <Button
                 key={a.label}
@@ -125,8 +94,8 @@ export default function ConceptCard({
               </Button>
             ))}
           </Stack>
-        </Box>
-      </CardContent>
+        </ConceptCardLayout>
+      </ConceptCardBody>
     </ConceptCardRoot>
   );
 }
