@@ -3,7 +3,9 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Search from "./Search";
 import { useConceptSearch } from "../hooks/useConceptSearch";
+import { useAutocomplete } from "../hooks/useAutocomplete";
 import type { Term } from "../api/graphql/queries/resolveTerms";
+import type { Suggestion } from "../api/graphql/queries/resolveSuggestions";
 
 // ----------------------------------------------------------------------
 
@@ -13,20 +15,30 @@ vi.mock("../hooks/useConceptSearch", () => ({
   useConceptSearch: vi.fn(),
 }));
 
-// Stub so these tests don't depend on Notification's internals
+vi.mock("../hooks/useAutocomplete", () => ({
+  useAutocomplete: vi.fn(),
+}));
+
+// Stub so these tests don't depend on Notification's internals.
+// The dismiss button lets tests exercise onClose.
 vi.mock("../components/Notification/Notification", () => ({
   default: ({
     open,
     severity,
     message,
+    onClose,
   }: {
     open: boolean;
     severity: string;
     message?: string;
+    onClose?: () => void;
   }) =>
     open ? (
       <div role="alert" data-severity={severity}>
         {message}
+        <button type="button" onClick={onClose}>
+          Dismiss
+        </button>
       </div>
     ) : null,
 }));
@@ -35,9 +47,11 @@ vi.mock("../components/Notification/Notification", () => ({
 const scrollToSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
 
 const mockedUseConceptSearch = vi.mocked(useConceptSearch);
+const mockedUseAutocomplete = vi.mocked(useAutocomplete);
 
 type SearchResult = ReturnType<typeof useConceptSearch>;
 type SearchOptions = Parameters<typeof useConceptSearch>[1];
+type AutocompleteResult = ReturnType<typeof useAutocomplete>;
 
 /** Only the fields Search reads from the response. */
 type SearchData = Pick<
@@ -46,20 +60,24 @@ type SearchData = Pick<
 >;
 
 /** Only the fields Search reads; the rest of UseQueryResult is irrelevant here. */
-type SearchState = {
-  data: SearchData | undefined;
+type QueryState<T> = {
+  data: T | undefined;
   isLoading: boolean;
   isFetching: boolean;
   isError: boolean;
   error: Error | null;
 };
 
+type SearchState = QueryState<SearchData>;
+type SuggestionState = QueryState<Suggestion[]>;
+
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // names shown
-const SUGGESTION_FETCH_LIMIT = 30; // results requested, before de-duplication
 const SUGGESTION_DELAY_MS = 300;
+const SUGGESTION_ERROR_MESSAGE =
+  "Suggestions are unavailable right now. You can still search.";
 
-const idle: SearchState = {
+const idle = {
   data: undefined,
   isLoading: false,
   isFetching: false,
@@ -68,26 +86,20 @@ const idle: SearchState = {
 };
 
 /*
- * Search calls the hook twice per render: once for the results
- * (limit PAGE_SIZE + offset) and once for the autocomplete suggestions
- * (limit SUGGESTION_FETCH_LIMIT). The mock routes each call by its limit, so
- * results and suggestions can be set up independently.
+ * Results come from useConceptSearch and suggestions from useAutocomplete,
+ * so each hook gets its own responder and can be set up independently.
  */
-type Responder = (term: string, options: SearchOptions) => SearchState;
+let respondToResults: (term: string, options: SearchOptions) => SearchState;
+let respondToSuggestions: (text: string) => SuggestionState;
 
-let respondToResults: Responder;
-let respondToSuggestions: Responder;
-
-const isSuggestionCall = (options: SearchOptions) =>
-  options?.limit === SUGGESTION_FETCH_LIMIT;
-
-function installMock() {
+function installMocks() {
+  // Cast once here instead of faking every UseQueryResult field
   mockedUseConceptSearch.mockImplementation(
     (term, options) =>
-      // Cast once here instead of faking every UseQueryResult field
-      (isSuggestionCall(options)
-        ? respondToSuggestions(term, options)
-        : respondToResults(term, options)) as unknown as SearchResult,
+      respondToResults(term, options) as unknown as SearchResult,
+  );
+  mockedUseAutocomplete.mockImplementation(
+    (text) => respondToSuggestions(text) as unknown as AutocompleteResult,
   );
 }
 
@@ -119,9 +131,12 @@ function mockPagedSearch(all: Term[]) {
   };
 }
 
-/** Suggestions: returns `state` for any non-empty typed text. */
-function mockSuggestions(state: Partial<SearchState>) {
-  respondToSuggestions = (term) => (term ? { ...idle, ...state } : idle);
+/**
+ * Suggestions: returns `state` for any non-empty typed text and `idle`
+ * for "", mirroring the hook being disabled for empty text.
+ */
+function mockSuggestions(state: Partial<SuggestionState>) {
+  respondToSuggestions = (text) => (text ? { ...idle, ...state } : idle);
 }
 
 // ----------------------------------------------------------------------
@@ -153,9 +168,9 @@ const resultsOf = (
   ...overrides,
 });
 
-/** A suggestions response containing `items`. */
-const suggestionsOf = (items: Term[]): SearchData =>
-  resultsOf(items, { limit: SUGGESTION_FETCH_LIMIT });
+/** Suggestions carry only the id and label of each term. */
+const suggestionsOf = (terms: Term[]): Suggestion[] =>
+  terms.map(({ id, label }) => ({ id, label }));
 
 const asthma = makeTerm("C0004096", "Asthma");
 const childhoodAsthma = makeTerm("C0264408", "Childhood asthma");
@@ -171,17 +186,30 @@ const queryPagination = () =>
 const getCardTitles = () =>
   screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
 
-const resultCalls = () =>
-  mockedUseConceptSearch.mock.calls.filter(([, o]) => !isSuggestionCall(o));
-const suggestionCalls = () =>
-  mockedUseConceptSearch.mock.calls.filter(([, o]) => isSuggestionCall(o));
+/** The open notification with the given severity, if any. */
+const queryAlert = (severity: "error" | "warning") =>
+  screen
+    .queryAllByRole("alert")
+    .find((alert) => alert.getAttribute("data-severity") === severity) ?? null;
+const findAlert = (severity: "error" | "warning") =>
+  waitFor(() => {
+    const alert = queryAlert(severity);
+    expect(alert).not.toBeNull();
+    return alert as HTMLElement;
+  });
+const dismiss = (
+  user: ReturnType<typeof userEvent.setup>,
+  alert: HTMLElement,
+) => user.click(within(alert).getByRole("button", { name: "Dismiss" }));
+
+const resultCalls = () => mockedUseConceptSearch.mock.calls;
+const suggestionCalls = () => mockedUseAutocomplete.mock.calls;
 const last = <T,>(list: T[]) => list[list.length - 1];
 
 const lastSearchedTerm = () => last(resultCalls())?.[0];
 const lastSearchOptions = () => last(resultCalls())?.[1];
 const lastSuggestionTerm = () => last(suggestionCalls())?.[0];
-const lastSuggestionOptions = () => last(suggestionCalls())?.[1];
-const suggestionTerms = () => new Set(suggestionCalls().map(([term]) => term));
+const suggestionTerms = () => new Set(suggestionCalls().map(([text]) => text));
 
 async function searchFor(term: string) {
   const user = userEvent.setup();
@@ -199,10 +227,11 @@ async function typeAndWaitForSuggestions(text: string) {
 
 beforeEach(() => {
   mockedUseConceptSearch.mockReset();
+  mockedUseAutocomplete.mockReset();
   scrollToSpy.mockClear();
   mockSearch({});
   mockSuggestions({});
-  installMock();
+  installMocks();
 });
 
 // ----------------------------------------------------------------------
@@ -230,13 +259,14 @@ describe("Search", () => {
       expect(lastSuggestionTerm()).toBe("");
     });
 
-    it("shows no progress, summary, results, pagination, or dropdown", () => {
+    it("shows no progress, summary, results, pagination, dropdown, or notification", () => {
       render(<Search />);
       expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
       expect(queryStatus()).not.toBeInTheDocument();
       expect(screen.queryByRole("heading")).not.toBeInTheDocument();
       expect(queryPagination()).not.toBeInTheDocument();
       expect(queryListbox()).not.toBeInTheDocument();
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
   });
 
@@ -311,14 +341,12 @@ describe("Search", () => {
       expect(suggestionTerms()).toEqual(new Set(["", "asthma"]));
     });
 
-    it(`requests ${SUGGESTION_FETCH_LIMIT} results to fill the list`, async () => {
+    it("never sends the typed text to the concept search", async () => {
       render(<Search />);
 
       await typeAndWaitForSuggestions("asth");
 
-      expect(lastSuggestionOptions()).toEqual({
-        limit: SUGGESTION_FETCH_LIMIT,
-      });
+      expect(resultCalls().map(([term]) => term)).not.toContain("asth");
     });
 
     it("shows each suggestion's name only, without its id", async () => {
@@ -387,6 +415,22 @@ describe("Search", () => {
       expect(await screen.findByText("Searching…")).toBeInTheDocument();
     });
 
+    it("clears the suggestions when the input is cleared, even if the hook still holds data", async () => {
+      // Simulates placeholderData: keepPreviousData, which keeps returning
+      // the last suggestions after the hook is disabled
+      respondToSuggestions = () => ({
+        ...idle,
+        data: suggestionsOf([asthma, childhoodAsthma]),
+      });
+      render(<Search />);
+      const user = await typeAndWaitForSuggestions("asth");
+
+      await user.clear(getInput());
+
+      await waitFor(() => expect(queryListbox()).not.toBeInTheDocument());
+      expect(lastSuggestionTerm()).toBe("");
+    });
+
     it("does not search while suggestions are shown", async () => {
       render(<Search />);
 
@@ -394,17 +438,6 @@ describe("Search", () => {
 
       expect(lastSearchedTerm()).toBe("");
       expect(queryStatus()).not.toBeInTheDocument();
-    });
-
-    it("does not show an error notification when suggestions fail", async () => {
-      mockSuggestions({ isError: true, error: new Error("Suggest failed") });
-      const user = userEvent.setup();
-      render(<Search />);
-
-      await user.type(getInput(), "asth");
-      await waitFor(() => expect(lastSuggestionTerm()).toBe("asth"));
-
-      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
     });
   });
 
@@ -679,7 +712,7 @@ describe("Search", () => {
     });
   });
 
-  describe("error", () => {
+  describe("search error", () => {
     beforeEach(() =>
       mockSearch({ isError: true, error: new Error("Network down") }),
     );
@@ -688,9 +721,8 @@ describe("Search", () => {
       render(<Search />);
       await searchFor("asthma");
 
-      const alert = screen.getByRole("alert");
+      const alert = queryAlert("error");
       expect(alert).toHaveTextContent("Network down");
-      expect(alert).toHaveAttribute("data-severity", "error");
     });
 
     it("does not show the summary or empty-state message on error", async () => {
@@ -700,10 +732,126 @@ describe("Search", () => {
       expect(queryStatus()).not.toBeInTheDocument();
     });
 
-    it("does not show a notification before an error", () => {
-      mockSearch({});
+    it("stays closed after being dismissed", async () => {
       render(<Search />);
-      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      const user = await searchFor("asthma");
+
+      await dismiss(user, queryAlert("error") as HTMLElement);
+
+      expect(queryAlert("error")).toBeNull();
+    });
+
+    it("opens again when a new search fails", async () => {
+      render(<Search />);
+      const user = await searchFor("asthma");
+      await dismiss(user, queryAlert("error") as HTMLElement);
+
+      mockSearch({ isError: true, error: new Error("Still down") });
+      await user.clear(getInput());
+      await user.type(getInput(), "copd{Enter}");
+
+      expect(queryAlert("error")).toHaveTextContent("Still down");
+    });
+  });
+
+  describe("autocomplete error", () => {
+    beforeEach(() =>
+      mockSuggestions({ isError: true, error: new Error("Suggest failed") }),
+    );
+
+    it("opens a warning that search still works", async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.type(getInput(), "asth");
+
+      const alert = await findAlert("warning");
+      expect(alert).toHaveTextContent(SUGGESTION_ERROR_MESSAGE);
+      expect(alert).not.toHaveTextContent("Suggest failed");
+    });
+
+    it("does not open the search error notification", async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.type(getInput(), "asth");
+      await findAlert("warning");
+
+      expect(queryAlert("error")).toBeNull();
+    });
+
+    it("does not open before anything is typed", () => {
+      render(<Search />);
+      expect(queryAlert("warning")).toBeNull();
+    });
+
+    it("stays closed after being dismissed", async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+      await user.type(getInput(), "asth");
+
+      await dismiss(user, await findAlert("warning"));
+
+      expect(queryAlert("warning")).toBeNull();
+    });
+
+    it("opens again when a later request fails with a new error", async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+      await user.type(getInput(), "asth");
+      await dismiss(user, await findAlert("warning"));
+
+      mockSuggestions({ isError: true, error: new Error("Failed again") });
+      await user.type(getInput(), "ma");
+
+      expect(await findAlert("warning")).toBeInTheDocument();
+    });
+
+    it("still lets the user search", async () => {
+      mockSearch({ data: resultsOf([asthma]) });
+      render(<Search />);
+
+      await searchFor("asthma");
+
+      expect(getStatus()).toHaveTextContent(
+        'Showing 1–1 of 1 concept matching "asthma"',
+      );
+    });
+  });
+
+  describe("both errors", () => {
+    beforeEach(() => {
+      mockSearch({ isError: true, error: new Error("Network down") });
+      mockSuggestions({ isError: true, error: new Error("Suggest failed") });
+    });
+
+    it("shows both notifications at once", async () => {
+      render(<Search />);
+      await searchFor("asthma");
+
+      expect(await findAlert("warning")).toBeInTheDocument();
+      expect(queryAlert("error")).toHaveTextContent("Network down");
+    });
+
+    it("dismissing the search error leaves the autocomplete warning open", async () => {
+      render(<Search />);
+      const user = await searchFor("asthma");
+      await findAlert("warning");
+
+      await dismiss(user, queryAlert("error") as HTMLElement);
+
+      expect(queryAlert("error")).toBeNull();
+      expect(queryAlert("warning")).toBeInTheDocument();
+    });
+
+    it("dismissing the autocomplete warning leaves the search error open", async () => {
+      render(<Search />);
+      const user = await searchFor("asthma");
+
+      await dismiss(user, await findAlert("warning"));
+
+      expect(queryAlert("warning")).toBeNull();
+      expect(queryAlert("error")).toHaveTextContent("Network down");
     });
   });
 

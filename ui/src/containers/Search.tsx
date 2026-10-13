@@ -13,12 +13,12 @@ import Notification from "../components/Notification/Notification";
 import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
+import { useAutocomplete } from "../hooks/useAutocomplete";
 
 // ----------------------------------------------------------------------
 
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
-const SUGGESTION_FETCH_LIMIT = 30; // how many results to request
 const SUGGESTION_DELAY_MS = 300;
 
 export default function Search() {
@@ -31,20 +31,38 @@ export default function Search() {
   // with a selected option's label doesn't fetch suggestions for that label.
   const [typed, setTyped] = useState("");
 
-  const [dismissedError, setDismissedError] = useState<Error | null>(null);
+  // Each notification remembers the error it was closed for, so it stays
+  // closed until its query fails again with a new error
+  const [dismissedSearchError, setDismissedSearchError] =
+    useState<Error | null>(null);
+  const [dismissedSuggestionError, setDismissedSuggestionError] =
+    useState<Error | null>(null);
 
   // Actual search result: fetches only when `submitted` changes, controlled by searchbar and pagination
-  const { data, isLoading, isError, error } = useConceptSearch(submitted, {
+  const {
+    data: searchData,
+    isLoading: isLoadingSearchResult,
+    isError: isSearchError,
+    error: searchError,
+  } = useConceptSearch(submitted, {
     limit: PAGE_SIZE,
     offset: (page - 1) * PAGE_SIZE,
   });
 
-  // Autocomplete suggestions: same hook, first 30 matches for the debounced typed text
+  // Autocomplete suggestions for the debounced typed text
   const suggestionText = useDebouncedValue(typed, SUGGESTION_DELAY_MS);
-  const suggestions = useConceptSearch(suggestionText, {
-    limit: SUGGESTION_FETCH_LIMIT,
-  });
-  const suggestionItems = suggestions.data?.items;
+  const {
+    data: suggestionData,
+    isFetching: isFetchingSuggestions,
+    isError: isSuggestionError,
+    error: suggestionError,
+  } = useAutocomplete(suggestionText);
+
+  // The hook is disabled for empty text; ignore any data kept from the
+  // previous query so the dropdown clears with the input
+  const hasSuggestionQuery = suggestionText.trim() !== "";
+  const suggestionItems = hasSuggestionQuery ? suggestionData : undefined;
+
   // de-duplicate and use first 10 distinct terms
   const suggestedNames = useMemo(
     () =>
@@ -55,12 +73,15 @@ export default function Search() {
     [suggestionItems],
   );
 
-  const items = data?.items ?? [];
-  const showSummary = submitted !== "" && !isLoading && !isError;
-  const pageCount = data ? Math.ceil(data.total / data.limit) : 0;
+  const searchItems = searchData?.items ?? [];
+  const showSummary =
+    submitted !== "" && !isLoadingSearchResult && !isSearchError;
+  const pageCount = searchData
+    ? Math.ceil(searchData.total / searchData.limit)
+    : 0;
 
-  const start = data && data.offset + 1;
-  const end = data && data.offset + data.items.length;
+  const start = searchData && searchData.offset + 1;
+  const end = searchData && searchData.offset + searchData.items.length;
 
   const handleSearch = (text: string) => {
     setSubmitted(text);
@@ -80,10 +101,18 @@ export default function Search() {
     <Stack spacing={1}>
       {/* Search error */}
       <Notification
-        open={isError && error !== dismissedError}
-        onClose={() => setDismissedError(error)}
+        open={isSearchError && searchError !== dismissedSearchError}
+        onClose={() => setDismissedSearchError(searchError)}
         severity="error"
-        message={error?.message}
+        message={searchError?.message}
+      />
+
+      {/* Autocomplete error: search still works, so this is a warning */}
+      <Notification
+        open={isSuggestionError && suggestionError !== dismissedSuggestionError}
+        onClose={() => setDismissedSuggestionError(suggestionError)}
+        severity="warning"
+        message="Suggestions are unavailable right now. You can still search."
       />
 
       {/* Searchbar with button */}
@@ -96,7 +125,7 @@ export default function Search() {
           onSearch={handleSearch}
           onSelect={handleSelect}
           options={suggestedNames}
-          loading={suggestions.isFetching}
+          loading={hasSuggestionQuery && isFetchingSuggestions}
         />
         <Button
           type="submit"
@@ -109,7 +138,7 @@ export default function Search() {
       </Box>
 
       {/* Search Result */}
-      {isLoading ? (
+      {isLoadingSearchResult ? (
         <CircularProgress aria-label="Searching concepts" />
       ) : (
         <>
@@ -117,11 +146,11 @@ export default function Search() {
           {showSummary && (
             <Box role="status" aria-live="polite">
               <Typography variant="body2" color="text.secondary">
-                {items.length > 0 ? (
+                {searchItems.length > 0 ? (
                   <>
                     Showing {start?.toLocaleString()}–{end?.toLocaleString()} of{" "}
-                    {data?.total.toLocaleString()}{" "}
-                    {data?.total === 1 ? "concept" : "concepts"} matching{" "}
+                    {searchData?.total.toLocaleString()}{" "}
+                    {searchData?.total === 1 ? "concept" : "concepts"} matching{" "}
                     <strong>"{submitted}"</strong>
                   </>
                 ) : (
@@ -134,7 +163,7 @@ export default function Search() {
             </Box>
           )}
 
-          {items.length > 0 && (
+          {searchItems.length > 0 && (
             <Box
               sx={{
                 display: "flex",
@@ -145,12 +174,12 @@ export default function Search() {
             >
               {/* Result Cards */}
               <Stack width="100%">
-                {items.map((c, i) => (
+                {searchItems.map((c, i) => (
                   <ConceptCard
                     key={c.id}
                     concept={c}
                     isFirst={i === 0}
-                    isLast={i === items.length - 1}
+                    isLast={i === searchItems.length - 1}
                     // onInclude={onInclude}
                     // onExclude={onExclude}
                   />
