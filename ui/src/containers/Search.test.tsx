@@ -3,9 +3,12 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Search from "./Search";
 import { useConceptSearch } from "../hooks/useConceptSearch";
-import { useAutocomplete } from "../hooks/useAutocomplete";
+import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
 import type { Term } from "../api/graphql/queries/resolveTerms";
-import type { Suggestion } from "../api/graphql/queries/resolveSuggestions";
+import type {
+  Suggestion,
+  SuggestionsPage,
+} from "../api/graphql/queries/autocomplete";
 
 // ----------------------------------------------------------------------
 
@@ -15,8 +18,8 @@ vi.mock("../hooks/useConceptSearch", () => ({
   useConceptSearch: vi.fn(),
 }));
 
-vi.mock("../hooks/useAutocomplete", () => ({
-  useAutocomplete: vi.fn(),
+vi.mock("../hooks/useConceptSuggestions", () => ({
+  useConceptSuggestions: vi.fn(),
 }));
 
 // Stub so these tests don't depend on Notification's internals.
@@ -47,11 +50,11 @@ vi.mock("../components/Notification/Notification", () => ({
 const scrollToSpy = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
 
 const mockedUseConceptSearch = vi.mocked(useConceptSearch);
-const mockedUseAutocomplete = vi.mocked(useAutocomplete);
+const mockedUseConceptSuggestions = vi.mocked(useConceptSuggestions);
 
 type SearchResult = ReturnType<typeof useConceptSearch>;
 type SearchOptions = Parameters<typeof useConceptSearch>[1];
-type AutocompleteResult = ReturnType<typeof useAutocomplete>;
+type SuggestionsResult = ReturnType<typeof useConceptSuggestions>;
 
 /** Only the fields Search reads from the response. */
 type SearchData = Pick<
@@ -69,10 +72,11 @@ type QueryState<T> = {
 };
 
 type SearchState = QueryState<SearchData>;
-type SuggestionState = QueryState<Suggestion[]>;
+type SuggestionState = QueryState<SuggestionsPage>;
 
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // names shown
+const SUGGESTION_UPSTREAM_CAP = 10; // the server returns at most this many
 const SUGGESTION_DELAY_MS = 300;
 const SUGGESTION_ERROR_MESSAGE =
   "Suggestions are unavailable right now. You can still search.";
@@ -86,7 +90,7 @@ const idle = {
 };
 
 /*
- * Results come from useConceptSearch and suggestions from useAutocomplete,
+ * Results come from useConceptSearch and suggestions from useConceptSuggestions,
  * so each hook gets its own responder and can be set up independently.
  */
 let respondToResults: (term: string, options: SearchOptions) => SearchState;
@@ -98,8 +102,8 @@ function installMocks() {
     (term, options) =>
       respondToResults(term, options) as unknown as SearchResult,
   );
-  mockedUseAutocomplete.mockImplementation(
-    (text) => respondToSuggestions(text) as unknown as AutocompleteResult,
+  mockedUseConceptSuggestions.mockImplementation(
+    (text) => respondToSuggestions(text) as unknown as SuggestionsResult,
   );
 }
 
@@ -149,6 +153,7 @@ const makeTerm = (id: string, label: string): Term => ({
   category: "Disease or Syndrome",
   description: null,
   synonyms: null,
+  // Not harmonized in any study; 0 is common in real data too
   bdc: { studyCount: 0, studies: [], variableNames: [] },
 });
 
@@ -169,9 +174,19 @@ const resultsOf = (
   ...overrides,
 });
 
-/** Suggestions carry only the id and label of each term. */
-const suggestionsOf = (terms: Term[]): Suggestion[] =>
-  terms.map(({ id, label }) => ({ id, label }));
+const toSuggestion = (term: Term): Suggestion => ({
+  id: term.id,
+  label: term.label,
+  category: term.category,
+  displayLabel: term.label,
+  description: term.description,
+});
+
+/** A suggestions response containing `terms`, shaped like the autocomplete page. */
+const suggestionsOf = (terms: Term[]): SuggestionsPage => ({
+  items: terms.map(toSuggestion),
+  total: terms.length,
+});
 
 const asthma = makeTerm("C0004096", "Asthma");
 const childhoodAsthma = makeTerm("C0264408", "Childhood asthma");
@@ -204,7 +219,7 @@ const dismiss = (
 ) => user.click(within(alert).getByRole("button", { name: "Dismiss" }));
 
 const resultCalls = () => mockedUseConceptSearch.mock.calls;
-const suggestionCalls = () => mockedUseAutocomplete.mock.calls;
+const suggestionCalls = () => mockedUseConceptSuggestions.mock.calls;
 const last = <T,>(list: T[]) => list[list.length - 1];
 
 const lastSearchedTerm = () => last(resultCalls())?.[0];
@@ -228,7 +243,7 @@ async function typeAndWaitForSuggestions(text: string) {
 
 beforeEach(() => {
   mockedUseConceptSearch.mockReset();
-  mockedUseAutocomplete.mockReset();
+  mockedUseConceptSuggestions.mockReset();
   scrollToSpy.mockClear();
   mockSearch({});
   mockSuggestions({});
@@ -385,25 +400,39 @@ describe("Search", () => {
       ]);
     });
 
-    it(`shows at most ${SUGGESTION_LIMIT} distinct names`, async () => {
-      // 30 results, each name twice: 15 distinct names
-      const names = Array.from({ length: 15 }, (_, i) => `Concept ${i + 1}`);
-      mockSuggestions({
-        data: suggestionsOf(
-          names.flatMap((name, i) => [
-            makeTerm(`A:${i}`, name),
-            makeTerm(`B:${i}`, name),
-          ]),
-        ),
-      });
+    it(`shows all ${SUGGESTION_UPSTREAM_CAP} names the server returns, in order`, async () => {
+      const terms = makeTerms(SUGGESTION_UPSTREAM_CAP);
+      mockSuggestions({ data: suggestionsOf(terms) });
       render(<Search />);
 
       await typeAndWaitForSuggestions("concept");
 
       const options = screen.getAllByRole("option");
       expect(options.map((o) => o.textContent)).toEqual(
-        names.slice(0, SUGGESTION_LIMIT),
+        terms.map((t) => t.label),
       );
+    });
+
+    it(`never shows more than ${SUGGESTION_LIMIT} names`, async () => {
+      // More than the server sends today; guards the dropdown if the cap changes
+      const terms = makeTerms(SUGGESTION_LIMIT + 5);
+      mockSuggestions({ data: suggestionsOf(terms) });
+      render(<Search />);
+
+      await typeAndWaitForSuggestions("concept");
+
+      expect(screen.getAllByRole("option")).toHaveLength(SUGGESTION_LIMIT);
+    });
+
+    it("shows nothing when the server returns no suggestions", async () => {
+      mockSuggestions({ data: suggestionsOf([]) });
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.type(getInput(), "zzzz");
+      await waitFor(() => expect(lastSuggestionTerm()).toBe("zzzz"));
+
+      expect(screen.queryAllByRole("option")).toHaveLength(0);
     });
 
     it('shows "Searching…" while suggestions load', async () => {

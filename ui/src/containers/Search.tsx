@@ -1,7 +1,6 @@
 import { useId, useMemo, useState } from "react";
 import {
   Box,
-  Button,
   CircularProgress,
   Pagination,
   Stack,
@@ -14,6 +13,7 @@ import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
+import { ResultList, Results, SearchButton, SearchRow } from "./Search.styles";
 
 // ----------------------------------------------------------------------
 
@@ -48,8 +48,6 @@ export default function Search() {
     limit: PAGE_SIZE,
     offset: (page - 1) * PAGE_SIZE,
   });
-
-  console.log(searchData);
 
   // Autocomplete suggestions for the debounced typed text
   const suggestionText = useDebouncedValue(typed, SUGGESTION_DELAY_MS);
@@ -119,7 +117,7 @@ export default function Search() {
       />
 
       {/* Searchbar with button */}
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+      <SearchRow>
         <Searchbar
           id={searchId}
           name="search"
@@ -130,15 +128,10 @@ export default function Search() {
           options={suggestedNames}
           loading={hasSuggestionQuery && isFetchingSuggestions}
         />
-        <Button
-          type="submit"
-          form={searchId}
-          variant="contained"
-          sx={{ flexShrink: 0 }}
-        >
+        <SearchButton type="submit" form={searchId} variant="contained">
           Search
-        </Button>
-      </Box>
+        </SearchButton>
+      </SearchRow>
 
       {/* Search Result */}
       {isLoadingSearchResult ? (
@@ -167,16 +160,9 @@ export default function Search() {
           )}
 
           {searchItems.length > 0 && (
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 2,
-              }}
-            >
+            <Results>
               {/* Result Cards */}
-              <Stack width="100%">
+              <ResultList>
                 {searchItems.map((c, i) => (
                   <ConceptCard
                     key={c.id}
@@ -187,7 +173,7 @@ export default function Search() {
                     // onExclude={onExclude}
                   />
                 ))}
-              </Stack>
+              </ResultList>
 
               {/* Pagination */}
               {pageCount > 1 && (
@@ -201,7 +187,7 @@ export default function Search() {
                   color="primary"
                 />
               )}
-            </Box>
+            </Results>
           )}
         </>
       )}
