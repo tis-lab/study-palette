@@ -2,12 +2,25 @@
 export const RESOLVE_TERMS_QUERY = `
   query ResolveTerms($query: String!, $limit: Int!, $offset: Int!) {
     terms(query: $query, limit: $limit, offset: $offset) {
+      bdcVariables {
+        name
+        label
+        domain
+        studyCount
+        studies
+        concepts
+      }
       items {
         id
         label
         category
         description
         synonyms
+        bdc {
+          studyCount
+          studies
+          variableNames
+        }
       }
       total
       limit
@@ -24,15 +37,35 @@ export interface ResolveTermsVariables {
 }
 
 // Nullability mirrors the GraphQL schema.
+
+/** BDC harmonization coverage for a concept; `studyCount` 0 is normal. */
+export interface BdcCoverage {
+  studyCount: number;
+  studies: string[];
+  variableNames: string[];
+}
+
+/** A BDC harmonized variable matching the search text. */
+export interface BdcVariable {
+  name: string;
+  label: string;
+  domain: string | null;
+  studyCount: number;
+  studies: string[];
+  concepts: string[];
+}
+
 export interface Term {
   id: string;
   label: string;
   category: string;
   description: string | null;
   synonyms: string[] | null;
+  bdc: BdcCoverage;
 }
 
 export interface TermsPage {
+  bdcVariables: BdcVariable[];
   items: Term[];
   total: number;
   limit: number;
