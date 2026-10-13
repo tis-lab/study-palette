@@ -38,14 +38,14 @@ export interface ResolveTermsVariables {
 
 // Nullability mirrors the GraphQL schema.
 
-/** BDC harmonization coverage for a concept; `studyCount` 0 is normal. */
+// `studyCount` is the number of studies the concept is harmonized in, not data
+// availability; 0 is common.
 export interface BdcCoverage {
   studyCount: number;
   studies: string[];
   variableNames: string[];
 }
 
-/** A BDC harmonized variable matching the search text. */
 export interface BdcVariable {
   name: string;
   label: string;

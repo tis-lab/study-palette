@@ -7,10 +7,6 @@ import {
   type AutocompleteVariables,
 } from "../api/graphql/queries/autocomplete";
 
-/**
- * Type-ahead suggestions for `searchText`, at most 10. Runs only when the text
- * is non-empty; the caller controls when `searchText` changes.
- */
 export function useConceptSuggestions(searchText: string) {
   const query = searchText.trim();
 

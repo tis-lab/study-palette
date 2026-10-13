@@ -1,4 +1,4 @@
-/** Type-ahead suggestions for free-text search; at most 10 results, no pagination. */
+// Upstream caps autocomplete at 10 results, with no pagination.
 export const AUTOCOMPLETE_QUERY = `
   query Autocomplete($query: String!) {
     autocomplete(query: $query) {
@@ -18,7 +18,6 @@ export interface AutocompleteVariables {
   query: string;
 }
 
-// Nullability mirrors the GraphQL schema.
 export interface Suggestion {
   id: string;
   label: string;
