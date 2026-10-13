@@ -134,6 +134,7 @@ const makeTerm = (id: string, label: string): Term => ({
   category: "Disease or Syndrome",
   description: null,
   synonyms: null,
+  bdc: { studyCount: 0, studies: [], variableNames: [] },
 });
 
 const makeTerms = (count: number) =>
