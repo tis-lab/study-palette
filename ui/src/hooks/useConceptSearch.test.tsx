@@ -3,11 +3,24 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { useConceptSearch } from "./useConceptSearch";
-import { RESOLVE_TERMS_QUERY } from "../api/graphql/queries/resolveTerms";
+import {
+  RESOLVE_TERMS_QUERY,
+  type TermsPage,
+} from "../api/graphql/queries/resolveTerms";
 
 const ENDPOINT = "https://graphql.test/graphql";
 
-const termsPage = {
+const termsPage: TermsPage = {
+  bdcVariables: [
+    {
+      name: "diabetes",
+      label: "Diabetes",
+      domain: null,
+      studyCount: 2,
+      studies: ["example_study_one", "example_study_two"],
+      concepts: ["MONDO:0005148"],
+    },
+  ],
   items: [
     {
       id: "MONDO:0005148",
@@ -15,6 +28,11 @@ const termsPage = {
       category: "biolink:Disease",
       description: "A type of diabetes.",
       synonyms: ["T2D"],
+      bdc: {
+        studyCount: 2,
+        studies: ["example_study_one", "example_study_two"],
+        variableNames: ["diabetes"],
+      },
     },
     {
       id: "MONDO:0005149",
@@ -22,6 +40,7 @@ const termsPage = {
       category: "biolink:Disease",
       description: null,
       synonyms: null,
+      bdc: { studyCount: 0, studies: [], variableNames: [] },
     },
   ],
   total: 2,

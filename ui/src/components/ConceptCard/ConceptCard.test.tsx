@@ -38,6 +38,7 @@ const asthma: Term = {
   category: "biolink:Disease",
   description: "A chronic inflammatory disease of the airways.",
   synonyms: null,
+  bdc: { studyCount: 0, studies: [], variableNames: [] },
 };
 
 type CardProps = Partial<Parameters<typeof ConceptCard>[0]>;
