@@ -11,8 +11,9 @@ import {
 const ENDPOINT = "https://graphql.test/graphql";
 
 const termsPage: TermsPage = {
-  bdcVariables: [
+  items: [
     {
+      __typename: "BdcVariable",
       name: "diabetes",
       label: "Diabetes",
       domain: null,
@@ -20,9 +21,8 @@ const termsPage: TermsPage = {
       studies: ["example_study_one", "example_study_two"],
       concepts: ["MONDO:0005148"],
     },
-  ],
-  items: [
     {
+      __typename: "Term",
       id: "MONDO:0005148",
       label: "type 2 diabetes mellitus",
       category: "biolink:Disease",
@@ -35,6 +35,7 @@ const termsPage: TermsPage = {
       },
     },
     {
+      __typename: "Term",
       id: "MONDO:0005149",
       label: "pulmonary hypertension",
       category: "biolink:Disease",
@@ -43,10 +44,11 @@ const termsPage: TermsPage = {
       bdc: { studyCount: 0, studies: [], variableNames: [] },
     },
   ],
-  total: 2,
+  total: 3,
   limit: 20,
   offset: 0,
   hasMore: false,
+  bdcVariableCount: 1,
 };
 
 function createWrapper() {

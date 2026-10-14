@@ -2,30 +2,34 @@
 export const RESOLVE_TERMS_QUERY = `
   query ResolveTerms($query: String!, $limit: Int!, $offset: Int!) {
     terms(query: $query, limit: $limit, offset: $offset) {
-      bdcVariables {
-        name
-        label
-        domain
-        studyCount
-        studies
-        concepts
-      }
       items {
-        id
-        label
-        category
-        description
-        synonyms
-        bdc {
+        __typename
+        ... on BdcVariable {
+          name
+          label
+          domain
           studyCount
           studies
-          variableNames
+          concepts
+        }
+        ... on Term {
+          id
+          label
+          category
+          description
+          synonyms
+          bdc {
+            studyCount
+            studies
+            variableNames
+          }
         }
       }
       total
       limit
       offset
       hasMore
+      bdcVariableCount
     }
   }
 `;
@@ -64,13 +68,18 @@ export interface Term {
   bdc: BdcCoverage;
 }
 
+// BDC variables come first in `items`, followed by terms.
+export type SearchItem =
+  | ({ __typename: "BdcVariable" } & BdcVariable)
+  | ({ __typename: "Term" } & Term);
+
 export interface TermsPage {
-  bdcVariables: BdcVariable[];
-  items: Term[];
+  items: SearchItem[];
   total: number;
   limit: number;
   offset: number;
   hasMore: boolean;
+  bdcVariableCount: number;
 }
 
 export interface ResolveTermsData {
