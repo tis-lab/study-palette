@@ -14,6 +14,7 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
 import { ResultList, Results, SearchButton, SearchRow } from "./Search.styles";
+import { getSearchItemKey } from "../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
@@ -98,6 +99,8 @@ export default function Search() {
     handleSearch(name);
   };
 
+  console.log(searchData);
+
   return (
     <Stack spacing={1}>
       {/* Search error */}
@@ -165,7 +168,7 @@ export default function Search() {
               <ResultList>
                 {searchItems.map((c, i) => (
                   <ConceptCard
-                    key={c.id}
+                    key={getSearchItemKey(c)}
                     concept={c}
                     isFirst={i === 0}
                     isLast={i === searchItems.length - 1}

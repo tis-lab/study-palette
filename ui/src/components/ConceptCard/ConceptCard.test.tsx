@@ -6,7 +6,7 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ConceptCard from "./ConceptCard";
-import type { Term } from "../../api/graphql/queries/resolveTerms";
+import type { SearchItem } from "../../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
@@ -18,11 +18,17 @@ vi.mock("./ConceptCardDetails", () => ({
   default: ({
     category,
     description,
+    variableNames,
   }: {
     category?: string;
     description?: string | null;
+    variableNames?: string[];
   }) => (
-    <div data-testid="concept-details" data-category={category ?? ""}>
+    <div
+      data-testid="concept-details"
+      data-category={category ?? ""}
+      data-variable-names={(variableNames ?? []).join(",")}
+    >
       {description}
     </div>
   ),
@@ -32,13 +38,36 @@ vi.mock("./ConceptCardDetails", () => ({
 
 /* Fixtures & helpers */
 
-const asthma: Term = {
+type TermItem = Extract<SearchItem, { __typename: "Term" }>;
+type VariableItem = Extract<SearchItem, { __typename: "BdcVariable" }>;
+
+const asthma: TermItem = {
+  __typename: "Term",
   id: "C0004096",
   label: "Asthma",
   category: "biolink:Disease",
   description: "A chronic inflammatory disease of the airways.",
   synonyms: null,
   bdc: { studyCount: 0, studies: [], variableNames: [] },
+};
+
+const harmonizedAsthma: TermItem = {
+  ...asthma,
+  bdc: {
+    studyCount: 3,
+    studies: ["ARIC", "CHS", "MESA"],
+    variableNames: ["asthma_dx", "asthma_ever"],
+  },
+};
+
+const systolicBp: VariableItem = {
+  __typename: "BdcVariable",
+  name: "bp_systolic",
+  label: "Systolic blood pressure",
+  domain: "BLOOD_PRESSURE",
+  studyCount: 12,
+  studies: ["ARIC", "CHS"],
+  concepts: ["HP:0000822"],
 };
 
 type CardProps = Partial<Parameters<typeof ConceptCard>[0]>;
@@ -53,6 +82,13 @@ const getIncludeButton = () =>
 const getExcludeButton = () =>
   screen.getByRole("button", { name: "+ Exclude" });
 const queryDetails = () => screen.queryByTestId("concept-details");
+const queryHarmonizedBadge = () => screen.queryByText("Harmonized Variable");
+
+async function openDetails() {
+  const user = userEvent.setup();
+  await user.click(getDetailsButton());
+  return queryDetails();
+}
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -71,8 +107,21 @@ describe("ConceptCard", () => {
 
     it("shows the concept id", () => {
       renderCard();
-      expect(screen.getByText("C0004096")).toBeInTheDocument();
+      expect(screen.getByText(/^C0004096\b/)).toBeInTheDocument();
     });
+
+    it("does not show the Harmonized Variable badge for a term", () => {
+      renderCard();
+      expect(queryHarmonizedBadge()).not.toBeInTheDocument();
+    });
+  });
+
+  // The meta line shows a placeholder ("x studies") until the count is wired up.
+  // Fill these in then; remember 0 can mean the index is off, not "no studies".
+  describe("study count", () => {
+    it.todo("shows how many studies the concept is harmonized in");
+    it.todo("uses the singular for one study");
+    it.todo("does not present 0 as BDC having nothing");
   });
 
   describe("details", () => {
@@ -83,20 +132,18 @@ describe("ConceptCard", () => {
     });
 
     it("expands when Details is clicked", async () => {
-      const user = userEvent.setup();
       renderCard();
 
-      await user.click(getDetailsButton());
+      await openDetails();
 
       expect(getDetailsButton()).toHaveAttribute("aria-expanded", "true");
       expect(queryDetails()).toBeInTheDocument();
     });
 
     it("points aria-controls at the panel containing the details", async () => {
-      const user = userEvent.setup();
       renderCard();
 
-      await user.click(getDetailsButton());
+      await openDetails();
 
       const panelId = getDetailsButton().getAttribute("aria-controls");
       expect(panelId).toBeTruthy();
@@ -105,16 +152,33 @@ describe("ConceptCard", () => {
     });
 
     it("passes the concept's category and description", async () => {
-      const user = userEvent.setup();
       renderCard();
 
-      await user.click(getDetailsButton());
+      const details = await openDetails();
 
-      const details = queryDetails();
       expect(details).toHaveAttribute("data-category", "biolink:Disease");
       expect(details).toHaveTextContent(
         "A chronic inflammatory disease of the airways.",
       );
+    });
+
+    it("passes the names of the variables mapped to the concept", async () => {
+      renderCard({ concept: harmonizedAsthma });
+
+      const details = await openDetails();
+
+      expect(details).toHaveAttribute(
+        "data-variable-names",
+        "asthma_dx,asthma_ever",
+      );
+    });
+
+    it("passes no variable names when none are mapped", async () => {
+      renderCard();
+
+      const details = await openDetails();
+
+      expect(details).toHaveAttribute("data-variable-names", "");
     });
 
     it("collapses and unmounts when Details is clicked again", async () => {
@@ -169,6 +233,68 @@ describe("ConceptCard", () => {
       expect(first).toHaveAttribute("aria-expanded", "false");
       expect(second).toHaveAttribute("aria-expanded", "true");
       expect(screen.getAllByTestId("concept-details")).toHaveLength(1);
+    });
+  });
+
+  describe("harmonized variable", () => {
+    it("shows the label as a level-2 heading", () => {
+      renderCard({ concept: systolicBp });
+      expect(
+        screen.getByRole("heading", {
+          level: 2,
+          name: "Systolic blood pressure",
+        }),
+      ).toBeInTheDocument();
+    });
+
+    it("shows the Harmonized Variable badge", () => {
+      renderCard({ concept: systolicBp });
+      expect(queryHarmonizedBadge()).toBeInTheDocument();
+    });
+
+    it("shows the variable name as its identifier", () => {
+      renderCard({ concept: systolicBp });
+      expect(screen.getByText(/^bp_systolic\b/)).toBeInTheDocument();
+    });
+
+    it.each([
+      ["BLOOD_PRESSURE", "Blood Pressure"],
+      ["DEMOGRAPHICS", "Demographics"],
+      ["SLEEP-APNEA", "Sleep Apnea"],
+      ["lung function", "Lung Function"],
+    ])("passes the domain %j as the category %j", async (domain, expected) => {
+      renderCard({ concept: { ...systolicBp, domain } });
+
+      const details = await openDetails();
+
+      expect(details).toHaveAttribute("data-category", expected);
+    });
+
+    it("passes no category when the domain is null", async () => {
+      renderCard({ concept: { ...systolicBp, domain: null } });
+
+      const details = await openDetails();
+
+      expect(details).toHaveAttribute("data-category", "");
+    });
+
+    it("passes no description or variable names", async () => {
+      renderCard({ concept: systolicBp });
+
+      const details = await openDetails();
+
+      expect(details).toBeEmptyDOMElement();
+      expect(details).toHaveAttribute("data-variable-names", "");
+    });
+
+    it("calls onInclude with the variable", async () => {
+      const user = userEvent.setup();
+      const onInclude = vi.fn();
+      renderCard({ concept: systolicBp, onInclude });
+
+      await user.click(getIncludeButton());
+
+      expect(onInclude).toHaveBeenCalledWith(systolicBp);
     });
   });
 

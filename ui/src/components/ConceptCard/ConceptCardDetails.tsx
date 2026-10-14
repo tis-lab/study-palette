@@ -1,6 +1,6 @@
-import { Tooltip } from "@mui/material";
+import { Chip, Stack, Tooltip } from "@mui/material";
 import parseCurie from "../../utils/parseCurie";
-import { ReactNode } from "react";
+import { ReactNode, useId, useState } from "react";
 import {
   CategoryRoot,
   DetailFieldRoot,
@@ -9,10 +9,7 @@ import {
   DetailValue,
   SourceChip,
 } from "./ConceptCardDetails.styles";
-
-// ----------------------------------------------------------------------
-
-/* Styles */
+import SourceVariablePopover from "./SourceVariablePopover";
 
 // ----------------------------------------------------------------------
 
@@ -20,11 +17,13 @@ import {
 interface Props {
   category?: string;
   description?: string | null;
+  variableNames?: string[];
 }
 
 interface DetailFieldProps {
   label: string;
   value: ReactNode;
+  fullWidth?: boolean;
 }
 
 const SOURCE_NAMES: Record<string, string> = {
@@ -34,9 +33,9 @@ const SOURCE_NAMES: Record<string, string> = {
 // ----------------------------------------------------------------------
 
 /** Must be rendered inside a <dl> (e.g. ConceptCardDetails). */
-export function DetailField({ label, value }: DetailFieldProps) {
+export function DetailField({ label, value, fullWidth }: DetailFieldProps) {
   return (
-    <DetailFieldRoot>
+    <DetailFieldRoot fullWidth={fullWidth}>
       <DetailTerm component="dt" variant="overline" color="text.secondary">
         {label}
       </DetailTerm>
@@ -62,16 +61,62 @@ export function CategoryValue({ value }: { value: string }) {
   );
 }
 
-export default function ConceptCardDetails({ category, description }: Props) {
+export default function ConceptCardDetails({
+  category,
+  description,
+  variableNames = [],
+}: Props) {
+  const popoverId = useId();
+  const [selected, setSelected] = useState<{
+    anchorEl: HTMLElement;
+    name: string;
+  } | null>(null);
+
   return (
-    <DetailsRoot>
-      {category && (
-        <DetailField
-          label="category"
-          value={<CategoryValue value={category} />}
-        />
-      )}
-      {description && <DetailField label="description" value={description} />}
-    </DetailsRoot>
+    <>
+      <DetailsRoot>
+        {category && (
+          <DetailField
+            label="category"
+            value={<CategoryValue value={category} />}
+          />
+        )}
+        {variableNames.length > 0 && (
+          <DetailField
+            label="mapped / source variables"
+            fullWidth
+            value={
+              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                {variableNames.map((name) => (
+                  <Chip
+                    key={name}
+                    label={name}
+                    size="small"
+                    variant="outlined"
+                    onClick={(e) =>
+                      setSelected({ anchorEl: e.currentTarget, name })
+                    }
+                    aria-haspopup="dialog"
+                    aria-expanded={selected?.name === name}
+                    aria-controls={
+                      selected?.name === name ? popoverId : undefined
+                    }
+                  />
+                ))}
+              </Stack>
+            }
+          />
+        )}
+        {description && (
+          <DetailField label="description" value={description} fullWidth />
+        )}
+      </DetailsRoot>
+      <SourceVariablePopover
+        id={popoverId}
+        anchorEl={selected?.anchorEl ?? null}
+        name={selected?.name ?? null}
+        onClose={() => setSelected(null)}
+      />
+    </>
   );
 }

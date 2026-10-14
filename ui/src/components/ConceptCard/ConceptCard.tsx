@@ -1,6 +1,6 @@
 import { useId, useState } from "react";
-import { Button, Collapse, Stack } from "@mui/material";
-import { Term } from "../../api/graphql/queries/resolveTerms";
+import { Button, Chip, Collapse, Stack } from "@mui/material";
+import { SearchItem } from "../../api/graphql/queries/resolveTerms";
 import ConceptCardDetails from "./ConceptCardDetails";
 import {
   ConceptCardBody,
@@ -13,17 +13,61 @@ import {
   ExpandIcon,
 } from "./ConceptCard.styles";
 
+function formatDomain(domain: string): string {
+  return domain
+    .toLowerCase()
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((word) => word[0].toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 // ----------------------------------------------------------------------
 
 /* Prop Types */
-type ConceptAction = (concept: Term) => void;
+type ConceptAction = (concept: SearchItem) => void;
 
 export interface Props {
-  concept: Term;
+  concept: SearchItem;
   isFirst: boolean;
   isLast: boolean;
   onInclude?: ConceptAction;
   onExclude?: ConceptAction;
+}
+
+/* Normalizes both search item types into the fields the card renders. */
+interface CardView {
+  id: string;
+  label: string;
+  harmonizedStudyCount: number;
+  category: string | null;
+  description: string | null;
+  isHarmonizedVariable: boolean;
+  variableNames: string[];
+}
+
+function toCardView(item: SearchItem): CardView {
+  if (item.__typename === "BdcVariable") {
+    return {
+      id: item.name,
+      label: item.label,
+      harmonizedStudyCount: item.studyCount,
+      category: item.domain ? formatDomain(item.domain) : null,
+      description: null,
+      isHarmonizedVariable: true,
+      variableNames: [],
+    };
+  }
+
+  return {
+    id: item.id,
+    label: item.label,
+    harmonizedStudyCount: item.bdc.studyCount,
+    category: item.category,
+    description: item.description,
+    isHarmonizedVariable: false,
+    variableNames: item.bdc.variableNames,
+  };
 }
 
 // ----------------------------------------------------------------------
@@ -37,6 +81,7 @@ export default function ConceptCard({
 }: Props) {
   const [open, setOpen] = useState(false);
   const detailsId = useId();
+  const view = toCardView(concept);
 
   const actions: { label: string; onClick?: ConceptAction }[] = [
     { label: "+ Include", onClick: onInclude },
@@ -56,13 +101,20 @@ export default function ConceptCard({
               useFlexGap
             >
               <ConceptTitle component="h2" variant="subtitle2">
-                {concept.label}
+                {view.label}
               </ConceptTitle>
+
+              {view.isHarmonizedVariable && (
+                <Chip
+                  label="Harmonized Variable"
+                  size="small"
+                  color="success"
+                />
+              )}
             </Stack>
 
             <ConceptMeta component="p" variant="caption" color="text.secondary">
-              {concept.id}
-              {/* · {concept?.studies ?? 0} studies */}
+              {view.id} · x studies
             </ConceptMeta>
 
             <DetailsButton
@@ -77,8 +129,9 @@ export default function ConceptCard({
 
             <Collapse in={open} id={detailsId} unmountOnExit>
               <ConceptCardDetails
-                category={concept?.category}
-                description={concept?.description}
+                category={view.category ?? undefined}
+                description={view.description}
+                variableNames={view.variableNames}
               />
             </Collapse>
           </ConceptCardMain>

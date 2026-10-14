@@ -8,22 +8,29 @@ export const DetailsRoot = styled("dl", {
 })(({ theme }) => ({
   margin: 0,
   padding: theme.spacing(1.5),
-  display: "grid",
+  // display: "grid",
   gap: theme.spacing(1),
   ...theme.typography.body2,
   color: theme.palette.text.primary,
   backgroundColor: theme.palette.action.hover,
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: theme.shape.borderRadius,
+  display: "flex",
+  flexWrap: "wrap",
+  columnGap: theme.spacing(4),
+  rowGap: theme.spacing(1.5),
 }));
 
 // ----------------------------------------------------------------------
 
 /* DetailField */
 
-export const DetailFieldRoot = styled("div")({
+export const DetailFieldRoot = styled("div", {
+  shouldForwardProp: (prop) => prop !== "fullWidth",
+})<{ fullWidth?: boolean }>(({ fullWidth }) => ({
+  flexBasis: fullWidth ? "100%" : "auto",
   minWidth: 0,
-});
+}));
 
 export const DetailTerm = styled(Typography)({
   lineHeight: 1.4,

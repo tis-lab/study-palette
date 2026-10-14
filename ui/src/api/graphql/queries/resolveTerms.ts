@@ -85,3 +85,9 @@ export interface TermsPage {
 export interface ResolveTermsData {
   terms: TermsPage | null;
 }
+
+export function getSearchItemKey(item: SearchItem): string {
+  return item.__typename === "BdcVariable"
+    ? `BdcVariable:${item.name}`
+    : `Term:${item.id}`;
+}

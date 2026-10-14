@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import Search from "./Search";
 import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
-import type { Term } from "../api/graphql/queries/resolveTerms";
+import type { SearchItem } from "../api/graphql/queries/resolveTerms";
 import type {
   Suggestion,
   SuggestionsPage,
@@ -119,7 +119,7 @@ function mockSearch(state: Partial<SearchState>) {
  * Results: serves `all` one page at a time, honoring the limit/offset
  * Search passes in, like the real server would.
  */
-function mockPagedSearch(all: Term[]) {
+function mockPagedSearch(all: SearchItem[]) {
   respondToResults = (term, options) => {
     if (!term) return idle;
     const { limit = PAGE_SIZE, offset = 0 } = options ?? {};
@@ -147,7 +147,11 @@ function mockSuggestions(state: Partial<SuggestionState>) {
 
 /* Fixtures & helpers */
 
-const makeTerm = (id: string, label: string): Term => ({
+type TermItem = Extract<SearchItem, { __typename: "Term" }>;
+type VariableItem = Extract<SearchItem, { __typename: "BdcVariable" }>;
+
+const makeTerm = (id: string, label: string): TermItem => ({
+  __typename: "Term",
   id,
   label,
   category: "Disease or Syndrome",
@@ -162,9 +166,19 @@ const makeTerms = (count: number) =>
     makeTerm(`C${String(i + 1).padStart(7, "0")}`, `Concept ${i + 1}`),
   );
 
+const makeVariable = (name: string, label: string): VariableItem => ({
+  __typename: "BdcVariable",
+  name,
+  label,
+  domain: "BLOOD_PRESSURE",
+  studyCount: 2,
+  studies: ["ARIC", "CHS"],
+  concepts: ["HP:0000822"],
+});
+
 /** A single-page response containing `items`. */
 const resultsOf = (
-  items: Term[],
+  items: SearchItem[],
   overrides: Partial<SearchData> = {},
 ): SearchData => ({
   items,
@@ -174,7 +188,7 @@ const resultsOf = (
   ...overrides,
 });
 
-const toSuggestion = (term: Term): Suggestion => ({
+const toSuggestion = (term: TermItem): Suggestion => ({
   id: term.id,
   label: term.label,
   category: term.category,
@@ -183,12 +197,13 @@ const toSuggestion = (term: Term): Suggestion => ({
 });
 
 /** A suggestions response containing `terms`, shaped like the autocomplete page. */
-const suggestionsOf = (terms: Term[]): SuggestionsPage => ({
+const suggestionsOf = (terms: TermItem[]): SuggestionsPage => ({
   items: terms.map(toSuggestion),
   total: terms.length,
 });
 
 const asthma = makeTerm("C0004096", "Asthma");
+const systolicBp = makeVariable("bp_systolic", "Systolic blood pressure");
 const childhoodAsthma = makeTerm("C0264408", "Childhood asthma");
 
 // MUI's Autocomplete gives the input role="combobox"
@@ -715,6 +730,59 @@ describe("Search", () => {
       await searchFor("asthma");
 
       expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("harmonized variables", () => {
+    it("shows variable and term cards together, in the order returned", async () => {
+      mockSearch({ data: resultsOf([systolicBp, asthma, childhoodAsthma]) });
+      render(<Search />);
+
+      await searchFor("pressure");
+
+      expect(getCardTitles()).toEqual([
+        "Systolic blood pressure",
+        "Asthma",
+        "Childhood asthma",
+      ]);
+    });
+
+    it("badges only the variable cards as harmonized variables", async () => {
+      mockSearch({ data: resultsOf([systolicBp, asthma]) });
+      render(<Search />);
+
+      await searchFor("pressure");
+
+      expect(screen.getAllByText("Harmonized Variable")).toHaveLength(1);
+    });
+
+    it("counts variables and terms together in the summary", async () => {
+      mockSearch({ data: resultsOf([systolicBp, asthma]) });
+      render(<Search />);
+
+      await searchFor("pressure");
+
+      expect(getStatus()).toHaveTextContent(
+        'Showing 1–2 of 2 concepts matching "pressure"',
+      );
+    });
+
+    it("keys cards uniquely even when a variable name matches a term id", async () => {
+      // Without the type prefix in the key, React would warn about duplicates
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+      mockSearch({
+        data: resultsOf([makeVariable("C0004096", "Asthma variable"), asthma]),
+      });
+      render(<Search />);
+
+      await searchFor("asthma");
+
+      expect(getCardTitles()).toEqual(["Asthma variable", "Asthma"]);
+      const keyWarnings = errorSpy.mock.calls.filter((args) =>
+        String(args[0]).includes("same key"),
+      );
+      expect(keyWarnings).toHaveLength(0);
+      errorSpy.mockRestore();
     });
   });
 
