@@ -76,8 +76,6 @@ def counts(response):
         yield (where, applied), study["participant_count"]
         for summary, _ in summaries(study):
             yield (where, applied | {summary["id"]}), summary["participant_count"]
-        for cell in study.get("cells") or []:
-            yield (where, applied | set(cell["criteria"])), cell["participant_count"]
 
 
 def misplaced(response):
@@ -105,14 +103,6 @@ def test_values_never_sum_past_their_concept(example):
                 assert sum(v["participant_count"] for v in values) <= summary["participant_count"], summary["id"]
 
 
-def test_a_cell_never_exceeds_a_summary_it_crosses(example):
-    for study in example["studies"]:
-        defined = by_id(study)
-        for cell in study.get("cells") or []:
-            for criterion in cell["criteria"]:
-                assert cell["participant_count"] <= defined[criterion]["participant_count"], cell["criteria"]
-
-
 def test_a_study_counts_one_granularity(example):
     parents = {t["curie"]: t.get("parents") or [] for t in example.get("terms") or []}
 
@@ -136,18 +126,6 @@ def test_values_repeat_their_concept(example):
                 assert concept and {k: summary.get(k) for k in concept} == concept, summary["id"]
 
 
-def test_cells_cross_summaries_in_their_own_study(example):
-    for study in example["studies"]:
-        referenced = {c for cell in study.get("cells") or [] for c in cell["criteria"]}
-        assert referenced - by_id(study).keys() == set(), study["research_study"]
-
-
-def test_cells_do_not_repeat_the_filter(example):
-    applied = set(example.get("filter") or [])
-    cells = [cell for study in example["studies"] for cell in study.get("cells") or []]
-    assert [cell for cell in cells if applied & set(cell["criteria"])] == []
-
-
 def test_the_filter_is_defined_in_every_study(example):
     applied = set(example.get("filter") or [])
     assert all(applied <= by_id(study).keys() for study in example["studies"])
@@ -166,10 +144,8 @@ def test_counts_are_consistent(example):
     assert {k: v for k, v in seen.items() if len(v) > 1} == {}
 
 
-def test_counts_respect_the_minimum_and_the_bound(example):
-    assert [k for k, n in counts(example) if n < example["min_cell_count"]] == []
-    cells = [cell for study in example["studies"] for cell in study.get("cells") or []]
-    assert max(len(cell["criteria"]) for cell in cells) <= example["max_cell_criteria"]
+def test_counts_respect_the_minimum(example):
+    assert [k for k, n in counts(example) if n < example["min_count"]] == []
 
 
 def test_concepts_resolve_in_terms(example):
@@ -194,8 +170,9 @@ def test_a_follow_up_merges_without_conflict():
             merged.setdefault(key, set()).add(n)
     assert {k: v for k, v in merged.items() if len(v) > 1} == {}
 
+    # The base's female count is the follow-up's total, in every study.
     shared = {k for k, _ in counts(load(BASE))} & {k for k, _ in counts(load(FOLLOW_UP))}
-    assert len(shared) > 5, "the examples should overlap, or this test proves nothing"
+    assert len(shared) >= len(load(BASE)["studies"]), "the examples should overlap, or this test proves nothing"
 
 
 def test_an_id_asks_one_question_everywhere():
@@ -219,9 +196,3 @@ def test_a_record_among_summaries_is_rejected(errors):
     response = load(BASE)
     response["studies"][0]["conditions"].append(response["records"]["record_conditions"][0])
     assert any("participant_count" in e for e in errors(response))
-
-
-def test_a_cell_needs_two_criteria(errors):
-    response = load(BASE)
-    response["studies"][0]["cells"].append({"criteria": ["palette:demography/sex/FEMALE"], "participant_count": 230})
-    assert any("too short" in e for e in errors(response))

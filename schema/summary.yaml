@@ -2,7 +2,8 @@ id: https://w3id.org/tis-lab/study-palette/summary
 name: study_palette_summary
 title: Study Palette summary statistics
 description: >-
-  Counts per study in place of rows per participant.
+  Counts per study in place of rows per participant: what the API returns,
+  computed on request from the BDCHM-shaped data.
 
 
   Each summary class extends the BDCHM class it summarizes: a ConditionSummary
@@ -12,7 +13,8 @@ description: >-
 
   A response has one StudySummary per study. In it, each concept has a summary
   counting the participants with any value recorded, and that summary's values
-  split the count by value. Cells count crosses between summaries.
+  split the count by value. A cross, such as T2D among women, is a summary in
+  the response for a narrower filter.
 
 
   Reading the counts:
@@ -32,7 +34,7 @@ description: >-
   - Repeated measurements are out of scope for now; a participant is binned
   by their most recent value.
 
-  - Counts below min_cell_count are left out.
+  - Counts below min_count are left out.
 
   - Counts are estimates.
 
@@ -165,13 +167,6 @@ classes:
       values:
         range: MeasurementObservationSummary
 
-  Cell:
-    description: Participants matching all of two or more summaries.
-    slots:
-      - criteria
-      - participant_count
-      - record_count
-
   StudySummary:
     description: >-
       The counts for one study. It refers to a BDCHM ResearchStudy rather than
@@ -186,7 +181,6 @@ classes:
       - procedures
       - drug_exposures
       - measurements
-      - cells
 
   SummaryResponse:
     tree_root: true
@@ -195,8 +189,7 @@ classes:
       - release
       - seed
       - filter
-      - min_cell_count
-      - max_cell_criteria
+      - min_count
       - terms
       - relations
       - research_studies
@@ -251,13 +244,6 @@ slots:
   bin_unit:
     description: Unit of the bounds, which may differ from the stored value's (ages are stored in days).
     range: UnitOfMeasurementEnum
-  criteria:
-    description: Ids of the summaries a cell crosses.
-    range: Summary
-    multivalued: true
-    inlined: false
-    required: true
-    minimum_cardinality: 2
   research_study:
     description: The study counted.
     range: ResearchStudy
@@ -278,18 +264,11 @@ slots:
     range: Summary
     multivalued: true
     inlined: false
-  min_cell_count:
-    description: >-
-      The smallest count reported. It also decides how far crosses go: they
-      stop where counts fall below it.
+  min_count:
+    description: The smallest count reported. Smaller counts are left out.
     range: integer
     required: true
     minimum_value: 1
-  max_cell_criteria:
-    description: The most summaries a cell crosses. Deeper crosses need a follow-up response.
-    range: integer
-    required: true
-    minimum_value: 2
   terms:
     description: Every term referred to, so no CURIE needs a lookup.
     range: Term
@@ -332,10 +311,6 @@ slots:
     inlined_as_list: true
   measurements:
     range: MeasurementObservationSummary
-    multivalued: true
-    inlined_as_list: true
-  cells:
-    range: Cell
     multivalued: true
     inlined_as_list: true
   records:

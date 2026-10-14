@@ -10,8 +10,7 @@ seed: MONDO:0005148
 filter:
   - palette:measurement/FAST_GLUC_BLD
   - palette:demography/sex/FEMALE
-min_cell_count: 10
-max_cell_criteria: 2
+min_count: 10
 
 terms:
   - curie: MONDO:0005148
@@ -133,11 +132,6 @@ studies:
             bin_unit: mg/dL
             participant_count: 50
 
-    cells:
-      - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:measurement/FAST_GLUC_BLD/126-mg_dL]
-        participant_count: 28
-      # T2D with MI among women is below min_cell_count, so not shown.
-
   - research_study: palette:study_two
     participant_count: 250
 
@@ -172,7 +166,7 @@ studies:
             participant_count: 24
 
     conditions:
-      # 8 women have T2D UNKNOWN, below min_cell_count, so not shown.
+      # 8 women have T2D UNKNOWN, below min_count, so not shown.
       - id: palette:condition/MONDO_0005148
         condition_concept: MONDO:0005148
         participant_count: 250
@@ -225,9 +219,3 @@ studies:
             bin_low: 126
             bin_unit: mg/dL
             participant_count: 50
-
-    cells:
-      - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:measurement/FAST_GLUC_BLD/126-mg_dL]
-        participant_count: 30
-      - criteria: [palette:condition/MONDO_0005148/PRESENT, palette:condition/MONDO_0005267/PRESENT]
-        participant_count: 14
