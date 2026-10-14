@@ -39,7 +39,6 @@ export interface Props {
 interface CardView {
   id: string;
   label: string;
-  harmonizedStudyCount: number;
   category: string | null;
   description: string | null;
   isHarmonizedVariable: boolean;
@@ -51,7 +50,6 @@ function toCardView(item: SearchItem): CardView {
     return {
       id: item.name,
       label: item.label,
-      harmonizedStudyCount: item.studyCount,
       category: item.domain ? formatDomain(item.domain) : null,
       description: null,
       isHarmonizedVariable: true,
@@ -62,7 +60,6 @@ function toCardView(item: SearchItem): CardView {
   return {
     id: item.id,
     label: item.label,
-    harmonizedStudyCount: item.bdc.studyCount,
     category: item.category,
     description: item.description,
     isHarmonizedVariable: false,
