@@ -1,11 +1,13 @@
 [build]
   base = "ui/"
-  command = "npm ci && npm run build && echo \"/api/* ${API_PROXY_URL}/api/:splat 200\" > dist/_redirects && echo \"/* /index.html 200\" >> dist/_redirects"
+  command = "npm ci && npm run build && echo \"/api/* ${API_PROXY_URL}/api/:splat 200\" > dist/_redirects && echo \"/graphql ${GRAPHQL_PROXY_URL} 200\" >> dist/_redirects && echo \"/* /index.html 200\" >> dist/_redirects"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "22"
   API_PROXY_URL = "https://study-palette-api.onrender.com"
+  GRAPHQL_PROXY_URL = "https://bdc-dp-middleware-dept-bdc-data-portal.apps.cloudapps.unc.edu/graphql"
+  VITE_GRAPHQL_URL = "/graphql"
 
 [context.deploy-preview.environment]
   API_PROXY_URL = "https://study-palette-dev.onrender.com"
