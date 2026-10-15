@@ -31,10 +31,13 @@ jobs:
       - name: Lint
         run: uv run ruff check .
 
+      - name: Fetch BDCHM
+        run: synthetic/fetch-bdchm.sh
+
       - name: Test
-        run: uv run pytest api/tests ontology/tests -v
+        run: uv run pytest api/tests ontology/tests schema/tests -v
 
       - name: Coverage
         run: |
-          uv run coverage run -m pytest api/tests ontology/tests
+          uv run coverage run -m pytest api/tests ontology/tests schema/tests
           uv run coverage report -m
