@@ -99,8 +99,6 @@ export default function Search() {
     handleSearch(name);
   };
 
-  console.log(searchData);
-
   return (
     <Stack spacing={1}>
       {/* Search error */}
