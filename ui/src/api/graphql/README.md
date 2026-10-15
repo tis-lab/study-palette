@@ -83,7 +83,9 @@ A component then reads `data`, `error` and `isPending` from the hook.
 Hooks get the endpoint from `getGraphQLEndpoint()`, which reads `VITE_GRAPHQL_URL`.
 `graphqlRequest()` itself takes the endpoint as an argument and reads no configuration.
 
-- `bun run dev` uses the shared development endpoint in `ui/.env.development`.
+- `npm run dev` uses the shared development endpoint in `ui/.env.development`.
+- Netlify builds use `/graphql`, which `netlify.toml` proxies to the middleware; the
+  middleware's CORS policy does not allow the Netlify origin.
 - Other builds must set `VITE_GRAPHQL_URL`. Vite inlines it at build time, so a published
   package calls the endpoint configured when it was built.
 - If it is not set, each request fails with `VITE_GRAPHQL_URL is not set`; the app
