@@ -25,7 +25,10 @@ export function useConceptSearch(
   return useQuery({
     queryKey: ["resolveTerms", query, limit, offset],
     queryFn: async ({ signal }) => {
-      const data = await graphqlRequest<ResolveTermsData, ResolveTermsVariables>({
+      const data = await graphqlRequest<
+        ResolveTermsData,
+        ResolveTermsVariables
+      >({
         endpoint: getGraphQLEndpoint(),
         query: RESOLVE_TERMS_QUERY,
         variables: { query, limit, offset },
