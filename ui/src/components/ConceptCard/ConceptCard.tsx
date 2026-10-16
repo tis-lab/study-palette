@@ -111,7 +111,7 @@ export default function ConceptCard({
             </Stack>
 
             <ConceptMeta component="p" variant="caption" color="text.secondary">
-              {view.id} · x studies
+              {view.id} {/*· x studies */}
             </ConceptMeta>
 
             <DetailsButton
