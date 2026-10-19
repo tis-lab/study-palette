@@ -3,6 +3,9 @@
 // keeping only what the cohort snapshot uses, until the summary API is available.
 import type { SummaryResponse } from "../api/graphql/queries/cohortSummary";
 
+/** Placeholder: the summary response has no available-participant total yet. */
+export const AVAILABLE_PARTICIPANTS_PLACEHOLDER = 5000;
+
 /** Trimmed from schema/examples/SYNTHETIC.SummaryResponse-t2d.yaml. */
 export const t2dSummary: SummaryResponse = {
   release: "example-release",

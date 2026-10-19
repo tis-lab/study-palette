@@ -19,10 +19,3 @@ export const MainColumn = styled("div")(({ theme }) => ({
   gap: theme.spacing(3),
   minWidth: 0,
 }));
-
-export const SnapshotPanel = styled("aside")(({ theme }) => ({
-  padding: theme.spacing(2),
-  border: `1px solid ${theme.palette.divider}`,
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.background.paper,
-}));
