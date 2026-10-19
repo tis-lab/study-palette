@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import { Typography } from "@mui/material";
 import Search from "./Search";
 import CriteriaSection from "../components/CriteriaSection";
+import type { Criteria } from "../hooks/useCohortSummary";
 import {
   getSearchItemKey,
   type SearchItem,
@@ -14,8 +15,7 @@ import {
 
 // ----------------------------------------------------------------------
 
-type CriteriaKind = "include" | "exclude";
-type Criteria = Record<CriteriaKind, SearchItem[]>;
+type CriteriaKind = keyof Criteria;
 
 const without = (items: SearchItem[], item: SearchItem) =>
   items.filter((i) => getSearchItemKey(i) !== getSearchItemKey(item));
