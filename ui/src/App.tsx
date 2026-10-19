@@ -13,7 +13,7 @@ import {
 } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
-import Search from "./containers/Search";
+import CohortBuilder from "./containers/CohortBuilder";
 
 interface StudiesResponse {
   studies: Study[];
@@ -94,7 +94,7 @@ function App() {
               NHLBI BioData Catalyst<sup>&reg;</sup> (BDC) Meta-Analysis Study
               Builder & Query Tool
             </p>
-            <Search />
+            <CohortBuilder />
           </div>
 
           <div className="header-controls">
