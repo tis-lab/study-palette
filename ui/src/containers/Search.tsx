@@ -7,14 +7,17 @@ import {
   Typography,
 } from "@mui/material";
 import Searchbar from "../components/Searchbar";
-import ConceptCard from "../components/ConceptCard/ConceptCard";
+import ConceptCard, { type ConceptAction } from "../components/ConceptCard";
 import Notification from "../components/Notification/Notification";
 import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
 import { ResultList, Results, SearchButton, SearchRow } from "./Search.styles";
-import { getSearchItemKey } from "../api/graphql/queries/resolveTerms";
+import {
+  getSearchItemKey,
+  type SearchItem,
+} from "../api/graphql/queries/resolveTerms";
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +25,16 @@ const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
 
-export default function Search() {
+interface Props {
+  onInclude?: (item: SearchItem) => void;
+  onExclude?: (item: SearchItem) => void;
+}
+
+export default function Search({ onInclude, onExclude }: Props) {
+  const resultActions: ConceptAction[] = [];
+  if (onInclude) resultActions.push({ label: "+ Include", onClick: onInclude });
+  if (onExclude) resultActions.push({ label: "+ Exclude", onClick: onExclude });
+
   // Unique per instance, so it can't collide with ids in the app
   const searchId = useId();
   const [value, setValue] = useState("");
@@ -170,8 +182,7 @@ export default function Search() {
                     concept={c}
                     isFirst={i === 0}
                     isLast={i === searchItems.length - 1}
-                    // onInclude={onInclude}
-                    // onExclude={onExclude}
+                    actions={resultActions}
                   />
                 ))}
               </ResultList>

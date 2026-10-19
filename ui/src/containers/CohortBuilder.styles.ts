@@ -12,6 +12,14 @@ export const CohortBuilderLayout = styled("div")(({ theme }) => ({
   },
 }));
 
+/** Search, results, then the Include and Exclude sections. */
+export const MainColumn = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(3),
+  minWidth: 0,
+}));
+
 export const SnapshotPanel = styled("aside")(({ theme }) => ({
   padding: theme.spacing(2),
   border: `1px solid ${theme.palette.divider}`,

@@ -671,6 +671,30 @@ describe("Search", () => {
       expect(getCardTitles()).toEqual(["Asthma", "Childhood asthma"]);
     });
 
+    it("passes the clicked result to onInclude or onExclude", async () => {
+      mockSearch({ data: resultsOf([asthma, childhoodAsthma]) });
+      const onInclude = vi.fn();
+      const onExclude = vi.fn();
+      render(<Search onInclude={onInclude} onExclude={onExclude} />);
+
+      const user = await searchFor("asthma");
+      await user.click(screen.getAllByRole("button", { name: "+ Include" })[1]);
+      await user.click(screen.getAllByRole("button", { name: "+ Exclude" })[0]);
+
+      expect(onInclude).toHaveBeenCalledWith(childhoodAsthma);
+      expect(onExclude).toHaveBeenCalledWith(asthma);
+    });
+
+    it("shows no Include/Exclude buttons without handlers", async () => {
+      mockSearch({ data: resultsOf([asthma]) });
+      render(<Search />);
+
+      await searchFor("asthma");
+
+      expect(screen.queryByRole("button", { name: "+ Include" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "+ Exclude" })).toBeNull();
+    });
+
     it("uses the singular for one result", async () => {
       mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);

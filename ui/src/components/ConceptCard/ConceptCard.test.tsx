@@ -76,6 +76,13 @@ function renderCard(props: CardProps = {}) {
   return render(<ConceptCard concept={asthma} isFirst isLast {...props} />);
 }
 
+const withActions = ({ onInclude = vi.fn(), onExclude = vi.fn() } = {}) => ({
+  actions: [
+    { label: "+ Include", onClick: onInclude },
+    { label: "+ Exclude", onClick: onExclude },
+  ],
+});
+
 const getDetailsButton = () => screen.getByRole("button", { name: "Details" });
 const getIncludeButton = () =>
   screen.getByRole("button", { name: "+ Include" });
@@ -287,10 +294,10 @@ describe("ConceptCard", () => {
       expect(details).toHaveAttribute("data-variable-names", "");
     });
 
-    it("calls onInclude with the variable", async () => {
+    it("calls an action with the variable", async () => {
       const user = userEvent.setup();
       const onInclude = vi.fn();
-      renderCard({ concept: systolicBp, onInclude });
+      renderCard({ concept: systolicBp, ...withActions({ onInclude }) });
 
       await user.click(getIncludeButton());
 
@@ -299,24 +306,30 @@ describe("ConceptCard", () => {
   });
 
   describe("actions", () => {
-    it("calls onInclude with the concept", async () => {
-      const user = userEvent.setup();
-      const onInclude = vi.fn();
-      const onExclude = vi.fn();
-      renderCard({ onInclude, onExclude });
+    it("renders one button per action, in order", () => {
+      renderCard(withActions());
 
-      await user.click(getIncludeButton());
-
-      expect(onInclude).toHaveBeenCalledOnce();
-      expect(onInclude).toHaveBeenCalledWith(asthma);
-      expect(onExclude).not.toHaveBeenCalled();
+      const buttons = screen
+        .getAllByRole("button")
+        .filter((b) => b.textContent !== "Details");
+      expect(buttons.map((b) => b.textContent)).toEqual([
+        "+ Include",
+        "+ Exclude",
+      ]);
     });
 
-    it("calls onExclude with the concept", async () => {
+    it("renders no action buttons when none are given", () => {
+      renderCard();
+
+      expect(screen.queryByRole("button", { name: "+ Include" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "+ Exclude" })).toBeNull();
+    });
+
+    it("calls only the clicked action, with the concept", async () => {
       const user = userEvent.setup();
       const onInclude = vi.fn();
       const onExclude = vi.fn();
-      renderCard({ onInclude, onExclude });
+      renderCard(withActions({ onInclude, onExclude }));
 
       await user.click(getExcludeButton());
 
@@ -325,21 +338,21 @@ describe("ConceptCard", () => {
       expect(onInclude).not.toHaveBeenCalled();
     });
 
-    it("does not throw when no handlers are provided", async () => {
-      const user = userEvent.setup();
-      renderCard();
-
-      await expect(user.click(getIncludeButton())).resolves.not.toThrow();
-      await expect(user.click(getExcludeButton())).resolves.not.toThrow();
-    });
-
     it("does not toggle details when an action is clicked", async () => {
       const user = userEvent.setup();
-      renderCard({ onInclude: vi.fn() });
+      renderCard(withActions());
 
       await user.click(getIncludeButton());
 
       expect(getDetailsButton()).toHaveAttribute("aria-expanded", "false");
+    });
+  });
+
+  describe("showDetails", () => {
+    it("hides the Details toggle when false", () => {
+      renderCard({ showDetails: false });
+
+      expect(screen.queryByRole("button", { name: "Details" })).toBeNull();
     });
   });
 
