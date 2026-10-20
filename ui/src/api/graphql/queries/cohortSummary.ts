@@ -1,5 +1,4 @@
-// The parts of schema/summary.yaml the cohort snapshot uses. The query itself
-// is added once the summary API is available.
+// Subset of schema/summary.yaml; the query is added with the summary API.
 
 export interface DemographySummary {
   id: string;

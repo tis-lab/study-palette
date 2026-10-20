@@ -18,13 +18,14 @@ const without = (items: SearchItem[], item: SearchItem) =>
   items.filter((i) => getSearchItemKey(i) !== getSearchItemKey(item));
 
 export default function CohortBuilder() {
+  const [searchText, setSearchText] = useState("");
   const [criteria, setCriteria] = useState<Criteria>({
     include: [],
     exclude: [],
   });
-  const summary = useCohortSummary(criteria);
+  const summary = useCohortSummary(searchText, criteria);
 
-  // A concept is either included or excluded, never both, and never twice
+  // An item is in at most one list, at most once
   const add = (kind: CriteriaKind) => (item: SearchItem) =>
     setCriteria((prev) => ({
       include: without(prev.include, item),
@@ -38,7 +39,11 @@ export default function CohortBuilder() {
   return (
     <CohortBuilderLayout>
       <MainColumn>
-        <Search onInclude={add("include")} onExclude={add("exclude")} />
+        <Search
+          onSearch={setSearchText}
+          onInclude={add("include")}
+          onExclude={add("exclude")}
+        />
         <CriteriaSection
           title="Include"
           items={criteria.include}

@@ -2,7 +2,6 @@ import { styled } from "@mui/material";
 
 // ----------------------------------------------------------------------
 
-/** Search on the left, cohort snapshot on the right; stacked on small screens. */
 export const CohortBuilderLayout = styled("div")(({ theme }) => ({
   display: "grid",
   gap: theme.spacing(3),
@@ -12,7 +11,6 @@ export const CohortBuilderLayout = styled("div")(({ theme }) => ({
   },
 }));
 
-/** Search, results, then the Include and Exclude sections. */
 export const MainColumn = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",

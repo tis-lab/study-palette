@@ -24,16 +24,25 @@ function wrapper({ children }: { children: ReactNode }) {
 const none: Criteria = { include: [], exclude: [] };
 
 describe("useCohortSummary", () => {
-  it("does not run without criteria", () => {
-    const { result } = renderHook(() => useCohortSummary(none), { wrapper });
+  it("does not run without a search or criteria", () => {
+    const { result } = renderHook(() => useCohortSummary("  ", none), { wrapper });
 
     expect(result.current.fetchStatus).toBe("idle");
     expect(result.current.data).toBeUndefined();
   });
 
-  it("returns the type 2 diabetes example for one criterion", async () => {
+  it("returns the type 2 diabetes example for a search alone", async () => {
+    const { result } = renderHook(() => useCohortSummary("diabetes", none), {
+      wrapper,
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data).toBe(t2dSummary);
+  });
+
+  it("returns the type 2 diabetes example for one criterion without a search", async () => {
     const { result } = renderHook(
-      () => useCohortSummary({ include: [term("MONDO:0005148")], exclude: [] }),
+      () => useCohortSummary("", { include: [term("MONDO:0005148")], exclude: [] }),
       { wrapper },
     );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
@@ -41,12 +50,12 @@ describe("useCohortSummary", () => {
     expect(result.current.data).toBe(t2dSummary);
   });
 
-  it("returns the narrower female example for more than one criterion", async () => {
+  it("returns the narrower female example once a search is narrowed by a criterion", async () => {
     const { result } = renderHook(
       () =>
-        useCohortSummary({
+        useCohortSummary("diabetes", {
           include: [term("MONDO:0005148")],
-          exclude: [term("MONDO:0005068")],
+          exclude: [],
         }),
       { wrapper },
     );

@@ -18,8 +18,8 @@ const GRAY = "#D9D9D9";
 // ----------------------------------------------------------------------
 
 export interface Props {
+  /** Without one, everyone available is shown. */
   summary?: SummaryResponse;
-  /** Everyone who could be in a cohort; the donut shows the cohort against it. */
   availableParticipants: number;
   isLoading?: boolean;
 }
@@ -34,8 +34,10 @@ export default function CohortSnapshot({
   const titleId = useId();
 
   // Estimated: a participant in two studies is counted twice
-  const participants =
-    summary?.studies.reduce((sum, s) => sum + s.participant_count, 0) ?? 0;
+  const participants = summary
+    ? summary.studies.reduce((sum, s) => sum + s.participant_count, 0)
+    : availableParticipants;
+
   const donut = {
     series: [
       {
@@ -64,23 +66,15 @@ export default function CohortSnapshot({
   return (
     <SnapshotPanel aria-labelledby={titleId}>
       <div>
-        <SnapshotTitle id={titleId}>
-          Cohort Snapshot
-        </SnapshotTitle>
+        <SnapshotTitle id={titleId}>Cohort Snapshot</SnapshotTitle>
         <Typography variant="body2" color="text.secondary">
           Based on current cohort
         </Typography>
       </div>
 
-      {isLoading && <CircularProgress aria-label="Loading cohort snapshot" />}
-
-      {!isLoading && !summary && (
-        <Typography variant="body2" color="text.secondary">
-          Include or exclude concepts to see your cohort.
-        </Typography>
-      )}
-
-      {!isLoading && summary && (
+      {isLoading ? (
+        <CircularProgress aria-label="Loading cohort snapshot" />
+      ) : (
         <>
           <Donut>
             <ReactECharts option={donut} style={FILL_PARENT} />
@@ -96,9 +90,11 @@ export default function CohortSnapshot({
           </Donut>
 
           <SnapshotFooter>
-            <Typography variant="body2">
-              Studies: <strong>{summary.studies.length}</strong>
-            </Typography>
+            {summary && (
+              <Typography variant="body2">
+                Studies: <strong>{summary.studies.length}</strong>
+              </Typography>
+            )}
             <Typography variant="caption" color="text.secondary">
               Participant count is estimated until query is executed
             </Typography>

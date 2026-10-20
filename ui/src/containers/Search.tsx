@@ -26,11 +26,12 @@ const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
 
 interface Props {
+  onSearch?: (text: string) => void;
   onInclude?: (item: SearchItem) => void;
   onExclude?: (item: SearchItem) => void;
 }
 
-export default function Search({ onInclude, onExclude }: Props) {
+export default function Search({ onSearch, onInclude, onExclude }: Props) {
   const resultActions: ConceptAction[] = [];
   if (onInclude) resultActions.push({ label: "+ Include", onClick: onInclude });
   if (onExclude) resultActions.push({ label: "+ Exclude", onClick: onExclude });
@@ -100,6 +101,7 @@ export default function Search({ onInclude, onExclude }: Props) {
   const handleSearch = (text: string) => {
     setSubmitted(text);
     setPage(1);
+    onSearch?.(text);
   };
 
   const handleChange = (text: string, reason: string) => {

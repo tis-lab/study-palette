@@ -17,19 +17,19 @@ const hypertension: SearchItem = {
 
 const diabetes: SearchItem = { ...hypertension, id: "MONDO:0005148", label: "Diabetes" };
 
-// jsdom has no canvas for ECharts to draw on
-vi.mock("echarts-for-react", () => ({ default: () => null }));
-
-// Search is covered by its own tests; here it only needs to report clicks
+// Search has its own tests; this stub only reports clicks
 vi.mock("./Search", () => ({
   default: ({
+    onSearch,
     onInclude,
     onExclude,
   }: {
+    onSearch: (text: string) => void;
     onInclude: (item: SearchItem) => void;
     onExclude: (item: SearchItem) => void;
   }) => (
     <div>
+      <button onClick={() => onSearch("hypertension")}>search</button>
       <button onClick={() => onInclude(hypertension)}>include result</button>
       <button onClick={() => onExclude(hypertension)}>exclude result</button>
       <button onClick={() => onInclude(diabetes)}>include other result</button>
@@ -108,23 +108,39 @@ describe("CohortBuilder", () => {
   });
 
   describe("cohort snapshot", () => {
-    it("asks for criteria before any are added", () => {
-      renderBuilder();
-
-      expect(
-        screen.getByText("Include or exclude concepts to see your cohort."),
-      ).toBeInTheDocument();
-    });
-
-    it("shows the summary once a concept is added, and narrows with more", async () => {
+    it("starts with everyone available, then narrows with each criterion", async () => {
       const user = userEvent.setup();
       renderBuilder();
+
+      expect(screen.getByText("5,000")).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "include result" }));
       expect(await screen.findByText("940")).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "include other result" }));
       expect(await screen.findByText("480")).toBeInTheDocument();
+    });
+
+    it("narrows on a search, then further with each criterion", async () => {
+      const user = userEvent.setup();
+      renderBuilder();
+
+      await user.click(screen.getByRole("button", { name: "search" }));
+      expect(await screen.findByText("940")).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "include result" }));
+      expect(await screen.findByText("480")).toBeInTheDocument();
+    });
+
+    it("returns to everyone available once all criteria are removed", async () => {
+      const user = userEvent.setup();
+      renderBuilder();
+
+      await user.click(screen.getByRole("button", { name: "include result" }));
+      expect(await screen.findByText("940")).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "Remove" }));
+      expect(await screen.findByText("5,000")).toBeInTheDocument();
     });
   });
 });
