@@ -2,13 +2,14 @@ import { useState } from "react";
 import Search from "./Search";
 import CriteriaSection from "../components/CriteriaSection";
 import CohortSnapshot from "../components/CohortSnapshot";
+import Demographics from "../components/Demographics";
 import { useCohortSummary, type Criteria } from "../hooks/useCohortSummary";
 import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../mocks/SYNTHETIC.cohortSummary";
 import {
   getSearchItemKey,
   type SearchItem,
 } from "../api/graphql/queries/resolveTerms";
-import { CohortBuilderLayout, MainColumn } from "./CohortBuilder.styles";
+import { CohortBuilderLayout, Column } from "./CohortBuilder.styles";
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +39,7 @@ export default function CohortBuilder() {
 
   return (
     <CohortBuilderLayout>
-      <MainColumn>
+      <Column>
         <Search
           onSearch={setSearchText}
           onInclude={add("include")}
@@ -54,13 +55,16 @@ export default function CohortBuilder() {
           items={criteria.exclude}
           onRemove={remove("exclude")}
         />
-      </MainColumn>
+      </Column>
 
-      <CohortSnapshot
-        summary={summary.data}
-        availableParticipants={AVAILABLE_PARTICIPANTS_PLACEHOLDER}
-        isLoading={summary.isLoading}
-      />
+      <Column>
+        <CohortSnapshot
+          summary={summary.data}
+          availableParticipants={AVAILABLE_PARTICIPANTS_PLACEHOLDER}
+          isLoading={summary.isLoading}
+        />
+        {summary.data && <Demographics summary={summary.data} />}
+      </Column>
     </CohortBuilderLayout>
   );
 }

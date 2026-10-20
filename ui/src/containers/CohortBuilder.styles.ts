@@ -11,7 +11,7 @@ export const CohortBuilderLayout = styled("div")(({ theme }) => ({
   },
 }));
 
-export const MainColumn = styled("div")(({ theme }) => ({
+export const Column = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing(3),

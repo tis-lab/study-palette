@@ -132,6 +132,18 @@ describe("CohortBuilder", () => {
       expect(await screen.findByText("480")).toBeInTheDocument();
     });
 
+    it("shows demographics only once there is a summary", async () => {
+      const user = userEvent.setup();
+      renderBuilder();
+
+      expect(screen.queryByRole("complementary", { name: "Demographics" })).toBeNull();
+
+      await user.click(screen.getByRole("button", { name: "search" }));
+      expect(
+        await screen.findByRole("complementary", { name: "Demographics" }),
+      ).toBeInTheDocument();
+    });
+
     it("returns to everyone available once all criteria are removed", async () => {
       const user = userEvent.setup();
       renderBuilder();

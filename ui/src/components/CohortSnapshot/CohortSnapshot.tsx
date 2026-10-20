@@ -2,18 +2,15 @@ import { useId } from "react";
 import { CircularProgress, Typography } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
+import { CATALYST_BLUE, ECHARTS_FILL, NEUTRAL_GRAY } from "../../charts";
+import { cohortParticipants } from "../../utils/summary";
+import { Panel, PanelTitle } from "../Panel/Panel.styles";
 import {
   Donut,
   DonutCaption,
   DonutCenter,
-  FILL_PARENT,
   SnapshotFooter,
-  SnapshotPanel,
-  SnapshotTitle,
 } from "./CohortSnapshot.styles";
-
-const CATALYST_BLUE = "#1A568C";
-const GRAY = "#D9D9D9";
 
 // ----------------------------------------------------------------------
 
@@ -33,9 +30,8 @@ export default function CohortSnapshot({
 }: Props) {
   const titleId = useId();
 
-  // Estimated: a participant in two studies is counted twice
   const participants = summary
-    ? summary.studies.reduce((sum, s) => sum + s.participant_count, 0)
+    ? cohortParticipants(summary)
     : availableParticipants;
 
   const donut = {
@@ -56,7 +52,7 @@ export default function CohortSnapshot({
           {
             name: "Not in cohort",
             value: Math.max(availableParticipants - participants, 0),
-            itemStyle: { color: GRAY },
+            itemStyle: { color: NEUTRAL_GRAY },
           },
         ],
       },
@@ -64,9 +60,9 @@ export default function CohortSnapshot({
   };
 
   return (
-    <SnapshotPanel aria-labelledby={titleId}>
+    <Panel aria-labelledby={titleId}>
       <div>
-        <SnapshotTitle id={titleId}>Cohort Snapshot</SnapshotTitle>
+        <PanelTitle id={titleId}>Cohort Snapshot</PanelTitle>
         <Typography variant="body2" color="text.secondary">
           Based on current cohort
         </Typography>
@@ -77,7 +73,7 @@ export default function CohortSnapshot({
       ) : (
         <>
           <Donut>
-            <ReactECharts option={donut} style={FILL_PARENT} />
+            <ReactECharts option={donut} style={ECHARTS_FILL} />
             <DonutCenter>
               <Typography variant="h5" component="p">
                 {participants.toLocaleString()}
@@ -101,6 +97,6 @@ export default function CohortSnapshot({
           </SnapshotFooter>
         </>
       )}
-    </SnapshotPanel>
+    </Panel>
   );
 }
