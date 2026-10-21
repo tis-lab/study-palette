@@ -4,6 +4,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi } from "vitest";
 import CohortBuilder from "./CohortBuilder";
 import type { SearchItem } from "../api/graphql/queries/resolveTerms";
+import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../mocks/SYNTHETIC.cohortSummary";
+
+const AVAILABLE = AVAILABLE_PARTICIPANTS_PLACEHOLDER.toLocaleString();
 
 const hypertension: SearchItem = {
   __typename: "Term",
@@ -112,7 +115,7 @@ describe("CohortBuilder", () => {
       const user = userEvent.setup();
       renderBuilder();
 
-      expect(screen.getByText("5,000")).toBeInTheDocument();
+      expect(screen.getByText(AVAILABLE)).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "include result" }));
       expect(await screen.findByText("940")).toBeInTheDocument();
@@ -152,7 +155,7 @@ describe("CohortBuilder", () => {
       expect(await screen.findByText("940")).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "Remove" }));
-      expect(await screen.findByText("5,000")).toBeInTheDocument();
+      expect(await screen.findByText(AVAILABLE)).toBeInTheDocument();
     });
   });
 });

@@ -3,8 +3,7 @@
 // keeping only what the cohort snapshot uses, until the summary API is available.
 import type { SummaryResponse } from "../api/graphql/queries/cohortSummary";
 
-/** Placeholder: the summary response has no available-participant total yet. */
-export const AVAILABLE_PARTICIPANTS_PLACEHOLDER = 5000;
+import { cohortParticipants } from "../utils/summary";
 
 /** Trimmed from schema/examples/SYNTHETIC.SummaryResponse-t2d.yaml. */
 export const t2dSummary: SummaryResponse = {
@@ -332,3 +331,8 @@ export const t2dFemaleSummary: SummaryResponse = {
     }
   ]
 };
+
+// Placeholder until the summary response includes available participants: the
+// broadest example's count times a random 10–20, picked once per page load.
+export const AVAILABLE_PARTICIPANTS_PLACEHOLDER =
+  cohortParticipants(t2dSummary) * (10 + Math.floor(Math.random() * 11));
