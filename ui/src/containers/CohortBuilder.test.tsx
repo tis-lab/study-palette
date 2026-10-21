@@ -58,7 +58,7 @@ describe("CohortBuilder", () => {
 
     expect(screen.getByRole("button", { name: "include result" })).toBeInTheDocument();
     expect(
-      screen.getByRole("complementary", { name: "Cohort Snapshot" }),
+      screen.getByRole("region", { name: "Cohort Snapshot" }),
     ).toBeInTheDocument();
   });
 
@@ -146,16 +146,15 @@ describe("CohortBuilder", () => {
       expect(await screen.findByText("480")).toBeInTheDocument();
     });
 
-    it("shows demographics only once there is a summary", async () => {
+    it("shows the demographics empty state until there is a summary", async () => {
       const user = userEvent.setup();
       renderBuilder();
 
-      expect(screen.queryByRole("complementary", { name: "Demographics" })).toBeNull();
+      expect(screen.getByText("Add criteria to view demographics")).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "search" }));
-      expect(
-        await screen.findByRole("complementary", { name: "Demographics" }),
-      ).toBeInTheDocument();
+      expect(await screen.findByText("940 participants · 2 studies")).toBeInTheDocument();
+      expect(screen.queryByText("Add criteria to view demographics")).toBeNull();
     });
 
     it("returns to everyone available once all criteria are removed", async () => {

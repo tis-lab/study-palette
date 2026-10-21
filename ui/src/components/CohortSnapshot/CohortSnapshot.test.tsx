@@ -12,7 +12,7 @@ describe("CohortSnapshot", () => {
     render(<CohortSnapshot availableParticipants={AVAILABLE} />);
 
     expect(
-      screen.getByRole("complementary", { name: "Cohort Snapshot" }),
+      screen.getByRole("region", { name: "Cohort Snapshot" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Based on current cohort")).toBeInTheDocument();
   });
@@ -24,6 +24,7 @@ describe("CohortSnapshot", () => {
     expect(screen.getByText("In cohort: 5000")).toBeInTheDocument();
     expect(screen.getByText("Not in cohort: 0")).toBeInTheDocument();
     expect(screen.queryByText("Studies:")).toBeNull();
+    expect(screen.queryByText(/available/)).toBeNull();
   });
 
   it("shows an error instead of the counts when the request fails", () => {

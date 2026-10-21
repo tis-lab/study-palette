@@ -7,11 +7,22 @@ import { t2dFemaleSummary, t2dSummary } from "../../mocks/SYNTHETIC.cohortSummar
 // test-setup.ts stubs ECharts to list each bar as "name: value"
 
 describe("Demographics", () => {
+  it("shows an empty state, with no tabs, before there is a cohort", () => {
+    render(<Demographics />);
+
+    expect(
+      screen.getByRole("region", { name: "Demographics" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Waiting for cohort criteria")).toBeInTheDocument();
+    expect(screen.getByText("Add criteria to view demographics")).toBeInTheDocument();
+    expect(screen.queryByRole("tab")).toBeNull();
+  });
+
   it("is a labelled panel with the cohort size and study count", () => {
     render(<Demographics summary={t2dSummary} />);
 
     expect(
-      screen.getByRole("complementary", { name: "Demographics" }),
+      screen.getByRole("region", { name: "Demographics" }),
     ).toBeInTheDocument();
     expect(screen.getByText("940 participants · 2 studies")).toBeInTheDocument();
   });

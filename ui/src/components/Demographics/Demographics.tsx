@@ -1,5 +1,6 @@
 import { useId, useState } from "react";
 import { Tab, Tabs, Typography, useTheme } from "@mui/material";
+import BarChartIcon from "@mui/icons-material/BarChart";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
 import { ECHARTS_FILL } from "../../charts";
@@ -8,7 +9,8 @@ import {
   demographicBreakdown,
   type DemographicSlot,
 } from "../../utils/summary";
-import { Panel, PanelTitle } from "../Panel/Panel.styles";
+import EmptyState from "../EmptyState";
+import { PanelSection, PanelTitle } from "../Panel/Panel.styles";
 import { BarArea } from "./Demographics.styles";
 
 // ----------------------------------------------------------------------
@@ -20,13 +22,40 @@ const SLOTS: { slot: DemographicSlot; label: string }[] = [
 ];
 
 export interface Props {
-  summary: SummaryResponse;
+  /** Absent until there is a cohort to describe. */
+  summary?: SummaryResponse;
 }
 
 // ----------------------------------------------------------------------
 
 export default function Demographics({ summary }: Props) {
   const titleId = useId();
+
+  return (
+    <PanelSection aria-labelledby={titleId}>
+      <div>
+        <PanelTitle id={titleId}>Demographics</PanelTitle>
+        <Typography variant="body2" color="text.secondary">
+          {summary
+            ? `${cohortParticipants(summary).toLocaleString()} participants · ${summary.studies.length} studies`
+            : "Waiting for cohort criteria"}
+        </Typography>
+      </div>
+
+      {summary ? (
+        <Breakdown summary={summary} />
+      ) : (
+        <EmptyState
+          icon={<BarChartIcon />}
+          title="Add criteria to view demographics"
+          description="Search for a concept, or add one to Include or Exclude, to see the demographic distribution for your cohort."
+        />
+      )}
+    </PanelSection>
+  );
+}
+
+function Breakdown({ summary }: { summary: SummaryResponse }) {
   const theme = useTheme();
   const [slot, setSlot] = useState<DemographicSlot>("sex");
 
@@ -76,15 +105,7 @@ export default function Demographics({ summary }: Props) {
   };
 
   return (
-    <Panel aria-labelledby={titleId}>
-      <div>
-        <PanelTitle id={titleId}>Demographics</PanelTitle>
-        <Typography variant="body2" color="text.secondary">
-          {total.toLocaleString()} participants · {summary.studies.length}{" "}
-          studies
-        </Typography>
-      </div>
-
+    <>
       <Tabs
         value={slot}
         onChange={(_, value: DemographicSlot) => setSlot(value)}
@@ -109,6 +130,6 @@ export default function Demographics({ summary }: Props) {
         Counts are aggregated across studies. Categories may not total 100% when
         values are not reported.
       </Typography>
-    </Panel>
+    </>
   );
 }

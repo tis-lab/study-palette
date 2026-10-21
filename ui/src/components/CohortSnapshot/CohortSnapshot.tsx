@@ -4,7 +4,7 @@ import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
 import { ECHARTS_FILL } from "../../charts";
 import { cohortParticipants } from "../../utils/summary";
-import { Panel, PanelTitle } from "../Panel/Panel.styles";
+import { PanelSection, PanelTitle } from "../Panel/Panel.styles";
 import {
   Donut,
   DonutCaption,
@@ -64,7 +64,7 @@ export default function CohortSnapshot({
   };
 
   return (
-    <Panel aria-labelledby={titleId}>
+    <PanelSection aria-labelledby={titleId}>
       <div>
         <PanelTitle id={titleId}>Cohort Snapshot</PanelTitle>
         <Typography variant="body2" color="text.secondary">
@@ -85,9 +85,11 @@ export default function CohortSnapshot({
                 {participants.toLocaleString()}
               </Typography>
               <DonutCaption variant="caption">Estimated Participants</DonutCaption>
-              <DonutCaption variant="caption" color="text.secondary">
-                of {availableParticipants.toLocaleString()} available
-              </DonutCaption>
+              {summary && (
+                <DonutCaption variant="caption" color="text.secondary">
+                  of {availableParticipants.toLocaleString()} available
+                </DonutCaption>
+              )}
             </DonutCenter>
           </Donut>
 
@@ -103,6 +105,6 @@ export default function CohortSnapshot({
           </SnapshotFooter>
         </>
       )}
-    </Panel>
+    </PanelSection>
   );
 }

@@ -2,7 +2,7 @@ import { Typography, styled } from "@mui/material";
 
 export const Donut = styled("div")({
   position: "relative",
-  height: 200,
+  height: 170,
 });
 
 export const DonutCenter = styled("div")({

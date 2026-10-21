@@ -5,6 +5,6 @@ export const EmptyStateRoot = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   gap: theme.spacing(1),
-  padding: theme.spacing(3, 2),
+  padding: theme.spacing(2),
   textAlign: "center",
 }));

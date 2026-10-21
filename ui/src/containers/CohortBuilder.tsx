@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Container, Divider } from "@mui/material";
 import Search from "./Search";
 import CohortCriteria from "../components/CohortCriteria";
 import CohortSnapshot from "../components/CohortSnapshot";
@@ -9,7 +10,7 @@ import {
   getSearchItemKey,
   type SearchItem,
 } from "../api/graphql/queries/resolveTerms";
-import { CohortBuilderLayout, Column } from "./CohortBuilder.styles";
+import { CohortBuilderLayout, Column, Overview } from "./CohortBuilder.styles";
 
 // ----------------------------------------------------------------------
 
@@ -38,25 +39,28 @@ export default function CohortBuilder() {
     setCriteria((prev) => ({ ...prev, [kind]: without(prev[kind], item) }));
 
   return (
-    <CohortBuilderLayout>
-      <Column>
-        <Search
-          onSearch={setSearchText}
-          onInclude={add("include")}
-          onExclude={add("exclude")}
-        />
-        <CohortCriteria criteria={criteria} onRemove={remove} />
-      </Column>
+    <Container maxWidth="lg">
+      <CohortBuilderLayout>
+        <Column>
+          <Search
+            onSearch={setSearchText}
+            onInclude={add("include")}
+            onExclude={add("exclude")}
+          />
+          <CohortCriteria criteria={criteria} onRemove={remove} />
+        </Column>
 
-      <Column>
-        <CohortSnapshot
-          summary={summary.data}
-          availableParticipants={AVAILABLE_PARTICIPANTS_PLACEHOLDER}
-          isLoading={summary.isLoading}
-          error={summary.error}
-        />
-        {summary.data && <Demographics summary={summary.data} />}
-      </Column>
-    </CohortBuilderLayout>
+        <Overview aria-label="Cohort overview">
+          <CohortSnapshot
+            summary={summary.data}
+            availableParticipants={AVAILABLE_PARTICIPANTS_PLACEHOLDER}
+            isLoading={summary.isLoading}
+            error={summary.error}
+          />
+          <Divider />
+          <Demographics summary={summary.data} />
+        </Overview>
+      </CohortBuilderLayout>
+    </Container>
   );
 }
