@@ -14,6 +14,7 @@ import {
 import { API_BASE, type DataMode, type Study } from "./types";
 import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
 import CohortBuilder from "./containers/CohortBuilder";
+import { SectionDivider } from "./App.styles";
 
 interface StudiesResponse {
   studies: Study[];
@@ -95,6 +96,7 @@ function App() {
               Builder & Query Tool
             </p>
             <CohortBuilder />
+            <SectionDivider />
           </div>
 
           <div className="header-controls">
