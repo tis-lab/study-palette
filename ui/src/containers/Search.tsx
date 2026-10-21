@@ -2,7 +2,6 @@ import { useId, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
-  Card,
   CircularProgress,
   Pagination,
   Stack,
@@ -17,11 +16,19 @@ import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
-import { ResultList, Results, SearchButton, SearchRow } from "./Search.styles";
+import {
+  GettingStarted,
+  ResultList,
+  Results,
+  SearchButton,
+  SearchRoot,
+  SearchRow,
+} from "./Search.styles";
 import {
   getSearchItemKey,
   type SearchItem,
 } from "../api/graphql/queries/resolveTerms";
+import type { Criteria } from "../hooks/useCohortSummary";
 
 // ----------------------------------------------------------------------
 
@@ -30,16 +37,40 @@ const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
 const EXAMPLE_SEARCHES = ["blood pressure", "hypertension"];
 
+const CRITERIA_LABELS = [
+  { kind: "include", add: "+ Include", added: "✓ Included" },
+  { kind: "exclude", add: "+ Exclude", added: "✓ Excluded" },
+] as const;
+
 interface Props {
   onSearch?: (text: string) => void;
   onInclude?: (item: SearchItem) => void;
   onExclude?: (item: SearchItem) => void;
+  /** Results already in a list show it, and clicking that button again takes them out. */
+  criteria?: Criteria;
+  onRemove?: (kind: keyof Criteria) => (item: SearchItem) => void;
 }
 
-export default function Search({ onSearch, onInclude, onExclude }: Props) {
-  const resultActions: ConceptAction[] = [];
-  if (onInclude) resultActions.push({ label: "+ Include", onClick: onInclude });
-  if (onExclude) resultActions.push({ label: "+ Exclude", onClick: onExclude });
+export default function Search({
+  onSearch,
+  onInclude,
+  onExclude,
+  criteria,
+  onRemove,
+}: Props) {
+  const onAdd = { include: onInclude, exclude: onExclude };
+  const resultActions = (item: SearchItem): ConceptAction[] =>
+    CRITERIA_LABELS.flatMap<ConceptAction>(({ kind, add, added }) => {
+      const onClick = onAdd[kind];
+      if (!onClick) return [];
+      const key = getSearchItemKey(item);
+      const selected = !!criteria?.[kind].some(
+        (i) => getSearchItemKey(i) === key,
+      );
+      return selected
+        ? [{ label: added, onClick: onRemove?.(kind) ?? onClick, selected }]
+        : [{ label: add, onClick }];
+    });
 
   // Unique per instance, so it can't collide with ids in the app
   const searchId = useId();
@@ -125,7 +156,7 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
   };
 
   return (
-    <Stack spacing={1}>
+    <SearchRoot spacing={1}>
       {/* Search error */}
       <Notification
         open={isSearchError && searchError !== dismissedSearchError}
@@ -160,7 +191,7 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
       </SearchRow>
 
       {submitted === "" && (
-        <Card variant="outlined">
+        <GettingStarted variant="outlined">
           <EmptyState
             icon={<SearchIcon />}
             title="Search concepts to get started"
@@ -171,13 +202,17 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
                 Try:
               </Typography>
               {EXAMPLE_SEARCHES.map((term) => (
-                <Button key={term} size="small" onClick={() => handleExample(term)}>
+                <Button
+                  key={term}
+                  size="small"
+                  onClick={() => handleExample(term)}
+                >
                   {term}
                 </Button>
               ))}
             </Stack>
           </EmptyState>
-        </Card>
+        </GettingStarted>
       )}
 
       {/* Search Result */}
@@ -216,7 +251,7 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
                     concept={c}
                     isFirst={i === 0}
                     isLast={i === searchItems.length - 1}
-                    actions={resultActions}
+                    actions={resultActions(c)}
                   />
                 ))}
               </ResultList>
@@ -238,6 +273,6 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
           )}
         </>
       )}
-    </Stack>
+    </SearchRoot>
   );
 }

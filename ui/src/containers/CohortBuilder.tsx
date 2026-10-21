@@ -46,6 +46,8 @@ export default function CohortBuilder() {
             onSearch={setSearchText}
             onInclude={add("include")}
             onExclude={add("exclude")}
+            criteria={criteria}
+            onRemove={remove}
           />
           <CohortCriteria criteria={criteria} onRemove={remove} />
         </Column>

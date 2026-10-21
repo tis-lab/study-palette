@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { Button, Chip, Collapse, Stack } from "@mui/material";
+import { Button, Chip, Collapse, Stack, Typography } from "@mui/material";
 import { SearchItem } from "../../api/graphql/queries/resolveTerms";
 import ConceptCardDetails from "./ConceptCardDetails";
 import {
@@ -7,7 +7,6 @@ import {
   ConceptCardLayout,
   ConceptCardMain,
   ConceptCardRoot,
-  ConceptMeta,
   ConceptTitle,
   DetailsButton,
   ExpandIcon,
@@ -28,6 +27,8 @@ function formatDomain(domain: string): string {
 export interface ConceptAction {
   label: string;
   onClick: (concept: SearchItem) => void;
+  /** Shown filled, as a pressed toggle. */
+  selected?: boolean;
 }
 
 export interface Props {
@@ -108,9 +109,9 @@ export default function ConceptCard({
               )}
             </Stack>
 
-            <ConceptMeta component="p" variant="caption" color="text.secondary">
+            <Typography component="p" variant="caption" color="text.secondary">
               {view.id} {/*· x studies */}
-            </ConceptMeta>
+            </Typography>
 
             {showDetails && (
               <>
@@ -139,7 +140,9 @@ export default function ConceptCard({
             {actions.map((a) => (
               <Button
                 key={a.label}
-                variant="outlined"
+                variant={a.selected ? "contained" : "outlined"}
+                size="small"
+                aria-pressed={a.selected}
                 onClick={() => a.onClick(concept)}
               >
                 {a.label}

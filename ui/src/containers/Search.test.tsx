@@ -277,7 +277,9 @@ describe("Search", () => {
 
     it("shows a getting-started message before anything is submitted", () => {
       render(<Search />);
-      expect(screen.getByText("Search concepts to get started")).toBeInTheDocument();
+      expect(
+        screen.getByText("Search concepts to get started"),
+      ).toBeInTheDocument();
     });
 
     it("hides the getting-started message once a search is submitted", async () => {
@@ -717,6 +719,34 @@ describe("Search", () => {
 
       expect(onInclude).toHaveBeenCalledWith(childhoodAsthma);
       expect(onExclude).toHaveBeenCalledWith(asthma);
+    });
+
+    it("marks results already in the criteria, and takes them out on click", async () => {
+      mockSearch({ data: resultsOf([asthma, childhoodAsthma]) });
+      const removeInclude = vi.fn();
+      const onRemove = vi.fn(() => removeInclude);
+      render(
+        <Search
+          onInclude={vi.fn()}
+          onExclude={vi.fn()}
+          criteria={{ include: [asthma], exclude: [] }}
+          onRemove={onRemove}
+        />,
+      );
+
+      const user = await searchFor("asthma");
+      const included = screen.getByRole("button", { name: "✓ Included" });
+      expect(included).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getAllByRole("button", { name: "+ Include" })).toHaveLength(
+        1,
+      );
+      expect(screen.getAllByRole("button", { name: "+ Exclude" })).toHaveLength(
+        2,
+      );
+
+      await user.click(included);
+      expect(onRemove).toHaveBeenCalledWith("include");
+      expect(removeInclude).toHaveBeenCalledWith(asthma);
     });
 
     it("shows no Include/Exclude buttons without handlers", async () => {
