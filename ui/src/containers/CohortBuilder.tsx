@@ -62,6 +62,7 @@ export default function CohortBuilder() {
           summary={summary.data}
           availableParticipants={AVAILABLE_PARTICIPANTS_PLACEHOLDER}
           isLoading={summary.isLoading}
+          error={summary.error}
         />
         {summary.data && <Demographics summary={summary.data} />}
       </Column>

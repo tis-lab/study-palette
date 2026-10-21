@@ -26,6 +26,20 @@ describe("CohortSnapshot", () => {
     expect(screen.queryByText("Studies:")).toBeNull();
   });
 
+  it("shows an error instead of the counts when the request fails", () => {
+    render(
+      <CohortSnapshot
+        availableParticipants={AVAILABLE}
+        error={new Error("Network down")}
+      />,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Couldn't load the cohort snapshot.",
+    );
+    expect(screen.queryByText("5,000")).toBeNull();
+  });
+
   it("shows a progress indicator while loading", () => {
     render(<CohortSnapshot availableParticipants={AVAILABLE} isLoading />);
 

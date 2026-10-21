@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { CircularProgress, Typography } from "@mui/material";
+import { Alert, CircularProgress, Typography } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
 import { CATALYST_BLUE, ECHARTS_FILL, NEUTRAL_GRAY } from "../../charts";
@@ -19,6 +19,8 @@ export interface Props {
   summary?: SummaryResponse;
   availableParticipants: number;
   isLoading?: boolean;
+  /** Shown instead of the counts, so a failed request never looks like everyone. */
+  error?: Error | null;
 }
 
 // ----------------------------------------------------------------------
@@ -27,6 +29,7 @@ export default function CohortSnapshot({
   summary,
   availableParticipants,
   isLoading = false,
+  error = null,
 }: Props) {
   const titleId = useId();
 
@@ -70,6 +73,8 @@ export default function CohortSnapshot({
 
       {isLoading ? (
         <CircularProgress aria-label="Loading cohort snapshot" />
+      ) : error ? (
+        <Alert severity="error">Couldn't load the cohort snapshot.</Alert>
       ) : (
         <>
           <Donut>
