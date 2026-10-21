@@ -18,7 +18,6 @@ export const DonutCenter = styled("div")({
 export const DonutCaption = styled(Typography)({
   maxWidth: 140,
   textAlign: "center",
-  lineHeight: 1.3,
 });
 
 export const SnapshotFooter = styled("div")(({ theme }) => ({

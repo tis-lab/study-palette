@@ -10,10 +10,7 @@ export const Panel = styled("aside")(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-// overline's default line height leaves a gap above the subtitle
 export const PanelTitle = styled("h2")(({ theme }) => ({
   ...theme.typography.overline,
   margin: 0,
-  lineHeight: 1.4,
-  fontWeight: theme.typography.fontWeightBold,
 }));

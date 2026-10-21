@@ -1,8 +1,8 @@
 import { useId, useState } from "react";
-import { Tab, Tabs, Typography } from "@mui/material";
+import { Tab, Tabs, Typography, useTheme } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
-import { CATALYST_BLUE, ECHARTS_FILL } from "../../charts";
+import { ECHARTS_FILL } from "../../charts";
 import {
   cohortParticipants,
   demographicBreakdown,
@@ -27,6 +27,7 @@ export interface Props {
 
 export default function Demographics({ summary }: Props) {
   const titleId = useId();
+  const theme = useTheme();
   const [slot, setSlot] = useState<DemographicSlot>("sex");
 
   const total = cohortParticipants(summary);
@@ -35,6 +36,10 @@ export default function Demographics({ summary }: Props) {
 
   const bars = {
     aria: { enabled: true },
+    textStyle: {
+      fontFamily: theme.typography.fontFamily,
+      color: theme.palette.text.secondary,
+    },
     animation: false,
     grid: { left: 0, right: 80, top: 0, bottom: 0, containLabel: true },
     xAxis: { type: "value", max: total, show: false },
@@ -50,11 +55,18 @@ export default function Demographics({ summary }: Props) {
         type: "bar",
         barWidth: 10,
         showBackground: true,
-        backgroundStyle: { borderRadius: 5 },
-        itemStyle: { color: CATALYST_BLUE, borderRadius: 5 },
+        backgroundStyle: {
+          color: theme.palette.grey[200],
+          borderRadius: theme.shape.borderRadius,
+        },
+        itemStyle: {
+          color: theme.palette.primary.main,
+          borderRadius: theme.shape.borderRadius,
+        },
         label: {
           show: true,
           position: "right",
+          color: theme.palette.text.primary,
           formatter: ({ value }: { value: number }) =>
             `${value.toLocaleString()} · ${percent(value)}%`,
         },

@@ -1,8 +1,8 @@
 import { useId } from "react";
-import { Alert, CircularProgress, Typography } from "@mui/material";
+import { Alert, CircularProgress, Typography, useTheme } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
-import { CATALYST_BLUE, ECHARTS_FILL, NEUTRAL_GRAY } from "../../charts";
+import { ECHARTS_FILL } from "../../charts";
 import { cohortParticipants } from "../../utils/summary";
 import { Panel, PanelTitle } from "../Panel/Panel.styles";
 import {
@@ -32,6 +32,7 @@ export default function CohortSnapshot({
   error = null,
 }: Props) {
   const titleId = useId();
+  const theme = useTheme();
 
   const participants = summary
     ? cohortParticipants(summary)
@@ -50,12 +51,12 @@ export default function CohortSnapshot({
           {
             name: "In cohort",
             value: participants,
-            itemStyle: { color: CATALYST_BLUE },
+            itemStyle: { color: theme.palette.primary.main },
           },
           {
             name: "Not in cohort",
             value: Math.max(availableParticipants - participants, 0),
-            itemStyle: { color: NEUTRAL_GRAY },
+            itemStyle: { color: theme.palette.grey[300] },
           },
         ],
       },
