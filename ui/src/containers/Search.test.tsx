@@ -275,6 +275,30 @@ describe("Search", () => {
       expect(getSearchButton()).toBeInTheDocument();
     });
 
+    it("shows a getting-started message before anything is submitted", () => {
+      render(<Search />);
+      expect(screen.getByText("Search concepts to get started")).toBeInTheDocument();
+    });
+
+    it("hides the getting-started message once a search is submitted", async () => {
+      mockSearch({ data: resultsOf([asthma]) });
+      render(<Search />);
+
+      await searchFor("asthma");
+
+      expect(screen.queryByText("Search concepts to get started")).toBeNull();
+    });
+
+    it("searches an example term when it is clicked", async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.click(screen.getByRole("button", { name: "hypertension" }));
+
+      expect(lastSearchedTerm()).toBe("hypertension");
+      expect(getInput()).toHaveValue("hypertension");
+    });
+
     it("does not search before anything is submitted", () => {
       render(<Search />);
       expect(lastSearchedTerm()).toBe("");

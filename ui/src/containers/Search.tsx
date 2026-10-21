@@ -1,11 +1,15 @@
 import { useId, useMemo, useRef, useState } from "react";
 import {
   Box,
+  Button,
+  Card,
   CircularProgress,
   Pagination,
   Stack,
   Typography,
 } from "@mui/material";
+import { Search as SearchIcon } from "@mui/icons-material";
+import EmptyState from "../components/EmptyState";
 import Searchbar from "../components/Searchbar";
 import ConceptCard, { type ConceptAction } from "../components/ConceptCard";
 import Notification from "../components/Notification/Notification";
@@ -24,6 +28,7 @@ import {
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
+const EXAMPLE_SEARCHES = ["blood pressure", "hypertension"];
 
 interface Props {
   onSearch?: (text: string) => void;
@@ -114,6 +119,11 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
     handleSearch(name);
   };
 
+  const handleExample = (term: string) => {
+    setValue(term);
+    handleSearch(term);
+  };
+
   return (
     <Stack spacing={1}>
       {/* Search error */}
@@ -148,6 +158,27 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
           Search
         </SearchButton>
       </SearchRow>
+
+      {submitted === "" && (
+        <Card variant="outlined">
+          <EmptyState
+            icon={<SearchIcon />}
+            title="Search concepts to get started"
+            description="Results will appear here. You can add each concept as an inclusion or exclusion criterion."
+          >
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Typography variant="body2" color="text.secondary">
+                Try:
+              </Typography>
+              {EXAMPLE_SEARCHES.map((term) => (
+                <Button key={term} size="small" onClick={() => handleExample(term)}>
+                  {term}
+                </Button>
+              ))}
+            </Stack>
+          </EmptyState>
+        </Card>
+      )}
 
       {/* Search Result */}
       {isLoadingSearchResult ? (
