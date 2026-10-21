@@ -25,17 +25,25 @@ const systolicBp: SearchItem = {
 };
 
 describe("CriteriaSection", () => {
-  it("renders nothing when there are no items", () => {
-    const { container } = render(
-      <CriteriaSection title="Include" items={[]} onRemove={vi.fn()} />,
+  it("shows the empty text and a zero count when there are no items", () => {
+    render(
+      <CriteriaSection
+        title="Include"
+        emptyText="No inclusion criteria added"
+        items={[]}
+        onRemove={vi.fn()}
+      />,
     );
 
-    expect(container).toBeEmptyDOMElement();
+    const section = screen.getByRole("region", { name: "Include" });
+    expect(within(section).getByText("No inclusion criteria added")).toBeInTheDocument();
+    expect(within(section).getByText("0")).toBeInTheDocument();
   });
 
   it("renders the title and one card per item, in order", () => {
     render(
       <CriteriaSection
+        emptyText="No criteria added"
         title="Include"
         items={[hypertension, systolicBp]}
         onRemove={vi.fn()}
@@ -52,7 +60,12 @@ describe("CriteriaSection", () => {
 
   it("offers Remove, not Include/Exclude or Details", () => {
     render(
-      <CriteriaSection title="Include" items={[hypertension]} onRemove={vi.fn()} />,
+      <CriteriaSection
+        title="Include"
+        emptyText="No criteria added"
+        items={[hypertension]}
+        onRemove={vi.fn()}
+      />,
     );
 
     expect(screen.getByRole("button", { name: "Remove" })).toBeInTheDocument();
@@ -65,6 +78,7 @@ describe("CriteriaSection", () => {
     const onRemove = vi.fn();
     render(
       <CriteriaSection
+        emptyText="No criteria added"
         title="Exclude"
         items={[hypertension, systolicBp]}
         onRemove={onRemove}

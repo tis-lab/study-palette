@@ -62,11 +62,16 @@ describe("CohortBuilder", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows no Include or Exclude section before anything is added", () => {
+  it("shows empty Include and Exclude sections before anything is added", () => {
     renderBuilder();
 
-    expect(querySection("Include")).toBeNull();
-    expect(querySection("Exclude")).toBeNull();
+    expect(screen.getByRole("region", { name: "Cohort Criteria" })).toHaveTextContent(
+      "0 criteria",
+    );
+    expect(within(querySection("Include")!).getByText("No inclusion criteria added"))
+      .toBeInTheDocument();
+    expect(within(querySection("Exclude")!).getByText("No exclusion criteria added"))
+      .toBeInTheDocument();
   });
 
   it("adds an included concept to the Include section only", async () => {
@@ -76,7 +81,11 @@ describe("CohortBuilder", () => {
     await user.click(screen.getByRole("button", { name: "include result" }));
 
     expect(within(querySection("Include")!).getByText("Hypertension")).toBeInTheDocument();
-    expect(querySection("Exclude")).toBeNull();
+    expect(within(querySection("Exclude")!).getByText("No exclusion criteria added"))
+      .toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Cohort Criteria" })).toHaveTextContent(
+      "1 criterion",
+    );
   });
 
   it("does not add the same concept twice", async () => {
@@ -96,18 +105,20 @@ describe("CohortBuilder", () => {
     await user.click(screen.getByRole("button", { name: "include result" }));
     await user.click(screen.getByRole("button", { name: "exclude result" }));
 
-    expect(querySection("Include")).toBeNull();
+    expect(within(querySection("Include")!).getByText("No inclusion criteria added"))
+      .toBeInTheDocument();
     expect(within(querySection("Exclude")!).getByText("Hypertension")).toBeInTheDocument();
   });
 
-  it("removes a concept, hiding the section once it is empty", async () => {
+  it("removes a concept, showing the empty state again", async () => {
     const user = userEvent.setup();
     renderBuilder();
 
     await user.click(screen.getByRole("button", { name: "include result" }));
     await user.click(screen.getByRole("button", { name: "Remove" }));
 
-    expect(querySection("Include")).toBeNull();
+    expect(within(querySection("Include")!).getByText("No inclusion criteria added"))
+      .toBeInTheDocument();
   });
 
   describe("cohort snapshot", () => {

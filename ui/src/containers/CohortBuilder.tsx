@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Search from "./Search";
-import CriteriaSection from "../components/CriteriaSection";
+import CohortCriteria from "../components/CohortCriteria";
 import CohortSnapshot from "../components/CohortSnapshot";
 import Demographics from "../components/Demographics";
 import { useCohortSummary, type Criteria } from "../hooks/useCohortSummary";
@@ -45,16 +45,7 @@ export default function CohortBuilder() {
           onInclude={add("include")}
           onExclude={add("exclude")}
         />
-        <CriteriaSection
-          title="Include"
-          items={criteria.include}
-          onRemove={remove("include")}
-        />
-        <CriteriaSection
-          title="Exclude"
-          items={criteria.exclude}
-          onRemove={remove("exclude")}
-        />
+        <CohortCriteria criteria={criteria} onRemove={remove} />
       </Column>
 
       <Column>
