@@ -1,4 +1,4 @@
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   Box,
   CircularProgress,
@@ -38,6 +38,7 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
 
   // Unique per instance, so it can't collide with ids in the app
   const searchId = useId();
+  const listRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState("");
   const [page, setPage] = useState(1);
@@ -177,7 +178,7 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
           {searchItems.length > 0 && (
             <Results>
               {/* Result Cards */}
-              <ResultList>
+              <ResultList ref={listRef}>
                 {searchItems.map((c, i) => (
                   <ConceptCard
                     key={getSearchItemKey(c)}
@@ -197,6 +198,7 @@ export default function Search({ onSearch, onInclude, onExclude }: Props) {
                   onChange={(_, value) => {
                     setPage(value);
                     window.scrollTo({ top: 0, behavior: "smooth" });
+                    if (listRef.current) listRef.current.scrollTop = 0;
                   }}
                   color="primary"
                 />

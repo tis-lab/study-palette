@@ -1075,6 +1075,20 @@ describe("Search", () => {
       expect(scrollToSpy).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
     });
 
+    it("scrolls the result list back to the top on page change", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+      const list = screen
+        .getAllByRole("heading", { level: 2 })[0]
+        .closest(".MuiCard-root")!.parentElement!;
+      list.scrollTop = 300;
+
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      expect(list.scrollTop).toBe(0);
+    });
+
     it("returns to page 1 on a new search", async () => {
       mockPagedSearch(makeTerms(45));
       render(<Search />);
