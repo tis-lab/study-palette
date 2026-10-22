@@ -40,5 +40,9 @@ export function useConceptSearch(
       return data.terms;
     },
     enabled: query.length > 0,
+    // Keep the current page on screen while the next one loads, so the layout
+    // doesn't collapse; a new search text still starts from empty.
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[1] === query ? previous : undefined,
   });
 }
