@@ -17,6 +17,15 @@ describe("Demographics", () => {
     expect(screen.queryByRole("tab")).toBeNull();
   });
 
+  it("shows skeleton bars, not the empty state, on the first load", () => {
+    render(<Demographics isLoading />);
+
+    expect(
+      screen.getByRole("progressbar", { name: "Loading demographics" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Add criteria to view demographics")).toBeNull();
+  });
+
   it("is a labelled panel with the cohort size and study count", () => {
     render(<Demographics summary={t2dSummary} />);
 

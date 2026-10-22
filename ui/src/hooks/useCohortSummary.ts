@@ -27,9 +27,14 @@ export function useCohortSummary(searchText: string, criteria: Criteria) {
   const include = criteria.include.map(getSearchItemKey);
   const exclude = criteria.exclude.map(getSearchItemKey);
 
+  const enabled = seed.length > 0 || include.length + exclude.length > 0;
+
   return useQuery({
     queryKey: ["cohortSummary", seed, include, exclude],
     queryFn: () => fetchCohortSummary(seed, criteria),
-    enabled: seed.length > 0 || include.length + exclude.length > 0,
+    enabled,
+    // Keep the previous cohort on screen while the next loads; with no filters
+    // left there is no cohort, so nothing to keep.
+    placeholderData: (previous) => (enabled ? previous : undefined),
   });
 }

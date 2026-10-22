@@ -1,28 +1,14 @@
 import { useId, useMemo, useRef, useState } from "react";
-import {
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  Pagination,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { Search as SearchIcon } from "@mui/icons-material";
-import EmptyState from "../components/EmptyState";
+import { Box, Link, Pagination, Stack, Typography } from "@mui/material";
 import Searchbar from "../components/Searchbar";
+import { SkeletonRows } from "../components/LoadingSkeleton";
 import ConceptCard, { type ConceptAction } from "../components/ConceptCard";
 import Notification from "../components/Notification/Notification";
 import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
-import {
-  ResultList,
-  Results,
-  SearchButton,
-  SearchRow,
-} from "./Search.styles";
+import { ResultList, Results, SearchButton, SearchRow } from "./Search.styles";
 import {
   getSearchItemKey,
   type SearchItem,
@@ -34,7 +20,7 @@ import type { Criteria } from "../hooks/useCohortSummary";
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
-const EXAMPLE_SEARCHES = ["diabetes", "hypertension"];
+const EXAMPLE_SEARCHES = ["blood pressure", "hypertension"];
 
 const CRITERIA_LABELS = [
   { kind: "include", add: "+ Include", added: "✓ Included" },
@@ -177,6 +163,7 @@ export default function Search({
         <Searchbar
           id={searchId}
           name="search"
+          placeholder="Search concepts…"
           value={value}
           onChange={handleChange}
           onSearch={handleSearch}
@@ -190,33 +177,28 @@ export default function Search({
       </SearchRow>
 
       {submitted === "" && (
-        <Card variant="outlined">
-          <EmptyState
-            icon={<SearchIcon />}
-            title="Search concepts to get started"
-            description="Results will appear here. You can add each concept as an inclusion or exclusion criterion."
-          >
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="body2" color="text.secondary">
-                Try:
-              </Typography>
-              {EXAMPLE_SEARCHES.map((term) => (
-                <Button
-                  key={term}
-                  size="small"
-                  onClick={() => handleExample(term)}
-                >
-                  {term}
-                </Button>
-              ))}
-            </Stack>
-          </EmptyState>
-        </Card>
+        <Stack direction="row" spacing={2} alignItems="baseline">
+          <Typography variant="body2" color="text.secondary">
+            Search for a concept above, or try:
+          </Typography>
+          {EXAMPLE_SEARCHES.map((term) => (
+            <Link
+              key={term}
+              component="button"
+              variant="body2"
+              underline="none"
+              onClick={() => handleExample(term)}
+            >
+              {term}
+            </Link>
+          ))}
+        </Stack>
       )}
 
       {/* Search Result */}
       {isLoadingSearchResult ? (
-        <CircularProgress aria-label="Searching concepts" />
+        // Rows about one result card tall
+        <SkeletonRows count={3} height={96} label="Searching concepts" />
       ) : (
         <>
           {/* Search Summary */}

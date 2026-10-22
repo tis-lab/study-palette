@@ -9,7 +9,7 @@ const AVAILABLE = 5000;
 
 describe("CohortSnapshot", () => {
   it("is a labelled panel with its subtitle", () => {
-    render(<CohortSnapshot availableParticipants={AVAILABLE} />);
+    render(<CohortSnapshot summary={t2dSummary} availableParticipants={AVAILABLE} />);
 
     expect(
       screen.getByRole("region", { name: "Cohort Snapshot" }),
@@ -25,6 +25,7 @@ describe("CohortSnapshot", () => {
     expect(screen.getByText("Not in cohort: 0")).toBeInTheDocument();
     expect(screen.queryByText("Studies:")).toBeNull();
     expect(screen.queryByText(/available/)).toBeNull();
+    expect(screen.queryByText("Based on current cohort")).toBeNull();
   });
 
   it("shows an error instead of the counts when the request fails", () => {
@@ -41,12 +42,17 @@ describe("CohortSnapshot", () => {
     expect(screen.queryByText("5,000")).toBeNull();
   });
 
-  it("shows a progress indicator while loading", () => {
+  it("shows a skeleton ring instead of the counts on the first load", () => {
     render(<CohortSnapshot availableParticipants={AVAILABLE} isLoading />);
 
     expect(
       screen.getByRole("progressbar", { name: "Loading cohort snapshot" }),
     ).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Cohort Snapshot" })).toHaveAttribute(
+      "aria-busy",
+      "true",
+    );
+    expect(screen.queryByText("5,000")).toBeNull();
   });
 
   it("shows the participants summed across studies, out of those available", () => {

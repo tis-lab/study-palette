@@ -275,20 +275,19 @@ describe("Search", () => {
       expect(getSearchButton()).toBeInTheDocument();
     });
 
-    it("shows a getting-started message before anything is submitted", () => {
+    it("prompts with a placeholder and example searches before anything is submitted", () => {
       render(<Search />);
-      expect(
-        screen.getByText("Search concepts to get started"),
-      ).toBeInTheDocument();
+      expect(getInput()).toHaveAttribute("placeholder", "Search concepts…");
+      expect(screen.getByText("Search for a concept above, or try:")).toBeInTheDocument();
     });
 
-    it("hides the getting-started message once a search is submitted", async () => {
+    it("hides the example searches once a search is submitted", async () => {
       mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);
 
       await searchFor("asthma");
 
-      expect(screen.queryByText("Search concepts to get started")).toBeNull();
+      expect(screen.queryByText("Search for a concept above, or try:")).toBeNull();
     });
 
     it("searches an example term when it is clicked", async () => {

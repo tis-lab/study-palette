@@ -1,8 +1,10 @@
 import { Typography, styled } from "@mui/material";
 
+export const DONUT_SIZE = 170;
+
 export const Donut = styled("div")({
   position: "relative",
-  height: 170,
+  height: DONUT_SIZE,
 });
 
 export const DonutCenter = styled("div")({

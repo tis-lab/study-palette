@@ -1,6 +1,5 @@
 import { useId, useState } from "react";
 import { Tab, Tabs, Typography, useTheme } from "@mui/material";
-import BarChartIcon from "@mui/icons-material/BarChart";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
 import { ECHARTS_FILL } from "../../charts";
@@ -10,6 +9,7 @@ import {
   type DemographicSlot,
 } from "../../utils/summary";
 import EmptyState from "../EmptyState";
+import { SkeletonRows } from "../LoadingSkeleton";
 import { PanelSection, PanelTitle } from "../Panel/Panel.styles";
 import { BarArea } from "./Demographics.styles";
 
@@ -24,15 +24,20 @@ const SLOTS: { slot: DemographicSlot; label: string }[] = [
 export interface Props {
   /** Absent until there is a cohort to describe. */
   summary?: SummaryResponse;
+  /** First load only; later updates keep the current chart on screen. */
+  isLoading?: boolean;
 }
+
+const BAR_THICKNESS = 10;
+const SKELETON_BARS = 3;
 
 // ----------------------------------------------------------------------
 
-export default function Demographics({ summary }: Props) {
+export default function Demographics({ summary, isLoading = false }: Props) {
   const titleId = useId();
 
   return (
-    <PanelSection aria-labelledby={titleId}>
+    <PanelSection aria-labelledby={titleId} aria-busy={isLoading}>
       <div>
         <PanelTitle id={titleId}>Demographics</PanelTitle>
         {summary && (
@@ -45,9 +50,16 @@ export default function Demographics({ summary }: Props) {
 
       {summary ? (
         <Breakdown summary={summary} />
+      ) : isLoading ? (
+        <BarArea rows={SKELETON_BARS}>
+          <SkeletonRows
+            count={SKELETON_BARS}
+            height={BAR_THICKNESS}
+            label="Loading demographics"
+          />
+        </BarArea>
       ) : (
         <EmptyState
-          icon={<BarChartIcon />}
           title="Add criteria to view demographics"
           description="Search for a concept to see the demographic distribution for your cohort."
         />
@@ -83,7 +95,7 @@ function Breakdown({ summary }: { summary: SummaryResponse }) {
     series: [
       {
         type: "bar",
-        barWidth: 10,
+        barWidth: BAR_THICKNESS,
         showBackground: true,
         backgroundStyle: {
           color: theme.palette.grey[200],

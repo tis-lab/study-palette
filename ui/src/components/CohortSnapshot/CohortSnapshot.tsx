@@ -1,11 +1,13 @@
 import { useId } from "react";
-import { Alert, CircularProgress, Typography, useTheme } from "@mui/material";
+import { Alert, Typography, useTheme } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
 import { ECHARTS_FILL } from "../../charts";
 import { cohortParticipants } from "../../utils/summary";
+import { MutedSkeleton } from "../LoadingSkeleton";
 import { PanelSection, PanelTitle } from "../Panel/Panel.styles";
 import {
+  DONUT_SIZE,
   Donut,
   DonutCaption,
   DonutCenter,
@@ -18,6 +20,7 @@ export interface Props {
   /** Without one, everyone available is shown. */
   summary?: SummaryResponse;
   availableParticipants: number;
+  /** First load only; later updates keep the current counts on screen. */
   isLoading?: boolean;
   /** Shown instead of the counts, so a failed request never looks like everyone. */
   error?: Error | null;
@@ -64,18 +67,28 @@ export default function CohortSnapshot({
   };
 
   return (
-    <PanelSection aria-labelledby={titleId}>
+    <PanelSection aria-labelledby={titleId} aria-busy={isLoading}>
       <div>
         <PanelTitle id={titleId}>Cohort Snapshot</PanelTitle>
-        <Typography variant="body2" color="text.secondary">
-          Based on current cohort
-        </Typography>
+        {summary && (
+          <Typography variant="body2" color="text.secondary">
+            Based on current cohort
+          </Typography>
+        )}
       </div>
 
-      {isLoading ? (
-        <CircularProgress aria-label="Loading cohort snapshot" />
-      ) : error ? (
+      {error ? (
         <Alert severity="error">Couldn't load the cohort snapshot.</Alert>
+      ) : isLoading ? (
+        <Donut role="progressbar" aria-label="Loading cohort snapshot">
+          <DonutCenter>
+            <MutedSkeleton
+              variant="circular"
+              width={DONUT_SIZE}
+              height={DONUT_SIZE}
+            />
+          </DonutCenter>
+        </Donut>
       ) : (
         <>
           <Donut>

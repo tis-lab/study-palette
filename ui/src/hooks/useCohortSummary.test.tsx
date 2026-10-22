@@ -50,6 +50,31 @@ describe("useCohortSummary", () => {
     expect(result.current.data).toBe(t2dSummary);
   });
 
+  it("keeps the previous cohort while the next one loads", async () => {
+    const { result, rerender } = renderHook(
+      ({ criteria }) => useCohortSummary("diabetes", criteria),
+      { wrapper, initialProps: { criteria: none } },
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    rerender({ criteria: { include: [term("MONDO:0005148")], exclude: [] } });
+
+    expect(result.current.isPlaceholderData).toBe(true);
+    expect(result.current.data).toBe(t2dSummary);
+  });
+
+  it("keeps nothing once every filter is removed", async () => {
+    const { result, rerender } = renderHook(
+      ({ text }) => useCohortSummary(text, none),
+      { wrapper, initialProps: { text: "diabetes" } },
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    rerender({ text: "" });
+
+    expect(result.current.data).toBeUndefined();
+  });
+
   it("returns the narrower female example once a search is narrowed by a criterion", async () => {
     const { result } = renderHook(
       () =>
