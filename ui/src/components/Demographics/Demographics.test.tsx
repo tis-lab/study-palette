@@ -13,7 +13,6 @@ describe("Demographics", () => {
     expect(
       screen.getByRole("region", { name: "Demographics" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Waiting for cohort criteria")).toBeInTheDocument();
     expect(screen.getByText("Add criteria to view demographics")).toBeInTheDocument();
     expect(screen.queryByRole("tab")).toBeNull();
   });

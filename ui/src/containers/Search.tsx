@@ -2,6 +2,7 @@ import { useId, useMemo, useRef, useState } from "react";
 import {
   Box,
   Button,
+  Card,
   CircularProgress,
   Pagination,
   Stack,
@@ -17,11 +18,9 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
 import {
-  GettingStarted,
   ResultList,
   Results,
   SearchButton,
-  SearchRoot,
   SearchRow,
 } from "./Search.styles";
 import {
@@ -35,7 +34,7 @@ import type { Criteria } from "../hooks/useCohortSummary";
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
-const EXAMPLE_SEARCHES = ["blood pressure", "hypertension"];
+const EXAMPLE_SEARCHES = ["diabetes", "hypertension"];
 
 const CRITERIA_LABELS = [
   { kind: "include", add: "+ Include", added: "✓ Included" },
@@ -156,7 +155,7 @@ export default function Search({
   };
 
   return (
-    <SearchRoot spacing={1}>
+    <Stack spacing={1}>
       {/* Search error */}
       <Notification
         open={isSearchError && searchError !== dismissedSearchError}
@@ -191,7 +190,7 @@ export default function Search({
       </SearchRow>
 
       {submitted === "" && (
-        <GettingStarted variant="outlined">
+        <Card variant="outlined">
           <EmptyState
             icon={<SearchIcon />}
             title="Search concepts to get started"
@@ -212,7 +211,7 @@ export default function Search({
               ))}
             </Stack>
           </EmptyState>
-        </GettingStarted>
+        </Card>
       )}
 
       {/* Search Result */}
@@ -273,6 +272,6 @@ export default function Search({
           )}
         </>
       )}
-    </SearchRoot>
+    </Stack>
   );
 }

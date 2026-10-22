@@ -1,5 +1,5 @@
 import { useId } from "react";
-import { Card, Chip, Typography } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 import ConceptCard from "../ConceptCard";
 import EmptyState from "../EmptyState";
 import {
@@ -9,6 +9,7 @@ import {
 import {
   CriteriaList,
   CriteriaSectionRoot,
+  EmptyCard,
   SectionHeader,
 } from "./CriteriaSection.styles";
 
@@ -42,9 +43,9 @@ export default function CriteriaSection({
       </SectionHeader>
 
       {items.length === 0 ? (
-        <Card variant="outlined">
+        <EmptyCard variant="outlined">
           <EmptyState description={emptyText} />
-        </Card>
+        </EmptyCard>
       ) : (
         <CriteriaList>
           {items.map((item, i) => (

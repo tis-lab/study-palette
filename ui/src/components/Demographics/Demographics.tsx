@@ -35,11 +35,12 @@ export default function Demographics({ summary }: Props) {
     <PanelSection aria-labelledby={titleId}>
       <div>
         <PanelTitle id={titleId}>Demographics</PanelTitle>
-        <Typography variant="body2" color="text.secondary">
-          {summary
-            ? `${cohortParticipants(summary).toLocaleString()} participants · ${summary.studies.length} studies`
-            : "Waiting for cohort criteria"}
-        </Typography>
+        {summary && (
+          <Typography variant="body2" color="text.secondary">
+            {cohortParticipants(summary).toLocaleString()} participants ·{" "}
+            {summary.studies.length} studies
+          </Typography>
+        )}
       </div>
 
       {summary ? (
@@ -48,7 +49,7 @@ export default function Demographics({ summary }: Props) {
         <EmptyState
           icon={<BarChartIcon />}
           title="Add criteria to view demographics"
-          description="Search for a concept, or add one to Include or Exclude, to see the demographic distribution for your cohort."
+          description="Search for a concept to see the demographic distribution for your cohort."
         />
       )}
     </PanelSection>

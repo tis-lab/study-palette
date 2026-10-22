@@ -1,19 +1,6 @@
-import { Button, Card, Stack, styled } from "@mui/material";
+import { Button, Stack, styled } from "@mui/material";
 
 // ----------------------------------------------------------------------
-
-/** Fills its column, so the getting-started card can take up the spare height. */
-export const SearchRoot = styled(Stack)({
-  flexGrow: 1,
-});
-
-/** Grows to line the column up with its neighbour, content centred. */
-export const GettingStarted = styled(Card)({
-  flexGrow: 1,
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-});
 
 /** Search input and button side by side. */
 export const SearchRow = styled("div")(({ theme }) => ({
