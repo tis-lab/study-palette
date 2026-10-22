@@ -2,6 +2,7 @@ import { useId } from "react";
 import { Chip, Typography } from "@mui/material";
 import ConceptCard from "../ConceptCard";
 import EmptyState from "../EmptyState";
+import { EmptyCard } from "../EmptyState/EmptyState.styles";
 import {
   getSearchItemKey,
   type SearchItem,
@@ -9,7 +10,6 @@ import {
 import {
   CriteriaList,
   CriteriaSectionRoot,
-  EmptyCard,
   SectionHeader,
 } from "./CriteriaSection.styles";
 
@@ -43,7 +43,7 @@ export default function CriteriaSection({
       </SectionHeader>
 
       {items.length === 0 ? (
-        <EmptyCard variant="outlined">
+        <EmptyCard elevation={0}>
           <EmptyState description={emptyText} />
         </EmptyCard>
       ) : (
@@ -55,7 +55,7 @@ export default function CriteriaSection({
               isFirst={i === 0}
               isLast={i === items.length - 1}
               actions={actions}
-              showDetails={false}
+              compact
             />
           ))}
         </CriteriaList>

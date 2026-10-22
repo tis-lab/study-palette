@@ -62,16 +62,14 @@ describe("CohortBuilder", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows empty Include and Exclude sections before anything is added", () => {
+  it("shows one empty state, without Include and Exclude, before anything is added", () => {
     renderBuilder();
 
-    expect(screen.getByRole("region", { name: "Cohort Criteria" })).toHaveTextContent(
-      "0 criteria",
-    );
-    expect(within(querySection("Include")!).getByText("No inclusion criteria added"))
-      .toBeInTheDocument();
-    expect(within(querySection("Exclude")!).getByText("No exclusion criteria added"))
-      .toBeInTheDocument();
+    const criteria = screen.getByRole("region", { name: "Cohort Criteria" });
+    expect(criteria).toHaveTextContent("0 criteria");
+    expect(within(criteria).getByText("No criteria added yet")).toBeInTheDocument();
+    expect(querySection("Include")).toBeNull();
+    expect(querySection("Exclude")).toBeNull();
   });
 
   it("adds an included concept to the Include section only", async () => {
@@ -117,8 +115,8 @@ describe("CohortBuilder", () => {
     await user.click(screen.getByRole("button", { name: "include result" }));
     await user.click(screen.getByRole("button", { name: "Remove" }));
 
-    expect(within(querySection("Include")!).getByText("No inclusion criteria added"))
-      .toBeInTheDocument();
+    expect(screen.getByText("No criteria added yet")).toBeInTheDocument();
+    expect(querySection("Include")).toBeNull();
   });
 
   describe("cohort snapshot", () => {

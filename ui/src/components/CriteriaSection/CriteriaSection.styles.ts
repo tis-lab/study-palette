@@ -1,4 +1,4 @@
-import { Card, Stack, styled } from "@mui/material";
+import { Stack, styled } from "@mui/material";
 
 export const CriteriaSectionRoot = styled("section")(({ theme }) => ({
   display: "flex",
@@ -16,8 +16,3 @@ export const SectionHeader = styled("div")(({ theme }) => ({
 export const CriteriaList = styled(Stack)({
   width: "100%",
 });
-
-/** Muted, so an empty list reads as a placeholder. */
-export const EmptyCard = styled(Card)(({ theme }) => ({
-  backgroundColor: theme.palette.action.hover,
-}));

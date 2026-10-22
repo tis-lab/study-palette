@@ -348,10 +348,13 @@ describe("ConceptCard", () => {
     });
   });
 
-  describe("showDetails", () => {
-    it("hides the Details toggle when false", () => {
-      renderCard({ showDetails: false });
+  describe("compact", () => {
+    it("shows only the name and code", () => {
+      renderCard({ concept: systolicBp, compact: true });
 
+      expect(screen.getByText("Systolic blood pressure")).toBeInTheDocument();
+      expect(screen.getByText("bp_systolic")).toBeInTheDocument();
+      expect(queryHarmonizedBadge()).not.toBeInTheDocument();
       expect(screen.queryByRole("button", { name: "Details" })).toBeNull();
     });
   });

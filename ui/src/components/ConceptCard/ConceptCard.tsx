@@ -36,7 +36,8 @@ export interface Props {
   isFirst: boolean;
   isLast: boolean;
   actions?: ConceptAction[];
-  showDetails?: boolean;
+  /** Name and code only, for concepts already picked. */
+  compact?: boolean;
 }
 
 /* Normalizes both search item types into the fields the card renders. */
@@ -78,7 +79,7 @@ export default function ConceptCard({
   isFirst,
   isLast,
   actions = [],
-  showDetails = true,
+  compact = false,
 }: Props) {
   const [open, setOpen] = useState(false);
   const detailsId = useId();
@@ -100,7 +101,7 @@ export default function ConceptCard({
                 {view.label}
               </ConceptTitle>
 
-              {view.isHarmonizedVariable && (
+              {!compact && view.isHarmonizedVariable && (
                 <Chip
                   label="Harmonized Variable"
                   size="small"
@@ -113,7 +114,7 @@ export default function ConceptCard({
               {view.id} {/*· x studies */}
             </Typography>
 
-            {showDetails && (
+            {!compact && (
               <>
                 <DetailsButton
                   size="small"
