@@ -78,6 +78,7 @@ export default function Search({
   const {
     data: searchData,
     isLoading: isLoadingSearchResult,
+    isPlaceholderData: isLoadingPage,
     isError: isSearchError,
     error: searchError,
   } = useConceptSearch(submitted, {
@@ -226,15 +227,19 @@ export default function Search({
             <Results>
               {/* Result Cards */}
               <ResultList ref={listRef}>
-                {searchItems.map((c, i) => (
-                  <ConceptCard
-                    key={getSearchItemKey(c)}
-                    concept={c}
-                    isFirst={i === 0}
-                    isLast={i === searchItems.length - 1}
-                    actions={resultActions(c)}
-                  />
-                ))}
+                {isLoadingPage ? (
+                  <SkeletonRows count={5} height={96} label="Loading page" />
+                ) : (
+                  searchItems.map((c, i) => (
+                    <ConceptCard
+                      key={getSearchItemKey(c)}
+                      concept={c}
+                      isFirst={i === 0}
+                      isLast={i === searchItems.length - 1}
+                      actions={resultActions(c)}
+                    />
+                  ))
+                )}
               </ResultList>
 
               {/* Pagination */}

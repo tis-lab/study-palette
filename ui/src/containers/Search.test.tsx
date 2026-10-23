@@ -66,6 +66,7 @@ type SearchData = Pick<
 type QueryState<T> = {
   data: T | undefined;
   isLoading: boolean;
+  isPlaceholderData?: boolean;
   isFetching: boolean;
   isError: boolean;
   error: Error | null;
@@ -1041,6 +1042,16 @@ describe("Search", () => {
   });
 
   describe("pagination", () => {
+    it("shows placeholder cards instead of the previous page while the next loads", async () => {
+      mockSearch({ data: resultsOf([asthma]), isPlaceholderData: true });
+      render(<Search onInclude={vi.fn()} />);
+
+      await searchFor("asthma");
+
+      expect(screen.getByRole("progressbar", { name: "Loading page" })).toBeInTheDocument();
+      expect(screen.queryByText(asthma.label)).toBeNull();
+    });
+
     it("is hidden when all results fit on one page", async () => {
       mockPagedSearch(makeTerms(PAGE_SIZE));
       render(<Search />);
