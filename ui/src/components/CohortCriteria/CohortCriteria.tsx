@@ -1,7 +1,8 @@
 import { useId } from "react";
-import { CardContent, Chip, Stack, Typography } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CriteriaSection from "../CriteriaSection";
+import EmptyState from "../EmptyState";
 import { EmptyCard } from "../EmptyState/EmptyState.styles";
 import { Panel, PanelTitle } from "../Panel/Panel.styles";
 import type { SearchItem } from "../../api/graphql/queries/resolveTerms";
@@ -38,19 +39,12 @@ export default function CohortCriteria({ criteria, onRemove }: Props) {
 
       {total === 0 ? (
         <EmptyCard elevation={0}>
-          <CardContent>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <FilterListIcon color="action" />
-              <div>
-                <Typography variant="subtitle2" component="p">
-                  No criteria added yet
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Search above, then add a concept as Include or Exclude.
-                </Typography>
-              </div>
-            </Stack>
-          </CardContent>
+          <EmptyState
+            align="start"
+            icon={<FilterListIcon color="action" />}
+            title="No criteria added yet"
+            description="Search above, then add a concept as Include or Exclude."
+          />
         </EmptyCard>
       ) : (
         <Sections>
