@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { cohortParticipants, demographicBreakdown, humanize } from "./summary";
+import {
+  cohortParticipants,
+  demographicBreakdown,
+  humanize,
+  percentOf,
+} from "./summary";
 import { t2dFemaleSummary, t2dSummary } from "../mocks/SYNTHETIC.cohortSummary";
 
 describe("humanize", () => {
@@ -16,6 +21,16 @@ describe("cohortParticipants", () => {
   it("sums participants across studies", () => {
     expect(cohortParticipants(t2dSummary)).toBe(940);
     expect(cohortParticipants(t2dFemaleSummary)).toBe(480);
+  });
+});
+
+describe("percentOf", () => {
+  it("rounds to a whole percentage", () => {
+    expect(percentOf(480, 940)).toBe(51);
+  });
+
+  it("is 0 for an empty cohort, not NaN", () => {
+    expect(percentOf(0, 0)).toBe(0);
   });
 });
 

@@ -30,6 +30,11 @@ export function cohortParticipants(summary: SummaryResponse): number {
   return summary.studies.reduce((sum, s) => sum + s.participant_count, 0);
 }
 
+/** Whole-number percentage; 0 for an empty cohort rather than NaN. */
+export function percentOf(count: number, total: number): number {
+  return total > 0 ? Math.round((count / total) * 100) : 0;
+}
+
 /**
  * Counts per category summed across studies, largest first. The remainder of
  * the cohort is "Not reported" (missing, or below min_count). Empty when no

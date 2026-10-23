@@ -6,6 +6,7 @@ import { ECHARTS_FILL } from "../../charts";
 import {
   cohortParticipants,
   demographicBreakdown,
+  percentOf,
   type DemographicSlot,
 } from "../../utils/summary";
 import EmptyState from "../EmptyState";
@@ -82,7 +83,6 @@ function Breakdown({ summary }: { summary: SummaryResponse }) {
 
   const total = cohortParticipants(summary);
   const rows = demographicBreakdown(summary, slot);
-  const percent = (count: number) => Math.round((count / total) * 100);
 
   const bars = {
     aria: { enabled: true },
@@ -118,7 +118,7 @@ function Breakdown({ summary }: { summary: SummaryResponse }) {
           position: "right",
           color: theme.palette.text.primary,
           formatter: ({ value }: { value: number }) =>
-            `${value.toLocaleString()} · ${percent(value)}%`,
+            `${value.toLocaleString()} · ${percentOf(value, total)}%`,
         },
         data: rows.map((r) => ({ name: r.label, value: r.count })),
       },
