@@ -1,9 +1,9 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import CohortBuilder from "./CohortBuilder";
+import Root from "./Root";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <CohortBuilder />
+    <Root />
   </StrictMode>,
 );

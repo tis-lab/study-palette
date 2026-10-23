@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { Button, Chip, Collapse, Stack } from "@mui/material";
+import { Button, Chip, Collapse, Stack, Typography } from "@mui/material";
 import { SearchItem } from "../../api/graphql/queries/resolveTerms";
 import ConceptCardDetails from "./ConceptCardDetails";
 import {
@@ -7,7 +7,6 @@ import {
   ConceptCardLayout,
   ConceptCardMain,
   ConceptCardRoot,
-  ConceptMeta,
   ConceptTitle,
   DetailsButton,
   ExpandIcon,
@@ -25,14 +24,20 @@ function formatDomain(domain: string): string {
 // ----------------------------------------------------------------------
 
 /* Prop Types */
-type ConceptAction = (concept: SearchItem) => void;
+export interface ConceptAction {
+  label: string;
+  onClick: (concept: SearchItem) => void;
+  /** Shown filled, as a pressed toggle. */
+  selected?: boolean;
+}
 
 export interface Props {
   concept: SearchItem;
   isFirst: boolean;
   isLast: boolean;
-  onInclude?: ConceptAction;
-  onExclude?: ConceptAction;
+  actions?: ConceptAction[];
+  /** Name and code only, for concepts already picked. */
+  compact?: boolean;
 }
 
 /* Normalizes both search item types into the fields the card renders. */
@@ -73,17 +78,12 @@ export default function ConceptCard({
   concept,
   isFirst,
   isLast,
-  onInclude,
-  onExclude,
+  actions = [],
+  compact = false,
 }: Props) {
   const [open, setOpen] = useState(false);
   const detailsId = useId();
   const view = toCardView(concept);
-
-  const actions: { label: string; onClick?: ConceptAction }[] = [
-    { label: "+ Include", onClick: onInclude },
-    { label: "+ Exclude", onClick: onExclude },
-  ];
 
   return (
     <ConceptCardRoot variant="outlined" isFirst={isFirst} isLast={isLast}>
@@ -101,7 +101,7 @@ export default function ConceptCard({
                 {view.label}
               </ConceptTitle>
 
-              {view.isHarmonizedVariable && (
+              {!compact && view.isHarmonizedVariable && (
                 <Chip
                   label="Harmonized Variable"
                   size="small"
@@ -110,35 +110,41 @@ export default function ConceptCard({
               )}
             </Stack>
 
-            <ConceptMeta component="p" variant="caption" color="text.secondary">
+            <Typography component="p" variant="caption" color="text.secondary">
               {view.id} {/*· x studies */}
-            </ConceptMeta>
+            </Typography>
 
-            <DetailsButton
-              size="small"
-              onClick={() => setOpen((v) => !v)}
-              aria-expanded={open}
-              aria-controls={detailsId}
-              startIcon={<ExpandIcon open={open} />}
-            >
-              Details
-            </DetailsButton>
+            {!compact && (
+              <>
+                <DetailsButton
+                  size="small"
+                  onClick={() => setOpen((v) => !v)}
+                  aria-expanded={open}
+                  aria-controls={detailsId}
+                  startIcon={<ExpandIcon open={open} />}
+                >
+                  Details
+                </DetailsButton>
 
-            <Collapse in={open} id={detailsId} unmountOnExit>
-              <ConceptCardDetails
-                category={view.category ?? undefined}
-                description={view.description}
-                variableNames={view.variableNames}
-              />
-            </Collapse>
+                <Collapse in={open} id={detailsId} unmountOnExit>
+                  <ConceptCardDetails
+                    category={view.category ?? undefined}
+                    description={view.description}
+                    variableNames={view.variableNames}
+                  />
+                </Collapse>
+              </>
+            )}
           </ConceptCardMain>
 
           <Stack direction="row" spacing={1} flexShrink={0}>
             {actions.map((a) => (
               <Button
                 key={a.label}
-                variant="outlined"
-                onClick={() => a.onClick?.(concept)}
+                variant={a.selected ? "contained" : "outlined"}
+                size="small"
+                aria-pressed={a.selected}
+                onClick={() => a.onClick(concept)}
               >
                 {a.label}
               </Button>

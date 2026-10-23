@@ -1,30 +1,65 @@
-import { useId, useMemo, useState } from "react";
-import {
-  Box,
-  CircularProgress,
-  Pagination,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { useId, useMemo, useRef, useState } from "react";
+import { Box, Link, Pagination, Stack, Typography } from "@mui/material";
 import Searchbar from "../components/Searchbar";
-import ConceptCard from "../components/ConceptCard/ConceptCard";
+import { SkeletonRows } from "../components/LoadingSkeleton";
+import ConceptCard, { type ConceptAction } from "../components/ConceptCard";
 import Notification from "../components/Notification/Notification";
 import { useConceptSearch } from "../hooks/useConceptSearch";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { uniqueLabels } from "../utils/uniqueLabels";
 import { useConceptSuggestions } from "../hooks/useConceptSuggestions";
 import { ResultList, Results, SearchButton, SearchRow } from "./Search.styles";
-import { getSearchItemKey } from "../api/graphql/queries/resolveTerms";
+import {
+  getSearchItemKey,
+  type SearchItem,
+} from "../api/graphql/queries/resolveTerms";
+import type { Criteria } from "../hooks/useCohortSummary";
 
 // ----------------------------------------------------------------------
 
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
+const EXAMPLE_SEARCHES = ["blood pressure", "hypertension"];
 
-export default function Search() {
+const CRITERIA_LABELS = [
+  { kind: "include", add: "+ Include", added: "✓ Included" },
+  { kind: "exclude", add: "+ Exclude", added: "✓ Excluded" },
+] as const;
+
+interface Props {
+  onSearch?: (text: string) => void;
+  onInclude?: (item: SearchItem) => void;
+  onExclude?: (item: SearchItem) => void;
+  /** Results already in a list show it, and clicking that button again takes them out. */
+  criteria?: Criteria;
+  onRemove?: (kind: keyof Criteria) => (item: SearchItem) => void;
+}
+
+export default function Search({
+  onSearch,
+  onInclude,
+  onExclude,
+  criteria,
+  onRemove,
+}: Props) {
+  const onAdd = { include: onInclude, exclude: onExclude };
+  const resultActions = (item: SearchItem): ConceptAction[] =>
+    CRITERIA_LABELS.flatMap<ConceptAction>(({ kind, add, added }) => {
+      const onClick = onAdd[kind];
+      if (!onClick) return [];
+      const key = getSearchItemKey(item);
+      const selected = !!criteria?.[kind].some(
+        (i) => getSearchItemKey(i) === key,
+      );
+      return selected
+        ? [{ label: added, onClick: onRemove?.(kind) ?? onClick, selected }]
+        : [{ label: add, onClick }];
+    });
+
   // Unique per instance, so it can't collide with ids in the app
   const searchId = useId();
+  const listRef = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState("");
   const [page, setPage] = useState(1);
@@ -43,6 +78,7 @@ export default function Search() {
   const {
     data: searchData,
     isLoading: isLoadingSearchResult,
+    isPlaceholderData: isLoadingPage,
     isError: isSearchError,
     error: searchError,
   } = useConceptSearch(submitted, {
@@ -88,6 +124,7 @@ export default function Search() {
   const handleSearch = (text: string) => {
     setSubmitted(text);
     setPage(1);
+    onSearch?.(text);
   };
 
   const handleChange = (text: string, reason: string) => {
@@ -97,6 +134,11 @@ export default function Search() {
 
   const handleSelect = (name: string) => {
     handleSearch(name);
+  };
+
+  const handleExample = (term: string) => {
+    setValue(term);
+    handleSearch(term);
   };
 
   return (
@@ -122,6 +164,7 @@ export default function Search() {
         <Searchbar
           id={searchId}
           name="search"
+          placeholder="Search concepts…"
           value={value}
           onChange={handleChange}
           onSearch={handleSearch}
@@ -134,9 +177,29 @@ export default function Search() {
         </SearchButton>
       </SearchRow>
 
+      {submitted === "" && (
+        <Stack direction="row" spacing={2} alignItems="baseline">
+          <Typography variant="body2" color="text.secondary">
+            Search for a concept above, or try:
+          </Typography>
+          {EXAMPLE_SEARCHES.map((term) => (
+            <Link
+              key={term}
+              component="button"
+              variant="body2"
+              underline="none"
+              onClick={() => handleExample(term)}
+            >
+              {term}
+            </Link>
+          ))}
+        </Stack>
+      )}
+
       {/* Search Result */}
       {isLoadingSearchResult ? (
-        <CircularProgress aria-label="Searching concepts" />
+        // Rows about one result card tall
+        <SkeletonRows count={3} height={96} label="Searching concepts" />
       ) : (
         <>
           {/* Search Summary */}
@@ -163,17 +226,20 @@ export default function Search() {
           {searchItems.length > 0 && (
             <Results>
               {/* Result Cards */}
-              <ResultList>
-                {searchItems.map((c, i) => (
-                  <ConceptCard
-                    key={getSearchItemKey(c)}
-                    concept={c}
-                    isFirst={i === 0}
-                    isLast={i === searchItems.length - 1}
-                    // onInclude={onInclude}
-                    // onExclude={onExclude}
-                  />
-                ))}
+              <ResultList ref={listRef}>
+                {isLoadingPage ? (
+                  <SkeletonRows count={5} height={96} label="Loading page" />
+                ) : (
+                  searchItems.map((c, i) => (
+                    <ConceptCard
+                      key={getSearchItemKey(c)}
+                      concept={c}
+                      isFirst={i === 0}
+                      isLast={i === searchItems.length - 1}
+                      actions={resultActions(c)}
+                    />
+                  ))
+                )}
               </ResultList>
 
               {/* Pagination */}
@@ -184,6 +250,7 @@ export default function Search() {
                   onChange={(_, value) => {
                     setPage(value);
                     window.scrollTo({ top: 0, behavior: "smooth" });
+                    if (listRef.current) listRef.current.scrollTop = 0;
                   }}
                   color="primary"
                 />

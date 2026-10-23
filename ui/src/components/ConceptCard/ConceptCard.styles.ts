@@ -51,12 +51,7 @@ export const ConceptTitle = styled(Typography)(({ theme }) => ({
   fontWeight: theme.typography.fontWeightBold,
 })) as typeof Typography;
 
-export const ConceptMeta = styled(Typography)(({ theme }) => ({
-  marginTop: theme.spacing(0.75),
-})) as typeof Typography;
-
 export const DetailsButton = styled(Button)(({ theme }) => ({
-  marginTop: theme.spacing(1.5),
   marginLeft: theme.spacing(-1),
   paddingLeft: theme.spacing(1),
   paddingRight: theme.spacing(1),

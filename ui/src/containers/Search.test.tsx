@@ -66,6 +66,7 @@ type SearchData = Pick<
 type QueryState<T> = {
   data: T | undefined;
   isLoading: boolean;
+  isPlaceholderData?: boolean;
   isFetching: boolean;
   isError: boolean;
   error: Error | null;
@@ -273,6 +274,31 @@ describe("Search", () => {
       render(<Search />);
       expect(getInput()).toBeInTheDocument();
       expect(getSearchButton()).toBeInTheDocument();
+    });
+
+    it("prompts with a placeholder and example searches before anything is submitted", () => {
+      render(<Search />);
+      expect(getInput()).toHaveAttribute("placeholder", "Search concepts…");
+      expect(screen.getByText("Search for a concept above, or try:")).toBeInTheDocument();
+    });
+
+    it("hides the example searches once a search is submitted", async () => {
+      mockSearch({ data: resultsOf([asthma]) });
+      render(<Search />);
+
+      await searchFor("asthma");
+
+      expect(screen.queryByText("Search for a concept above, or try:")).toBeNull();
+    });
+
+    it("searches an example term when it is clicked", async () => {
+      const user = userEvent.setup();
+      render(<Search />);
+
+      await user.click(screen.getByRole("button", { name: "hypertension" }));
+
+      expect(lastSearchedTerm()).toBe("hypertension");
+      expect(getInput()).toHaveValue("hypertension");
     });
 
     it("does not search before anything is submitted", () => {
@@ -671,6 +697,68 @@ describe("Search", () => {
       expect(getCardTitles()).toEqual(["Asthma", "Childhood asthma"]);
     });
 
+    it("reports each submitted term to onSearch", async () => {
+      mockSearch({ data: resultsOf([asthma]) });
+      const onSearch = vi.fn();
+      render(<Search onSearch={onSearch} />);
+
+      await searchFor("  asthma ");
+
+      expect(onSearch).toHaveBeenCalledWith("asthma");
+    });
+
+    it("passes the clicked result to onInclude or onExclude", async () => {
+      mockSearch({ data: resultsOf([asthma, childhoodAsthma]) });
+      const onInclude = vi.fn();
+      const onExclude = vi.fn();
+      render(<Search onInclude={onInclude} onExclude={onExclude} />);
+
+      const user = await searchFor("asthma");
+      await user.click(screen.getAllByRole("button", { name: "+ Include" })[1]);
+      await user.click(screen.getAllByRole("button", { name: "+ Exclude" })[0]);
+
+      expect(onInclude).toHaveBeenCalledWith(childhoodAsthma);
+      expect(onExclude).toHaveBeenCalledWith(asthma);
+    });
+
+    it("marks results already in the criteria, and takes them out on click", async () => {
+      mockSearch({ data: resultsOf([asthma, childhoodAsthma]) });
+      const removeInclude = vi.fn();
+      const onRemove = vi.fn(() => removeInclude);
+      render(
+        <Search
+          onInclude={vi.fn()}
+          onExclude={vi.fn()}
+          criteria={{ include: [asthma], exclude: [] }}
+          onRemove={onRemove}
+        />,
+      );
+
+      const user = await searchFor("asthma");
+      const included = screen.getByRole("button", { name: "✓ Included" });
+      expect(included).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getAllByRole("button", { name: "+ Include" })).toHaveLength(
+        1,
+      );
+      expect(screen.getAllByRole("button", { name: "+ Exclude" })).toHaveLength(
+        2,
+      );
+
+      await user.click(included);
+      expect(onRemove).toHaveBeenCalledWith("include");
+      expect(removeInclude).toHaveBeenCalledWith(asthma);
+    });
+
+    it("shows no Include/Exclude buttons without handlers", async () => {
+      mockSearch({ data: resultsOf([asthma]) });
+      render(<Search />);
+
+      await searchFor("asthma");
+
+      expect(screen.queryByRole("button", { name: "+ Include" })).toBeNull();
+      expect(screen.queryByRole("button", { name: "+ Exclude" })).toBeNull();
+    });
+
     it("uses the singular for one result", async () => {
       mockSearch({ data: resultsOf([asthma]) });
       render(<Search />);
@@ -954,6 +1042,16 @@ describe("Search", () => {
   });
 
   describe("pagination", () => {
+    it("shows placeholder cards instead of the previous page while the next loads", async () => {
+      mockSearch({ data: resultsOf([asthma]), isPlaceholderData: true });
+      render(<Search onInclude={vi.fn()} />);
+
+      await searchFor("asthma");
+
+      expect(screen.getByRole("progressbar", { name: "Loading page" })).toBeInTheDocument();
+      expect(screen.queryByText(asthma.label)).toBeNull();
+    });
+
     it("is hidden when all results fit on one page", async () => {
       mockPagedSearch(makeTerms(PAGE_SIZE));
       render(<Search />);
@@ -1039,6 +1137,20 @@ describe("Search", () => {
       await user.click(screen.getByRole("button", { name: "Go to page 2" }));
 
       expect(scrollToSpy).toHaveBeenCalledWith({ top: 0, behavior: "smooth" });
+    });
+
+    it("scrolls the result list back to the top on page change", async () => {
+      mockPagedSearch(makeTerms(45));
+      render(<Search />);
+      const user = await searchFor("concept");
+      const list = screen
+        .getAllByRole("heading", { level: 2 })[0]
+        .closest(".MuiCard-root")!.parentElement!;
+      list.scrollTop = 300;
+
+      await user.click(screen.getByRole("button", { name: "Go to page 2" }));
+
+      expect(list.scrollTop).toBe(0);
     });
 
     it("returns to page 1 on a new search", async () => {
