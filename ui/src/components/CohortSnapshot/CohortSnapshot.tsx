@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import { Alert, Typography, useTheme } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
@@ -41,7 +41,7 @@ export default function CohortSnapshot({
     ? cohortParticipants(summary)
     : availableParticipants;
 
-  const donut = {
+  const donut = useMemo(() => ({
     series: [
       {
         type: "pie",
@@ -64,7 +64,7 @@ export default function CohortSnapshot({
         ],
       },
     ],
-  };
+  }), [participants, availableParticipants, theme]);
 
   return (
     <PanelSection aria-labelledby={titleId} aria-busy={isLoading}>
