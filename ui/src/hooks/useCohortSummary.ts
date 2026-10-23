@@ -24,8 +24,8 @@ async function fetchCohortSummary(
 
 export function useCohortSummary(searchText: string, criteria: Criteria) {
   const seed = searchText.trim();
-  const include = criteria.include.map(getSearchItemKey);
-  const exclude = criteria.exclude.map(getSearchItemKey);
+  const include = criteria.include.map(getSearchItemKey).sort();
+  const exclude = criteria.exclude.map(getSearchItemKey).sort();
 
   const enabled = seed.length > 0 || include.length + exclude.length > 0;
 
