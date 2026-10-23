@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { Tab, Tabs, Typography, useTheme } from "@mui/material";
+import { Alert, Tab, Tabs, Typography, useTheme } from "@mui/material";
 import ReactECharts from "echarts-for-react";
 import type { SummaryResponse } from "../../api/graphql/queries/cohortSummary";
 import { ECHARTS_FILL } from "../../charts";
@@ -26,6 +26,8 @@ export interface Props {
   summary?: SummaryResponse;
   /** First load only; later updates keep the current chart on screen. */
   isLoading?: boolean;
+  /** Shown instead of the chart, so a failed request never reads as "add criteria". */
+  error?: Error | null;
 }
 
 const BAR_THICKNESS = 10;
@@ -33,14 +35,18 @@ const SKELETON_BARS = 3;
 
 // ----------------------------------------------------------------------
 
-export default function Demographics({ summary, isLoading = false }: Props) {
+export default function Demographics({
+  summary,
+  isLoading = false,
+  error = null,
+}: Props) {
   const titleId = useId();
 
   return (
     <PanelSection aria-labelledby={titleId} aria-busy={isLoading}>
       <div>
         <PanelTitle id={titleId}>Demographics</PanelTitle>
-        {summary && (
+        {summary && !error && (
           <Typography variant="body2" color="text.secondary">
             {cohortParticipants(summary).toLocaleString()} participants ·{" "}
             {summary.studies.length} studies
@@ -48,7 +54,9 @@ export default function Demographics({ summary, isLoading = false }: Props) {
         )}
       </div>
 
-      {summary ? (
+      {error ? (
+        <Alert severity="error">Couldn't load demographics.</Alert>
+      ) : summary ? (
         <Breakdown summary={summary} />
       ) : isLoading ? (
         <BarArea rows={SKELETON_BARS}>

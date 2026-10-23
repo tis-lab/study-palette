@@ -60,7 +60,11 @@ export default function CohortBuilder() {
             error={summary.error}
           />
           <Divider />
-          <Demographics summary={summary.data} isLoading={summary.isLoading} />
+          <Demographics
+            summary={summary.data}
+            isLoading={summary.isLoading}
+            error={summary.error}
+          />
         </Overview>
       </CohortBuilderLayout>
     </Container>

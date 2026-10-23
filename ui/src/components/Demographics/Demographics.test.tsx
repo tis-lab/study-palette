@@ -26,6 +26,15 @@ describe("Demographics", () => {
     expect(screen.queryByText("Add criteria to view demographics")).toBeNull();
   });
 
+  it("shows an error, not the empty state or counts, when the request fails", () => {
+    render(<Demographics summary={t2dSummary} error={new Error("Network down")} />);
+
+    expect(screen.getByRole("alert")).toHaveTextContent("Couldn't load demographics.");
+    expect(screen.queryByText("Add criteria to view demographics")).toBeNull();
+    expect(screen.queryByText("940 participants · 2 studies")).toBeNull();
+    expect(screen.queryByRole("tab")).toBeNull();
+  });
+
   it("is a labelled panel with the cohort size and study count", () => {
     render(<Demographics summary={t2dSummary} />);
 
