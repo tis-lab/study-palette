@@ -295,10 +295,10 @@ describe("Search", () => {
       const user = userEvent.setup();
       render(<Search />);
 
-      await user.click(screen.getByRole("button", { name: "hypertension" }));
+      await user.click(screen.getByRole("button", { name: "heart failure" }));
 
-      expect(lastSearchedTerm()).toBe("hypertension");
-      expect(getInput()).toHaveValue("hypertension");
+      expect(lastSearchedTerm()).toBe("heart failure");
+      expect(getInput()).toHaveValue("heart failure");
     });
 
     it("does not search before anything is submitted", () => {
@@ -729,7 +729,7 @@ describe("Search", () => {
         <Search
           onInclude={vi.fn()}
           onExclude={vi.fn()}
-          criteria={{ include: [asthma], exclude: [] }}
+          criteria={{ include: [asthma], exclude: [], match: "all" }}
           onRemove={onRemove}
         />,
       );

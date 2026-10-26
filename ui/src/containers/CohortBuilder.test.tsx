@@ -1,10 +1,11 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import CohortBuilder from "./CohortBuilder";
 import type { SearchItem } from "../api/graphql/queries/resolveTerms";
-import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../mocks/SYNTHETIC.cohortSummary";
+import { t2dSummary } from "../mocks/SYNTHETIC.cohortSummary";
+import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../placeholders";
 
 const AVAILABLE = AVAILABLE_PARTICIPANTS_PLACEHOLDER.toLocaleString();
 
@@ -23,22 +24,34 @@ const diabetes: SearchItem = { ...hypertension, id: "MONDO:0005148", label: "Dia
 // Search has its own tests; this stub only reports clicks
 vi.mock("./Search", () => ({
   default: ({
-    onSearch,
     onInclude,
     onExclude,
   }: {
-    onSearch: (text: string) => void;
     onInclude: (item: SearchItem) => void;
     onExclude: (item: SearchItem) => void;
   }) => (
     <div>
-      <button onClick={() => onSearch("hypertension")}>search</button>
       <button onClick={() => onInclude(hypertension)}>include result</button>
       <button onClick={() => onExclude(hypertension)}>exclude result</button>
       <button onClick={() => onInclude(diabetes)}>include other result</button>
     </div>
   ),
 }));
+
+beforeEach(() => {
+  vi.stubEnv("VITE_GRAPHQL_URL", "https://graphql.test/graphql");
+  vi.spyOn(globalThis, "fetch").mockImplementation(
+    async () =>
+      new Response(JSON.stringify({ data: { summary: t2dSummary } }), {
+        status: 200,
+      }),
+  );
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.restoreAllMocks();
+});
 
 function renderBuilder() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -119,50 +132,64 @@ describe("CohortBuilder", () => {
     expect(querySection("Include")).toBeNull();
   });
 
-  describe("cohort snapshot", () => {
-    it("starts with everyone available, then narrows with each criterion", async () => {
-      const user = userEvent.setup();
+  describe("cohort overview", () => {
+    it("shows everyone available, without asking the API, before anything is added", () => {
       renderBuilder();
 
       expect(screen.getByText(AVAILABLE)).toBeInTheDocument();
+      expect(screen.getByText("Include a concept to see its demographic breakdown.")).toBeInTheDocument();
+      expect(globalThis.fetch).not.toHaveBeenCalled();
+    });
+
+    it("shows the API's summary once a concept is included", async () => {
+      const user = userEvent.setup();
+      renderBuilder();
 
       await user.click(screen.getByRole("button", { name: "include result" }));
-      expect(await screen.findByText("940")).toBeInTheDocument();
+
+      // 940 from the API, plus the placeholder's 50 for one include
+      expect(await screen.findByText("990")).toBeInTheDocument();
+      expect(screen.getByText(`of ${AVAILABLE} available`)).toBeInTheDocument();
+      expect(screen.getByText("990 participants · 2 studies")).toBeInTheDocument();
+      const body = JSON.parse(
+        vi.mocked(globalThis.fetch).mock.calls[0][1]?.body as string,
+      );
+      expect(body.variables).toEqual({
+        sourceId: "t2d",
+        include: ["HP:0000822"],
+        exclude: [],
+      });
+    });
+
+    it("offers AND/OR once two concepts are included, and the count follows it", async () => {
+      const user = userEvent.setup();
+      renderBuilder();
+
+      await user.click(screen.getByRole("button", { name: "include result" }));
+      await screen.findByText("990");
+      expect(screen.queryByRole("group", { name: "How included concepts combine" })).toBeNull();
 
       await user.click(screen.getByRole("button", { name: "include other result" }));
-      expect(await screen.findByText("480")).toBeInTheDocument();
-    });
-
-    it("narrows on a search, then further with each criterion", async () => {
-      const user = userEvent.setup();
-      renderBuilder();
-
-      await user.click(screen.getByRole("button", { name: "search" }));
+      const match = screen.getByRole("group", { name: "How included concepts combine" });
+      expect(within(match).getByRole("button", { name: "All (AND)" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      // Placeholder counts: 940 from the API, narrowed by AND, widened by OR
       expect(await screen.findByText("940")).toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: "include result" }));
-      expect(await screen.findByText("480")).toBeInTheDocument();
+      await user.click(within(match).getByRole("button", { name: "Any (OR)" }));
+      expect(await screen.findByText("1,040")).toBeInTheDocument();
     });
 
-    it("shows the demographics empty state until there is a summary", async () => {
-      const user = userEvent.setup();
-      renderBuilder();
-
-      expect(screen.getByText("Add criteria to view demographics")).toBeInTheDocument();
-
-      await user.click(screen.getByRole("button", { name: "search" }));
-      expect(await screen.findByText("940 participants · 2 studies")).toBeInTheDocument();
-      expect(screen.queryByText("Add criteria to view demographics")).toBeNull();
-    });
-
-    it("returns to everyone available once all criteria are removed", async () => {
+    it("goes back to everyone available once every criterion is removed", async () => {
       const user = userEvent.setup();
       renderBuilder();
 
       await user.click(screen.getByRole("button", { name: "include result" }));
-      expect(await screen.findByText("940")).toBeInTheDocument();
-
+      await screen.findByText("990");
       await user.click(screen.getByRole("button", { name: "Remove" }));
+
       expect(await screen.findByText(AVAILABLE)).toBeInTheDocument();
     });
   });

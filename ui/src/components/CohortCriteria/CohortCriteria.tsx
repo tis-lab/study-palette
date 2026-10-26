@@ -1,24 +1,38 @@
 import { useId } from "react";
-import { Chip, Typography } from "@mui/material";
+import {
+  Chip,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from "@mui/material";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import CriteriaSection from "../CriteriaSection";
 import EmptyState from "../EmptyState";
 import { EmptyCard } from "../EmptyState/EmptyState.styles";
 import { Panel, PanelTitle } from "../Panel/Panel.styles";
 import type { SearchItem } from "../../api/graphql/queries/resolveTerms";
-import type { Criteria } from "../../hooks/useCohortSummary";
-import { Header, Sections } from "./CohortCriteria.styles";
+import type {
+  Criteria,
+  CriteriaKind,
+  CriteriaMatch,
+} from "../../hooks/useCohortSummary";
+import { Header, MatchRow, Sections } from "./CohortCriteria.styles";
 
 // ----------------------------------------------------------------------
 
 export interface Props {
   criteria: Criteria;
-  onRemove: (kind: keyof Criteria) => (item: SearchItem) => void;
+  onRemove: (kind: CriteriaKind) => (item: SearchItem) => void;
+  onMatchChange: (match: CriteriaMatch) => void;
 }
 
 // ----------------------------------------------------------------------
 
-export default function CohortCriteria({ criteria, onRemove }: Props) {
+export default function CohortCriteria({
+  criteria,
+  onRemove,
+  onMatchChange,
+}: Props) {
   const titleId = useId();
   const total = criteria.include.length + criteria.exclude.length;
 
@@ -47,20 +61,41 @@ export default function CohortCriteria({ criteria, onRemove }: Props) {
           />
         </EmptyCard>
       ) : (
-        <Sections>
-          <CriteriaSection
-            title="Include"
-            emptyText="No inclusion criteria added"
-            items={criteria.include}
-            onRemove={onRemove("include")}
-          />
-          <CriteriaSection
-            title="Exclude"
-            emptyText="No exclusion criteria added"
-            items={criteria.exclude}
-            onRemove={onRemove("exclude")}
-          />
-        </Sections>
+        <>
+          {criteria.include.length > 1 && (
+            <MatchRow>
+              <Typography variant="body2" color="text.secondary">
+                Include participants who match
+              </Typography>
+              <ToggleButtonGroup
+                exclusive
+                size="small"
+                value={criteria.match}
+                onChange={(_, match: CriteriaMatch | null) =>
+                  match && onMatchChange(match)
+                }
+                aria-label="How included concepts combine"
+              >
+                <ToggleButton value="all">All (AND)</ToggleButton>
+                <ToggleButton value="any">Any (OR)</ToggleButton>
+              </ToggleButtonGroup>
+            </MatchRow>
+          )}
+          <Sections>
+            <CriteriaSection
+              title="Include"
+              emptyText="No inclusion criteria added"
+              items={criteria.include}
+              onRemove={onRemove("include")}
+            />
+            <CriteriaSection
+              title="Exclude"
+              emptyText="No exclusion criteria added"
+              items={criteria.exclude}
+              onRemove={onRemove("exclude")}
+            />
+          </Sections>
+        </>
       )}
     </Panel>
   );

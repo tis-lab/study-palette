@@ -15,3 +15,10 @@ export const Sections = styled("div")(({ theme }) => ({
     gridTemplateColumns: "1fr 1fr",
   },
 }));
+
+export const MatchRow = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  flexWrap: "wrap",
+  gap: theme.spacing(1),
+}));

@@ -4,8 +4,12 @@ import Search from "./Search";
 import CohortCriteria from "../components/CohortCriteria";
 import CohortSnapshot from "../components/CohortSnapshot";
 import Demographics from "../components/Demographics";
-import { useCohortSummary, type Criteria } from "../hooks/useCohortSummary";
-import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../mocks/SYNTHETIC.cohortSummary";
+import {
+  useCohortSummary,
+  type Criteria,
+  type CriteriaKind,
+} from "../hooks/useCohortSummary";
+import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../placeholders";
 import {
   getSearchItemKey,
   type SearchItem,
@@ -14,22 +18,21 @@ import { CohortBuilderLayout, Column, Overview } from "./CohortBuilder.styles";
 
 // ----------------------------------------------------------------------
 
-type CriteriaKind = keyof Criteria;
-
 const without = (items: SearchItem[], item: SearchItem) =>
   items.filter((i) => getSearchItemKey(i) !== getSearchItemKey(item));
 
 export default function CohortBuilder() {
-  const [searchText, setSearchText] = useState("");
   const [criteria, setCriteria] = useState<Criteria>({
     include: [],
     exclude: [],
+    match: "all",
   });
-  const summary = useCohortSummary(searchText, criteria);
+  const summary = useCohortSummary(criteria);
 
   // An item is in at most one list, at most once
   const add = (kind: CriteriaKind) => (item: SearchItem) =>
     setCriteria((prev) => ({
+      ...prev,
       include: without(prev.include, item),
       exclude: without(prev.exclude, item),
       [kind]: [...without(prev[kind], item), item],
@@ -43,13 +46,18 @@ export default function CohortBuilder() {
       <CohortBuilderLayout>
         <Column>
           <Search
-            onSearch={setSearchText}
             onInclude={add("include")}
             onExclude={add("exclude")}
             criteria={criteria}
             onRemove={remove}
           />
-          <CohortCriteria criteria={criteria} onRemove={remove} />
+          <CohortCriteria
+            criteria={criteria}
+            onRemove={remove}
+            onMatchChange={(match) =>
+              setCriteria((prev) => ({ ...prev, match }))
+            }
+          />
         </Column>
 
         <Overview aria-label="Cohort overview">

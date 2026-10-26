@@ -13,14 +13,14 @@ import {
   getSearchItemKey,
   type SearchItem,
 } from "../api/graphql/queries/resolveTerms";
-import type { Criteria } from "../hooks/useCohortSummary";
+import type { Criteria, CriteriaKind } from "../hooks/useCohortSummary";
 
 // ----------------------------------------------------------------------
 
 const PAGE_SIZE = 20;
 const SUGGESTION_LIMIT = 10; // how many names the dropdown shows
 const SUGGESTION_DELAY_MS = 300;
-const EXAMPLE_SEARCHES = ["blood pressure", "hypertension"];
+const EXAMPLE_SEARCHES = ["type 2 diabetes", "heart failure"];
 
 const CRITERIA_LABELS = [
   { kind: "include", add: "+ Include", added: "✓ Included" },
@@ -33,7 +33,7 @@ interface Props {
   onExclude?: (item: SearchItem) => void;
   /** Results already in a list show it, and clicking that button again takes them out. */
   criteria?: Criteria;
-  onRemove?: (kind: keyof Criteria) => (item: SearchItem) => void;
+  onRemove?: (kind: CriteriaKind) => (item: SearchItem) => void;
 }
 
 export default function Search({
@@ -178,7 +178,11 @@ export default function Search({
       </SearchRow>
 
       {submitted === "" && (
-        <Stack direction="row" spacing={2} alignItems="baseline">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={2}
+          alignItems="baseline"
+        >
           <Typography variant="body2" color="text.secondary">
             Search for a concept above, or try:
           </Typography>
