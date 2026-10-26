@@ -97,9 +97,15 @@ export default function ConceptCard({
               flexWrap="wrap"
               useFlexGap
             >
-              <ConceptTitle component="h2" variant="subtitle2">
-                {view.label}
-              </ConceptTitle>
+              {compact ? (
+                <Typography component="h2" variant="body2">
+                  {view.label}
+                </Typography>
+              ) : (
+                <ConceptTitle component="h2" variant="subtitle2">
+                  {view.label}
+                </ConceptTitle>
+              )}
 
               {!compact && view.isHarmonizedVariable && (
                 <Chip

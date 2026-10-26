@@ -1,4 +1,4 @@
-import { Stack, styled } from "@mui/material";
+import { Card, Stack, styled } from "@mui/material";
 
 export const CriteriaSectionRoot = styled("section")(({ theme }) => ({
   display: "flex",
@@ -15,4 +15,11 @@ export const SectionHeader = styled("div")(({ theme }) => ({
 
 export const CriteriaList = styled(Stack)({
   width: "100%",
+});
+
+export const EmptyListCard = styled(Card)({
+  flexGrow: 1,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 });

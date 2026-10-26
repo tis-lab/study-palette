@@ -167,18 +167,21 @@ describe("CohortBuilder", () => {
 
       await user.click(screen.getByRole("button", { name: "include result" }));
       await screen.findByText("990");
-      expect(screen.queryByRole("group", { name: "How included concepts combine" })).toBeNull();
+      expect(screen.queryByRole("group", { name: "Inclusion logic" })).toBeNull();
 
       await user.click(screen.getByRole("button", { name: "include other result" }));
-      const match = screen.getByRole("group", { name: "How included concepts combine" });
-      expect(within(match).getByRole("button", { name: "All (AND)" })).toHaveAttribute(
+      const match = screen.getByRole("group", { name: "Inclusion logic" });
+      expect(
+        screen.getByText("Counts are illustrative until the summary API supports AND/OR."),
+      ).toBeInTheDocument();
+      expect(within(match).getByRole("button", { name: "All criteria AND" })).toHaveAttribute(
         "aria-pressed",
         "true",
       );
       // Placeholder counts: 940 from the API, narrowed by AND, widened by OR
       expect(await screen.findByText("940")).toBeInTheDocument();
 
-      await user.click(within(match).getByRole("button", { name: "Any (OR)" }));
+      await user.click(within(match).getByRole("button", { name: "Any criterion OR" }));
       expect(await screen.findByText("1,040")).toBeInTheDocument();
     });
 

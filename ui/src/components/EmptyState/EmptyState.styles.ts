@@ -1,4 +1,4 @@
-import { Card, styled } from "@mui/material";
+import { styled } from "@mui/material";
 
 type Align = "center" | "start";
 
@@ -31,8 +31,3 @@ export const EmptyStateText = styled("div", notAlign)<{ align: Align }>(
       : { alignItems: "flex-start" }),
   }),
 );
-
-/** A tinted, borderless prompt, so empty lists read as placeholders, not more boxes. */
-export const EmptyCard = styled(Card)(({ theme }) => ({
-  backgroundColor: theme.palette.action.hover,
-}));

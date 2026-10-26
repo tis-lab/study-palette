@@ -23,7 +23,7 @@ export interface Criteria {
 const conceptOf = (item: SearchItem) =>
   item.__typename === "Term" ? item.id : item.name;
 
-/** Summarizes the cohort for the selected criteria. Runs only once there is a criterion. */
+/** Runs only once a concept is included or excluded. */
 export function useCohortSummary(criteria: Criteria) {
   const include = criteria.include.map(conceptOf).sort();
   const exclude = criteria.exclude.map(conceptOf).sort();

@@ -23,7 +23,6 @@ const SLOTS: { slot: DemographicSlot; label: string }[] = [
 ];
 
 export interface Props {
-  /** Absent until a criterion is chosen. */
   summary?: SummaryResponse;
   /** First load only; later updates keep the current chart on screen. */
   isLoading?: boolean;
