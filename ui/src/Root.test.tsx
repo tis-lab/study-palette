@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CohortBuilder } from "./index";
 
-describe("CohortBuilder", () => {
+describe("CohortBuilder (package export)", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
   });

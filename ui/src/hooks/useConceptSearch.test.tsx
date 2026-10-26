@@ -134,6 +134,36 @@ describe("useConceptSearch", () => {
     });
   });
 
+  it("keeps the previous page while the next page of the same search loads", async () => {
+    mockResponse({ data: { terms: termsPage } });
+
+    const { result, rerender } = renderHook(
+      ({ offset }) => useConceptSearch("diabetes", { offset }),
+      { wrapper, initialProps: { offset: 0 } },
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    rerender({ offset: 20 });
+
+    expect(result.current.isPlaceholderData).toBe(true);
+    expect(result.current.data).toEqual(termsPage);
+  });
+
+  it("does not keep results from a different search", async () => {
+    mockResponse({ data: { terms: termsPage } });
+
+    const { result, rerender } = renderHook(
+      ({ text }) => useConceptSearch(text),
+      { wrapper, initialProps: { text: "diabetes" } },
+    );
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    rerender({ text: "asthma" });
+
+    expect(result.current.isPlaceholderData).toBe(false);
+    expect(result.current.data).toBeUndefined();
+  });
+
   it("returns the page of terms", async () => {
     mockResponse({ data: { terms: termsPage } });
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Container, Typography } from "@mui/material";
 import OverviewCharts from "./OverviewCharts";
 import DemographicsSankey from "./DemographicsSankey";
 import FilterPanel from "./FilterPanel";
@@ -13,7 +14,8 @@ import {
 } from "./demoData";
 import { API_BASE, type DataMode, type Study } from "./types";
 import { PALETTES, DEFAULT_PALETTE, type PaletteKey } from "./palette";
-import Search from "./containers/Search";
+import CohortBuilder from "./containers/CohortBuilder";
+import { PageTitle, SectionDivider } from "./App.styles";
 
 interface StudiesResponse {
   studies: Study[];
@@ -89,12 +91,20 @@ function App() {
         </div>
         <div className="header-row">
           <div>
-            <h1>Study Palette</h1>
-            <p>
-              NHLBI BioData Catalyst<sup>&reg;</sup> (BDC) Meta-Analysis Study
-              Builder & Query Tool
-            </p>
-            <Search />
+            {/* Matches the cohort builder's width so the title lines up with it */}
+            <Container maxWidth="lg">
+              <PageTitle>
+                <Typography variant="h4" component="h1">
+                  Study Palette
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  NHLBI BioData Catalyst<sup>&reg;</sup> (BDC) Meta-Analysis
+                  Study Builder & Query Tool
+                </Typography>
+              </PageTitle>
+            </Container>
+            <CohortBuilder />
+            <SectionDivider />
           </div>
 
           <div className="header-controls">

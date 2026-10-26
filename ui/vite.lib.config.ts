@@ -29,6 +29,8 @@ export default defineConfig({
         "@mui/icons-material",
         "@mui/material",
         "@tis-lab/context-providers",
+        "echarts",
+        "echarts-for-react",
       ],
     },
     sourcemap: true,

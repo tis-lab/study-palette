@@ -13,15 +13,15 @@ Components never call `fetch` or contain GraphQL documents themselves.
 | File | Role |
 |------|------|
 | `src/api/queryClient.ts` | The `QueryClient`, created once at module scope |
-| `src/CohortBuilder.tsx` | The root: app-wide providers, including `QueryClientProvider`, around `<App />` |
+| `src/Root.tsx` | The root: app-wide providers, including `QueryClientProvider`, around `<App />` |
 | `src/api/config.ts` | `getGraphQLEndpoint()`: the endpoint, from `VITE_GRAPHQL_URL` |
 | `src/api/graphql/graphqlRequest.ts` | `graphqlRequest()`: sends one operation and returns its `data` |
 | `src/api/graphql/queries/` | Operations and their variable and response types |
 | `src/hooks/` | Feature hooks, one per operation |
 
-Both the standalone app (`main.tsx`) and the published package (`index.ts`) render
-`CohortBuilder`, so a host application does not need to supply a provider or install
-TanStack Query.
+Both the standalone app (`main.tsx`) and the published package (`index.ts`, which
+exports it as `CohortBuilder`) render `Root`, so a host application does not need to
+supply a provider or install TanStack Query.
 
 ## Request helper
 

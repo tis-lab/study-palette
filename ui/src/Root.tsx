@@ -7,7 +7,7 @@ import { queryClient } from "./api/queryClient";
  * app (main.tsx) and the published package (index.ts) render this, so a host
  * application does not have to supply any of these providers.
  */
-export default function CohortBuilder() {
+export default function Root() {
   return (
     <QueryClientProvider client={queryClient}>
       <App />

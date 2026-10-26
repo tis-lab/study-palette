@@ -24,4 +24,8 @@ export const Results = styled("div")(({ theme }) => ({
 
 export const ResultList = styled(Stack)({
   width: "100%",
+  maxHeight: 480,
+  overflowY: "auto",
+  // Flex children shrink by default; keep each card's height so the box scrolls
+  "& > *": { flexShrink: 0 },
 });
