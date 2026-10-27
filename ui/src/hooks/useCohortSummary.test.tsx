@@ -131,19 +131,18 @@ describe("useCohortSummary", () => {
     );
   });
 
-  it("keeps the previous summary while the next one loads", async () => {
+  it("is loading again, without the previous summary, for a new selection", async () => {
     mockResponse({ data: { summary: t2dSummary } });
     const { result, rerender } = renderHook(
       ({ criteria }) => useCohortSummary(criteria),
       { wrapper, initialProps: { criteria: t2d } },
     );
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    const previous = result.current.data;
 
     rerender({ criteria: { ...t2d, exclude: [term("MONDO:0005252")] } });
 
-    expect(result.current.isPlaceholderData).toBe(true);
-    expect(result.current.data).toEqual(previous);
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.data).toBeUndefined();
   });
 
   it("asks again when AND/OR changes, though the API can't take it yet", async () => {
