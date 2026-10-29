@@ -37,7 +37,6 @@ export interface ConceptAction {
   onClick: (concept: SearchItem) => void;
   /** Shown filled, as a pressed toggle. */
   selected?: boolean;
-  /** Shown instead of the label, which becomes its tooltip. */
   icon?: ReactNode;
 }
 
