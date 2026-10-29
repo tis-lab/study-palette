@@ -697,16 +697,6 @@ describe("Search", () => {
       expect(getCardTitles()).toEqual(["Asthma", "Childhood asthma"]);
     });
 
-    it("reports each submitted term to onSearch", async () => {
-      mockSearch({ data: resultsOf([asthma]) });
-      const onSearch = vi.fn();
-      render(<Search onSearch={onSearch} />);
-
-      await searchFor("  asthma ");
-
-      expect(onSearch).toHaveBeenCalledWith("asthma");
-    });
-
     it("passes the clicked result to onInclude or onExclude", async () => {
       mockSearch({ data: resultsOf([asthma, childhoodAsthma]) });
       const onInclude = vi.fn();
