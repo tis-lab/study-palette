@@ -44,10 +44,10 @@ make -C contracts client                              # type-check the client
 ```
 
 ```
-Searched for type 2 diabetes mellitus in example-release
+Searched for Type 2 diabetes in example-release
   palette:study_one: 480 participants
   palette:study_two: 460 participants
-Resolved MONDO:0005148 -> type 2 diabetes mellitus
+Resolved MONDO:0005148 -> Type 2 diabetes
 ```
 
 [`toy/server.py`](toy/server.py) stands in for the middleware: it serves the SYNTHETIC

@@ -18,7 +18,7 @@ async function get<T>(path: string): Promise<T> {
 const summary = await get<SummaryResponse>("/summary/t2d");
 
 // Every term the response mentions is inside it, so labels need no second call.
-const labels = new Map((summary.terms ?? []).map((term) => [term.curie, term.label]));
+const labels = new Map((summary.terms ?? []).map((term) => [term.curie, term.display_label]));
 console.log(`Searched for ${labels.get(summary.seed ?? "") ?? summary.seed} in ${summary.release}`);
 
 for (const study of summary.studies ?? []) {
@@ -27,4 +27,4 @@ for (const study of summary.studies ?? []) {
 
 // The terms contract on its own: resolve one CURIE.
 const seed = await get<Term>(`/terms/${summary.seed}`);
-console.log(`Resolved ${seed.curie} -> ${seed.label}`);
+console.log(`Resolved ${seed.curie} -> ${seed.display_label}`);

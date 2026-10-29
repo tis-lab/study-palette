@@ -23,9 +23,22 @@ classes:
     description: A concept from a source vocabulary.
     slots:
       - curie
-      - label
+      - display_label
+      - labels
       - vocabulary
       - parents
+
+  TermLabel:
+    description: One name a term goes by, and where it comes from.
+    attributes:
+      text:
+        required: true
+      label_source:
+        range: LabelSourceEnum
+        required: true
+      synonym_scope:
+        description: How close a synonym is to the term. Absent for the source's own name for it.
+        range: SynonymScopeEnum
 
   TermRelation:
     description: A link between two terms outside their hierarchy, such as a disease and its biomarker.
@@ -39,8 +52,20 @@ slots:
   curie:
     identifier: true
     range: uriorcurie
-  label:
-    description: The label the owning vocabulary publishes.
+  display_label:
+    description: >-
+      What the UI shows: the CURATED name if there is one, otherwise the
+      owning vocabulary's, otherwise the KG's, otherwise the CURIE. A name is
+      a label without a synonym_scope; each source gives at most one.
+    required: true
+  labels:
+    description: >-
+      Every name the term goes by. Search matches on these, so a name users
+      should be able to type belongs here. Empty when no source has a label;
+      display_label is then the CURIE.
+    range: TermLabel
+    multivalued: true
+    inlined_as_list: true
   vocabulary:
     description: >-
       The vocabulary that owns the term. Usually the CURIE's prefix, but an
@@ -75,3 +100,18 @@ enums:
         description: Published in the knowledge graph.
       CURATED:
         description: Asserted by this project.
+  LabelSourceEnum:
+    permissible_values:
+      ONTOLOGY:
+        description: Published by the vocabulary that owns the term.
+      KG:
+        description: From the BDC knowledge graph, including the variable library.
+      CURATED:
+        description: Chosen by this project, usually to replace a label users shouldn't have to read.
+  SynonymScopeEnum:
+    description: The OBO synonym scopes, which Monarch's search already distinguishes.
+    permissible_values:
+      EXACT:
+      RELATED:
+      BROAD:
+      NARROW:
