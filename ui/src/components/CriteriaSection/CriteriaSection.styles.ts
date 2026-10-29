@@ -15,4 +15,10 @@ export const SectionHeader = styled("div")(({ theme }) => ({
 
 export const CriteriaList = styled(Stack)({
   width: "100%",
+  "& .MuiButton-root": {
+    textTransform: "none",
+  },
+  "& .MuiButton-root:hover, & .MuiButton-root.Mui-focusVisible": {
+    textDecoration: "underline",
+  },
 });

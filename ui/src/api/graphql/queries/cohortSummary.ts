@@ -1,13 +1,18 @@
-// Subset of schema/summary.yaml; the query is added with the summary API.
+// Subset of schema/summary.yaml.
+
+export interface DemographyValue {
+  id: string;
+  participant_count: number;
+  sex?: string;
+  race?: string[];
+  ethnicity?: string;
+}
 
 export interface DemographySummary {
   id: string;
   summarized_slot: "sex" | "race" | "ethnicity";
   participant_count: number;
-  sex?: string;
-  race?: string[];
-  ethnicity?: string;
-  values?: DemographySummary[];
+  values?: DemographyValue[];
 }
 
 export interface StudySummary {
@@ -16,16 +21,33 @@ export interface StudySummary {
   demographics?: DemographySummary[];
 }
 
-export interface ResearchStudy {
-  id: string;
-  name: string;
+export interface SummaryResponse {
+  studies: StudySummary[];
 }
 
-export interface SummaryResponse {
-  release: string;
-  seed: string;
-  filter: string[];
-  min_count: number;
-  research_studies: ResearchStudy[];
-  studies: StudySummary[];
+export const COHORT_SUMMARY_QUERY = `
+  query ReadSummary($sourceId: ID!, $include: [ID!]!, $exclude: [ID!]!) {
+    summary(sourceId: $sourceId, include: $include, exclude: $exclude) {
+      studies {
+        research_study
+        participant_count
+        demographics {
+          id
+          summarized_slot
+          participant_count
+          values { id participant_count sex race ethnicity }
+        }
+      }
+    }
+  }
+`;
+
+export interface CohortSummaryVariables {
+  sourceId: string;
+  include: string[];
+  exclude: string[];
+}
+
+export interface CohortSummaryData {
+  summary: SummaryResponse | null;
 }

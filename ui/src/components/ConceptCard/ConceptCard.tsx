@@ -87,7 +87,7 @@ export default function ConceptCard({
 
   return (
     <ConceptCardRoot variant="outlined" isFirst={isFirst} isLast={isLast}>
-      <ConceptCardBody>
+      <ConceptCardBody compact={compact}>
         <ConceptCardLayout>
           <ConceptCardMain>
             <Stack
@@ -97,9 +97,15 @@ export default function ConceptCard({
               flexWrap="wrap"
               useFlexGap
             >
-              <ConceptTitle component="h2" variant="subtitle2">
-                {view.label}
-              </ConceptTitle>
+              {compact ? (
+                <Typography component="h2" variant="body2">
+                  {view.label}
+                </Typography>
+              ) : (
+                <ConceptTitle component="h2" variant="subtitle2">
+                  {view.label}
+                </ConceptTitle>
+              )}
 
               {!compact && view.isHarmonizedVariable && (
                 <Chip
@@ -141,7 +147,10 @@ export default function ConceptCard({
             {actions.map((a) => (
               <Button
                 key={a.label}
-                variant={a.selected ? "contained" : "outlined"}
+                variant={
+                  a.selected ? "contained" : compact ? "text" : "outlined"
+                }
+                color={compact ? "inherit" : "primary"}
                 size="small"
                 aria-pressed={a.selected}
                 onClick={() => a.onClick(concept)}
