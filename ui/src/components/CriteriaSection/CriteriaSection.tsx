@@ -1,7 +1,6 @@
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import { Chip, Typography } from "@mui/material";
 import ConceptCard from "../ConceptCard";
-import EmptyState from "../EmptyState";
 import {
   getSearchItemKey,
   type SearchItem,
@@ -9,7 +8,6 @@ import {
 import {
   CriteriaList,
   CriteriaSectionRoot,
-  EmptyListCard,
   SectionHeader,
 } from "./CriteriaSection.styles";
 
@@ -20,6 +18,8 @@ export interface Props {
   emptyText: string;
   items: SearchItem[];
   onRemove: (item: SearchItem) => void;
+  /** Controls for this section, shown under its header. */
+  children?: ReactNode;
 }
 
 // ----------------------------------------------------------------------
@@ -29,6 +29,7 @@ export default function CriteriaSection({
   emptyText,
   items,
   onRemove,
+  children,
 }: Props) {
   const titleId = useId();
   const actions = [{ label: "Remove", onClick: onRemove }];
@@ -42,10 +43,12 @@ export default function CriteriaSection({
         <Chip label={items.length} size="small" />
       </SectionHeader>
 
+      {children}
+
       {items.length === 0 ? (
-        <EmptyListCard variant="outlined">
-          <EmptyState description={emptyText} />
-        </EmptyListCard>
+        <Typography variant="body2" color="text.secondary">
+          {emptyText}
+        </Typography>
       ) : (
         <CriteriaList>
           {items.map((item, i) => (
