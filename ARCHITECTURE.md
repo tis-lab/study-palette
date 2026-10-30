@@ -35,6 +35,16 @@ The current implementation is FastAPI. Should the tier move to Java, the target 
 Boot on Java 21, with `springdoc-openapi` generating the schema from types and Jakarta Bean
 Validation on request models.
 
+### Contract
+
+The LinkML schemas in `schema/` are the interface between this tier and the client: every
+response is a LinkML document serialized as JSON. Each side generates its types from them
+(`gen-java` for the middleware, `gen-typescript` for the UI), with `gen-json-schema` to
+validate documents where the two meet. Neither side hand-writes the shape of a response. The
+transport is plain HTTP rather than GraphQL: responses are fixed, self-contained documents,
+so client field selection and a second type system add nothing. See
+[contracts/](contracts/README.md).
+
 Web MVC rather than WebFlux, because queries run against embedded DuckDB over JDBC: the work
 happens in-process and is CPU-bound, so a reactive stack has nothing to await, and virtual
 threads cover request concurrency. Quarkus and Micronaut were considered for their startup

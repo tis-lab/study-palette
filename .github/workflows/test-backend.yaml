@@ -35,9 +35,9 @@ jobs:
         run: synthetic/fetch-bdchm.sh
 
       - name: Test
-        run: uv run pytest api/tests ontology/tests schema/tests -v
+        run: uv run pytest api/tests contracts/toy ontology/tests schema/tests -v
 
       - name: Coverage
         run: |
-          uv run coverage run -m pytest api/tests ontology/tests schema/tests
+          uv run coverage run -m pytest api/tests contracts/toy ontology/tests schema/tests
           uv run coverage report -m
