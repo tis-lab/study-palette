@@ -2,13 +2,18 @@
 
 **Scope and availability assessment**
 
-**As of:** October 27, 2026
+**As of:** October 30, 2026
 
 ## 1. Purpose
 
-This document describes what the middleware currently returns for terms, what the UI will need from the term graph, and what is still missing. It covers concepts, hierarchy, relationships, variable typing, and provenance - the source and history of the information returned.
+The first version needs to do two things:
 
-The middleware implementation described here is [PR #3](https://github.com/tis-lab/bdc-dp-middleware/pull/3). The proposed scope follows [study-palette #31](https://github.com/tis-lab/study-palette/issues/31) and supports the documentation requirements for [BDC-Portal #108](https://github.com/tis-lab/BDC-Portal/issues/108).
+1. **Help users find concepts using familiar words.** Search should match names and synonyms, including BDC variable labels and curated names when they are included in the search index.
+2. **Show readable labels.** Users should see a useful name for a concept. A curated label should be able to replace a poor source label for display, while keeping the original name and its source.
+
+Exploring parent and child concepts, building filters from variable types, and inspecting source variables are later steps. We describe those needs here so they are not lost, but they do not all need to be implemented for the first version.
+
+This document supports [BDC-Portal #108](https://github.com/tis-lab/BDC-Portal/issues/108). “Current” means the implementation in [middleware PR #3](https://github.com/tis-lab/bdc-dp-middleware/pull/3). Proposed requirements come from [study-palette #31](https://github.com/tis-lab/study-palette/issues/31) and the review of this document. A field in an upstream schema is not necessarily available through middleware.
 
 | Requirement                                                  | Where it is covered                                                                                                                 |
 |--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
@@ -16,23 +21,13 @@ The middleware implementation described here is [PR #3](https://github.com/tis-l
 | Describe the intended scope and what is available or missing | Section 6 compares current support with the target scope. Sections 7-8 describe the proposed response requirements and UI behavior. |
 
 
-### Current position
-
-PR #3 returns term metadata from Monarch, concept matches from the local harmonization index, and the specification mappings behind those matches. The broader term graph described in #31 still needs a shared response structure for hierarchy, relationships, variable details, and provenance.
-
-We can define that structure before the UI is fully implemented. The next step is to agree on what information the UI needs and compare it with what the middleware and upstream sources can provide. The recommendations below are for that discussion; they are not yet an approved schema.
-
 ## 2. Implementation and sources
-
-All descriptions of current middleware behavior refer to PR #3. The Study Palette and variable-library schemas provide context for the intended response and the remaining gaps.
 
 | Source                                                                  | Used for                                                               |
 |-------------------------------------------------------------------------|------------------------------------------------------------------------|
 | [Middleware PR #3](https://github.com/tis-lab/bdc-dp-middleware/pull/3) | Current endpoint fields, behavior, and query examples                  |
 | [Study Palette](https://github.com/tis-lab/study-palette)               | Shared LinkML definitions and term-graph requirements                  |
 | [BDC variable library](https://github.com/linkml/bdc-variable-library)  | Variable identities, value types, units, and integration relationships |
-
-“Current” means supported by the PR #3 implementation. Deployment may differ by environment. A field defined in an upstream schema is also not necessarily populated or available through the middleware.
 
 ## 3. Current middleware term API
 
@@ -124,9 +119,9 @@ The `linkml/bdc-variable-library` schema defines several details that PR #3 does
 | `IntegratedVariable`                         | BDCHM type, unit and `integrates`, whose range is `CompoundVariable`                              | An integrated variable is more than a concept grouping; trace integration through the actual model rather than assuming a direct list of phvs                                 |
 | `MetadataVariable` / `DocumentationVariable` | Microschema slot assignments and documentation-derived values                                     | Distinguish measured/source fields from constants or context supplied by documentation                                                                                        |
 
-Variables inherit their `id` from `Entity`. `concept_type` describes the associated concept; it is not the variable’s identifier. The PR #3 schema makes this distinction explicit for `BdcConcept`, even though the PR description compares it with `IntegratedVariable`.
+Variables inherit their IDs from `Entity`; `concept_type` describes the related concept, not the variable's own identity. Source and integrated variables can use different units. We need to preserve those differences and confirm which modeled fields are populated upstream.
 
-The variable-library schema also includes examples of compound variables with different units being integrated into a normalized representation. The response needs to preserve those differences between the concept, the source variable, and the integrated variable.
+Ontology/KG sources provide term meanings and relationships. The variable library and transformation specifications provide variable details and mapping evidence. The shared LinkML model defines the response. Middleware retrieves and checks available information; the UI uses it for search, display and later exploration. The current local index and Monarch connection do not provide a live variable-library graph.
 
 ### 5.2 Information flow and responsibility
 
@@ -144,109 +139,101 @@ The middleware combines results from the configured Monarch provider with a bund
 
 In this table, “not exposed” means the middleware term API does not return the information. It may still exist in an upstream schema or source.
 
-| Capability                             | Current availability                                                    | What is still needed                                                                                           |
-|----------------------------------------|-------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| Concept identity                       | Provider `id`; PR #3 local `conceptType`; LinkML `curie`                | Agree on identifier fields while keeping concepts and integrated variables separate                            |
-| Labels, descriptions, synonyms         | Provider metadata exposed; local verified labels may be absent          | Preserve label source/status and show an explicit unresolved fallback                                          |
-| Vocabulary and semantic category       | Provider category exposed; vocabulary defined in LinkML                 | Return both with their different meanings; do not infer ownership solely from prefix                           |
-| Parent/child hierarchy                 | Direct parents modeled in LinkML; absent from term-search API           | Bounded parent/child exploration with direction, predicate and completeness                                    |
-| Cross-concept relations                | Subject/predicate/object/source modeled in LinkML                       | Serve requested edges with readable reason, source evidence and review status                                  |
-| KG anchors / cross-vocabulary mappings | Not exposed by middleware term API                                      | Preserve mapping predicate and route; direct versus SSSOM-hop mapping is not automatically equivalence         |
-| Contributing studies                   | Specification study names/counts exposed                                | Distinguish mapping coverage from observed/accessible data; add availability state                             |
-| Exact BDCHM binding                    | PR #3 supplies class and concept-slot/source tuples                     | Extend binding to the actual value slot, type and relevant constraints where verified                          |
-| Integrated-variable identity           | Not implemented by local concept grouping                               | Agree independent identifiers and concept associations; do not use CURIE as every variable's ID                |
-| Source variables                       | Specification-alias grouping in PR #3, not phv records                  | Paged source variables (phvs) linked to concepts, studies, datasets, and provenance                            |
-| Type, units, permissible values        | Not exposed by current term API                                         | Source-backed metadata for constructing valid filters, including explicit unknowns                             |
-| Mapping provenance                     | Specification tuples in PR #3; richer upstream development exists       | Trace studies, datasets, and source variables through transformations to concepts, including commit references |
-| Release and version                    | Index build metadata exists in PR #3; no term-response release field    | Include the graph release and source versions so results from different releases are not mixed                 |
-| Bounded graph and continuation         | Search pagination exists; graph-boundary contract does not              | Seeds, hop/node/edge limits, requested categories and declared incomplete boundaries                           |
-| Self-contained references              | Search hits include labels; the summary model includes referenced terms | Include an entry for every referenced concept, even when only its identifier and label are returned            |
-| One envelope across use cases          | Search, autocomplete and summary context use different shapes           | Agree on a shared response structure with different levels of detail and a migration plan                      |
+| Area                         | Available now                                                                                                                 | Still needed                                                                                                                                 |
+|------------------------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| Concept identity             | Provider `id`, local `conceptType`, schema `curie`.                                                                           | Agree consistent identifier fields without merging concept and variable identities.                                                          |
+| Labels and synonyms          | Provider metadata and local concept labels.                                                                                   | A set of labels with sources, one chosen display label, and curated overrides for poor labels.                                               |
+| Searchable names             | Existing provider search and local matching.                                                                                  | Confirm BDC variable labels and curated names reach the term-search index. Displaying a name alone does not make it searchable.              |
+| Vocabulary/category          | Provider category; vocabulary modeled in LinkML.                                                                              | Return both where available and preserve their meanings.                                                                                     |
+| Hierarchy                    | Direct parents modeled in LinkML.                                                                                             | Parent/child retrieval with limits and a clear indication of missing or incomplete results.                                                  |
+| Relations and mappings       | Basic relation fields in LinkML.                                                                                              | Requested links, readable reasons, evidence, review status and mapping routes. A cross-vocabulary mapping is not automatically equivalence.  |
+| Study coverage               | Specification study names and counts.                                                                                         | Distinguish a disabled/unavailable index from valid zero coverage.                                                                           |
+| BDCHM binding                | Class, concept slot and source-file tuples.                                                                                   | Verified value slots, types and constraints.                                                                                                 |
+| Variable identity and typing | Concept-based carrier groups; richer upstream models.                                                                         | Independent variable IDs, units, coded values and missing-value meanings.                                                                    |
+| Source-variable provenance   | Specification mappings.                                                                                                       | Source-variable accessions, study/dataset links and versioned transformation history.                                                        |
+| Response limits and versions | Search paging and index build metadata.                                                                                       | Graph release, response-format version, retrieval limits and continuation.                                                                   |
+| Measurement identity         | Summaries use `FAST_GLUC_BLD`; the term catalog uses `OMOP:4156660`. Corey notes that middleware PR #9 maps these internally. | Expose the link in the shared response so the UI can resolve it without its own mapping. Neither response currently explains the connection. |
+| Shared response structure    | Search, autocomplete and summary context use different shapes.                                                                | Agree a term-graph structure that supports both small search results and later detailed requests.                                            |
 
 ## 7. Proposed response requirements
 
-The following recommendations are based on study-palette #31 and need to be agreed with the UI and KG teams.
+These are requirements for the intended response, not claims that they are implemented today. Field names and details still need team agreement.
 
-1. **Keep concepts and variables separate.** Ontology terms, integrated variables, and source variables need their own identities. Ontology hierarchy, concept mappings, and variable-integration relationships also need distinct meanings. A mapping to a KG concept does not automatically mean equivalence or an is-a relationship.
-2. **Limit each graph request.** Let the caller specify starting terms, hop depth, and the types of nodes and relationships it needs. Set response limits and provide a way to continue when more results exist.
-3. **Explain what was returned.** The UI needs to know whether a relationship category is complete, was not requested, was truncated, is unavailable, or failed to load. An empty list alone cannot explain that.
-4. **Include referenced terms.** Every returned term identifier should have an entry in the response. A term at the edge of the requested neighborhood can include its label or unresolved-label status without loading all of its own relationships.
-5. **Keep the source of each relationship.** Include the predicate, source, readable explanation, and review status. We need to extend or refine the current `KG`/`CURATED` model to cover ontology hierarchy and unreviewed assertions.
-6. **Provide typing before filter selection.** Return known value types, units, permissible values, BDCHM class/slot bindings, and contributing source variables. The UI should not have to guess a variable’s type from its label or a sample of values.
-7. **Keep requests within a graph release.** Responses and cached results should identify their release. If that release changes, the UI should rebuild its graph session rather than combine results from different releases.
+### 7.1 Readable and searchable names
 
-### Proposed response objects
+A term should carry its CURIE, its available names with their sources, and a chosen display label. A curated label should take priority for display while keeping the original ontology/KG names. Curated labels should ship with the release. The team still needs to agree the remaining fallback order, storage and update process. If no usable label is available, show the CURIE as an identifier fallback.
 
-| Object                         | Information it should carry                                                                                                    |
-|--------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Response envelope              | Schema version, graph release, starting terms, requested scope, terms, variables, relationships, completeness and continuation |
-| Term                           | Identifier, display metadata, owning vocabulary, category, label provenance/status and hierarchy references                    |
-| Relation                       | Subject, predicate, object, provenance, explanation, review state and mapping route where applicable                           |
-| Integrated/harmonized variable | Independent identity, concept association, value representation, BDCHM binding and integrated source variables                 |
-| Source variable                | phv identity, study/dataset links, name/description, type/unit/coded values and transformation provenance                      |
+For example, a term may have a long vocabulary name and a shorter curated name for the UI. Keep both, record where each came from, and make eligible names searchable. A variable's own label stays attached to that variable; using it to find a related concept must preserve that association.
 
-This outlines the information each object would carry. Object names, required fields, and whether each field holds one or multiple values still need to be agreed through #31 and the related KG result-object discussion.
+In [Corey's review](https://github.com/tis-lab/study-palette/pull/64#discussion_r4413532189), Monarch search is described as Solr eDisMax over `id`, `name` and `synonym`, with extra weight for exact synonym matches. In simple terms, it matches indexed names and synonyms. “Search by meaning” therefore depends on good synonym coverage, not an assumed embedding-based search. BDC variable labels and curated names must reach the index, not just the display response. This is about term search; it does not change the separate Elasticsearch metadata-query work.
 
-### 7.1 Minimum information by use case
+**Checks:** A curated name replaces a poor display label without removing the original. Each name retains its source. Searching a distinct BDC variable label or curated alias finds the expected concept after indexing. Label data and the index use compatible releases. An identifier fallback is not presented as a verified label.
 
-The table below describes the information each use case would need in the proposed response.
+### 7.2 Resolve references within the response
 
-| Use case                                 | Minimum response information                                                                                                                  | Additional information                                                                                         |
-|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| Search / type-ahead                      | Contract and release identity; matching identifiers; display labels or explicit unresolved status; result ordering/pagination; scope metadata | Descriptions, synonyms, vocabulary/category and mapping coverage when requested and available                  |
-| Concept detail / hierarchy exploration   | Seed identifier; requested direction/depth/categories; labeled nodes; typed edges; boundary state for each requested expansion                | Related concepts, variable associations and evidence                                                           |
-| Variable selection / filter construction | Independent variable identity; concept association; declared value representation; availability of required typing                            | Units, permissible values, missing-value meanings and BDCHM class/slot bindings appropriate to that variable   |
-| Source-variable inspection               | Variable identity; study/dataset identifiers when supplied; metadata and transformation provenance with availability states                   | Names, descriptions, source type/unit/codes and versioned source links                                         |
-| Suggested relation                       | Same node/relation semantics and provenance as detail responses                                                                               | Explanation, review state and supporting evidence; suggestions must not appear as accepted ontology assertions |
+Every concept CURIE mentioned should have a term entry in the response. This includes units, relation predicates and coded values when they are represented as CURIEs. A term at the edge of a requested result can include its display information without expanding all its relationships.
 
-Search, detail, and suggested-relation responses should use the same overall structure, with different levels of detail. Type-ahead does not need to load every variable field. A later request can fetch more information for the selected concept, using the same graph release. We still need to agree on how to introduce this structure alongside the PR #3 operations.
+**Checks:** Both ends of each relation can be resolved. For a summary using `observation_type: FAST_GLUC_BLD`, the response explains its connection to `OMOP:4156660` and includes that term's display information. The UI does not need a hard-coded mapping or another vocabulary call. Preserve the original measurement key; agree how the connection is represented and sourced rather than simply replacing the key with a CURIE.
 
-### 7.2 Incomplete or unavailable information
+### 7.3 Keep identities and relationship meanings separate
 
-A single `complete` flag would not tell the UI enough. For example, hierarchy retrieval could succeed while variable provenance is unavailable. The response should report completeness for each starting term, direction, and requested relationship category, and explain how to request more results when a limit is reached.
+Concepts, integrated variables and source variables need their own identities. A parent relationship, a cross-vocabulary mapping and a variable-integration link mean different things.
 
-| State                 | Meaning                                                      | UI interpretation                                                                                     |
-|-----------------------|--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| Complete within scope | Retrieval finished for the declared scope and source/release | An empty collection means none found within that scope; it is not a claim about every possible source |
-| Not requested         | The request omitted the category or expansion                | Offer expansion; do not infer a leaf or absence                                                       |
-| Truncated             | A limit stopped otherwise supported retrieval                | Show that more may exist and supply continuation or a supported follow-up request                     |
-| Unavailable           | The source/capability or required metadata is not available  | Mark the information unknown; distinguish from an empty result                                        |
-| Failed                | Requested retrieval encountered an error                     | Expose a stable error state and retry behavior; do not substitute an empty success                    |
+**Checks:** Variables sharing a concept remain distinguishable. Direct parents, inferred ancestors and mapping anchors remain separate. Preserve the predicate and mapping route, including any intermediate mapping steps. Apply the coverage definition in section 2; do not treat mapping counts as participants or access permissions. Distinguish unavailable coverage from zero matches.
 
-The graph release identifies the data snapshot; the schema version identifies the response format. Both would help the UI interpret and combine results correctly. We also need to decide whether a graph response can return partial results when one source fails. The current GraphQL error handling does not define that behavior.
+### 7.4 Limit graph requests and explain incomplete results
 
-### 7.3 Checks for the proposed response
+Later graph requests should specify starting concepts, how far to follow links, and the kinds of nodes and relations needed. Results need limits and a way to continue. Report completeness for each starting term, direction and requested relation category.
 
-The following checks should guide the schema review and later testing:
+| Result state | What it tells the UI |
+| --- | --- |
+| Complete within scope | The requested search finished. An empty list means none found in that scope and source, not none anywhere. |
+| Not requested | This part was not requested; do not assume the term has no children or relations. |
+| Truncated | A limit was reached; show that more results may exist and how to continue. |
+| Unavailable | The source or information is unavailable; treat it as unknown. |
+| Failed | Retrieval failed; do not present it as an empty successful result. |
 
-1. Every concept CURIE referenced in the response should resolve to an included entry. This also applies to units, predicates, or permissible values represented as CURIEs. If a label is unavailable, mark it as unresolved rather than treating the identifier as a verified label.
-2. Each relationship should retain its predicate and resolve both endpoints. Record where the assertion came from separately from whether it has been reviewed.
-3. Preserve conflicting assertions and their evidence. Agree on deduplication and precedence rules before combining relationships from different sources.
-4. Keep direct parents, inferred ancestors, and mapping anchors distinct. Traversal should handle multiple parents and cycles. A partial list of parents cannot be used to claim a complete list of children.
-5. Keep source units and integrated units separate. A shared concept or label is not enough to merge variables or infer a unit conversion.
-6. Include the source file, version or commit, and mapping context where available. A file path helps locate a specification, but its revision is needed to reproduce the mapping.
-7. Keep related requests within the same release and declared scope. Source-variable pagination needs stable ordering and a way to continue without silently changing releases.
-8. Keep mapping coverage and search totals separate from participant counts, observed distributions, and access permissions.
+**Checks:** Retrieval handles multiple parents and cycles without exceeding its limits. A partial parent list does not prove a complete child list. Different parts of a response can have different states. The team must decide whether one source's failure allows partial results; the current operation's failure behavior is described in section 3.
 
-### 7.4 Work to carry forward
+### 7.5 Explain relationships and their sources
 
-| Scope category                       | Disposition                                                                                                                     |
-|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| Current implementation               | PR #3 search, autocomplete, concept metadata and specification coverage/provenance                                              |
-| Response structure to agree          | Bounded graph response, hierarchy, relation evidence, variable typing, self-contained labels and release/completeness semantics |
-| Details that depend on upstream work | Paged phv details, study/dataset containment, reproducible transformation lineage and broader cohort coverage                   |
+Relations should include a predicate, readable reason, source and review status. These should distinguish ontology hierarchy, harvested KG links, curated links and unreviewed assertions.
 
-## 8. Proposed UI behavior
+**Checks:** Curated or unreviewed assertions do not appear as published ontology facts. Keep conflicting assertions and their evidence until combination rules are agreed. Include available source files, revisions/commits and mapping context so a result can be traced back to its source. The existing KG/CURATED distinction needs further detail for this scope.
 
-- Display verified concept labels when available; otherwise show the CURIE and an unresolved/identifier-only indication. Never substitute a specification alias label as a concept label.
-- Keep a variable's own label with that variable. Selecting a concept retains its CURIE; selecting an integrated variable must retain its independent identity when that model is introduced.
-- Display specification coverage as mapping coverage, not as participant availability or an access guarantee.
-- Do not show zero coverage as “BDC has no data” when the local index may be disabled or unavailable. The proposed availability status should make that distinction clear.
-- Only treat a term as having no children or relationships when the response confirms that the requested category is complete. Reversing parent links only identifies children within the returned set.
-- Keep concept availability separate from clinical status. For example, PRESENT is a value constraint; finding the concept does not mean that status applies to any participant.
-- Display curated or unreviewed links distinctly from published KG assertions. Preserve mappings as mappings; do not silently use them as equivalence or hierarchy edges.
-- Enable filter controls only when the necessary typing and units are supplied or explicitly configured through another agreed contract.
-- Keep transport/source errors separate from a valid empty result. The middleware already distinguishes bad input, unavailable upstreams, timeouts and invalid responses.
+### 7.6 Provide variable details before building filters
+
+Later filter controls need value types, units, allowed codes, missing-value meanings, BDCHM bindings and contributing source variables.
+
+**Checks:** Use declared typing, or another agreed configuration, before enabling controls. Do not infer types from names or sample values. Preserve source and integrated units separately, and do not assume a conversion from a shared concept. Do not treat observed data ranges as validation limits.
+
+### 7.7 Keep related requests on the same release
+
+The graph release identifies the data snapshot; the response version identifies its format. Search, detail and suggested-relation responses should use the same overall term-graph structure, with different amounts of information.
+
+**Checks:** Related requests and cached results stay on the same release. Paging has stable ordering and continuation. A release change rebuilds the UI session. Type-ahead does not require loading every variable field. Agree how the new structure will be introduced alongside the current operations.
+
+### Information the proposed response would carry
+
+| Part                 | Information                                                                                                          |
+|----------------------|----------------------------------------------------------------------------------------------------------------------|
+| Response details     | Version, release, starting terms, requested scope, completeness and continuation.                                    |
+| Terms                | Identifiers, names with sources, chosen display labels, vocabulary, category and hierarchy links.                    |
+| Relations            | Subject, predicate, object, explanation, provenance, review status and mapping route.                                |
+| Integrated variables | Independent identity, concept association, value format, BDCHM binding and links to contributing compound variables. |
+| Source variables     | Source identity such as phv where available, study/dataset links, types, units, codes and transformation history.    |
+
+### 7.8 Work to carry forward
+
+The first-version priorities are concept search and readable labels. Hierarchy exploration, variable-based filters, source-variable inspection and suggested relations come later. Implementation of label indexing, graph retrieval, variable-library provenance and measurement mappings remains follow-up work under #31. This documentation task records the needs and gaps; it does not implement them.
+
+## 8. UI-specific behavior
+
+- Keep the selected concept's CURIE even when its display label changes. A selected integrated variable retains its own identity.
+- Keep concept discovery separate from clinical status. Finding a concept does not mean PRESENT applies to a participant; status is a separate filter choice.
+- Offer a clear retry path for source failures and distinguish them from bad input or valid empty results.
+
+The display, coverage, completeness, provenance and filter rules are specified with their checks in section 7.
 
 ## 9. PR #3 query examples
 
@@ -297,10 +284,9 @@ These queries follow the PR #3 schema. The search example requests both local co
 
 ## 10. Sources
 
-Sections 7-8 contain proposals based on these sources. Current middleware behavior is described separately in Sections 3-4.
-
 1. [Study-palette #31: intended term graph](https://github.com/tis-lab/study-palette/issues/31).
 2. [Middleware PR #3](https://github.com/tis-lab/bdc-dp-middleware/pull/3).
 3. [Study-palette PR #54](https://github.com/tis-lab/study-palette/pull/54); [terms.yaml](https://github.com/tis-lab/study-palette/blob/b3d29eb7d221713bbfd314d0b1e268927cfd77a2/schema/terms.yaml); [summary.yaml](https://github.com/tis-lab/study-palette/blob/b3d29eb7d221713bbfd314d0b1e268927cfd77a2/schema/summary.yaml).
 4. [Study-palette PR #29: Explore demo](https://github.com/tis-lab/study-palette/pull/29).
 5. [Variable-library LinkML schema](https://github.com/linkml/bdc-variable-library/blob/main/src/bdc_variable_library/schema/bdc_variable_library.yaml).
+6. [Middleware PR #9](https://github.com/tis-lab/bdc-dp-middleware/pull/9), referenced in Corey's measurement-identity comment.
