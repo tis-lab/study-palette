@@ -14,21 +14,44 @@ min_count: 10
 
 terms:
   - curie: MONDO:0005148
-    label: type 2 diabetes mellitus
+    display_label: Type 2 diabetes
+    labels:
+      - text: type 2 diabetes mellitus
+        label_source: ONTOLOGY
+      - text: type II diabetes mellitus
+        label_source: ONTOLOGY
+        synonym_scope: EXACT
+      - text: NIDDM
+        label_source: ONTOLOGY
+        synonym_scope: EXACT
+      - text: Type 2 diabetes
+        label_source: CURATED
     vocabulary: MONDO
     parents: [MONDO:0005015]
   - curie: MONDO:0005015
-    label: diabetes mellitus
+    display_label: diabetes mellitus
+    labels:
+      - text: diabetes mellitus
+        label_source: ONTOLOGY
     vocabulary: MONDO
   - curie: MONDO:0005267
-    label: heart disorder
+    display_label: heart disorder
+    labels:
+      - text: heart disorder
+        label_source: ONTOLOGY
     vocabulary: MONDO
   - curie: MONDO:0024643
-    label: myocardial disorder
+    display_label: myocardial disorder
+    labels:
+      - text: myocardial disorder
+        label_source: ONTOLOGY
     vocabulary: MONDO
     parents: [MONDO:0005267]
   - curie: MONDO:0005068
-    label: myocardial infarction
+    display_label: myocardial infarction
+    labels:
+      - text: myocardial infarction
+        label_source: ONTOLOGY
     vocabulary: MONDO
     parents: [MONDO:0024643]
 

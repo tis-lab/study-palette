@@ -12,31 +12,69 @@ filter:
   - palette:measurement/FAST_GLUC_BLD
 min_count: 10
 
+# Most terms carry only their ontology name. Two show the rest: type 2
+# diabetes has synonyms users might type and a curated display label, and
+# fasting glucose has a variable-library label from the KG and a curated
+# replacement for the ontology's long name.
 terms:
   - curie: MONDO:0005148
-    label: type 2 diabetes mellitus
+    display_label: Type 2 diabetes
+    labels:
+      - text: type 2 diabetes mellitus
+        label_source: ONTOLOGY
+      - text: type II diabetes mellitus
+        label_source: ONTOLOGY
+        synonym_scope: EXACT
+      - text: NIDDM
+        label_source: ONTOLOGY
+        synonym_scope: EXACT
+      - text: Type 2 diabetes
+        label_source: CURATED
     vocabulary: MONDO
     parents: [MONDO:0005015]
   - curie: MONDO:0005015
-    label: diabetes mellitus
+    display_label: diabetes mellitus
+    labels:
+      - text: diabetes mellitus
+        label_source: ONTOLOGY
     vocabulary: MONDO
   - curie: MONDO:0005267
-    label: heart disorder
+    display_label: heart disorder
+    labels:
+      - text: heart disorder
+        label_source: ONTOLOGY
     vocabulary: MONDO
   - curie: MONDO:0024643
-    label: myocardial disorder
+    display_label: myocardial disorder
+    labels:
+      - text: myocardial disorder
+        label_source: ONTOLOGY
     vocabulary: MONDO
     parents: [MONDO:0005267]
   - curie: MONDO:0005068
-    label: myocardial infarction
+    display_label: myocardial infarction
+    labels:
+      - text: myocardial infarction
+        label_source: ONTOLOGY
     vocabulary: MONDO
     parents: [MONDO:0024643]
   - curie: MONDO:0005252
-    label: heart failure
+    display_label: heart failure
+    labels:
+      - text: heart failure
+        label_source: ONTOLOGY
     vocabulary: MONDO
     parents: [MONDO:0005267]
   - curie: OMOP:4156660
-    label: Fasting blood glucose measurement
+    display_label: Fasting glucose
+    labels:
+      - text: Fasting blood glucose measurement
+        label_source: ONTOLOGY
+      - text: fasting glucose
+        label_source: KG
+        synonym_scope: EXACT
+      - text: Fasting glucose
+        label_source: CURATED
     vocabulary: SNOMED
 
 relations:

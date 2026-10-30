@@ -50,7 +50,7 @@ def test_every_example_is_a_valid_document(client):
 def test_a_term_resolves_by_curie(client):
     response = client.get("/terms/MONDO:0005148")
     assert response.status_code == 200
-    assert response.json()["label"] == "type 2 diabetes mellitus"
+    assert response.json()["display_label"] == "Type 2 diabetes"
 
 
 def test_unknown_names_are_not_found(client):
