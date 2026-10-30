@@ -13,12 +13,9 @@ export const SectionHeader = styled("div")(({ theme }) => ({
   gap: theme.spacing(1),
 }));
 
-export const CriteriaList = styled(Stack)({
+export const CriteriaList = styled(Stack)(({ theme }) => ({
   width: "100%",
-  "& .MuiButton-root": {
-    textTransform: "none",
+  "& .MuiIconButton-root:hover, & .MuiIconButton-root.Mui-focusVisible": {
+    color: theme.palette.error.main,
   },
-  "& .MuiButton-root:hover, & .MuiButton-root.Mui-focusVisible": {
-    textDecoration: "underline",
-  },
-});
+}));

@@ -1,5 +1,13 @@
-import { useId, useState } from "react";
-import { Button, Chip, Collapse, Stack, Typography } from "@mui/material";
+import { useId, useState, type ReactNode } from "react";
+import {
+  Button,
+  Chip,
+  Collapse,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { SearchItem } from "../../api/graphql/queries/resolveTerms";
 import ConceptCardDetails from "./ConceptCardDetails";
 import {
@@ -29,6 +37,7 @@ export interface ConceptAction {
   onClick: (concept: SearchItem) => void;
   /** Shown filled, as a pressed toggle. */
   selected?: boolean;
+  icon?: ReactNode;
 }
 
 export interface Props {
@@ -144,20 +153,25 @@ export default function ConceptCard({
           </ConceptCardMain>
 
           <Stack direction="row" spacing={1} flexShrink={0}>
-            {actions.map((a) => (
-              <Button
-                key={a.label}
-                variant={
-                  a.selected ? "contained" : compact ? "text" : "outlined"
-                }
-                color={compact ? "inherit" : "primary"}
-                size="small"
-                aria-pressed={a.selected}
-                onClick={() => a.onClick(concept)}
-              >
-                {a.label}
-              </Button>
-            ))}
+            {actions.map((a) =>
+              a.icon ? (
+                <Tooltip key={a.label} title={a.label}>
+                  <IconButton size="small" onClick={() => a.onClick(concept)}>
+                    {a.icon}
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <Button
+                  key={a.label}
+                  variant={a.selected ? "contained" : "outlined"}
+                  size="small"
+                  aria-pressed={a.selected}
+                  onClick={() => a.onClick(concept)}
+                >
+                  {a.label}
+                </Button>
+              ),
+            )}
           </Stack>
         </ConceptCardLayout>
       </ConceptCardBody>

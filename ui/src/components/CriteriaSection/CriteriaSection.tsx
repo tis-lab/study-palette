@@ -1,5 +1,6 @@
 import { useId, type ReactNode } from "react";
 import { Chip, Typography } from "@mui/material";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ConceptCard from "../ConceptCard";
 import {
   getSearchItemKey,
@@ -32,7 +33,13 @@ export default function CriteriaSection({
   children,
 }: Props) {
   const titleId = useId();
-  const actions = [{ label: "Remove", onClick: onRemove }];
+  const actions = [
+    {
+      label: "Remove",
+      icon: <DeleteOutlineIcon fontSize="small" />,
+      onClick: onRemove,
+    },
+  ];
 
   return (
     <CriteriaSectionRoot aria-labelledby={titleId}>
