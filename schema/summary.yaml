@@ -44,6 +44,12 @@ description: >-
   response with a narrower filter merges with the first by id.
 
 
+  The overview is the response with no seed and no filter, fetched before any
+  search. Each study's participant_count in it is everyone in the study, so it
+  is the total a filtered count is out of. Adding the studies' totals counts a
+  participant enrolled in two studies twice.
+
+
   Because summaries subclass BDCHM records, the validator accepts a summary
   where a record belongs. Keep them in separate slots.
 license: MIT
@@ -253,10 +259,9 @@ slots:
     description: The index release counted. Responses merge only within a release.
     required: true
   seed:
-    description: The term searched for.
+    description: The term searched for. The overview has none.
     range: Term
     inlined: false
-    required: true
   filter:
     description: >-
       Ids of the summaries every participant counted must match. Each study's

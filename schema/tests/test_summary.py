@@ -17,6 +17,7 @@ EXAMPLES_DIR = SCHEMA_DIR / "examples"
 EXAMPLES = sorted(EXAMPLES_DIR.glob("*.yaml"))
 BASE = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d.yaml"
 FOLLOW_UP = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-female.yaml"
+OVERVIEW = EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-overview.yaml"
 
 SUMMARY_SLOTS = ("participants", "demographics", "conditions", "procedures", "drug_exposures", "measurements")
 COUNT_SLOTS = ("participant_count", "record_count", "values")
@@ -150,7 +151,7 @@ def test_counts_respect_the_minimum(example):
 
 def test_concepts_resolve_in_terms(example):
     terms = {t["curie"]: t for t in example.get("terms") or []}
-    referenced = {example["seed"]}
+    referenced = {example["seed"]} if "seed" in example else set()
     referenced |= {p for t in terms.values() for p in t.get("parents") or []}
     referenced |= {r[end] for r in example.get("relations") or [] for end in ("subject", "object")}
     referenced |= {
@@ -175,9 +176,30 @@ def test_a_follow_up_merges_without_conflict():
     assert len(shared) >= len(load(BASE)["studies"]), "the examples should overlap, or this test proves nothing"
 
 
+def test_the_overview_is_unfiltered():
+    overview = load(OVERVIEW)
+    assert "seed" not in overview
+    assert not overview.get("filter")
+
+
+def test_the_overview_counts_every_study(example):
+    assert {s["research_study"] for s in example["studies"]} <= {s["research_study"] for s in load(OVERVIEW)["studies"]}
+
+
+def test_a_filter_never_counts_more_than_the_overview(example):
+    overview = {s["research_study"]: s for s in load(OVERVIEW)["studies"]}
+    for study in example["studies"]:
+        total = overview[study["research_study"]]
+        assert study["participant_count"] <= total["participant_count"], study["research_study"]
+        unfiltered = by_id(total)
+        for summary, _ in summaries(study):
+            if summary["id"] in unfiltered:
+                assert summary["participant_count"] <= unfiltered[summary["id"]]["participant_count"], summary["id"]
+
+
 def test_an_id_asks_one_question_everywhere():
     asked = {}
-    for response in (load(BASE), load(FOLLOW_UP)):
+    for response in (load(BASE), load(FOLLOW_UP), load(OVERVIEW)):
         for study in response["studies"]:
             for summary, _ in summaries(study):
                 asked.setdefault(summary["id"], set()).add(question(summary))
