@@ -266,7 +266,6 @@ describe("ConceptCard", () => {
     it.each([
       ["condition", "Condition"],
       ["drugexposure", "Drug Exposure"],
-      ["somethingnew", "somethingnew"],
     ])("passes the type %j as the category %j", async (bdchmType, expected) => {
       renderCard({ concept: { ...systolicBp, bdchmType } });
 

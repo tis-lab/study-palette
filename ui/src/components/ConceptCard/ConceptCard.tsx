@@ -63,8 +63,7 @@ function toCardView(item: SearchItem): CardView {
     return {
       id: item.conceptType,
       label: item.displayLabel,
-      category:
-        item.bdchmType && (BDCHM_TYPE_LABELS[item.bdchmType] ?? item.bdchmType),
+      category: item.bdchmType && BDCHM_TYPE_LABELS[item.bdchmType],
       description: null,
       isHarmonizedVariable: true,
       variableNames: [],

@@ -68,8 +68,7 @@ export interface Term {
 
 // BDC concepts come first in `items`, followed by terms.
 export type SearchItem =
-  | ({ __typename: "BdcConcept" } & BdcConcept)
-  | ({ __typename: "Term" } & Term);
+  ({ __typename: "BdcConcept" } & BdcConcept) | ({ __typename: "Term" } & Term);
 
 export interface TermsPage {
   items: SearchItem[];

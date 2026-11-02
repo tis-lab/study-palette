@@ -281,9 +281,7 @@ describe("Search", () => {
     it("prompts with a placeholder and example searches before anything is submitted", () => {
       render(<Search />);
       expect(getInput()).toHaveAttribute("placeholder", "Search concepts…");
-      expect(
-        screen.getByText("Search for a concept above, or try:"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Search for a concept above, or try:")).toBeInTheDocument();
     });
 
     it("hides the example searches once a search is submitted", async () => {
@@ -292,9 +290,7 @@ describe("Search", () => {
 
       await searchFor("asthma");
 
-      expect(
-        screen.queryByText("Search for a concept above, or try:"),
-      ).toBeNull();
+      expect(screen.queryByText("Search for a concept above, or try:")).toBeNull();
     });
 
     it("searches an example term when it is clicked", async () => {
@@ -1047,9 +1043,7 @@ describe("Search", () => {
 
       await searchFor("asthma");
 
-      expect(
-        screen.getByRole("progressbar", { name: "Loading page" }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("progressbar", { name: "Loading page" })).toBeInTheDocument();
       expect(screen.queryByText(asthma.label)).toBeNull();
     });
 
