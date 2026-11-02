@@ -159,6 +159,26 @@ def test_concepts_resolve_in_terms(example):
     assert referenced - terms.keys() == set()
 
 
+def names(term):
+    """Each source's own name for a term, as opposed to its synonyms."""
+    return [
+        (label["label_source"], label["text"]) for label in term.get("labels") or [] if "synonym_scope" not in label
+    ]
+
+
+def test_each_source_names_a_term_once(example):
+    for term in example.get("terms") or []:
+        sources = [source for source, _ in names(term)]
+        assert len(sources) == len(set(sources)), term["curie"]
+
+
+def test_a_term_displays_its_highest_ranked_name(example):
+    for term in example.get("terms") or []:
+        named = dict(names(term))
+        expected = next((named[s] for s in ("CURATED", "ONTOLOGY", "KG") if s in named), term["curie"])
+        assert term["display_label"] == expected, term["curie"]
+
+
 def test_records_and_summaries_stay_apart(example):
     assert misplaced(example) == []
 
