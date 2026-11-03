@@ -40,9 +40,12 @@ vi.mock("./Search", () => ({
 beforeEach(() => {
   vi.stubEnv("VITE_GRAPHQL_URL", "https://graphql.test/graphql");
   vi.spyOn(globalThis, "fetch").mockImplementation(async (_, init) => {
-    const data = String(init?.body).includes("searchProbe")
+    const body = String(init?.body);
+    const data = body.includes("searchProbe")
       ? { searchProbe: { totalHits: AVAILABLE } }
-      : { summary: t2dSummary };
+      : body.includes("searchConditions")
+        ? { searchConditions: { totalHits: "82" } }
+        : { summary: t2dSummary };
     return new Response(JSON.stringify({ data }), { status: 200 });
   });
 });
@@ -163,15 +166,14 @@ describe("CohortBuilder", () => {
 
       await user.click(screen.getByRole("button", { name: "include result" }));
 
-      // 940 from the API, plus the placeholder's 50 for one include
-      expect(await screen.findByText("990")).toBeInTheDocument();
+      // One include is counted by searchConditions
+      expect(await screen.findByText("82")).toBeInTheDocument();
       expect(screen.getByText(`of ${AVAILABLE} available`)).toBeInTheDocument();
-      expect(screen.getByText("990 participants · 2 studies")).toBeInTheDocument();
-      expect(sentBodies().at(-1).variables).toEqual({
-        sourceId: "t2d",
-        include: ["HP:0000822"],
-        exclude: [],
-      });
+      expect(screen.getByText("82 participants · 2 studies")).toBeInTheDocument();
+      expect(sentBodies().slice(-2).map((b) => b.variables)).toEqual([
+        { sourceId: "t2d", include: ["HP:0000822"], exclude: [] },
+        { keyword: "PRESENT|ONESELF|HP:0000822" },
+      ]);
     });
 
     it("offers AND/OR once two concepts are included, and the count follows it", async () => {
@@ -179,7 +181,7 @@ describe("CohortBuilder", () => {
       renderBuilder();
 
       await user.click(screen.getByRole("button", { name: "include result" }));
-      await screen.findByText("990");
+      await screen.findByText("82");
       expect(screen.queryByRole("group", { name: "Inclusion logic" })).toBeNull();
 
       await user.click(screen.getByRole("button", { name: "include other result" }));
@@ -200,7 +202,7 @@ describe("CohortBuilder", () => {
       renderBuilder();
 
       await user.click(screen.getByRole("button", { name: "include result" }));
-      await screen.findByText("990");
+      await screen.findByText("82");
       await user.click(screen.getByRole("button", { name: "Remove" }));
 
       expect(await screen.findByText(AVAILABLE)).toBeInTheDocument();

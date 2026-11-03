@@ -16,10 +16,7 @@ export const illustrativeParticipants = (
   return Math.max(sourceCount + included - 70 * excludes, 0);
 };
 
-/**
- * The summary response with its study counts moved to the illustrative total,
- * spread across studies by size; the rest of the response is untouched.
- */
+/** The summary with its study counts moved to the illustrative total. */
 export const illustrateSummary = (
   summary: SummaryResponse,
   criteria: Criteria,
@@ -31,6 +28,15 @@ export const illustrateSummary = (
     criteria.exclude.length,
     criteria.match,
   );
+  return withParticipants(summary, target);
+};
+
+/** The summary with its study counts moved to `target`, spread across studies by size. */
+export const withParticipants = (
+  summary: SummaryResponse,
+  target: number,
+): SummaryResponse => {
+  const total = cohortParticipants(summary);
   const scale = total > 0 ? target / total : 0;
   return {
     ...summary,

@@ -33,12 +33,14 @@ const wrapper = ({ children }: { children: ReactNode }) => {
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
 };
 
+/** Answers searchConditions with 82 and everything else with `body`. */
 const mockResponse = (body: unknown) =>
-  vi
-    .spyOn(globalThis, "fetch")
-    .mockImplementation(
-      async () => new Response(JSON.stringify(body), { status: 200 }),
-    );
+  vi.spyOn(globalThis, "fetch").mockImplementation(async (_, init) => {
+    const reply = String(init?.body).includes("searchConditions")
+      ? { data: { searchConditions: { totalHits: "82" } } }
+      : body;
+    return new Response(JSON.stringify(reply), { status: 200 });
+  });
 
 const sentBody = (fetchSpy: ReturnType<typeof mockResponse>, call = 0) =>
   JSON.parse(fetchSpy.mock.calls[call][1]?.body as string);
@@ -96,16 +98,19 @@ describe("useCohortSummary", () => {
     });
   });
 
-  it("returns the response with placeholder study counts for the selection", async () => {
-    mockResponse({ data: { summary: t2dSummary } });
+  it("counts one included concept from searchConditions", async () => {
+    const fetchSpy = mockResponse({ data: { summary: t2dSummary } });
 
     const { result } = renderHook(() => useCohortSummary(t2d), { wrapper });
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    // 480 + 460 from the API, moved to 990 for one include
+    expect(sentBody(fetchSpy, 1).variables).toEqual({
+      keyword: "PRESENT|ONESELF|MONDO:0005148",
+    });
+    // 82 spread across the API's 480 + 460
     expect(
       result.current.data?.studies.map((s) => s.participant_count),
-    ).toEqual([506, 484]);
+    ).toEqual([42, 40]);
     expect(result.current.data?.studies[0].demographics).toEqual(
       t2dSummary.studies[0].demographics,
     );
@@ -154,8 +159,9 @@ describe("useCohortSummary", () => {
 
     rerender({ criteria: { ...t2d, match: "any" } });
 
-    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(2));
-    expect(sentBody(fetchSpy, 1).variables).not.toHaveProperty("match");
+    // A summary and a searchConditions request per selection
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledTimes(4));
+    expect(sentBody(fetchSpy, 2).variables).not.toHaveProperty("match");
   });
 
   it("keeps nothing once every criterion is removed", async () => {
