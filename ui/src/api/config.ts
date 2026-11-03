@@ -4,10 +4,10 @@
  * Read when a request runs, so a missing value fails that request rather than
  * the app.
  */
-export function getGraphQLEndpoint(): string {
+export const getGraphQLEndpoint = (): string => {
   const endpoint = import.meta.env.VITE_GRAPHQL_URL;
   if (!endpoint) {
     throw new Error("VITE_GRAPHQL_URL is not set");
   }
   return endpoint;
-}
+};
