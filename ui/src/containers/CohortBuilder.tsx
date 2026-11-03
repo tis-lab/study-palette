@@ -9,7 +9,7 @@ import {
   type Criteria,
   type CriteriaKind,
 } from "../hooks/useCohortSummary";
-import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../placeholders";
+import { useAvailableParticipants } from "../hooks/useAvailableParticipants";
 import {
   getSearchItemKey,
   type SearchItem,
@@ -27,6 +27,7 @@ export default function CohortBuilder() {
     exclude: [],
     match: "all",
   });
+  const available = useAvailableParticipants();
   const summary = useCohortSummary(criteria);
 
   // An item is in at most one list, at most once
@@ -63,9 +64,9 @@ export default function CohortBuilder() {
         <Overview aria-label="Cohort overview">
           <CohortSnapshot
             summary={summary.data}
-            availableParticipants={AVAILABLE_PARTICIPANTS_PLACEHOLDER}
-            isLoading={summary.isLoading}
-            error={summary.error}
+            availableParticipants={available.data ?? 0}
+            isLoading={available.isLoading || summary.isLoading}
+            error={available.error ?? summary.error}
           />
           <Divider />
           <Demographics

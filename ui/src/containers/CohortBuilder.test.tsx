@@ -5,9 +5,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import CohortBuilder from "./CohortBuilder";
 import type { SearchItem } from "../api/graphql/queries/resolveTerms";
 import { t2dSummary } from "../mocks/SYNTHETIC.cohortSummary";
-import { AVAILABLE_PARTICIPANTS_PLACEHOLDER } from "../placeholders";
 
-const AVAILABLE = AVAILABLE_PARTICIPANTS_PLACEHOLDER.toLocaleString();
+const AVAILABLE = "500";
 
 const hypertension: SearchItem = {
   __typename: "Term",
@@ -40,13 +39,18 @@ vi.mock("./Search", () => ({
 
 beforeEach(() => {
   vi.stubEnv("VITE_GRAPHQL_URL", "https://graphql.test/graphql");
-  vi.spyOn(globalThis, "fetch").mockImplementation(
-    async () =>
-      new Response(JSON.stringify({ data: { summary: t2dSummary } }), {
-        status: 200,
-      }),
-  );
+  vi.spyOn(globalThis, "fetch").mockImplementation(async (_, init) => {
+    const data = String(init?.body).includes("searchProbe")
+      ? { searchProbe: { totalHits: AVAILABLE } }
+      : { summary: t2dSummary };
+    return new Response(JSON.stringify({ data }), { status: 200 });
+  });
 });
+
+const sentBodies = () =>
+  vi
+    .mocked(globalThis.fetch)
+    .mock.calls.map(([, init]) => JSON.parse(init?.body as string));
 
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -133,12 +137,24 @@ describe("CohortBuilder", () => {
   });
 
   describe("cohort overview", () => {
-    it("shows everyone available, without asking the API, before anything is added", () => {
+    it("asks only for the available total on page load, and shows it", async () => {
       renderBuilder();
 
-      expect(screen.getByText(AVAILABLE)).toBeInTheDocument();
+      expect(await screen.findByText(AVAILABLE)).toBeInTheDocument();
       expect(screen.getByText("Include a concept to see its demographic breakdown.")).toBeInTheDocument();
-      expect(globalThis.fetch).not.toHaveBeenCalled();
+      expect(sentBodies()).toHaveLength(1);
+      expect(sentBodies()[0].query).toContain("searchProbe");
+    });
+
+    it("shows an error instead of the counts when the page load request fails", async () => {
+      vi.mocked(globalThis.fetch).mockImplementation(
+        async () => new Response("", { status: 500 }),
+      );
+      renderBuilder();
+
+      expect(
+        await screen.findByText("Couldn't load the cohort snapshot."),
+      ).toBeInTheDocument();
     });
 
     it("shows the API's summary once a concept is included", async () => {
@@ -151,10 +167,7 @@ describe("CohortBuilder", () => {
       expect(await screen.findByText("990")).toBeInTheDocument();
       expect(screen.getByText(`of ${AVAILABLE} available`)).toBeInTheDocument();
       expect(screen.getByText("990 participants · 2 studies")).toBeInTheDocument();
-      const body = JSON.parse(
-        vi.mocked(globalThis.fetch).mock.calls[0][1]?.body as string,
-      );
-      expect(body.variables).toEqual({
+      expect(sentBodies().at(-1).variables).toEqual({
         sourceId: "t2d",
         include: ["HP:0000822"],
         exclude: [],
