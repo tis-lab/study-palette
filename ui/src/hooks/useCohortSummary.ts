@@ -24,7 +24,7 @@ const conceptOf = (item: SearchItem) =>
   item.__typename === "Term" ? item.id : item.name;
 
 /** Runs only once a concept is included or excluded. */
-export function useCohortSummary(criteria: Criteria) {
+export const useCohortSummary = (criteria: Criteria) => {
   const include = criteria.include.map(conceptOf).sort();
   const exclude = criteria.exclude.map(conceptOf).sort();
   const enabled = include.length + exclude.length > 0;
@@ -48,4 +48,4 @@ export function useCohortSummary(criteria: Criteria) {
     },
     enabled,
   });
-}
+};

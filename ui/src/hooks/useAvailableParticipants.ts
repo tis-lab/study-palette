@@ -7,8 +7,8 @@ import {
 } from "../api/graphql/queries/searchProbe";
 
 /** Everyone available, fetched once on page load. */
-export function useAvailableParticipants() {
-  return useQuery({
+export const useAvailableParticipants = () =>
+  useQuery({
     queryKey: ["availableParticipants"],
     queryFn: async ({ signal }) => {
       const data = await graphqlRequest<SearchProbeData, object>({
@@ -21,4 +21,3 @@ export function useAvailableParticipants() {
     },
     staleTime: Infinity,
   });
-}

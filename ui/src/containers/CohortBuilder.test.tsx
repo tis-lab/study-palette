@@ -57,14 +57,14 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-function renderBuilder() {
+const renderBuilder = () => {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
       <CohortBuilder />
     </QueryClientProvider>,
   );
-}
+};
 
 const querySection = (name: "Include" | "Exclude") =>
   screen.queryByRole("region", { name });

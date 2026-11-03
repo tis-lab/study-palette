@@ -26,20 +26,19 @@ const t2d: Criteria = {
   match: "all",
 };
 
-function wrapper({ children }: { children: ReactNode }) {
+const wrapper = ({ children }: { children: ReactNode }) => {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
   return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
-}
+};
 
-function mockResponse(body: unknown) {
-  return vi
+const mockResponse = (body: unknown) =>
+  vi
     .spyOn(globalThis, "fetch")
     .mockImplementation(
       async () => new Response(JSON.stringify(body), { status: 200 }),
     );
-}
 
 const sentBody = (fetchSpy: ReturnType<typeof mockResponse>, call = 0) =>
   JSON.parse(fetchSpy.mock.calls[call][1]?.body as string);

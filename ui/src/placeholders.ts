@@ -5,25 +5,25 @@ import { cohortParticipants } from "./utils/summary";
 // PLACEHOLDER until the summary returns counts per selection: include/exclude
 // don't change the example source's count, so nudge it to show the flow. With
 // OR each include adds people; with AND each include after the first removes some.
-export function illustrativeParticipants(
+export const illustrativeParticipants = (
   sourceCount: number,
   includes: number,
   excludes: number,
   match: CriteriaMatch,
-): number {
+): number => {
   const included =
     match === "any" ? 50 * includes : includes > 0 ? 50 * (2 - includes) : 0;
   return Math.max(sourceCount + included - 70 * excludes, 0);
-}
+};
 
 /**
  * The summary response with its study counts moved to the illustrative total,
  * spread across studies by size; the rest of the response is untouched.
  */
-export function illustrateSummary(
+export const illustrateSummary = (
   summary: SummaryResponse,
   criteria: Criteria,
-): SummaryResponse {
+): SummaryResponse => {
   const total = cohortParticipants(summary);
   const target = illustrativeParticipants(
     total,
@@ -39,4 +39,4 @@ export function illustrateSummary(
       participant_count: Math.round(study.participant_count * scale),
     })),
   };
-}
+};
