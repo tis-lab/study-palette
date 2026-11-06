@@ -1,0 +1,63 @@
+# SYNTHETIC page load: A={p1,p2}, B={p2,p3}. Union=3, study sum=4.
+release: overlap-example-release
+filter: []
+min_count: 1
+participant_count: 3
+studies:
+  - id: palette:study_a
+    name: Example Study A
+    participant_count: 2
+  - id: palette:study_b
+    name: Example Study B
+    participant_count: 2
+terms:
+  HP:0000822:
+    label: Hypertension
+    vocabulary: HP
+summary:
+  conditions:
+    - id: palette:condition/HP_0000822
+      condition_concept: HP:0000822
+      participant_count: 3
+      studies:
+        - research_study: palette:study_a
+          participant_count: 2
+        - research_study: palette:study_b
+          participant_count: 2
+      values:
+        - id: palette:condition/HP_0000822/ONESELF/PRESENT
+          condition_concept: HP:0000822
+          condition_status: PRESENT
+          relationship_to_participant: ONESELF
+          participant_count: 3
+          studies:
+            - research_study: palette:study_a
+              participant_count: 2
+            - research_study: palette:study_b
+              participant_count: 2
+  demographics:
+    - id: palette:demography/sex
+      summarized_slot: sex
+      participant_count: 3
+      studies:
+        - research_study: palette:study_a
+          participant_count: 2
+        - research_study: palette:study_b
+          participant_count: 2
+      values:
+        - id: palette:demography/sex/FEMALE
+          summarized_slot: sex
+          sex: FEMALE
+          participant_count: 2
+          studies:
+            - research_study: palette:study_a
+              participant_count: 1
+            - research_study: palette:study_b
+              participant_count: 2
+        - id: palette:demography/sex/MALE
+          summarized_slot: sex
+          sex: MALE
+          participant_count: 1
+          studies:
+            - research_study: palette:study_a
+              participant_count: 1
