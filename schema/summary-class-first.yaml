@@ -1,0 +1,315 @@
+# PROPOSAL ONLY
+# The canonical schema and current consumers remain unchanged.
+# Class-first revision for review.
+id: https://w3id.org/tis-lab/study-palette/summary-class-first
+name: study_palette_summary_class_first
+title: Study Palette class-first summary proposal
+description: Class-first cohort summaries with a root study directory and per-facet study contributions. The
+  same response shape serves unfiltered page load and filtered selections. Overall counts describe the union
+  of matching participants using the release's agreed participant identity; never derive them by summing study
+  contributions.
+license: MIT
+prefixes:
+  linkml: https://w3id.org/linkml/
+  palette: https://w3id.org/tis-lab/study-palette/
+default_prefix: palette
+default_range: string
+imports:
+- linkml:types
+- ../synthetic/bdchm
+- terms
+classes:
+  # REVIEW: each class/value links back to studies without nesting facets under studies.
+  Summary:
+    mixin: true
+    description: Fields added to each class summary. Counts describe this facet, not the whole cohort. Nested
+      values repeat the concept/slot and have their own study contributions.
+    slots:
+    - id
+    - participant_count
+    - record_count
+    - values
+    - studies
+  Binned:
+    mixin: true
+    description: A bin [bin_low, bin_high); either end may be left open.
+    slots:
+    - bin_low
+    - bin_high
+    - bin_unit
+  ParticipantSummary:
+    is_a: Participant
+    mixins:
+    - Summary
+    - Binned
+    description: Participants by age_at_index, binned.
+    slots:
+    - summarized_slot
+    slot_usage:
+      associated_person:
+        required: false
+      member_of_research_study:
+        required: false
+      values:
+        range: ParticipantSummary
+  DemographySummary:
+    is_a: Demography
+    mixins:
+    - Summary
+    description: Participants by sex, race, or ethnicity.
+    slots:
+    - summarized_slot
+    slot_usage:
+      associated_participant:
+        required: false
+      values:
+        range: DemographySummary
+  ConditionSummary:
+    is_a: Condition
+    mixins:
+    - Summary
+    description: Participants with a condition recorded, by condition_status.
+    slot_usage:
+      associated_participant:
+        required: false
+      condition_provenance:
+        required: false
+      condition_status:
+        required: false
+      relationship_to_participant:
+        required: false
+      values:
+        range: ConditionSummary
+  ProcedureSummary:
+    is_a: Procedure
+    mixins:
+    - Summary
+    description: Participants with a procedure recorded, by procedure_status.
+    slot_usage:
+      associated_participant:
+        required: false
+      procedure_provenance:
+        required: false
+      procedure_status:
+        required: false
+      values:
+        range: ProcedureSummary
+  DrugExposureSummary:
+    is_a: DrugExposure
+    mixins:
+    - Summary
+    description: Participants with a drug exposure recorded.
+    slot_usage:
+      associated_participant:
+        required: false
+      exposure_provenance:
+        required: false
+      values:
+        range: DrugExposureSummary
+  MeasurementObservationSummary:
+    is_a: MeasurementObservation
+    mixins:
+    - Summary
+    - Binned
+    description: Participants with a measurement recorded, by bin of value_quantity. range_low and range_high
+      keep their BDCHM meaning (a lab's reference range) and are not bins.
+    slot_usage:
+      associated_participant:
+        required: false
+      values:
+        range: MeasurementObservationSummary
+  # REVIEW: keep ID/name/participant_count at the response root; remove old facet arrays.
+  StudySummary:
+    description: One study in the root response directory. participant_count is the matching cohort count in
+      this study; on unfiltered page load it is the study baseline. Cache that unfiltered response by release
+      and access scope for X-of-total displays. No facet arrays belong here.
+    slots:
+    - id
+    - name
+    - participant_count
+    slot_usage:
+      participant_count:
+        required: true
+  # REVIEW: no seed. One response shape for page load and filtered cohorts.
+  SummaryResponse:
+    tree_root: true
+    description: One response for the current selection. Omitted/null request filters mean page load. Root
+      participant_count is the overall matching union, studies are study-level totals, and summary holds class-based
+      facets. No seed field is returned.
+    slots:
+    - release
+    - filter
+    - min_count
+    - participant_count
+    - studies
+    - summary
+    - terms
+    - relations
+    - records
+    slot_usage:
+      studies:
+        range: StudySummary
+      participant_count:
+        required: false
+  ParticipantRecords:
+    description: Participant-level records, kept apart from summaries.
+    attributes:
+      record_conditions:
+        description: Condition records.
+        range: Condition
+        multivalued: true
+        inlined_as_list: true
+      record_demographics:
+        description: Demography records.
+        range: Demography
+        multivalued: true
+        inlined_as_list: true
+      record_measurements:
+        description: MeasurementObservation records.
+        range: MeasurementObservation
+        multivalued: true
+        inlined_as_list: true
+  # REVIEW: separate contribution type avoids duplicating study metadata on every facet.
+  StudyContribution:
+    description: Contribution of one study to the containing facet or value. research_study resolves to SummaryResponse.studies[].id.
+      Do not sum contributions to infer a cross-study union.
+    slots:
+    - research_study
+    - participant_count
+    slot_usage:
+      participant_count:
+        required: true
+  # REVIEW: retain the attached proposal's single typed summary object.
+  SummaryFacets:
+    description: A single typed class-first object. Unsupported class arrays may be omitted; omission is not
+      a zero count. An empty array means no reportable entries for an evaluated class.
+    slots:
+    - participants
+    - demographics
+    - conditions
+    - procedures
+    - drug_exposures
+    - measurements
+slots:
+  name:
+    description: Study display name when available; id remains the stable lookup key.
+    range: string
+  # REVIEW: optional global counts prevent fabricating totals when identity is unavailable.
+  participant_count:
+    description: 'Matching participants at the containing object''s scope. Root: overall selected cohort union;
+      class/value: participants with that concept/value recorded; study directory/contribution: matching participants
+      within that study. Required on study entries and contributions. Global root/facet counts may be omitted
+      when unavailable or suppressed; omission is not zero. Zero at the root may explicitly represent an empty
+      cohort. Nonzero published counts below min_count are suppressed. Cross-study union counts require a documented
+      identity rule; reverse_nested counts distinct parent documents, not persons across duplicate documents.'
+    range: integer
+    required: false
+    minimum_value: 0
+  record_count:
+    description: How many records match.
+    range: integer
+    minimum_value: 0
+  values:
+    description: The summary split by value. Each value repeats its parent's concept.
+    range: Summary
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  summarized_slot:
+    description: The BDCHM slot summarized, for classes with no concept slot.
+    range: SummarizedSlotEnum
+    required: true
+  bin_low:
+    description: Lower bound, inclusive.
+    range: decimal
+  bin_high:
+    description: Upper bound, exclusive.
+    range: decimal
+  bin_unit:
+    description: Unit of the bounds, which may differ from the stored value's (ages are stored in days).
+    range: UnitOfMeasurementEnum
+  research_study:
+    description: Identifier of the root study directory entry contributing to this facet.
+    range: StudySummary
+    inlined: false
+    required: true
+  release:
+    description: The index release counted. Responses merge only within a release.
+    required: true
+  filter:
+    description: Summary IDs required in every branch of the executed selection. This list is not a serialization
+      of arbitrary AND/OR logic. Retain the full request expression separately; an empty list does not prove
+      the request was unfiltered. No filtering input types are introduced by this response schema.
+    range: Summary
+    multivalued: true
+    inlined: false
+  min_count:
+    description: Smallest nonzero count reported. Suppress small cells and unsafe complementary disclosures;
+      omitted cells are not zero. Root zero may represent an empty cohort. This schema does not itself enforce
+      disclosure policy.
+    range: integer
+    required: true
+    minimum_value: 1
+  terms:
+    description: Concept lookup dictionary keyed by CURIE. Each value carries Term metadata; the key supplies
+      its curie identifier. Study IDs resolve in studies, and summary IDs resolve in summary arrays, not this
+      ontology dictionary.
+    range: Term
+    multivalued: true
+    inlined_as_list: false
+    inlined: true
+  relations:
+    description: Links between terms beyond their hierarchy.
+    range: TermRelation
+    multivalued: true
+    inlined_as_list: true
+  studies:
+    description: At the response root, study ID/name/cohort-count entries. Within a facet/value, study references
+      and that facet/value count. A study can be omitted due to suppression; missing contributions are not
+      zero.
+    range: StudyContribution
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  participants:
+    range: ParticipantSummary
+    multivalued: true
+    inlined_as_list: true
+  demographics:
+    range: DemographySummary
+    multivalued: true
+    inlined_as_list: true
+  conditions:
+    range: ConditionSummary
+    multivalued: true
+    inlined_as_list: true
+  procedures:
+    range: ProcedureSummary
+    multivalued: true
+    inlined_as_list: true
+  drug_exposures:
+    range: DrugExposureSummary
+    multivalued: true
+    inlined_as_list: true
+  measurements:
+    range: MeasurementObservationSummary
+    multivalued: true
+    inlined_as_list: true
+  records:
+    description: Existing optional participant-level record block, kept separate from aggregates and only for
+      authorized callers. Current middleware does not populate it; this revision does not expand authorization.
+    range: ParticipantRecords
+    inlined: true
+  summary:
+    description: Class-first facet arrays. Use the same structure for page load and filtered responses.
+    range: SummaryFacets
+    inlined: true
+    required: true
+enums:
+  SummarizedSlotEnum:
+    permissible_values:
+      sex: null
+      race: null
+      ethnicity: null
+      age_at_index: null
+version: 0.2.0-class-first
