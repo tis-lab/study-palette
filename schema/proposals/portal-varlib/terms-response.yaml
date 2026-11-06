@@ -1,0 +1,148 @@
+# PROPOSED transport projection; catalog retains actual upstream inheritance.
+id: https://w3id.org/tis-lab/study-palette/proposals/portal-varlib/terms-response
+name: portal_harmonized_terms_response
+version: 0.1.0-draft
+description: UI metadata contract only; does not promise participant totals, datasets
+  or ontology hierarchy.
+license: MIT
+prefixes:
+  linkml: https://w3id.org/linkml/
+  portal: https://w3id.org/tis-lab/study-palette/proposals/portal-varlib/
+default_prefix: portal
+default_range: string
+imports:
+- portal-varlib
+classes:
+  PortalHarmonizedSearchResponse:
+    tree_root: true
+    description: Proposed harmonized-only search result. total counts matching concept
+      cards, not participants/variables. Separate from existing mixed Monarch union
+      pagination.
+    attributes:
+      query:
+        range: string
+        required: true
+      catalog_release:
+        range: string
+        required: true
+      total:
+        range: integer
+        required: true
+        minimum_value: 0
+      offset:
+        range: integer
+        required: true
+        minimum_value: 0
+      limit:
+        range: integer
+        required: true
+        minimum_value: 1
+      has_more:
+        range: boolean
+        required: true
+      items:
+        range: PortalHarmonizedConceptCard
+        required: true
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  PortalHarmonizedConceptCard:
+    description: One concept with one or more integrated variables. No unsupported
+      numeric UI fields.
+    attributes:
+      concept:
+        range: PortalConcept
+        required: true
+        inlined: true
+      display_label:
+        range: string
+        required: true
+      study_count:
+        range: integer
+        required: true
+        minimum_value: 0
+      studies:
+        range: PortalResearchStudy
+        required: true
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      integrated_variables:
+        range: PortalIntegratedVariableCard
+        required: true
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  PortalIntegratedVariableCard:
+    description: Response projection of inherited catalog metadata; upstream identity
+      retained.
+    attributes:
+      id:
+        range: uriorcurie
+        required: true
+      variable_label:
+        range: string
+        required: true
+      variable_description:
+        range: string
+      concept_type:
+        range: uriorcurie
+        required: true
+      bdchm_type:
+        range: BdchmTypeEnum
+        required: true
+      unit:
+        range: string
+      cde_id:
+        range: uriorcurie
+      compound_variables:
+        range: PortalCompoundVariableCard
+        required: true
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  PortalCompoundVariableCard:
+    attributes:
+      id:
+        range: uriorcurie
+        required: true
+      variable_label:
+        range: string
+        required: true
+      study_id:
+        range: uriorcurie
+        required: true
+      study_name:
+        range: string
+        required: true
+      source_variables:
+        range: PortalSourceVariableCard
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+  PortalSourceVariableCard:
+    description: Verified source variable resolved through compound row_metadata.
+      Omission of source_variables means unresolved/not supplied, not zero source
+      variables.
+    attributes:
+      id:
+        range: uriorcurie
+        required: true
+      variable_name:
+        range: string
+        required: true
+      variable_label:
+        range: string
+      source_id:
+        range: string
+      file_id:
+        range: string
+      file_name:
+        range: string
+      study_id:
+        range: uriorcurie
+        required: true
+      microschema_slots:
+        range: ClinicalMicroschemaEnum
+        required: true
+        multivalued: true
