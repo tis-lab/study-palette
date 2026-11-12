@@ -39,7 +39,7 @@ def client(generated):
 def test_a_summary_is_served_as_a_valid_document(client):
     response = client.get("/summary/t2d")
     assert response.status_code == 200
-    assert response.json()["seed"] == "MONDO:0005148"
+    assert response.json()["focus"] == ["MONDO:0005148"]
 
 
 def test_every_example_is_a_valid_document(client):

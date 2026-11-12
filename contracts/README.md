@@ -44,7 +44,7 @@ make -C contracts client                              # type-check the client
 ```
 
 ```
-Searched for Type 2 diabetes in example-release
+Described Type 2 diabetes in example-release
   palette:study_one: 480 participants
   palette:study_two: 460 participants
 Resolved MONDO:0005148 -> Type 2 diabetes

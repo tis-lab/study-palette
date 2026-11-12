@@ -12,11 +12,14 @@ PACKAGE := org.biodatacatalyst.contract
 JSON_SCHEMAS := $(OUT)/summary.schema.json $(OUT)/terms.schema.json
 TYPESCRIPT := $(OUT)/typescript/summary.ts $(OUT)/typescript/terms.ts
 
+BDCHM := ../synthetic/bdchm.yaml
+
 .PHONY: all clean client
+.DELETE_ON_ERROR:
 
 all: $(JSON_SCHEMAS) $(TYPESCRIPT) $(OUT)/java
 
-$(OUT)/summary.schema.json: $(SCHEMA)/summary.yaml $(SCHEMA)/terms.yaml
+$(OUT)/summary.schema.json: $(SCHEMA)/summary.yaml $(SCHEMA)/terms.yaml $(BDCHM)
 	mkdir -p $(@D)
 	$(RUN) gen-json-schema --top-class SummaryResponse $< > $@
 
@@ -24,13 +27,13 @@ $(OUT)/terms.schema.json: $(SCHEMA)/terms.yaml
 	mkdir -p $(@D)
 	$(RUN) gen-json-schema --top-class Term $< > $@
 
-$(OUT)/typescript/%.ts: $(SCHEMA)/%.yaml $(SCHEMA)/terms.yaml
+$(OUT)/typescript/%.ts: $(SCHEMA)/%.yaml $(SCHEMA)/terms.yaml $(BDCHM)
 	mkdir -p $(@D)
 	$(RUN) gen-typescript $< > $@
 
 # gen-java resolves imports by schema name, which fails on BDCHM's path import,
 # so it reads a copy with the imports merged in.
-$(OUT)/summary-merged.yaml: $(SCHEMA)/summary.yaml $(SCHEMA)/terms.yaml
+$(OUT)/summary-merged.yaml: $(SCHEMA)/summary.yaml $(SCHEMA)/terms.yaml $(BDCHM)
 	mkdir -p $(@D)
 	$(RUN) gen-linkml --mergeimports -f yaml $< > $@
 

@@ -19,12 +19,13 @@ const summary = await get<SummaryResponse>("/summary/t2d");
 
 // Every term the response mentions is inside it, so labels need no second call.
 const labels = new Map((summary.terms ?? []).map((term) => [term.curie, term.display_label]));
-console.log(`Searched for ${labels.get(summary.seed ?? "") ?? summary.seed} in ${summary.release}`);
+const focus = summary.focus ?? [];
+console.log(`Described ${focus.map((curie) => labels.get(curie) ?? curie).join(", ")} in ${summary.release}`);
 
 for (const study of summary.studies ?? []) {
   console.log(`  ${study.research_study}: ${study.participant_count} participants`);
 }
 
 // The terms contract on its own: resolve one CURIE.
-const seed = await get<Term>(`/terms/${summary.seed}`);
-console.log(`Resolved ${seed.curie} -> ${seed.display_label}`);
+const term = await get<Term>(`/terms/${focus[0]}`);
+console.log(`Resolved ${term.curie} -> ${term.display_label}`);
