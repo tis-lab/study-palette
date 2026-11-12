@@ -1,4 +1,5 @@
-# PROPOSAL ONLY
+# PROPOSAL ONLY (amended for review)
+# Lines marked AMENDMENT are suggested additions; everything else is unchanged.
 # The canonical schema and current consumers remain unchanged.
 # Class-first revision for review.
 id: https://w3id.org/tis-lab/study-palette/summary-class-first
@@ -30,6 +31,7 @@ classes:
     - record_count
     - values
     - studies
+    - count_mode          # AMENDMENT: whether participant_count is estimated or exact
   Binned:
     mixin: true
     description: A bin [bin_low, bin_high); either end may be left open.
@@ -127,9 +129,20 @@ classes:
     - id
     - name
     - participant_count
+    - count_status        # AMENDMENT
+    - count_mode          # AMENDMENT
     slot_usage:
       participant_count:
-        required: true
+        required: false   # AMENDMENT: was true; a study may be listed without a count
+    rules:                # AMENDMENT: a reported status must carry a count
+    - preconditions:
+        slot_conditions:
+          count_status:
+            equals_string: REPORTED
+      postconditions:
+        slot_conditions:
+          participant_count:
+            required: true
   # REVIEW: no seed. One response shape for page load and filtered cohorts.
   SummaryResponse:
     tree_root: true
@@ -146,6 +159,8 @@ classes:
     - terms
     - relations
     - records
+    - count_mode              # AMENDMENT: mode of the root participant_count
+    - suppressed_study_count  # AMENDMENT: studies matching below min_count, not listed by name
     slot_usage:
       studies:
         range: StudySummary
@@ -175,10 +190,22 @@ classes:
       Do not sum contributions to infer a cross-study union.
     slots:
     - research_study
+    - consent_group       # AMENDMENT: access is requested per consent group
     - participant_count
+    - count_status        # AMENDMENT
+    - count_mode          # AMENDMENT
     slot_usage:
       participant_count:
-        required: true
+        required: false   # AMENDMENT: was true; below-min and withheld cells carry no count
+    rules:                # AMENDMENT
+    - preconditions:
+        slot_conditions:
+          count_status:
+            equals_string: REPORTED
+      postconditions:
+        slot_conditions:
+          participant_count:
+            required: true
   # REVIEW: retain the attached proposal's single typed summary object.
   SummaryFacets:
     description: A single typed class-first object. Unsupported class arrays may be omitted; omission is not
@@ -191,6 +218,21 @@ classes:
     - drug_exposures
     - measurements
 slots:
+  # AMENDMENT: the four slots below describe the numbers themselves, not who may see them.
+  count_mode:
+    description: Whether the count is an estimate (noise applied) or exact.
+    range: CountModeEnum
+  count_status:
+    description: Whether this entry's count is reported, below min_count (possibly none), or withheld to
+      prevent a complementary disclosure. Absent means the response carries no count for this entry.
+    range: CountStatusEnum
+  consent_group:
+    description: dbGaP consent group the contribution belongs to, e.g. phs001234.c1.
+    pattern: '^phs\d{6}\.c\d+$'
+  suppressed_study_count:
+    description: Number of studies with matching participants below min_count that are not listed by name.
+    range: integer
+    minimum_value: 0
   name:
     description: Study display name when available; id remains the stable lookup key.
     range: string
@@ -198,7 +240,7 @@ slots:
   participant_count:
     description: 'Matching participants at the containing object''s scope. Root: overall selected cohort union;
       class/value: participants with that concept/value recorded; study directory/contribution: matching participants
-      within that study. Required on study entries and contributions. Global root/facet counts may be omitted
+      within that study. Required on study entries and contributions whose count_status is REPORTED (AMENDMENT). Global root/facet counts may be omitted
       when unavailable or suppressed; omission is not zero. Zero at the root may explicitly represent an empty
       cohort. Nonzero published counts below min_count are suppressed. Cross-study union counts require a documented
       identity rule; reverse_nested counts distinct parent documents, not persons across duplicate documents.'
@@ -306,10 +348,24 @@ slots:
     inlined: true
     required: true
 enums:
+  CountModeEnum:            # AMENDMENT
+    permissible_values:
+      ESTIMATED:
+        description: Consistent noise applied; an estimate.
+      EXACT:
+        description: No noise or suppression.
+  CountStatusEnum:          # AMENDMENT
+    permissible_values:
+      REPORTED:
+        description: participant_count is present.
+      BELOW_MIN_COUNT:
+        description: Fewer than min_count matching participants, possibly none.
+      WITHHELD:
+        description: Not reported, so that other reported counts cannot reveal a suppressed one.
   SummarizedSlotEnum:
     permissible_values:
       sex: null
       race: null
       ethnicity: null
       age_at_index: null
-version: 0.2.0-class-first
+version: 0.2.1-class-first

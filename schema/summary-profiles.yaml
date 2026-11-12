@@ -1,0 +1,214 @@
+# Generated from a short script; edit the script, not this file, when facet classes change.
+id: https://w3id.org/tis-lab/study-palette/summary-profiles
+name: study_palette_summary_profiles
+title: Study Palette response profiles
+description: Validation contracts for each access tier. Each profile only restricts the class-first summary schema;
+  it adds no slots and changes no meaning. The disclosure policy names the profile a response must validate against,
+  and the API refuses to send one that does not.
+license: MIT
+version: 0.1.0
+prefixes:
+  linkml: https://w3id.org/linkml/
+  palette: https://w3id.org/tis-lab/study-palette/
+default_prefix: palette
+default_range: string
+imports:
+- linkml:types
+- summary-class-first.amended
+classes:
+  PublicStudyEntry:
+    is_a: StudySummary
+    description: A contributing study listed by name only. It carries no count, and only studies at or above min_count
+      may be listed; below-threshold studies appear only in suppressed_study_count.
+    slot_usage:
+      participant_count:
+        required: false
+        value_presence: ABSENT
+      count_status:
+        equals_string: REPORTED
+      count_mode:
+        equals_string: ESTIMATED
+  PublicParticipantSummary:
+    is_a: ParticipantSummary
+    slot_usage:
+      values:
+        range: PublicParticipantSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        value_presence: ABSENT
+  PublicDemographySummary:
+    is_a: DemographySummary
+    slot_usage:
+      values:
+        range: PublicDemographySummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        value_presence: ABSENT
+  PublicConditionSummary:
+    is_a: ConditionSummary
+    slot_usage:
+      values:
+        range: PublicConditionSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        value_presence: ABSENT
+  PublicProcedureSummary:
+    is_a: ProcedureSummary
+    slot_usage:
+      values:
+        range: PublicProcedureSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        value_presence: ABSENT
+  PublicDrugExposureSummary:
+    is_a: DrugExposureSummary
+    slot_usage:
+      values:
+        range: PublicDrugExposureSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        value_presence: ABSENT
+  PublicMeasurementObservationSummary:
+    is_a: MeasurementObservationSummary
+    slot_usage:
+      values:
+        range: PublicMeasurementObservationSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        value_presence: ABSENT
+  PublicSummaryFacets:
+    is_a: SummaryFacets
+    slot_usage:
+      participants:
+        range: PublicParticipantSummary
+      demographics:
+        range: PublicDemographySummary
+      conditions:
+        range: PublicConditionSummary
+      procedures:
+        range: PublicProcedureSummary
+      drug_exposures:
+        range: PublicDrugExposureSummary
+      measurements:
+        range: PublicMeasurementObservationSummary
+  PublicSummaryResponse:
+    is_a: SummaryResponse
+    description: Public tier, and signed-in users before the breakdown stage.
+    slot_usage:
+      studies:
+        range: PublicStudyEntry
+      summary:
+        range: PublicSummaryFacets
+      records:
+        value_presence: ABSENT
+      count_mode:
+        equals_string: ESTIMATED
+  EstimatedStudyEntry:
+    is_a: StudySummary
+    slot_usage:
+      participant_count:
+        required: false
+      count_mode:
+        equals_string: ESTIMATED
+  EstimatedContribution:
+    is_a: StudyContribution
+    slot_usage:
+      participant_count:
+        required: false
+      count_mode:
+        equals_string: ESTIMATED
+      count_status:
+        required: true
+  SignedInParticipantSummary:
+    is_a: ParticipantSummary
+    slot_usage:
+      values:
+        range: SignedInParticipantSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        range: EstimatedContribution
+  SignedInDemographySummary:
+    is_a: DemographySummary
+    slot_usage:
+      values:
+        range: SignedInDemographySummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        range: EstimatedContribution
+  SignedInConditionSummary:
+    is_a: ConditionSummary
+    slot_usage:
+      values:
+        range: SignedInConditionSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        range: EstimatedContribution
+  SignedInProcedureSummary:
+    is_a: ProcedureSummary
+    slot_usage:
+      values:
+        range: SignedInProcedureSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        range: EstimatedContribution
+  SignedInDrugExposureSummary:
+    is_a: DrugExposureSummary
+    slot_usage:
+      values:
+        range: SignedInDrugExposureSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        range: EstimatedContribution
+  SignedInMeasurementObservationSummary:
+    is_a: MeasurementObservationSummary
+    slot_usage:
+      values:
+        range: SignedInMeasurementObservationSummary
+      count_mode:
+        equals_string: ESTIMATED
+      studies:
+        range: EstimatedContribution
+  SignedInSummaryFacets:
+    is_a: SummaryFacets
+    slot_usage:
+      participants:
+        range: SignedInParticipantSummary
+      demographics:
+        range: SignedInDemographySummary
+      conditions:
+        range: SignedInConditionSummary
+      procedures:
+        range: SignedInProcedureSummary
+      drug_exposures:
+        range: SignedInDrugExposureSummary
+      measurements:
+        range: SignedInMeasurementObservationSummary
+  SignedInBreakdownResponse:
+    is_a: SummaryResponse
+    description: Signed-in users at the visualization stage, after refinement.
+    slot_usage:
+      studies:
+        range: EstimatedStudyEntry
+      summary:
+        range: SignedInSummaryFacets
+      records:
+        value_presence: ABSENT
+      count_mode:
+        equals_string: ESTIMATED
+  ApprovedSummaryResponse:
+    is_a: SummaryResponse
+    description: Approved researchers; exact counts within their exact scope, estimates elsewhere.
+    slot_usage:
+      records:
+        value_presence: ABSENT
