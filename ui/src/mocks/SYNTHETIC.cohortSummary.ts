@@ -8,7 +8,7 @@ import { cohortParticipants } from "../utils/summary";
 /** Trimmed from schema/examples/SYNTHETIC.SummaryResponse-t2d.yaml. */
 export const t2dSummary: SummaryResponse = {
   release: "example-release",
-  seed: "MONDO:0005148",
+  focus: ["MONDO:0005148"],
   filter: [
     "palette:measurement/FAST_GLUC_BLD"
   ],
@@ -196,7 +196,7 @@ export const t2dSummary: SummaryResponse = {
 /** Trimmed from schema/examples/SYNTHETIC.SummaryResponse-t2d-female.yaml. */
 export const t2dFemaleSummary: SummaryResponse = {
   release: "example-release",
-  seed: "MONDO:0005148",
+  focus: ["MONDO:0005148"],
   filter: [
     "palette:measurement/FAST_GLUC_BLD",
     "palette:demography/sex/FEMALE"

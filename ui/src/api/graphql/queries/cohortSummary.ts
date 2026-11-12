@@ -23,7 +23,7 @@ export interface ResearchStudy {
 
 export interface SummaryResponse {
   release: string;
-  seed: string;
+  focus?: string[];
   filter: string[];
   min_count: number;
   research_studies: ResearchStudy[];
