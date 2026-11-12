@@ -1,13 +1,14 @@
 # SYNTHETIC: illustrative counts for two fictional studies, not derived from
 # participant data.
 #
-# A search for type 2 diabetes, over participants with a fasting glucose
+# Focus: type 2 diabetes. Filter: participants with a fasting glucose
 # measurement. Glucose is related through a curated biomarker link. Study One
 # records heart conditions as subtypes and Study Two as heart disorder, so
 # comparing them would need a roll-up, which this draft leaves out.
 
 release: example-release
-seed: MONDO:0005148
+focus:
+  - MONDO:0005148
 filter:
   - palette:measurement/FAST_GLUC_BLD
 min_count: 10

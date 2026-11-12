@@ -1,7 +1,7 @@
 # SYNTHETIC: illustrative counts for two fictional studies, not derived from
 # participant data.
 #
-# The overview the landing page fetches before any search: no seed and no
+# The overview the landing page fetches before any search: no focus and no
 # filter, so each study's participant_count is everyone in it. The UI keeps
 # this response for the release and reads each study's total from it when a
 # filtered response, such as SYNTHETIC.SummaryResponse-t2d.yaml, arrives.

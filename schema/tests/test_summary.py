@@ -151,7 +151,7 @@ def test_counts_respect_the_minimum(example):
 
 def test_concepts_resolve_in_terms(example):
     terms = {t["curie"]: t for t in example.get("terms") or []}
-    referenced = {example["seed"]} if "seed" in example else set()
+    referenced = set(example.get("focus") or [])
     referenced |= {p for t in terms.values() for p in t.get("parents") or []}
     referenced |= {r[end] for r in example.get("relations") or [] for end in ("subject", "object")}
     referenced |= {
@@ -178,7 +178,7 @@ def test_a_follow_up_merges_without_conflict():
 
 def test_the_overview_is_unfiltered():
     overview = load(OVERVIEW)
-    assert "seed" not in overview
+    assert not overview.get("focus")
     assert not overview.get("filter")
 
 
