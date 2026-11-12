@@ -1,0 +1,28 @@
+# First type 2 diabetes; hypertension within 5 years after; HbA1c >= 6.5 % within 90 days; no CKD before.
+name: T2D with later hypertension
+release: "2026.10"
+missing_time: EXCLUDE
+criteria:
+  criterion: {criterion_type: ParticipantCriterion, age_at_index: {gte_days: 6570}}
+index_event:
+  occurrence: FIRST
+  criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0005148", status: [PRESENT], time_anchor: age_at_condition_start}
+inclusion_rules:
+  - name: Hypertension within 5 years after index
+    criteria:
+      criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0005044", status: [PRESENT]}
+    window: {start_days_after_index: 0, end_days_after_index: 1826}
+    occurrence: {at_least: 1}
+  - name: HbA1c at or above 6.5 within 90 days of index
+    criteria:
+      criterion:
+        criterion_type: MeasurementObservationCriterion
+        concept: "LOINC:4548-4"
+        value: {gte: 6.5, unit: "%"}
+    window: {start_days_after_index: -90, end_days_after_index: 90}
+    occurrence: {at_least: 1}
+  - name: No chronic kidney disease before index
+    criteria:
+      criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0005300", status: [PRESENT, HISTORICAL]}
+    window: {end_days_after_index: -1}
+    occurrence: {exactly: 0}

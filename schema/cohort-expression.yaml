@@ -1,0 +1,415 @@
+id: https://example.org/bdchm-cohort-expression
+name: bdchm_cohort_expression
+title: Cohort expression model over BDC-HM
+description: >-
+  A cohort expression selects participants by the BDC-HM records they have.
+  Every criterion names a BDC-HM class and constrains that class's own slots
+  and enum values, so a cohort keeps the meaning harmonization gave the data;
+  nothing is converted to OMOP. The structure borrows OHDSI cohort definitions
+  (an index event, inclusion rules, time windows and occurrence counts) and
+  adds a boolean tree (all, any, none) that can nest to any depth.
+
+
+  Two shapes share this one model. A boolean expression uses only `criteria`
+  and is what live counts accept. A temporal expression adds `index_event` and
+  `inclusion_rules`; windows are measured as differences between BDC-HM ages in
+  days, so no calendar dates are needed.
+
+
+  Semantics that apply everywhere:
+
+  - A concept includes its descendants in the release's term closure unless
+  include_descendants is false.
+
+  - `none` means "not recorded": no qualifying record exists. "Recorded absent"
+  is a positive criterion whose status includes ABSENT.
+
+  - Condition criteria count the participant's own records only unless
+  relationship_to_participant says otherwise.
+
+  - A record without the slot named by time_anchor cannot satisfy a window; with
+  missing_time EXCLUDE it is also reported as excluded for missing time.
+license: MIT
+version: 0.1.0
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  bdchm: https://w3id.org/bdchm/
+  cohort: https://example.org/bdchm-cohort-expression/
+
+default_prefix: cohort
+default_range: string
+
+imports:
+  - linkml:types
+  - bdchm
+
+# ---------------------------------------------------------------------
+# Expression structure
+# ---------------------------------------------------------------------
+
+classes:
+
+  CohortExpression:
+    tree_root: true
+    description: A complete cohort definition, evaluated against one release.
+    attributes:
+      name:
+        description: Optional display name.
+      release:
+        required: true
+        description: The data release the expression is evaluated against.
+      missing_time:
+        range: MissingTimeEnum
+        ifabsent: string(EXCLUDE)
+      criteria:
+        range: CriteriaNode
+        inlined: true
+        description: >-
+          Boolean tree every participant must satisfy. The only part live
+          counts accept.
+      index_event:
+        range: IndexEvent
+        inlined: true
+        description: Anchors time windows. Present only in temporal expressions.
+      inclusion_rules:
+        range: InclusionRule
+        multivalued: true
+        inlined_as_list: true
+        description: Rules evaluated relative to the index event; all must pass.
+    rules:
+      - description: Inclusion rules require an index event.
+        preconditions:
+          slot_conditions:
+            inclusion_rules:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            index_event:
+              required: true
+
+  CriteriaNode:
+    description: Either one criterion or a group of nodes. Exactly one must be set.
+    attributes:
+      criterion:
+        range: Criterion
+        inlined: true
+      group:
+        range: CriteriaGroup
+        inlined: true
+    exactly_one_of:
+      - slot_conditions:
+          criterion:
+            required: true
+      - slot_conditions:
+          group:
+            required: true
+
+  CriteriaGroup:
+    description: >-
+      Members of `all` must every one hold (and); at least one member of `any`
+      must hold (or); no member of `none` may hold (not recorded). When more than
+      one list is present, all of them apply.
+    attributes:
+      all:
+        range: CriteriaNode
+        multivalued: true
+        inlined_as_list: true
+      any:
+        range: CriteriaNode
+        multivalued: true
+        inlined_as_list: true
+        minimum_cardinality: 2
+      none:
+        range: CriteriaNode
+        multivalued: true
+        inlined_as_list: true
+
+  IndexEvent:
+    description: The record each participant's time windows are measured from.
+    attributes:
+      criterion:
+        range: EventCriterion
+        required: true
+        inlined: true
+      occurrence:
+        range: IndexOccurrenceEnum
+        ifabsent: string(FIRST)
+
+  InclusionRule:
+    description: A named rule evaluated relative to the index event.
+    attributes:
+      name:
+        required: true
+      criteria:
+        range: CriteriaNode
+        required: true
+        inlined: true
+      window:
+        range: Window
+        inlined: true
+      occurrence:
+        range: Occurrence
+        required: true
+        inlined: true
+
+  Window:
+    description: >-
+      Days from the index event's anchor age to the criterion record's anchor
+      age. Negative values are before the index event; an absent bound is open.
+    attributes:
+      start_days_after_index:
+        range: integer
+      end_days_after_index:
+        range: integer
+
+  Occurrence:
+    description: How many qualifying records the rule requires. Exactly one field must be set.
+    attributes:
+      at_least:
+        range: integer
+        minimum_value: 1
+      at_most:
+        range: integer
+        minimum_value: 0
+      exactly:
+        range: integer
+        minimum_value: 0
+    exactly_one_of:
+      - slot_conditions:
+          at_least:
+            required: true
+      - slot_conditions:
+          at_most:
+            required: true
+      - slot_conditions:
+          exactly:
+            required: true
+
+  ValueRange:
+    description: Bounds on a measured value. A value whose BDC-HM operator makes it uncertain (for example LESS_THAN) satisfies a bound only if the bound holds for every value the operator allows.
+    attributes:
+      gte:
+        range: decimal
+      gt:
+        range: decimal
+      lte:
+        range: decimal
+      lt:
+        range: decimal
+      unit:
+        range: UnitOfMeasurementEnum
+        required: true
+        exact_mappings:
+          - bdchm:unit
+
+  AgeRange:
+    description: Bounds on an age in days, as BDC-HM records ages.
+    attributes:
+      gte_days:
+        range: integer
+        minimum_value: 0
+      lt_days:
+        range: integer
+        minimum_value: 0
+
+# ---------------------------------------------------------------------
+# Criteria: one subclass per BDC-HM class. Each constrains that class's
+# own slots, named in exact_mappings.
+# ---------------------------------------------------------------------
+
+  Criterion:
+    abstract: true
+    description: A condition on one BDC-HM class's records for a participant.
+    attributes:
+      criterion_type:
+        designates_type: true
+        required: true
+        description: The criterion subclass, e.g. ConditionCriterion.
+
+  EventCriterion:
+    abstract: true
+    is_a: Criterion
+    description: A criterion on a dated record type, usable as an index event or in a window.
+    attributes:
+      concept:
+        range: uriorcurie
+        required: true
+        description: The term to match, by CURIE.
+      include_descendants:
+        range: boolean
+        ifabsent: true
+      status:
+        multivalued: true
+        description: Statuses that qualify; each subclass narrows this to its BDC-HM status enum.
+      time_anchor:
+        description: The BDC-HM age slot used for windows; each subclass limits the choices.
+
+  ConditionCriterion:
+    is_a: EventCriterion
+    related_mappings:
+      - bdchm:Condition
+    attributes:
+      relationship_to_participant:
+        range: FamilyRelationshipEnum
+        ifabsent: string(OMOP:45884467)
+        exact_mappings:
+          - bdchm:relationship_to_participant
+        description: Defaults to Self (OMOP:45884467), so relatives' conditions never count by accident.
+    slot_usage:
+      status:
+        range: HistoricalStatusValuesEnum
+        exact_mappings:
+          - bdchm:condition_status
+        description: Statuses that qualify. HISTORICAL must be listed explicitly to count.
+      concept:
+        exact_mappings:
+          - bdchm:condition_concept
+      time_anchor:
+        range: ConditionTimeAnchorEnum
+        ifabsent: string(age_at_condition_start)
+
+  ProcedureCriterion:
+    is_a: EventCriterion
+    related_mappings:
+      - bdchm:Procedure
+    slot_usage:
+      status:
+        range: StatusEnum
+        exact_mappings:
+          - bdchm:procedure_status
+      concept:
+        exact_mappings:
+          - bdchm:procedure_concept
+      time_anchor:
+        range: ProcedureTimeAnchorEnum
+        ifabsent: string(age_at_procedure)
+
+  DrugExposureCriterion:
+    is_a: EventCriterion
+    related_mappings:
+      - bdchm:DrugExposure
+    slot_usage:
+      status:
+        range: HistoricalStatusValuesEnum
+        exact_mappings:
+          - bdchm:exposure_status
+      concept:
+        exact_mappings:
+          - bdchm:drug_concept
+      time_anchor:
+        range: ExposureTimeAnchorEnum
+        ifabsent: string(age_at_exposure_start)
+
+  MeasurementObservationCriterion:
+    is_a: EventCriterion
+    related_mappings:
+      - bdchm:MeasurementObservation
+    attributes:
+      value:
+        range: ValueRange
+        inlined: true
+        exact_mappings:
+          - bdchm:value_quantity
+    slot_usage:
+      status:
+        value_presence: ABSENT
+        description: MeasurementObservation records carry no status.
+      concept:
+        exact_mappings:
+          - bdchm:observation_type
+      time_anchor:
+        range: ObservationTimeAnchorEnum
+        ifabsent: string(age_at_observation)
+
+  ParticipantCriterion:
+    is_a: Criterion
+    description: Constraints on the participant record itself. Not usable as an index event.
+    related_mappings:
+      - bdchm:Participant
+    attributes:
+      age_at_index:
+        range: AgeRange
+        inlined: true
+        exact_mappings:
+          - bdchm:age_at_index
+
+  DemographyCriterion:
+    is_a: Criterion
+    description: Constraints on the participant's Demography record. Not usable as an index event.
+    related_mappings:
+      - bdchm:Demography
+    attributes:
+      sex:
+        range: SexEnum
+        multivalued: true
+        exact_mappings:
+          - bdchm:sex
+        description: Any listed value qualifies.
+      race:
+        range: RaceEnum
+        multivalued: true
+        exact_mappings:
+          - bdchm:race
+        description: Qualifies if any of the participant's recorded races is listed (BDC-HM race is multivalued).
+      ethnicity:
+        range: EthnicityEnum
+        multivalued: true
+        exact_mappings:
+          - bdchm:ethnicity
+
+# ---------------------------------------------------------------------
+# Enums
+# ---------------------------------------------------------------------
+
+enums:
+  HistoricalStatusValuesEnum:
+    description: >-
+      Materialized copy of BDC-HM's HistoricalStatusEnum, which BDC-HM builds
+      from StatusEnum plus HISTORICAL. LinkML's JSON Schema output does not
+      expand inherited or included values, so validation needs them listed.
+      Keep in step with BDC-HM.
+    see_also:
+      - bdchm:HistoricalStatusEnum
+    permissible_values:
+      PRESENT: {}
+      ABSENT: {}
+      UNKNOWN: {}
+      HISTORICAL: {}
+  MissingTimeEnum:
+    permissible_values:
+      EXCLUDE:
+        description: Records without the anchor age cannot satisfy a window and are reported as excluded.
+
+  IndexOccurrenceEnum:
+    permissible_values:
+      FIRST:
+        description: Each participant's earliest qualifying record.
+      LAST:
+        description: Each participant's latest qualifying record.
+
+  ConditionTimeAnchorEnum:
+    permissible_values:
+      age_at_condition_start:
+        meaning: bdchm:age_at_condition_start
+      age_at_condition_end:
+        meaning: bdchm:age_at_condition_end
+      age_at_condition_report:
+        meaning: bdchm:age_at_condition_report
+
+  ProcedureTimeAnchorEnum:
+    permissible_values:
+      age_at_procedure:
+        meaning: bdchm:age_at_procedure
+
+  ExposureTimeAnchorEnum:
+    permissible_values:
+      age_at_exposure_start:
+        meaning: bdchm:age_at_exposure_start
+      age_at_exposure_end:
+        meaning: bdchm:age_at_exposure_end
+
+  ObservationTimeAnchorEnum:
+    permissible_values:
+      age_at_observation:
+        meaning: bdchm:age_at_observation

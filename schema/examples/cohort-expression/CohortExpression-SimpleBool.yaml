@@ -1,0 +1,18 @@
+# (type 1 or type 2 diabetes) and (hypertension or obesity), with no kidney disease recorded.
+# MONDO identifiers are illustrative; verify against the release's BDC-KG version.
+name: Diabetes with hypertension or obesity, no CKD
+release: "2026.10"
+criteria:
+  group:
+    all:
+      - group:
+          any:
+            - criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0005147", status: [PRESENT]}
+            - criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0005148", status: [PRESENT]}
+      - group:
+          any:
+            - criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0005044", status: [PRESENT]}
+            - criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0011122", status: [PRESENT]}
+      - criterion: {criterion_type: DemographyCriterion, sex: ["OMOP:8532"]}   # female
+    none:
+      - criterion: {criterion_type: ConditionCriterion, concept: "MONDO:0005300", status: [PRESENT, HISTORICAL]}
