@@ -23,7 +23,6 @@ const SLOTS: { slot: DemographicSlot; label: string }[] = [
 ];
 
 export interface Props {
-  /** Absent until there is a cohort to describe. */
   summary?: SummaryResponse;
   /** First load only; later updates keep the current chart on screen. */
   isLoading?: boolean;
@@ -68,10 +67,7 @@ export default function Demographics({
           />
         </BarArea>
       ) : (
-        <EmptyState
-          title="Add criteria to view demographics"
-          description="Search for a concept to see the demographic distribution for your cohort."
-        />
+        <EmptyState description="Include a concept to see its demographic breakdown." />
       )}
     </PanelSection>
   );

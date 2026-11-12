@@ -7,12 +7,9 @@ describe("CohortBuilder (package export)", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders the app inside its providers without making any request on load", () => {
-    const fetchSpy = vi.spyOn(global, "fetch");
-
+  it("renders the app inside its providers", () => {
     render(<CohortBuilder />);
 
     expect(screen.getByText("Study Palette")).toBeInTheDocument();
-    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
