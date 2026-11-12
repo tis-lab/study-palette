@@ -6,7 +6,8 @@
 # It merges with that response by id, and their shared counts agree.
 
 release: example-release
-seed: MONDO:0005148
+focus:
+  - MONDO:0005148
 filter:
   - palette:measurement/FAST_GLUC_BLD
   - palette:demography/sex/FEMALE

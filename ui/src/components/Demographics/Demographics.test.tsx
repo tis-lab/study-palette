@@ -7,30 +7,25 @@ import { t2dFemaleSummary, t2dSummary } from "../../mocks/SYNTHETIC.cohortSummar
 // test-setup.ts stubs ECharts to list each bar as "name: value"
 
 describe("Demographics", () => {
-  it("shows an empty state, with no tabs, before there is a cohort", () => {
+  it("prompts for criteria, with no tabs, before there is a cohort", () => {
     render(<Demographics />);
 
-    expect(
-      screen.getByRole("region", { name: "Demographics" }),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Add criteria to view demographics")).toBeInTheDocument();
+    expect(screen.getByText("Include a concept to see its demographic breakdown.")).toBeInTheDocument();
     expect(screen.queryByRole("tab")).toBeNull();
   });
 
-  it("shows skeleton bars, not the empty state, on the first load", () => {
+  it("shows skeleton bars, not the prompt, on the first load", () => {
     render(<Demographics isLoading />);
 
     expect(
       screen.getByRole("progressbar", { name: "Loading demographics" }),
     ).toBeInTheDocument();
-    expect(screen.queryByText("Add criteria to view demographics")).toBeNull();
   });
 
-  it("shows an error, not the empty state or counts, when the request fails", () => {
+  it("shows an error, not the counts, when the request fails", () => {
     render(<Demographics summary={t2dSummary} error={new Error("Network down")} />);
 
     expect(screen.getByRole("alert")).toHaveTextContent("Couldn't load demographics.");
-    expect(screen.queryByText("Add criteria to view demographics")).toBeNull();
     expect(screen.queryByText("940 participants · 2 studies")).toBeNull();
     expect(screen.queryByRole("tab")).toBeNull();
   });

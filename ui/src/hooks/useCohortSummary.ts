@@ -1,40 +1,51 @@
 import { useQuery } from "@tanstack/react-query";
+import { getGraphQLEndpoint } from "../api/config";
+import { graphqlRequest } from "../api/graphql/graphqlRequest";
+import type { SearchItem } from "../api/graphql/queries/resolveTerms";
 import {
-  getSearchItemKey,
-  type SearchItem,
-} from "../api/graphql/queries/resolveTerms";
-import type { SummaryResponse } from "../api/graphql/queries/cohortSummary";
-import { t2dFemaleSummary, t2dSummary } from "../mocks/SYNTHETIC.cohortSummary";
+  COHORT_SUMMARY_QUERY,
+  type CohortSummaryData,
+  type CohortSummaryVariables,
+} from "../api/graphql/queries/cohortSummary";
+import { illustrateSummary } from "../placeholders";
+
+export type CriteriaKind = "include" | "exclude";
+
+/** How included concepts combine: "all" is AND, "any" is OR. */
+export type CriteriaMatch = "all" | "any";
 
 export interface Criteria {
   include: SearchItem[];
   exclude: SearchItem[];
+  match: CriteriaMatch;
 }
 
-// Mock until the summary API lands: one filter (search or criterion) returns
-// the t2d example, more return its female follow-up.
-async function fetchCohortSummary(
-  seed: string,
-  criteria: Criteria,
-): Promise<SummaryResponse> {
-  const filters =
-    (seed ? 1 : 0) + criteria.include.length + criteria.exclude.length;
-  return filters > 1 ? t2dFemaleSummary : t2dSummary;
-}
+const conceptOf = (item: SearchItem) =>
+  item.__typename === "Term" ? item.id : item.name;
 
-export function useCohortSummary(searchText: string, criteria: Criteria) {
-  const seed = searchText.trim();
-  const include = criteria.include.map(getSearchItemKey).sort();
-  const exclude = criteria.exclude.map(getSearchItemKey).sort();
-
-  const enabled = seed.length > 0 || include.length + exclude.length > 0;
+/** Runs only once a concept is included or excluded. */
+export function useCohortSummary(criteria: Criteria) {
+  const include = criteria.include.map(conceptOf).sort();
+  const exclude = criteria.exclude.map(conceptOf).sort();
+  const enabled = include.length + exclude.length > 0;
 
   return useQuery({
-    queryKey: ["cohortSummary", seed, include, exclude],
-    queryFn: () => fetchCohortSummary(seed, criteria),
+    // The summary API has no AND/OR argument yet (it treats includes as OR), so
+    // `match` is keyed but not sent; add it to the variables once the API takes it
+    queryKey: ["cohortSummary", include, exclude, criteria.match],
+    queryFn: async ({ signal }) => {
+      const data = await graphqlRequest<
+        CohortSummaryData,
+        CohortSummaryVariables
+      >({
+        endpoint: getGraphQLEndpoint(),
+        query: COHORT_SUMMARY_QUERY,
+        variables: { sourceId: "t2d", include, exclude },
+        signal,
+      });
+      if (!data?.summary) throw new Error("Missing summary response");
+      return illustrateSummary(data.summary, criteria);
+    },
     enabled,
-    // Keep the previous cohort on screen while the next loads; with no filters
-    // left there is no cohort, so nothing to keep.
-    placeholderData: (previous) => (enabled ? previous : undefined),
   });
 }

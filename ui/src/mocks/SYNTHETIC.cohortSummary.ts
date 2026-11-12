@@ -1,28 +1,11 @@
 // SYNTHETIC: illustrative counts for two fictional studies, not derived from
 // participant data. Trimmed copies of schema/examples/SYNTHETIC.SummaryResponse-*.yaml,
-// keeping only what the cohort snapshot uses, until the summary API is available.
+// used only as fixed responses in tests; the app reads the summary API.
 import type { SummaryResponse } from "../api/graphql/queries/cohortSummary";
 
-import { cohortParticipants } from "../utils/summary";
 
 /** Trimmed from schema/examples/SYNTHETIC.SummaryResponse-t2d.yaml. */
 export const t2dSummary: SummaryResponse = {
-  release: "example-release",
-  seed: "MONDO:0005148",
-  filter: [
-    "palette:measurement/FAST_GLUC_BLD"
-  ],
-  min_count: 10,
-  research_studies: [
-    {
-      id: "palette:study_one",
-      name: "Example Study One"
-    },
-    {
-      id: "palette:study_two",
-      name: "Example Study Two"
-    }
-  ],
   studies: [
     {
       research_study: "palette:study_one",
@@ -35,13 +18,11 @@ export const t2dSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/sex/FEMALE",
-              summarized_slot: "sex",
               sex: "FEMALE",
               participant_count: 230
             },
             {
               id: "palette:demography/sex/MALE",
-              summarized_slot: "sex",
               sex: "MALE",
               participant_count: 245
             }
@@ -54,7 +35,6 @@ export const t2dSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/race/WHITE",
-              summarized_slot: "race",
               race: [
                 "WHITE"
               ],
@@ -62,7 +42,6 @@ export const t2dSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/BLACK_OR_AFRICAN_AMERICAN",
-              summarized_slot: "race",
               race: [
                 "BLACK_OR_AFRICAN_AMERICAN"
               ],
@@ -70,7 +49,6 @@ export const t2dSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/ASIAN",
-              summarized_slot: "race",
               race: [
                 "ASIAN"
               ],
@@ -78,7 +56,6 @@ export const t2dSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE",
-              summarized_slot: "race",
               race: [
                 "AMERICAN_INDIAN_OR_ALASKA_NATIVE"
               ],
@@ -93,13 +70,11 @@ export const t2dSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/ethnicity/HISPANIC_OR_LATINO",
-              summarized_slot: "ethnicity",
               ethnicity: "HISPANIC_OR_LATINO",
               participant_count: 70
             },
             {
               id: "palette:demography/ethnicity/NOT_HISPANIC_OR_LATINO",
-              summarized_slot: "ethnicity",
               ethnicity: "NOT_HISPANIC_OR_LATINO",
               participant_count: 410
             }
@@ -118,13 +93,11 @@ export const t2dSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/sex/FEMALE",
-              summarized_slot: "sex",
               sex: "FEMALE",
               participant_count: 250
             },
             {
               id: "palette:demography/sex/MALE",
-              summarized_slot: "sex",
               sex: "MALE",
               participant_count: 205
             }
@@ -137,7 +110,6 @@ export const t2dSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/race/WHITE",
-              summarized_slot: "race",
               race: [
                 "WHITE"
               ],
@@ -145,7 +117,6 @@ export const t2dSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/BLACK_OR_AFRICAN_AMERICAN",
-              summarized_slot: "race",
               race: [
                 "BLACK_OR_AFRICAN_AMERICAN"
               ],
@@ -153,7 +124,6 @@ export const t2dSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN",
-              summarized_slot: "race",
               race: [
                 "MIDDLE_EASTERN_OR_NORTH_AFRICAN"
               ],
@@ -161,7 +131,6 @@ export const t2dSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER",
-              summarized_slot: "race",
               race: [
                 "NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER"
               ],
@@ -176,13 +145,11 @@ export const t2dSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/ethnicity/HISPANIC_OR_LATINO",
-              summarized_slot: "ethnicity",
               ethnicity: "HISPANIC_OR_LATINO",
               participant_count: 70
             },
             {
               id: "palette:demography/ethnicity/NOT_HISPANIC_OR_LATINO",
-              summarized_slot: "ethnicity",
               ethnicity: "NOT_HISPANIC_OR_LATINO",
               participant_count: 390
             }
@@ -195,23 +162,6 @@ export const t2dSummary: SummaryResponse = {
 
 /** Trimmed from schema/examples/SYNTHETIC.SummaryResponse-t2d-female.yaml. */
 export const t2dFemaleSummary: SummaryResponse = {
-  release: "example-release",
-  seed: "MONDO:0005148",
-  filter: [
-    "palette:measurement/FAST_GLUC_BLD",
-    "palette:demography/sex/FEMALE"
-  ],
-  min_count: 10,
-  research_studies: [
-    {
-      id: "palette:study_one",
-      name: "Example Study One"
-    },
-    {
-      id: "palette:study_two",
-      name: "Example Study Two"
-    }
-  ],
   studies: [
     {
       research_study: "palette:study_one",
@@ -224,7 +174,6 @@ export const t2dFemaleSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/sex/FEMALE",
-              summarized_slot: "sex",
               sex: "FEMALE",
               participant_count: 230
             }
@@ -237,7 +186,6 @@ export const t2dFemaleSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/race/WHITE",
-              summarized_slot: "race",
               race: [
                 "WHITE"
               ],
@@ -245,7 +193,6 @@ export const t2dFemaleSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/BLACK_OR_AFRICAN_AMERICAN",
-              summarized_slot: "race",
               race: [
                 "BLACK_OR_AFRICAN_AMERICAN"
               ],
@@ -253,7 +200,6 @@ export const t2dFemaleSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/ASIAN",
-              summarized_slot: "race",
               race: [
                 "ASIAN"
               ],
@@ -261,7 +207,6 @@ export const t2dFemaleSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE",
-              summarized_slot: "race",
               race: [
                 "AMERICAN_INDIAN_OR_ALASKA_NATIVE"
               ],
@@ -282,7 +227,6 @@ export const t2dFemaleSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/sex/FEMALE",
-              summarized_slot: "sex",
               sex: "FEMALE",
               participant_count: 250
             }
@@ -295,7 +239,6 @@ export const t2dFemaleSummary: SummaryResponse = {
           values: [
             {
               id: "palette:demography/race/WHITE",
-              summarized_slot: "race",
               race: [
                 "WHITE"
               ],
@@ -303,7 +246,6 @@ export const t2dFemaleSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/BLACK_OR_AFRICAN_AMERICAN",
-              summarized_slot: "race",
               race: [
                 "BLACK_OR_AFRICAN_AMERICAN"
               ],
@@ -311,7 +253,6 @@ export const t2dFemaleSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN",
-              summarized_slot: "race",
               race: [
                 "MIDDLE_EASTERN_OR_NORTH_AFRICAN"
               ],
@@ -319,7 +260,6 @@ export const t2dFemaleSummary: SummaryResponse = {
             },
             {
               id: "palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER",
-              summarized_slot: "race",
               race: [
                 "NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER"
               ],
@@ -331,8 +271,3 @@ export const t2dFemaleSummary: SummaryResponse = {
     }
   ]
 };
-
-// Placeholder until the summary response includes available participants: the
-// broadest example's count times a random 10–20, picked once per page load.
-export const AVAILABLE_PARTICIPANTS_PLACEHOLDER =
-  cohortParticipants(t2dSummary) * (10 + Math.floor(Math.random() * 11));
