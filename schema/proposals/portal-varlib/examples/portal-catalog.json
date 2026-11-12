@@ -1,0 +1,108 @@
+{
+  "schema_version": 3,
+  "release": "SYNTHETIC-REVIEW-ONLY",
+  "sources": [
+    {
+      "source_id": "example:synthetic-source",
+      "repository": "example/synthetic-metadata",
+      "revision": "0000000000000000000000000000000000000000",
+      "path": "illustration-only.yaml"
+    }
+  ],
+  "concepts": [
+    {
+      "curie": "HP:0000822",
+      "label": "Hypertension"
+    }
+  ],
+  "studies": [
+    {
+      "id": "example:study-a",
+      "study_name": "Synthetic Study A"
+    },
+    {
+      "id": "example:study-b",
+      "study_name": "Synthetic Study B"
+    }
+  ],
+  "integrated_variables": [
+    {
+      "id": "example:integrated-htn-clinical",
+      "variable_label": "Synthetic clinical hypertension status",
+      "variable_description": "Illustrates a reviewed definition, not an actual DMC variable.",
+      "concept_type": "HP:0000822",
+      "bdchm_type": "condition",
+      "integrates": [
+        "example:compound-htn-a",
+        "example:compound-htn-b"
+      ],
+      "metadata_sources": [
+        "example:synthetic-source"
+      ]
+    },
+    {
+      "id": "example:integrated-htn-report",
+      "variable_label": "Synthetic reported hypertension status",
+      "concept_type": "HP:0000822",
+      "bdchm_type": "condition",
+      "integrates": [
+        "example:compound-htn-report-a"
+      ],
+      "metadata_sources": [
+        "example:synthetic-source"
+      ]
+    }
+  ],
+  "compound_variables": [
+    {
+      "id": "example:compound-htn-a",
+      "variable_label": "Synthetic A clinical status",
+      "associated_study": "example:study-a",
+      "concept_type": "HP:0000822",
+      "bdchm_type": "condition",
+      "metadata_sources": [
+        "example:synthetic-source"
+      ],
+      "row_metadata": [
+        {
+          "id": "example:source-htn-a",
+          "microschema_slot": [
+            "condition_status"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "example:compound-htn-b",
+      "variable_label": "Synthetic B clinical status",
+      "associated_study": "example:study-b",
+      "concept_type": "HP:0000822",
+      "bdchm_type": "condition",
+      "metadata_sources": [
+        "example:synthetic-source"
+      ]
+    },
+    {
+      "id": "example:compound-htn-report-a",
+      "variable_label": "Synthetic A reported status",
+      "associated_study": "example:study-a",
+      "concept_type": "HP:0000822",
+      "bdchm_type": "condition",
+      "metadata_sources": [
+        "example:synthetic-source"
+      ]
+    }
+  ],
+  "single_categorical_variables": [
+    {
+      "id": "example:source-htn-a",
+      "variable_name": "synthetic_htn_dx",
+      "variable_label": "Synthetic study A diagnosis field",
+      "associated_study": "example:study-a",
+      "source_id": "SYNTHETIC-NOT-A-DBGaP-ACCESSION",
+      "metadata_sources": [
+        "example:synthetic-source"
+      ]
+    }
+  ]
+}
