@@ -74,6 +74,7 @@ imports:
   - linkml:types
   - ../synthetic/bdchm
   - terms
+  - summary-request
 
 classes:
   Summary:
@@ -202,8 +203,7 @@ classes:
     description: Counts of the participants matching one filter, study by study, describing the focus concepts.
     slots:
       - release
-      - focus
-      - filter
+      - request
       - min_count
       - terms
       - relations
@@ -267,21 +267,14 @@ slots:
   release:
     description: The index release counted. Responses merge only within a release.
     required: true
-  focus:
+  request:
     description: >-
-      The concepts to describe. Each is summarized in every study that records
-      it, along with the terms related to it. The filter, not the focus, decides
-      who is counted. The overview has none.
-    range: Term
-    multivalued: true
-    inlined: false
-  filter:
-    description: >-
-      Ids of the summaries every participant counted must match. Each study's
-      participant_count is how many of its participants pass.
-    range: Summary
-    multivalued: true
-    inlined: false
+      The effective request used to compute these counts, echoed with the full
+      AND/OR tree. Transport null fields are omitted. No filter means all
+      participants. Focus never changes the selected population.
+    range: SummaryRequest
+    required: true
+    inlined: true
   min_count:
     description: The smallest count reported. Smaller counts are left out.
     range: integer
