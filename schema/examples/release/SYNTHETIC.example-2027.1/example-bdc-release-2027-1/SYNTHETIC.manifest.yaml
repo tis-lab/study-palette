@@ -1,0 +1,76 @@
+# SYNTHETIC: illustrative content, not derived from participant data.
+#
+# A release manifest for two fictional studies. Each directory beside this
+# one stands in for the bucket its name gives; the model, VarLib and KG files
+# are placeholders. The harmonized records are the fictional ones in
+# synthetic/sample.
+
+id: example-2027.1
+created_on: '2027-01-15T00:00:00Z'
+data_model:
+  version: v1.3.0
+  download_url: s3://example-bdc-release-2027-1/
+  files:
+  - path: bdchm/SYNTHETIC.bdchm.yaml
+    format: YAML
+    bytes: 119
+    sha256: d171dc9b35be74957b96127c321608b8c0a656257d81571a5846066958450448
+variable_library:
+  version: 1.0.0
+  download_url: s3://example-bdc-release-2027-1/
+  files:
+  - path: varlib/SYNTHETIC.varlib.yaml
+    format: YAML
+    bytes: 116
+    sha256: 911567dfd506ba40e680bc3a6f72d2791259131a29140e22fa124fea750ee471
+knowledge_graph:
+  version: 1.0.0
+  download_url: s3://example-bdc-release-2027-1/
+  files:
+  - path: kg/SYNTHETIC.kg.yaml
+    format: YAML
+    bytes: 119
+    sha256: 879d9d8047d31fa9b12facdcd252842900f8c035392bd728410c444f63139d86
+studies:
+- accession: phs999001
+  version: v2
+  download_url: s3://example-phs999001-v2/
+  harmonized_data:
+  - path: harmonized/SYNTHETIC.Participant.jsonl
+    format: JSONL
+    bytes: 179
+    sha256: e80f44faf2d3fbd57a9cffccb76c9171f26a6405c1b366d597d767b72b19075c
+    conforms_to_class: bdchm:Participant
+    record_count: 1
+  - path: harmonized/SYNTHETIC.Condition.jsonl
+    format: JSONL
+    bytes: 3499
+    sha256: fb97beed2d2f65e6687b75e1f2507c3974e5a0dc3efe96b491f9b2709d8a6218
+    conforms_to_class: bdchm:Condition
+    record_count: 8
+  provenance:
+  - path: provenance/SYNTHETIC.provenance.yaml
+    format: YAML
+    bytes: 115
+    sha256: 03575818b658370bd0ba65697cc983d12e881f27551a8cd0ec3151e16cb659c3
+- accession: phs999002
+  version: v1
+  download_url: s3://example-phs999002-v1/
+  harmonized_data:
+  - path: harmonized/SYNTHETIC.Participant.jsonl
+    format: JSONL
+    bytes: 179
+    sha256: bd4bd9776a9b59a88e02a5d33df2d240430df814f11e9782f2b005ddd853826b
+    conforms_to_class: bdchm:Participant
+    record_count: 1
+  - path: harmonized/SYNTHETIC.Condition.jsonl
+    format: JSONL
+    bytes: 3503
+    sha256: f16f2a2597973e0801cc3007a9c3f67e429f8754f798968ab1c68bc05956bdf1
+    conforms_to_class: bdchm:Condition
+    record_count: 8
+  provenance:
+  - path: provenance/SYNTHETIC.provenance.yaml
+    format: YAML
+    bytes: 115
+    sha256: d512b8ba85d4af55e9fd3f3b4f4de57a0cdcb598ac98487379a09b9d8adfc226
