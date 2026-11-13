@@ -190,6 +190,7 @@ summary:
   measurements:
   - id: palette:measurement/FAST_GLUC_BLD
     observation_type: FAST_GLUC_BLD
+    measurement_selection: BASELINE
     participant_count: 480
     studies:
     - research_study: palette:study_one
@@ -199,6 +200,7 @@ summary:
     values:
     - id: palette:measurement/FAST_GLUC_BLD/-70mg_dL
       observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
       bin_high: 70
       bin_unit: mg/dL
       participant_count: 21
@@ -209,6 +211,7 @@ summary:
         participant_count: 10
     - id: palette:measurement/FAST_GLUC_BLD/70-100mg_dL
       observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
       bin_low: 70
       bin_high: 100
       bin_unit: mg/dL
@@ -220,6 +223,7 @@ summary:
         participant_count: 120
     - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
       observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
       bin_low: 100
       bin_high: 126
       bin_unit: mg/dL
@@ -231,6 +235,7 @@ summary:
         participant_count: 70
     - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
       observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
       bin_low: 126
       bin_unit: mg/dL
       participant_count: 100
