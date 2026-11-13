@@ -1,4 +1,5 @@
 # Generated from a short script; edit the script, not this file, when facet classes change.
+# FIX: the script is not in the repository; commit it beside this file and regenerate rather than hand-edit.
 id: https://w3id.org/tis-lab/study-palette/summary-profiles
 name: study_palette_summary_profiles
 title: Study Palette response profiles
@@ -14,7 +15,7 @@ default_prefix: palette
 default_range: string
 imports:
 - linkml:types
-- summary-class-first.amended
+- summary-class-first   # FIX: summary-class-first.amended does not exist
 classes:
   PublicStudyEntry:
     is_a: StudySummary
@@ -25,63 +26,73 @@ classes:
         required: false
         value_presence: ABSENT
       count_status:
-        equals_string: REPORTED
-      count_mode:
-        equals_string: ESTIMATED
+        equals_string: LISTED   # FIX: REPORTED requires a count, so no entry could validate
   PublicParticipantSummary:
     is_a: ParticipantSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: PublicParticipantSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
-        value_presence: ABSENT
+        maximum_cardinality: 0  # FIX: a second ABSENT slot on one class is only enforced jointly by gen-json-schema
   PublicDemographySummary:
     is_a: DemographySummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: PublicDemographySummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
-        value_presence: ABSENT
+        maximum_cardinality: 0  # FIX: a second ABSENT slot on one class is only enforced jointly by gen-json-schema
   PublicConditionSummary:
     is_a: ConditionSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: PublicConditionSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
-        value_presence: ABSENT
+        maximum_cardinality: 0  # FIX: a second ABSENT slot on one class is only enforced jointly by gen-json-schema
   PublicProcedureSummary:
     is_a: ProcedureSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: PublicProcedureSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
-        value_presence: ABSENT
+        maximum_cardinality: 0  # FIX: a second ABSENT slot on one class is only enforced jointly by gen-json-schema
   PublicDrugExposureSummary:
     is_a: DrugExposureSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: PublicDrugExposureSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
-        value_presence: ABSENT
+        maximum_cardinality: 0  # FIX: a second ABSENT slot on one class is only enforced jointly by gen-json-schema
   PublicMeasurementObservationSummary:
     is_a: MeasurementObservationSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: PublicMeasurementObservationSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
-        value_presence: ABSENT
+        maximum_cardinality: 0  # FIX: a second ABSENT slot on one class is only enforced jointly by gen-json-schema
   PublicSummaryFacets:
     is_a: SummaryFacets
     slot_usage:
@@ -108,75 +119,87 @@ classes:
       records:
         value_presence: ABSENT
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
   EstimatedStudyEntry:
     is_a: StudySummary
     slot_usage:
       participant_count:
         required: false
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
   EstimatedContribution:
     is_a: StudyContribution
     slot_usage:
       participant_count:
         required: false
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       count_status:
         required: true
   SignedInParticipantSummary:
     is_a: ParticipantSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: SignedInParticipantSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
         range: EstimatedContribution
   SignedInDemographySummary:
     is_a: DemographySummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: SignedInDemographySummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
         range: EstimatedContribution
   SignedInConditionSummary:
     is_a: ConditionSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: SignedInConditionSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
         range: EstimatedContribution
   SignedInProcedureSummary:
     is_a: ProcedureSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: SignedInProcedureSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
         range: EstimatedContribution
   SignedInDrugExposureSummary:
     is_a: DrugExposureSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: SignedInDrugExposureSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
         range: EstimatedContribution
   SignedInMeasurementObservationSummary:
     is_a: MeasurementObservationSummary
     slot_usage:
+      record_count:
+        value_presence: ABSENT  # FIX: exact and unsuppressed otherwise
       values:
         range: SignedInMeasurementObservationSummary
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
       studies:
         range: EstimatedContribution
   SignedInSummaryFacets:
@@ -205,7 +228,7 @@ classes:
       records:
         value_presence: ABSENT
       count_mode:
-        equals_string: ESTIMATED
+        equals_string: OBFUSCATED
   ApprovedSummaryResponse:
     is_a: SummaryResponse
     description: Approved researchers; exact counts within their exact scope, estimates elsewhere.

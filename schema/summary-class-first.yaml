@@ -31,7 +31,7 @@ classes:
     - record_count
     - values
     - studies
-    - count_mode          # AMENDMENT: whether participant_count is estimated or exact
+    - count_mode          # AMENDMENT: whether participant_count is obfuscated or exact
   Binned:
     mixin: true
     description: A bin [bin_low, bin_high); either end may be left open.
@@ -44,7 +44,9 @@ classes:
     mixins:
     - Summary
     - Binned
-    description: Participants by age_at_index, binned.
+    description: >-
+      Participants by age, binned. Use summarized_slot age_at_baseline: no harmonized study populates
+      Participant.age_at_index, so age_at_index bins would be empty (FIX).
     slots:
     - summarized_slot
     slot_usage:
@@ -115,11 +117,15 @@ classes:
     - Binned
     description: Participants with a measurement recorded, by bin of value_quantity. range_low and range_high
       keep their BDCHM meaning (a lab's reference range) and are not bins.
+    slots:
+    - measurement_selection   # FIX: which measurement places a participant in a bin
     slot_usage:
       associated_participant:
         required: false
       values:
         range: MeasurementObservationSummary
+      measurement_selection:
+        required: true
   # REVIEW: keep ID/name/participant_count at the response root; remove old facet arrays.
   StudySummary:
     description: One study in the root response directory. participant_count is the matching cohort count in
@@ -226,6 +232,10 @@ slots:
     description: Whether this entry's count is reported, below min_count (possibly none), or withheld to
       prevent a complementary disclosure. Absent means the response carries no count for this entry.
     range: CountStatusEnum
+  measurement_selection:          # FIX
+    description: Which of a participant's measurements places them in a bin. ANY lets one participant fall in
+      several bins, so bins then do not sum to the facet's participant_count.
+    range: MeasurementSelectionEnum
   consent_group:
     description: dbGaP consent group the contribution belongs to, e.g. phs001234.c1.
     pattern: '^phs\d{6}\.c\d+$'
@@ -238,7 +248,11 @@ slots:
     range: string
   # REVIEW: optional global counts prevent fabricating totals when identity is unavailable.
   participant_count:
-    description: 'Matching participants at the containing object''s scope. Root: overall selected cohort union;
+    description: 'Matching participants at the containing object''s scope. Root: overall selected cohort union,
+      computed exactly over every study in scope, including studies below min_count, then obfuscated once when
+      count_mode is OBFUSCATED; never a sum of obfuscated or suppressed contributions (FIX). With Participant as
+      the release identity rule the exact union equals the sum of exact per-study counts. Root count_mode is EXACT
+      only when every contributing consent group is in the caller''s exact scope (FIX);
       class/value: participants with that concept/value recorded; study directory/contribution: matching participants
       within that study. Required on study entries and contributions whose count_status is REPORTED (AMENDMENT). Global root/facet counts may be omitted
       when unavailable or suppressed; omission is not zero. Zero at the root may explicitly represent an empty
@@ -248,7 +262,10 @@ slots:
     required: false
     minimum_value: 0
   record_count:
-    description: How many records match.
+    description: >-
+      How many records match. Carries no count_mode or count_status of its own, so it is exact and unsuppressed
+      wherever it appears; a record_count of 1 bounds the participant count. Profiles below the approved tier must
+      mark it ABSENT (FIX).
     range: integer
     minimum_value: 0
   values:
@@ -350,22 +367,38 @@ slots:
 enums:
   CountModeEnum:            # AMENDMENT
     permissible_values:
-      ESTIMATED:
-        description: Consistent noise applied; an estimate.
+      OBFUSCATED:               # FIX: was ESTIMATED; the value is noise on an exact count, not a model estimate
+        description: Exact count with consistent noise applied by the disclosure layer. Noise is seeded by release,
+          consent group and the matching participant set, so the same participants always receive the same noise. # The exact obfuscation method can be modified, this is a suggestion to allow for initial consideration of the structure
       EXACT:
-        description: No noise or suppression.
+        description: No noise. Every contributing consent group is in the caller's exact scope.
   CountStatusEnum:          # AMENDMENT
     permissible_values:
       REPORTED:
         description: participant_count is present.
+      LISTED:                   # FIX: public study entries are named without a count
+        description: The study is named because its obfuscated count is at or above min_count; no count is given.
       BELOW_MIN_COUNT:
-        description: Fewer than min_count matching participants, possibly none.
+        description: Fewer than min_count matching participants after obfuscation, possibly none. Zero and
+          small counts are indistinguishable.
       WITHHELD:
-        description: Not reported, so that other reported counts cannot reveal a suppressed one.
+        description: Not reported, so that other reported counts cannot reveal a suppressed one. Applies when
+          exactly one contribution under a reported parent is below min_count, since the parent minus the others
+          would reveal it (FIX).
   SummarizedSlotEnum:
     permissible_values:
       sex: null
       race: null
       ethnicity: null
       age_at_index: null
+      age_at_baseline:          # FIX: ParticipantAttribute.age_at_baseline_days in the counting model
+        description: Age at the study's designated baseline visit.
+  MeasurementSelectionEnum:   # FIX
+    permissible_values:
+      BASELINE:
+        description: The participant's measurement at the study's baseline visit.
+      LATEST:
+        description: The participant's measurement with the greatest age_at_observation.
+      ANY:
+        description: Every measurement; a participant can appear in several bins.
 version: 0.2.1-class-first

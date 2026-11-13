@@ -156,12 +156,16 @@ def test_optional_union_counts_do_not_require_fabrication(validator):
     assert validator.is_valid(data)
 
 
-def test_study_count_remains_required(validator):
+def test_reported_study_count_remains_required(validator):
+    # The amendment made participant_count optional; it stays required when count_status is REPORTED.
     data = load("overview")
+    data["studies"][0]["count_status"] = "REPORTED"
     del data["studies"][0]["participant_count"]
     assert not validator.is_valid(data)
     data = load("overview")
-    del data["summary"]["conditions"][0]["studies"][0]["participant_count"]
+    contribution = data["summary"]["conditions"][0]["studies"][0]
+    contribution["count_status"] = "REPORTED"
+    del contribution["participant_count"]
     assert not validator.is_valid(data)
 
 
