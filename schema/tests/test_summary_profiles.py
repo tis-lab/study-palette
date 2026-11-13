@@ -64,3 +64,4 @@ def test_public_rejects_each_forbidden_slot_alone(public):
     data = copy.deepcopy(PUBLIC)
     data["summary"]["conditions"][0]["record_count"] = 5
     assert not public.is_valid(data)
+    
