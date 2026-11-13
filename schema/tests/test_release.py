@@ -44,8 +44,9 @@ def packages(manifest):
 
 
 def located(package, file):
-    """Where a listed file is in the payload."""
-    return PAYLOAD / urlparse(package["download_url"]).netloc / file["path"]
+    """Where a listed file is in the payload: its bucket, then any prefix, then its path."""
+    url = urlparse(package["download_url"])
+    return PAYLOAD / url.netloc / url.path.lstrip("/") / file["path"]
 
 
 def test_the_manifest_validates(manifest, errors):
