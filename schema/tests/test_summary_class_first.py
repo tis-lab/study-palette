@@ -239,4 +239,3 @@ def test_proposal_has_distinct_schema_identity():
     proposed = yaml.safe_load((SCHEMA_DIR / "summary-class-first.yaml").read_text())
     assert proposed["id"] != canonical["id"]
     assert proposed["name"] != canonical["name"]
-    
