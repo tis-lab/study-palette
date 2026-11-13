@@ -1,0 +1,246 @@
+# SYNTHETIC: invented counts; these two fictional cohorts are disjoint by construction.
+# Global values here are illustrative, NOT evidence that real study totals can be added.
+# Some small study cells are omitted; missing contributions/values are not zero.
+release: example-release
+filter:
+- palette:measurement/FAST_GLUC_BLD
+- palette:demography/sex/FEMALE
+min_count: 10
+terms:
+  MONDO:0005148:
+    label: type 2 diabetes mellitus
+    vocabulary: MONDO
+    parents:
+    - MONDO:0005015
+  MONDO:0005015:
+    label: diabetes mellitus
+    vocabulary: MONDO
+  MONDO:0005267:
+    label: heart disorder
+    vocabulary: MONDO
+  MONDO:0024643:
+    label: myocardial disorder
+    vocabulary: MONDO
+    parents:
+    - MONDO:0005267
+  MONDO:0005068:
+    label: myocardial infarction
+    vocabulary: MONDO
+    parents:
+    - MONDO:0024643
+studies:
+- id: palette:study_one
+  name: Example Study One
+  participant_count: 230
+- id: palette:study_two
+  name: Example Study Two
+  participant_count: 250
+participant_count: 480
+summary:
+  demographics:
+  - id: palette:demography/sex
+    summarized_slot: sex
+    participant_count: 480
+    studies:
+    - research_study: palette:study_one
+      participant_count: 230
+    - research_study: palette:study_two
+      participant_count: 250
+    values:
+    - id: palette:demography/sex/FEMALE
+      summarized_slot: sex
+      sex: FEMALE
+      participant_count: 480
+      studies:
+      - research_study: palette:study_one
+        participant_count: 230
+      - research_study: palette:study_two
+        participant_count: 250
+  - id: palette:demography/race
+    summarized_slot: race
+    participant_count: 473
+    studies:
+    - research_study: palette:study_one
+      participant_count: 227
+    - research_study: palette:study_two
+      participant_count: 246
+    values:
+    - id: palette:demography/race/WHITE
+      summarized_slot: race
+      race:
+      - WHITE
+      participant_count: 265
+      studies:
+      - research_study: palette:study_one
+        participant_count: 115
+      - research_study: palette:study_two
+        participant_count: 150
+    - id: palette:demography/race/BLACK_OR_AFRICAN_AMERICAN
+      summarized_slot: race
+      race:
+      - BLACK_OR_AFRICAN_AMERICAN
+      participant_count: 120
+      studies:
+      - research_study: palette:study_one
+        participant_count: 70
+      - research_study: palette:study_two
+        participant_count: 50
+    - id: palette:demography/race/ASIAN
+      summarized_slot: race
+      race:
+      - ASIAN
+      participant_count: 22
+      studies:
+      - research_study: palette:study_one
+        participant_count: 22
+    - id: palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE
+      summarized_slot: race
+      race:
+      - AMERICAN_INDIAN_OR_ALASKA_NATIVE
+      participant_count: 20
+      studies:
+      - research_study: palette:study_one
+        participant_count: 20
+    - id: palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN
+      summarized_slot: race
+      race:
+      - MIDDLE_EASTERN_OR_NORTH_AFRICAN
+      participant_count: 22
+      studies:
+      - research_study: palette:study_two
+        participant_count: 22
+    - id: palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
+      summarized_slot: race
+      race:
+      - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
+      participant_count: 24
+      studies:
+      - research_study: palette:study_two
+        participant_count: 24
+  conditions:
+  - id: palette:condition/MONDO_0005148
+    condition_concept: MONDO:0005148
+    participant_count: 475
+    studies:
+    - research_study: palette:study_one
+      participant_count: 225
+    - research_study: palette:study_two
+      participant_count: 250
+    values:
+    - id: palette:condition/MONDO_0005148/PRESENT
+      condition_concept: MONDO:0005148
+      condition_status: PRESENT
+      participant_count: 78
+      studies:
+      - research_study: palette:study_one
+        participant_count: 40
+      - research_study: palette:study_two
+        participant_count: 38
+    - id: palette:condition/MONDO_0005148/ABSENT
+      condition_concept: MONDO:0005148
+      condition_status: ABSENT
+      participant_count: 389
+      studies:
+      - research_study: palette:study_one
+        participant_count: 185
+      - research_study: palette:study_two
+        participant_count: 204
+  - id: palette:condition/MONDO_0005068
+    condition_concept: MONDO:0005068
+    participant_count: 230
+    studies:
+    - research_study: palette:study_one
+      participant_count: 230
+    values:
+    - id: palette:condition/MONDO_0005068/PRESENT
+      condition_concept: MONDO:0005068
+      condition_status: PRESENT
+      participant_count: 15
+      studies:
+      - research_study: palette:study_one
+        participant_count: 15
+    - id: palette:condition/MONDO_0005068/ABSENT
+      condition_concept: MONDO:0005068
+      condition_status: ABSENT
+      participant_count: 215
+      studies:
+      - research_study: palette:study_one
+        participant_count: 215
+  - id: palette:condition/MONDO_0005267
+    condition_concept: MONDO:0005267
+    participant_count: 250
+    studies:
+    - research_study: palette:study_two
+      participant_count: 250
+    values:
+    - id: palette:condition/MONDO_0005267/PRESENT
+      condition_concept: MONDO:0005267
+      condition_status: PRESENT
+      participant_count: 45
+      studies:
+      - research_study: palette:study_two
+        participant_count: 45
+    - id: palette:condition/MONDO_0005267/ABSENT
+      condition_concept: MONDO:0005267
+      condition_status: ABSENT
+      participant_count: 205
+      studies:
+      - research_study: palette:study_two
+        participant_count: 205
+  measurements:
+  - id: palette:measurement/FAST_GLUC_BLD
+    observation_type: FAST_GLUC_BLD
+    measurement_selection: BASELINE
+    participant_count: 480
+    studies:
+    - research_study: palette:study_one
+      participant_count: 230
+    - research_study: palette:study_two
+      participant_count: 250
+    values:
+    - id: palette:measurement/FAST_GLUC_BLD/-70mg_dL
+      observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
+      bin_high: 70
+      bin_unit: mg/dL
+      participant_count: 21
+      studies:
+      - research_study: palette:study_one
+        participant_count: 11
+      - research_study: palette:study_two
+        participant_count: 10
+    - id: palette:measurement/FAST_GLUC_BLD/70-100mg_dL
+      observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
+      bin_low: 70
+      bin_high: 100
+      bin_unit: mg/dL
+      participant_count: 235
+      studies:
+      - research_study: palette:study_one
+        participant_count: 115
+      - research_study: palette:study_two
+        participant_count: 120
+    - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
+      observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
+      bin_low: 100
+      bin_high: 126
+      bin_unit: mg/dL
+      participant_count: 124
+      studies:
+      - research_study: palette:study_one
+        participant_count: 54
+      - research_study: palette:study_two
+        participant_count: 70
+    - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
+      observation_type: FAST_GLUC_BLD
+      measurement_selection: BASELINE
+      bin_low: 126
+      bin_unit: mg/dL
+      participant_count: 100
+      studies:
+      - research_study: palette:study_one
+        participant_count: 50
+      - research_study: palette:study_two
+        participant_count: 50
