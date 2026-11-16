@@ -10,7 +10,8 @@ tables do, and they are built at release time inside the data boundary.
 Short answer: yes, to within roughly 5–15% for three to five facets, **if** the tables go up
 to three-way and stay exact. Pairwise tables alone plateau at 10–20% however large the study.
 The deeper limit is not the estimator but the data: by five to seven facets most combinations
-within one study are already below the reporting threshold.
+within one study are already below the reporting threshold. And the tables are only worth having
+where row-level data is not — see [What this means for us](#what-this-means-for-us).
 
 ## The estimate
 
@@ -95,7 +96,8 @@ What these say:
    in the HV-shaped population: with no noise at all, 164 selected pairs gave 75% median error
    and 656 gave 39%. A small set of selected three-way tables (40, anchored on demographics) did
    not help either; the higher-order signal is spread across many triples rather than
-   concentrated in a few. Whether real harmonized data is that densely connected is the open
+   concentrated in a few. *The selection code is not in this PR, so these figures cannot be
+   reproduced from it; treat them as indicative.* Whether real harmonized data is that densely connected is the open
    question only the real data can answer.
 4. **Five to seven facets mostly fall below the reporting threshold within a single study.**
    Even with large segments, the share of combinations reaching 11 participants drops fast
@@ -142,8 +144,13 @@ square of the facet count for pairs and the cube for triples:
 the literature, though within the range of real deployments (the 2020 census used a larger
 budget).
 
-What that costs. Four-facet queries in the HV-shaped studies at ρ=2, error for 11–49 /
-50–199 / 200–999 participants, with the noise-free figure for comparison:
+What that costs, **with a naive mechanism**: the same noise on every table, negative cells
+clipped to zero (which biases small cells upward), and no reconciliation of the noisy tables
+with one another. The state of the art does better on both counts — MST and AIM choose which
+tables to spend the budget on, and Private-PGM fits one consistent model to the noisy
+measurements, which removes much of the noise. Read the figures below as an upper bound on the
+cost, not as what a careful release would see. Four-facet queries in the HV-shaped studies at
+ρ=2, error for 11–49 / 50–199 / 200–999 participants, with the noise-free figure for comparison:
 
 | study (sigma: pairs, triples) | up to 2-way, noisy | up to 2-way, no noise | up to 3-way, noisy | up to 3-way, no noise |
 |---|---|---|---|---|
@@ -156,9 +163,10 @@ What that costs. Four-facet queries in the HV-shaped studies at ρ=2, error for 
   facets, or in WHI, noisy pairs are within a point or two of exact ones. With 80–116 facets
   in JHS and MESA, noise doubles or triples the error under 50 participants at ρ=2, and is
   worse at ρ=0.5.
-- **Noisy three-way tables at realistic facet counts are unusable** below a few hundred
-  participants, even in WHI. The noise needed to protect 50,000–170,000 tables swamps the
-  cells it protects.
+- **Noisy three-way tables at realistic facet counts are unusable with this mechanism** below
+  a few hundred participants, even in WHI. The noise needed to protect 50,000–170,000 tables
+  swamps the cells it protects. Selection and post-processing would recover some of that;
+  whether enough is untested here.
 - **Small studies and small counts pay most**, since the noise is the same absolute size
   whatever the cell.
 
@@ -177,6 +185,29 @@ worth weighing:
 `evaluate.py --rho` measures the cost of any of these for a given study. Answering live queries
 with noise instead would not compose — every answer spends budget — which is why noise, if
 used, belongs on the tables, once.
+
+## What this means for us
+
+Inside the data boundary, the tables are not obviously better than what we already have. DuckDB
+over the release's Parquet gives exact counts for any combination, at interactive speed, and an
+estimate from tables kept beside that data is a less accurate way to get the same number. The
+first compromise above — exact three-way tables kept inside the boundary — is therefore a
+cache, not a new capability.
+
+What the tables would buy is the one thing row-level data cannot do: leave the boundary. That
+is where the noise has to be added, and with the naive mechanism measured here it costs most
+of the accuracy that made the three-way tables worth building. So as it stands the approach
+works best exactly where we do not need it.
+
+Two things could change that conclusion, and both are worth knowing before the idea is set
+aside:
+
+- **Real data may be less densely connected than the simulation.** If a few hundred pairs and
+  triples carry most of the structure, fewer tables means less noise per table. Running
+  `evaluate.py`'s comparison on real harmonized data inside the boundary settles this.
+- **A modern mechanism may recover enough accuracy.** Running AIM or Private-PGM on the same
+  populations would show whether noisy tables can serve broad three- and four-facet exploration
+  outside the boundary, with exact counts left to authorized users inside it.
 
 ## Running it
 
