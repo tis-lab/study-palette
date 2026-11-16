@@ -242,3 +242,10 @@ def test_no_global_participant_count(schema):
     view = SchemaView(schema)
     for name in ("SummaryResponse", "ConditionSummary", "DemographySummary"):
         assert "participant_count" not in view.class_slots(name)
+
+
+def test_seed_is_optional(errors):
+    response = yaml.safe_load(BASE.read_text())
+    assert errors(response) == []
+    response["seed"] = "diabetes"
+    assert errors(response) == []

@@ -21,4 +21,5 @@ flowchart TD
 - The unfiltered overview supplies study denominators. A filtered response supplies matching counts. Keep those responses separate and scoped to the same release and authorization context.
 - `suppressed_study_count` reports the number of matching studies omitted below `min_count`, not their participant total. Missing cells are not zero.
 - `terms` is keyed by CURIE. `focus`, relations, and the existing optional records block remain supported.
+- `seed` is an optional legacy search-text echo, not a filtering instruction. Main now uses `focus`; which should be used for concept identity.
 - Age remains `age_at_index`, as in the pinned BDCHM model and examples. Baseline age must not be silently substituted. Measurements retain the existing most-recent-value rule; a new selection policy is outside this shape change.

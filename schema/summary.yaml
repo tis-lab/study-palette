@@ -135,6 +135,7 @@ classes:
     - research_studies
     - studies
     - records
+    - seed
     - summary
     - suppressed_study_count
     slot_usage:
@@ -276,6 +277,10 @@ slots:
     description: Participant-level records, for callers authorized to see them.
     range: ParticipantRecords
     inlined: true
+  seed:
+    description: Optional legacy search-text echo. Focus identifies concepts; seed is absent for page load.
+    range: string
+    required: false
   name:
     description: Study display name when available.
     range: string
