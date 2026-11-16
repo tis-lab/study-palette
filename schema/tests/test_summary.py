@@ -48,7 +48,26 @@ def example(request):
 
 
 def load(path):
-    return yaml.safe_load(path.read_text())
+    response = yaml.safe_load(path.read_text())
+    for study in response["studies"]:
+        for slot, nodes in response["summary"].items():
+            study[slot] = project(nodes, study["research_study"])
+    response["terms"] = [dict(curie=key, **value) for key, value in response.get("terms", {}).items()]
+    return response
+
+
+def project(nodes, study_id):
+    result = []
+    for node in nodes:
+        contribution = next((s for s in node.get("studies", []) if s["research_study"] == study_id), None)
+        if contribution is None:
+            continue
+        item = {k: v for k, v in node.items() if k not in ("studies", "values")}
+        item["participant_count"] = contribution["participant_count"]
+        if "values" in node:
+            item["values"] = project(node["values"], study_id)
+        result.append(item)
+    return result
 
 
 def summaries(study):
@@ -92,8 +111,9 @@ def test_there_are_examples():
     assert EXAMPLES
 
 
-def test_example_validates(example, errors):
-    assert errors(example) == []
+@pytest.mark.parametrize("path", EXAMPLES, ids=lambda p: p.name)
+def test_example_validates(path, errors):
+    assert errors(yaml.safe_load(path.read_text())) == []
 
 
 def test_values_never_sum_past_their_concept(example):
@@ -206,15 +226,19 @@ def test_an_id_asks_one_question_everywhere():
     assert {i: q for i, q in asked.items() if len(q) > 1} == {}
 
 
-def test_a_summary_in_a_record_slot_passes_the_validator_but_not_the_guard(errors):
-    response = load(BASE)
-    summary = response["studies"][0]["conditions"][0]["values"][0]
-    response["records"]["record_conditions"].append(summary)
-    assert errors(response) == []
-    assert summary["id"] in misplaced(response)
+def test_missing_study_count_is_rejected(errors):
+    response = yaml.safe_load(BASE.read_text())
+    del response["studies"][0]["participant_count"]
+    assert errors(response)
 
 
-def test_a_record_among_summaries_is_rejected(errors):
-    response = load(BASE)
-    response["studies"][0]["conditions"].append(response["records"]["record_conditions"][0])
-    assert any("participant_count" in e for e in errors(response))
+def test_missing_contribution_count_is_rejected(errors):
+    response = yaml.safe_load(BASE.read_text())
+    del response["summary"]["conditions"][0]["studies"][0]["participant_count"]
+    assert errors(response)
+
+
+def test_no_global_participant_count(schema):
+    view = SchemaView(schema)
+    for name in ("SummaryResponse", "ConditionSummary", "DemographySummary"):
+        assert "participant_count" not in view.class_slots(name)
