@@ -1,4 +1,5 @@
-"""Validate canonical request documents; does not execute filters or decode summary IDs.
+"""
+Validate canonical request documents; does not execute filters or decode summary IDs.
 
 The LinkML-generated JSON Schema checks structure. These additional checks enforce
 runtime limits and canonical no-null encoding that generators do not fully express.
@@ -19,6 +20,7 @@ RELATIONSHIPS = {"ONESELF", "NATURAL_PARENT", "NATURAL_FATHER", "NATURAL_MOTHER"
 
 
 def request_validator():
+    """Build a JSON Schema validator for canonical SummaryRequest documents."""
     schema = json.loads(JsonSchemaGenerator(str(SCHEMA), top_class="SummaryRequest",
                                            not_closed=False).serialize())
     Draft202012Validator.check_schema(schema)
@@ -26,7 +28,8 @@ def request_validator():
 
 
 def validate_request(request, validator=None):
-    """Raise ValueError for an invalid canonical request; return it unchanged.
+    """
+    Raise ValueError for an invalid canonical request; return it unchanged.
 
     HTTP/GraphQL adapters normalize omitted/null filter and focus before calling
     this check. Do not trim, case-fold, expand or decode the supplied identifiers.
