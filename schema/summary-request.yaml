@@ -1,0 +1,123 @@
+id: https://w3id.org/tis-lab/study-palette/summary-request
+name: study_palette_summary_request
+title: Summary request contract
+license: MIT
+prefixes:
+  linkml: https://w3id.org/linkml/
+  palette: https://w3id.org/tis-lab/study-palette/
+default_prefix: palette
+default_range: string
+imports:
+- linkml:types
+classes:
+  SummaryRequest:
+    description: Population selection and concepts to describe. Empty request means
+      overview. Transport nulls are normalized by the adapter before document validation.
+    attributes:
+      focus:
+        range: uriorcurie
+        multivalued: true
+        maximum_cardinality: 100
+        description: Exact concept identifiers to describe; does not select participants.
+          Empty or omitted means no explicit focus.
+      filter:
+        range: SummaryFilter
+        inlined: true
+        description: Recursive population predicate. Omit for the unfiltered population.
+  SummaryFilter:
+    description: Exactly one of condition, summaryId, and, or. AND/OR arrays must
+      be nonempty. Runtime additionally enforces maximum depth 8 and 100 nodes.
+    attributes:
+      condition:
+        range: SummaryCondition
+        inlined: true
+      summaryId:
+        description: Opaque summary identifier interpreted within the response release.
+          Never derive its meaning by decoding it in the UI.
+      and:
+        range: SummaryFilter
+        multivalued: true
+        inlined_as_list: true
+        minimum_cardinality: 1
+      or:
+        range: SummaryFilter
+        multivalued: true
+        inlined_as_list: true
+        minimum_cardinality: 1
+    exactly_one_of:
+    - slot_conditions:
+        condition:
+          required: true
+    - slot_conditions:
+        summaryId:
+          required: true
+    - slot_conditions:
+        and:
+          required: true
+    - slot_conditions:
+        or:
+          required: true
+  SummaryCondition:
+    description: Exact condition concept. INCLUDE maps to PRESENT; EXCLUDE maps to
+      explicit ABSENT, not NOT. Concept, status and relationship must match the same
+      source record. No automatic descendant expansion.
+    attributes:
+      concept:
+        range: uriorcurie
+        required: true
+      selection:
+        range: SummarySelectionEnum
+      status:
+        range: SummaryConditionStatusEnum
+      relationship:
+        range: SummaryRelationshipEnum
+        description: Defaults to ONESELF when omitted. This request vocabulary is
+          mapped to the pinned backend vocabulary.
+    any_of:
+    - slot_conditions:
+        selection:
+          required: true
+    - slot_conditions:
+        status:
+          required: true
+    rules:
+    - preconditions:
+        slot_conditions:
+          selection:
+            equals_string: INCLUDE
+          status:
+            required: true
+      postconditions:
+        slot_conditions:
+          status:
+            equals_string: PRESENT
+    - preconditions:
+        slot_conditions:
+          selection:
+            equals_string: EXCLUDE
+          status:
+            required: true
+      postconditions:
+        slot_conditions:
+          status:
+            equals_string: ABSENT
+enums:
+  SummarySelectionEnum:
+    permissible_values:
+      INCLUDE: {}
+      EXCLUDE: {}
+  SummaryConditionStatusEnum:
+    permissible_values:
+      PRESENT: {}
+      ABSENT: {}
+  SummaryRelationshipEnum:
+    permissible_values:
+      ONESELF: {}
+      NATURAL_PARENT: {}
+      NATURAL_FATHER: {}
+      NATURAL_MOTHER: {}
+      NATURAL_SIBLING: {}
+      NATURAL_BROTHER: {}
+      NATURAL_SISTER: {}
+      NATURAL_CHILD: {}
+      BLOOD_RELATIVE: {}

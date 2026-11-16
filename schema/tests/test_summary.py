@@ -69,9 +69,22 @@ def question(summary):
     return json.dumps({k: v for k, v in summary.items() if k not in COUNT_SLOTS}, sort_keys=True)
 
 
+def fixture_conjunction(node):
+    """Only these historical count-merge fixtures are conjunctions of IDs.
+    Do not flatten OR into an AND set: different requests select different cohorts.
+    """
+    if node is None:
+        return frozenset()
+    if set(node) == {"summaryId"}:
+        return frozenset({node["summaryId"]})
+    if set(node) == {"and"}:
+        return frozenset().union(*(fixture_conjunction(n) for n in node["and"]))
+    raise AssertionError("Count-merge fixture requires an AND-only summaryId request")
+
+
 def counts(response):
     """Every count, keyed by study and the full set of ids it matches, filter included."""
-    applied = frozenset(response.get("filter") or [])
+    applied = fixture_conjunction(response["request"].get("filter"))
     for study in response["studies"]:
         where = study["research_study"]
         yield (where, applied), study["participant_count"]
@@ -128,7 +141,7 @@ def test_values_repeat_their_concept(example):
 
 
 def test_the_filter_is_defined_in_every_study(example):
-    applied = set(example.get("filter") or [])
+    applied = fixture_conjunction(example["request"].get("filter"))
     assert all(applied <= by_id(study).keys() for study in example["studies"])
 
 
@@ -151,7 +164,7 @@ def test_counts_respect_the_minimum(example):
 
 def test_concepts_resolve_in_terms(example):
     terms = {t["curie"]: t for t in example.get("terms") or []}
-    referenced = set(example.get("focus") or [])
+    referenced = set(example["request"].get("focus") or [])
     referenced |= {p for t in terms.values() for p in t.get("parents") or []}
     referenced |= {r[end] for r in example.get("relations") or [] for end in ("subject", "object")}
     referenced |= {
@@ -178,8 +191,8 @@ def test_a_follow_up_merges_without_conflict():
 
 def test_the_overview_is_unfiltered():
     overview = load(OVERVIEW)
-    assert not overview.get("focus")
-    assert not overview.get("filter")
+    assert not overview["request"].get("focus")
+    assert not overview["request"].get("filter")
 
 
 def test_the_overview_counts_every_study(example):

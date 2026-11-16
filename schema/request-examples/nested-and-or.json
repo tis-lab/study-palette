@@ -1,0 +1,31 @@
+{
+  "focus": [
+    "MONDO:0005148"
+  ],
+  "filter": {
+    "or": [
+      {
+        "and": [
+          {
+            "condition": {
+              "concept": "HP:0000822",
+              "selection": "INCLUDE"
+            }
+          },
+          {
+            "condition": {
+              "concept": "MONDO:0005015",
+              "selection": "INCLUDE"
+            }
+          }
+        ]
+      },
+      {
+        "condition": {
+          "concept": "HP:0000819",
+          "selection": "EXCLUDE"
+        }
+      }
+    ]
+  }
+}

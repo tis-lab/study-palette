@@ -7,10 +7,11 @@
 # comparing them would need a roll-up, which this draft leaves out.
 
 release: example-release
-focus:
+request:
+  focus:
   - MONDO:0005148
-filter:
-  - palette:measurement/FAST_GLUC_BLD
+  filter:
+    summaryId: palette:measurement/FAST_GLUC_BLD
 min_count: 10
 
 terms:

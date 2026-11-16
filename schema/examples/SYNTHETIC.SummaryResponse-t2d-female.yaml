@@ -6,11 +6,13 @@
 # It merges with that response by id, and their shared counts agree.
 
 release: example-release
-focus:
+request:
+  focus:
   - MONDO:0005148
-filter:
-  - palette:measurement/FAST_GLUC_BLD
-  - palette:demography/sex/FEMALE
+  filter:
+    and:
+    - summaryId: palette:measurement/FAST_GLUC_BLD
+    - summaryId: palette:demography/sex/FEMALE
 min_count: 10
 
 terms:
