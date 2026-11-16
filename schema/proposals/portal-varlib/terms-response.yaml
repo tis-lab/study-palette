@@ -1,23 +1,24 @@
-# PROPOSED transport projection; catalog retains actual upstream inheritance.
+# Temporary response-only projections avoid importing upstream variable definitions as UI types.
 id: https://w3id.org/tis-lab/study-palette/proposals/portal-varlib/terms-response
 name: portal_harmonized_terms_response
-version: 0.1.0-draft
-description: UI metadata contract only; does not promise participant totals, datasets
-  or ontology hierarchy.
+version: 0.1.1-draft
+description: Harmonized concept search metadata. Term references share the portal term graph. Counts describe mapped
+  studies, not participants.
 license: MIT
 prefixes:
   linkml: https://w3id.org/linkml/
+  bdchm: https://w3id.org/bdchm/
   portal: https://w3id.org/tis-lab/study-palette/proposals/portal-varlib/
 default_prefix: portal
 default_range: string
 imports:
-- portal-varlib
+- linkml:types
+- ../../terms
 classes:
   PortalHarmonizedSearchResponse:
     tree_root: true
-    description: Proposed harmonized-only search result. total counts matching concept
-      cards, not participants/variables. Separate from existing mixed Monarch union
-      pagination.
+    description: Proposed harmonized-only search result. total counts matching concept cards, not participants/variables.
+      Separate from existing mixed Monarch union pagination.
     attributes:
       query:
         range: string
@@ -47,11 +48,10 @@ classes:
         inlined: true
         inlined_as_list: true
   PortalHarmonizedConceptCard:
-    description: One concept with one or more integrated variables. No unsupported
-      numeric UI fields.
+    description: One concept with one or more integrated variables. No unsupported numeric UI fields.
     attributes:
       concept:
-        range: PortalConcept
+        range: Term
         required: true
         inlined: true
       display_label:
@@ -74,8 +74,7 @@ classes:
         inlined: true
         inlined_as_list: true
   PortalIntegratedVariableCard:
-    description: Response projection of inherited catalog metadata; upstream identity
-      retained.
+    description: Response projection of inherited catalog metadata; upstream identity retained.
     attributes:
       id:
         range: uriorcurie
@@ -121,9 +120,8 @@ classes:
         inlined: true
         inlined_as_list: true
   PortalSourceVariableCard:
-    description: Verified source variable resolved through compound row_metadata.
-      Omission of source_variables means unresolved/not supplied, not zero source
-      variables.
+    description: Verified source variable resolved through compound row_metadata. Omission of source_variables means
+      unresolved/not supplied, not zero source variables.
     attributes:
       id:
         range: uriorcurie
@@ -146,3 +144,78 @@ classes:
         range: ClinicalMicroschemaEnum
         required: true
         multivalued: true
+  PortalResearchStudy:
+    description: Temporary response projection of study identity and display name. The producer catalog retains
+      upstream ResearchStudy inheritance. See README upstream follow-up.
+    attributes:
+      id:
+        range: uriorcurie
+        required: true
+      study_name:
+        range: string
+        required: true
+        pattern: .*\S.*
+enums:
+  BdchmTypeEnum:
+    description: A list of BDCHM entities used to describe variables
+    permissible_values:
+      observation:
+        meaning: bdchm:Observation
+      condition:
+        meaning: bdchm:Condition
+      procedure:
+        meaning: bdchm:Procedure
+      exposure:
+        meaning: bdchm:Exposure
+      drugexposure:
+        meaning: bdchm:DrugExposure
+  ClinicalMicroschemaEnum:
+    description: A list of slots describing clinical data in microschema
+    permissible_values:
+      subject_identifier: null
+      measurement_type: null
+      measurement_value: null
+      unit: null
+      method: null
+      instrument: null
+      reagent_kit: null
+      calculated_from: null
+      body_location: null
+      body_position: null
+      context: null
+      collected_by: null
+      data_type: null
+      age_at_measurement: null
+      study_site: null
+      absolute_time: null
+      predicted_value: null
+      lower_limit_normal: null
+      upper_limit_normal: null
+      percent_predicted_value: null
+      activity_type: null
+      relative_timing: null
+      condition_type: null
+      associated_evidence: null
+      age_at_condition_start: null
+      age_at_condition_end: null
+      age_at_condition_record: null
+      condition_status: null
+      condition_provenance: null
+      condition_severity: null
+      relationship_to_participant: null
+      drug_type: null
+      age_at_drug_start: null
+      age_at_drug_end: null
+      age_at_drug_record: null
+      route_of_administration: null
+      dose: null
+      frequency: null
+      indication: null
+      procedure_type: null
+      age_at_procedure_start: null
+      age_at_procedure_end: null
+      age_at_procedure_record: null
+      procedure_status: null
+      procedure_provenance: null
+      exposure_status: null
+      exposure_provenance: null

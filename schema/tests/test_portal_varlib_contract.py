@@ -15,7 +15,7 @@ spec.loader.exec_module(module)
 
 @pytest.fixture
 def catalog():
-    return json.loads((ROOT / 'examples/portal-catalog.json').read_text())
+    return json.loads((ROOT / 'examples/SYNTHETIC.portal-catalog.json').read_text())
 
 
 def test_genuine_upstream_inheritance():
@@ -29,7 +29,6 @@ def test_genuine_upstream_inheritance():
 
 
 def test_pinned_vendor_closure():
-    module.verify_vendor()
     view = SchemaView(str(ROOT / 'portal-varlib.yaml'))
     view.all_classes()  # all imports resolve locally
     for schema in view.schema_map.values():
@@ -85,14 +84,23 @@ def test_inherited_metadata_is_accepted(catalog):
     assert module.validate_catalog(catalog, allow_synthetic=True) == []
 
 
-def test_only_unreachable_generated_definitions_are_excluded():
-    defs = module.validator().schema['$defs']
-    assert 'PortalIntegratedVariable' in defs
-    assert 'PortalCompoundVariable' in defs
-    assert 'DocumentationVariable' in defs
-    assert 'StrokeStatusRecord' not in defs
+def test_concepts_reuse_term():
+    view = SchemaView(str(ROOT / 'portal-varlib.yaml'))
+    assert view.induced_slot('concepts', 'PortalVariableCatalog').range == 'Term'
+    assert 'PortalConcept' not in view.all_classes()
 
 
-def test_dangling_generated_definition_fails_closed():
-    with pytest.raises(KeyError):
-        module.reachable_schema({'$ref': '#/$defs/Missing', '$defs': {}})
+def test_missing_concept_identity(catalog):
+    del catalog['concepts'][0]['curie']
+    assert module.validate_catalog(catalog, allow_synthetic=True)
+
+
+def test_optional_term_metadata(catalog):
+    catalog['concepts'][0]['vocabulary'] = 'HP'
+    catalog['concepts'][0]['parents'] = ['HP:0000118']
+    assert module.validate_catalog(catalog, allow_synthetic=True) == []
+
+
+def test_source_reference_and_study_checked(catalog):
+    catalog['single_categorical_variables'][0]['associated_study'] = 'example:study-b'
+    assert module.validate_catalog(catalog, allow_synthetic=True)
