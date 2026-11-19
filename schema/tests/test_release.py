@@ -38,9 +38,10 @@ def manifest():
 def packages(manifest):
     """Every package with its files, the studies' harmonized data and provenance included."""
     for key in ("data_model", "variable_library", "knowledge_graph"):
-        yield manifest[key], manifest[key]["files"]
+        if key in manifest:
+            yield manifest[key], manifest[key]["files"]
     for study in manifest["studies"]:
-        yield study, study["harmonized_data"] + study["provenance"]
+        yield study, study["harmonized_data"] + study.get("provenance", [])
 
 
 def located(package, file):
@@ -70,7 +71,8 @@ def test_every_delivered_file_is_listed(manifest):
 def test_each_study_revision_has_its_own_bucket(manifest):
     urls = [s["download_url"] for s in manifest["studies"]]
     assert len(urls) == len(set(urls))
-    assert not set(urls) & {manifest[k]["download_url"] for k in ("data_model", "variable_library", "knowledge_graph")}
+    keys = ("data_model", "variable_library", "knowledge_graph")
+    assert not set(urls) & {manifest[k]["download_url"] for k in keys if k in manifest}
 
 
 def test_example_accessions_are_fictional(manifest):
@@ -78,9 +80,17 @@ def test_example_accessions_are_fictional(manifest):
     assert all(s["accession"].startswith("phs999") for s in manifest["studies"])
 
 
-def test_a_study_without_provenance_is_rejected(manifest, errors):
-    del manifest["studies"][0]["provenance"]
-    assert any("provenance" in e for e in errors(manifest))
+def test_a_release_without_the_pending_components_validates(manifest, errors):
+    """The VarLib, KG and provenance are optional until they're delivered."""
+    del manifest["variable_library"], manifest["knowledge_graph"]
+    for study in manifest["studies"]:
+        del study["provenance"]
+    assert errors(manifest) == []
+
+
+def test_a_release_without_the_data_model_is_rejected(manifest, errors):
+    del manifest["data_model"]
+    assert any("data_model" in e for e in errors(manifest))
 
 
 def test_a_versioned_accession_is_rejected(manifest, errors):
