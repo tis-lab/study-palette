@@ -1,0 +1,239 @@
+id: https://w3id.org/tis-lab/study-palette/release
+name: study_palette_release
+title: BDC data release manifest
+description: >-
+  What a BDC data release contains, written by the DMC and read by the portal's
+  load pipeline.
+
+
+  A release is one complete delivery: the BDC-HM model, the Variable Library,
+  the BDC knowledge graph, and every study's harmonized data and provenance.
+  The model, VarLib and KG are built outside the harmonization pipeline and
+  delivered in the release's own bucket, with this manifest. Each study is
+  delivered in a bucket of its own, and a revised study gets a new bucket, so
+  the manifest points to the bucket holding the revision this release
+  includes.
+
+
+  Every release carries every study. The data in the portal is always exactly
+  one release, and comparing two manifests shows which studies are new,
+  revised, or withdrawn. Releases carrying only new or updated studies may be
+  worth adding later if full releases grow too large to deliver; they are not
+  part of this contract.
+
+
+  A file's path is relative to its package's download_url. Its size and
+  checksum let the load verify that what it reads is what the release named,
+  which matters because the release doesn't own the study buckets it points
+  to.
+
+
+  Field names follow the LinkML datasets model and Frictionless Data Package
+  where they overlap, and are mapped to DCAT.
+see_also:
+  - https://w3id.org/linkml/datasets
+  - https://specs.frictionlessdata.io/data-package
+prefixes:
+  linkml: https://w3id.org/linkml/
+  release: https://w3id.org/tis-lab/study-palette/release/
+  bdchm: https://w3id.org/bdchm/
+  dcat: http://www.w3.org/ns/dcat#
+  dcterms: http://purl.org/dc/terms/
+  frictionless: https://specs.frictionlessdata.io/
+  pav: http://purl.org/pav/
+  spdx: http://spdx.org/rdf/terms#
+  void: http://rdfs.org/ns/void#
+default_prefix: release
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  Release:
+    tree_root: true
+    description: A complete BDC data release.
+    class_uri: dcat:Catalog
+    close_mappings:
+      - frictionless:data-package
+    slots:
+      - id
+      - created_on
+      - data_model
+      - variable_library
+      - knowledge_graph
+      - studies
+    slot_usage:
+      id:
+        description: >-
+          The release, as the portal reports it. Summary responses carry it as
+          their release.
+        examples:
+          - value: example-2027.1
+
+  Package:
+    description: >-
+      Files delivered together under one location, at one version.
+    class_uri: dcat:Dataset
+    close_mappings:
+      - frictionless:data-package
+    slots:
+      - version
+      - download_url
+      - files
+
+  Study:
+    description: >-
+      One study's harmonized data and the provenance explaining it, in the
+      study's own bucket.
+    class_uri: dcat:Dataset
+    slots:
+      - accession
+      - version
+      - download_url
+      - harmonized_data
+      - provenance
+    slot_usage:
+      version:
+        description: The study's dbGaP version.
+        examples:
+          - value: v2
+
+  DataFile:
+    description: One file in a package.
+    class_uri: dcat:Distribution
+    close_mappings:
+      - frictionless:data-resource
+    slots:
+      - path
+      - format
+      - bytes
+      - sha256
+      - conforms_to_class
+      - record_count
+
+slots:
+  id:
+    identifier: true
+    slot_uri: dcterms:identifier
+
+  created_on:
+    range: datetime
+    slot_uri: pav:createdOn
+
+  data_model:
+    description: The BDC-HM model the harmonized data conforms to.
+    range: Package
+    required: true
+    inlined: true
+
+  variable_library:
+    range: Package
+    required: true
+    inlined: true
+
+  knowledge_graph:
+    range: Package
+    required: true
+    inlined: true
+
+  studies:
+    range: Study
+    required: true
+    multivalued: true
+    inlined_as_list: true
+    slot_uri: dcat:dataset
+
+  accession:
+    identifier: true
+    description: The study's dbGaP accession, without its version.
+    slot_uri: dcterms:identifier
+    pattern: "^phs\\d{6}$"
+    examples:
+      - value: phs999001
+
+  version:
+    required: true
+    slot_uri: pav:version
+
+  download_url:
+    description: Where the package's files are; their paths are relative to it.
+    range: uri
+    required: true
+    slot_uri: dcat:downloadURL
+
+  files:
+    range: DataFile
+    required: true
+    multivalued: true
+    inlined_as_list: true
+    slot_uri: dcat:distribution
+    exact_mappings:
+      - frictionless:resources
+
+  harmonized_data:
+    description: The study's records, one file per BDC-HM class.
+    range: DataFile
+    required: true
+    multivalued: true
+    inlined_as_list: true
+    slot_uri: dcat:distribution
+
+  provenance:
+    description: >-
+      How the harmonized data was produced, including how each study variable
+      maps to harmonized ones.
+    range: DataFile
+    required: true
+    multivalued: true
+    inlined_as_list: true
+    slot_uri: dcat:distribution
+
+  path:
+    required: true
+    close_mappings:
+      - frictionless:path
+
+  format:
+    range: FileFormat
+    required: true
+    slot_uri: dcterms:format
+
+  bytes:
+    range: integer
+    required: true
+    minimum_value: 0
+    slot_uri: dcat:byteSize
+    exact_mappings:
+      - frictionless:bytes
+
+  sha256:
+    description: The file's SHA-256 digest, in hex.
+    required: true
+    pattern: "^[0-9a-f]{64}$"
+    slot_uri: spdx:checksumValue
+    close_mappings:
+      - frictionless:hash
+
+  conforms_to_class:
+    description: The BDC-HM class whose records the file holds.
+    range: uriorcurie
+    slot_uri: dcterms:conformsTo
+    examples:
+      - value: bdchm:Condition
+
+  record_count:
+    description: How many records the file holds.
+    range: integer
+    minimum_value: 0
+    slot_uri: void:entities
+
+enums:
+  FileFormat:
+    description: >-
+      Harmonized data is JSON Lines, the format the load review settled on
+      (tis-lab/BDC-Portal#165). Others are listed as the components need them.
+    permissible_values:
+      JSONL:
+        description: JSON Lines, one record per line.
+      YAML:
+      JSON:
