@@ -127,13 +127,17 @@ slots:
     inlined: true
 
   variable_library:
+    description: >-
+      Optional until the DMC delivers the Variable Library with each release;
+      required from then on.
     range: Package
-    required: true
     inlined: true
 
   knowledge_graph:
+    description: >-
+      Optional until the DMC delivers the BDC knowledge graph with each
+      release; required from then on.
     range: Package
-    required: true
     inlined: true
 
   studies:
@@ -181,9 +185,9 @@ slots:
   provenance:
     description: >-
       How the harmonized data was produced, including how each study variable
-      maps to harmonized ones.
+      maps to harmonized ones. Optional until harmonization emits provenance
+      records (linkml/dm-bip#352); required from then on.
     range: DataFile
-    required: true
     multivalued: true
     inlined_as_list: true
     slot_uri: dcat:distribution
