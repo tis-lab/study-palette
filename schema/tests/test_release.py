@@ -36,7 +36,7 @@ def manifest():
 
 
 def packages(manifest):
-    """Every package with its files, the studies' harmonized data and provenance included."""
+    """Every delivered package with its files, the studies' harmonized data and any provenance included."""
     for key in ("data_model", "variable_library", "knowledge_graph"):
         if key in manifest:
             yield manifest[key], manifest[key]["files"]
