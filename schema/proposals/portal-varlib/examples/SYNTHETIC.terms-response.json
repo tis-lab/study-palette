@@ -1,0 +1,77 @@
+{
+  "query": "Hypertension",
+  "catalog_release": "SYNTHETIC-REVIEW-ONLY",
+  "total": 1,
+  "offset": 0,
+  "limit": 20,
+  "has_more": false,
+  "items": [
+    {
+      "concept": {
+        "curie": "HP:0000822",
+        "label": "Hypertension"
+      },
+      "display_label": "Hypertension",
+      "study_count": 2,
+      "studies": [
+        {
+          "id": "example:study-a",
+          "study_name": "Synthetic Study A"
+        },
+        {
+          "id": "example:study-b",
+          "study_name": "Synthetic Study B"
+        }
+      ],
+      "integrated_variables": [
+        {
+          "id": "example:integrated-htn-clinical",
+          "variable_label": "Synthetic clinical hypertension status",
+          "variable_description": "Illustrates a reviewed definition, not an actual DMC variable.",
+          "concept_type": "HP:0000822",
+          "bdchm_type": "condition",
+          "compound_variables": [
+            {
+              "id": "example:compound-htn-a",
+              "variable_label": "Synthetic A clinical status",
+              "study_id": "example:study-a",
+              "study_name": "Synthetic Study A",
+              "source_variables": [
+                {
+                  "id": "example:source-htn-a",
+                  "variable_name": "synthetic_htn_dx",
+                  "variable_label": "Synthetic study A diagnosis field",
+                  "source_id": "SYNTHETIC-NOT-A-DBGaP-ACCESSION",
+                  "study_id": "example:study-a",
+                  "microschema_slots": [
+                    "condition_status"
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "example:compound-htn-b",
+              "variable_label": "Synthetic B clinical status",
+              "study_id": "example:study-b",
+              "study_name": "Synthetic Study B"
+            }
+          ]
+        },
+        {
+          "id": "example:integrated-htn-report",
+          "variable_label": "Synthetic reported hypertension status",
+          "concept_type": "HP:0000822",
+          "bdchm_type": "condition",
+          "compound_variables": [
+            {
+              "id": "example:compound-htn-report-a",
+              "variable_label": "Synthetic A reported status",
+              "study_id": "example:study-a",
+              "study_name": "Synthetic Study A"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

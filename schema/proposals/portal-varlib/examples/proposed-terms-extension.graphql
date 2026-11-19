@@ -1,0 +1,35 @@
+# PROPOSAL ONLY: Java loader/resolver changes are also required.
+extend type BdcConcept {
+  integratedVariables: [BdcIntegratedVariable!]!
+  catalogStudyCount: Int!
+  catalogStudies: [BdcCatalogStudy!]!
+}
+type BdcCatalogStudy { id: ID!, name: String! }
+type BdcIntegratedVariable {
+  id: ID!
+  variableLabel: String!
+  variableDescription: String
+  conceptType: ID!
+  bdchmType: BdchmTypeEnum!
+  unit: String
+  cdeId: ID
+  compoundVariables: [BdcCompoundVariable!]!
+}
+type BdcCompoundVariable {
+  id: ID!
+  variableLabel: String!
+  studyId: ID!
+  studyName: String!
+  # Null when source metadata was not supplied/resolved. Do not fabricate chips.
+  sourceVariables: [BdcSourceVariable!]
+}
+type BdcSourceVariable {
+  id: ID!
+  variableName: String!
+  variableLabel: String
+  sourceId: String
+  fileId: String
+  fileName: String
+  studyId: ID!
+  microschemaSlots: [String!]!
+}

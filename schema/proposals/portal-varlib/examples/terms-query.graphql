@@ -1,0 +1,21 @@
+# FUTURE query: not supported until the included SDL and Java mapping are implemented.
+query PortalTerms($query: String!) {
+  terms(query: $query, limit: 20, offset: 0) {
+    total hasMore
+    items {
+      __typename
+      ... on BdcConcept {
+        conceptType conceptLabel displayLabel
+        catalogStudyCount catalogStudies { id name }
+        integratedVariables {
+          id variableLabel variableDescription conceptType bdchmType unit cdeId
+          compoundVariables {
+            id variableLabel studyId studyName
+            sourceVariables { id variableName variableLabel sourceId fileId fileName studyId microschemaSlots }
+          }
+        }
+      }
+      ... on Term { id label }
+    }
+  }
+}
