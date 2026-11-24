@@ -1,4 +1,4 @@
-"""Generate the draft access profiles from the disclosure extension's facet classes."""
+"""Generate the draft access profiles from the summary schema's facet classes."""
 from pathlib import Path
 
 import yaml
@@ -20,21 +20,22 @@ def main():
         "classes": {},
     }
     classes = schema["classes"]
-    classes["PublicStudyEntry"] = {
+    classes["ListedStudyEntry"] = {
         "is_a": "StudySummary",
         "slot_usage": {
             "participant_count": {"required": False, "value_presence": "ABSENT"},
             "count_status": {"required": True, "equals_string": "LISTED"},
         },
     }
-    for name, base in (("EstimatedStudyEntry", "StudySummary"),
-                       ("EstimatedContribution", "StudyContribution")):
+    for name, base in (("ObfuscatedStudyEntry", "StudySummary"),
+                       ("ObfuscatedContribution", "StudyContribution")):
         classes[name] = {"is_a": base, "slot_usage": {
             "count_mode": {"required": True, "equals_string": "OBFUSCATED"},
             "count_status": {"required": True},
         }}
-    facets = {slot: {"range": extension["slots"][slot]["range"]} for slot in extension["classes"]["SummaryFacets"]["slots"]}
-    for tier in ("Public", "SignedIn"):
+    facets = {slot: {"range": extension["slots"][slot]["range"]}
+              for slot in extension["classes"]["SummaryFacets"]["slots"]}
+    for tier in ("Totals", "Breakdown"):
         ranges = {}
         for slot, config in facets.items():
             base = config["range"]
@@ -43,18 +44,18 @@ def main():
                 "record_count": {"value_presence": "ABSENT"},
                 "values": {"range": name},
                 "count_mode": {"required": True, "equals_string": "OBFUSCATED"},
-                "studies": {"maximum_cardinality": 0} if tier == "Public" else {"range": "EstimatedContribution"},
+                "studies": {"maximum_cardinality": 0} if tier == "Totals" else {"range": "ObfuscatedContribution"},
             }}
             ranges[slot] = {"range": name}
         classes[tier + "SummaryFacets"] = {"is_a": "SummaryFacets", "slot_usage": ranges}
-        name = "PublicSummaryResponse" if tier == "Public" else "SignedInBreakdownResponse"
+        name = tier + "SummaryResponse"
         classes[name] = {"is_a": "SummaryResponse", "slot_usage": {
-            "studies": {"range": "PublicStudyEntry" if tier == "Public" else "EstimatedStudyEntry"},
+            "studies": {"range": "ListedStudyEntry" if tier == "Totals" else "ObfuscatedStudyEntry"},
             "summary": {"range": tier + "SummaryFacets"},
             "records": {"value_presence": "ABSENT"},
             "count_mode": {"required": True, "equals_string": "OBFUSCATED"},
         }}
-    classes["ApprovedSummaryResponse"] = {
+    classes["ExactSummaryResponse"] = {
         "is_a": "SummaryResponse",
         "description": "Structural contract only. The service must verify scope before releasing any exact count.",
         "slot_usage": {"records": {"value_presence": "ABSENT"}},
