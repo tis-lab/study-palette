@@ -1,32 +1,26 @@
-"""The disclosure policy is well formed and names only things the summary schemas define."""
+"""
+The disclosure policy conforms to schema/policy.yaml and names only things the summary schemas define.
+
+The schema carries the rules. Tests here confirm the policy passes, that each rule rejects what it
+should, and check the two constraints LinkML rules cannot express: tier names and stage numbers are
+unique, and an unavailable stage is inert.
+"""
 
 import copy
-import re
 from pathlib import Path
 
 import pytest
 import yaml
+from linkml.validator import Validator
+from linkml.validator.plugins import JsonschemaValidationPlugin
+from linkml_runtime import SchemaView
 
 SCHEMA_DIR = Path(__file__).resolve().parent.parent
 POLICY_PATH = SCHEMA_DIR.parent / "policy" / "disclosure-policy.yaml"
+POLICY_SCHEMA = SCHEMA_DIR / "policy.yaml"
 BDCHM = SCHEMA_DIR.parent / "synthetic" / "bdchm.yaml"
-
 TIERS = ("public", "authenticated", "authorized")
-STAGES = ("0_sign_in_and_scope", "1_search_and_add_terms", "2_live_summary_per_term", "3_and_or_not",
-          "4_refine_criteria", "5_cohort_and_visuals", "6_provisioning")
-STAGE_KEYS = ("available", "pool", "profile")
-# Which profiles each database role may serve. A role that counts must pass a profile;
-# api_search returns no counts, so it serves none.
-POOL_PROFILES = {
-    "api_search": {None},
-    "api_public": {"TotalsSummaryResponse"},
-    "api_counting": {"TotalsSummaryResponse", "BreakdownSummaryResponse", "ExactSummaryResponse"},
-    None: {None},
-}
-# Upper-case words in the policy's text that are not schema enum values.
-NOT_ENUM_VALUES = {"BDC", "HMAC", "NIH", "RAS"}
-ENUM_VALUE = re.compile(r"\b[A-Z][A-Z_]{2,}\b")
-SNAKE_CASE = re.compile(r"\b[a-z]+(?:_[a-z]+)+\b")
+CORE_STAGE_KEYS = {"number", "available", "pool", "profile"}
 
 
 def read(path):
@@ -39,181 +33,126 @@ def policy():
 
 
 @pytest.fixture(scope="module")
-def summary():
-    return read(SCHEMA_DIR / "summary.yaml")
+def errors():
+    validator = Validator(str(POLICY_SCHEMA), validation_plugins=[JsonschemaValidationPlugin(closed=True)])
+    return lambda instance: [r.message for r in validator.validate(instance, "DisclosurePolicy").results]
 
 
-@pytest.fixture(scope="module")
-def profiles():
-    return read(SCHEMA_DIR / "summary-profiles.yaml")
+def stage(policy, tier, number):
+    found = next(t for t in policy["tiers"] if t["name"] == tier)
+    return next(s for s in found["stages"] if s["number"] == number)
 
 
-def positive_int(value):
-    return isinstance(value, int) and not isinstance(value, bool) and value >= 1
+def broken(policy, change):
+    copied = copy.deepcopy(policy)
+    change(copied)
+    return copied
 
 
-def stages(policy):
-    """Every (tier, stage, settings) in the policy."""
-    for tier, settings in policy["tiers"].items():
-        for stage, config in settings["stages"].items():
-            yield tier, stage, config
-
-
-def walk(node, key=None):
-    """Every (key, value) leaf in the policy, at any depth."""
-    if isinstance(node, dict):
-        for k, v in node.items():
-            yield from walk(v, k)
-    elif isinstance(node, list):
-        for v in node:
-            yield from walk(v, key)
-    else:
-        yield key, node
-
-
-def ancestors(name, classes):
-    while name in classes:
-        name = classes[name].get("is_a")
-        if name:
-            yield name
-
-
-# Rule 1: shape.
-def problems(policy):
-    """What makes a policy unusable, if anything."""
-    if not isinstance(policy, dict):
-        return ["expected a mapping at the top level"]
-    found = []
-    if not positive_int(policy.get("policy_version")):
-        found.append("policy_version must be a positive integer")
-    counting = policy.get("counting")
-    if not isinstance(counting, dict) or not positive_int(counting.get("min_count")):
-        found.append("counting.min_count must be a positive integer")
-    tiers = policy.get("tiers") if isinstance(policy.get("tiers"), dict) else {}
-    found += [f"tiers is missing {t}" for t in TIERS if t not in tiers]
-    for tier, settings in tiers.items():
-        listed = (settings or {}).get("stages") or {}
-        found += [f"{tier} is missing stage {s}" for s in STAGES if s not in listed]
-        found += [f"{tier} {s} is missing {k}" for s, c in listed.items() for k in STAGE_KEYS if k not in (c or {})]
+def uniqueness_problems(policy):
+    names = [t["name"] for t in policy["tiers"]]
+    found = [] if sorted(names) == sorted(TIERS) else [f"tiers are {names}"]
+    for tier in policy["tiers"]:
+        numbers = [s["number"] for s in tier["stages"]]
+        if sorted(numbers) != list(range(7)):
+            found.append(f"{tier['name']} stages are {numbers}")
     return found
 
 
-# Rule 2: an unavailable stage does nothing.
-def inert_violations(policy):
-    return [(t, s) for t, s, c in stages(policy) if c["available"] is not True and (
-        c["available"] is not False or c["pool"] is not None or c["profile"] is not None or set(c) - set(STAGE_KEYS))]
+def active_unavailable_stages(policy):
+    return [(t["name"], s["number"]) for t in policy["tiers"] for s in t["stages"]
+            if s["available"] is False and (s["pool"], s["profile"]) != ("none", "none") or
+            s["available"] is False and set(s) - CORE_STAGE_KEYS]
 
 
-# Rules 3 and 4: no counting role without a profile, and each role serves only its profiles.
-def pool_violations(policy):
-    return [(t, s, c["pool"], c["profile"]) for t, s, c in stages(policy)
-            if c["profile"] not in POOL_PROFILES.get(c["pool"], set())]
+def test_policy_conforms_to_schema(policy, errors):
+    assert errors(policy) == []
 
 
-def test_policy_is_well_formed(policy):
-    assert problems(policy) == []
+def test_tiers_and_stages_are_unique(policy):
+    assert uniqueness_problems(policy) == []
 
 
 @pytest.mark.parametrize(
-    ("change", "problem"),
+    "change",
     [
-        (lambda p: p.pop("policy_version"), "policy_version"),
-        (lambda p: p.update(policy_version="2"), "policy_version"),
-        (lambda p: p["counting"].pop("min_count"), "min_count"),
-        (lambda p: p["counting"].update(min_count=0), "min_count"),
-        (lambda p: p["counting"].update(min_count=True), "min_count"),
-        (lambda p: p["tiers"].pop("authorized"), "missing authorized"),
-        (lambda p: p["tiers"]["public"]["stages"].pop("5_cohort_and_visuals"), "missing stage 5"),
-        (lambda p: p["tiers"]["authenticated"]["stages"]["6_provisioning"].pop("pool"), "missing pool"),
+        lambda p: p["tiers"][1].update(name="public"),
+        lambda p: stage(p, "authenticated", 6).update(number=5),
     ],
-    ids=["no-version", "string-version", "no-min-count", "zero-min-count", "bool-min-count", "no-tier",
-         "no-stage", "no-stage-key"],
+    ids=["duplicate-tier", "duplicate-stage"],
 )
-def test_malformed_policy_is_caught(policy, change, problem):
-    broken = copy.deepcopy(policy)
-    change(broken)
-    assert any(problem in p for p in problems(broken))
-
-
-def test_non_mapping_is_caught():
-    assert problems(["just", "a list"]) == ["expected a mapping at the top level"]
+def test_duplicates_are_caught(policy, change):
+    assert uniqueness_problems(broken(policy, change))
 
 
 def test_unavailable_stages_are_inert(policy):
-    assert inert_violations(policy) == []
+    assert active_unavailable_stages(policy) == []
 
 
 @pytest.mark.parametrize(
-    ("change"),
+    "change",
     [
-        lambda s: s.update(pool="api_public"),
-        lambda s: s.update(profile="TotalsSummaryResponse"),
-        lambda s: s.update(shows="something"),
-        lambda s: s.update(available="no"),
+        lambda s: s.update(pool="api_public", profile="TotalsSummaryResponse"),
+        lambda s: s.update(provisioning="ACCESS_INFORMATION"),
     ],
-    ids=["pool", "profile", "extra-key", "not-boolean"],
+    ids=["queries", "extra-field"],
 )
 def test_active_unavailable_stage_is_caught(policy, change):
-    broken = copy.deepcopy(policy)
-    change(broken["tiers"]["public"]["stages"]["5_cohort_and_visuals"])
-    assert inert_violations(broken) == [("public", "5_cohort_and_visuals")]
+    copied = copy.deepcopy(policy)
+    change(stage(copied, "public", 5))
+    assert active_unavailable_stages(copied) == [("public", 5)]
 
 
-def test_pools_serve_only_their_profiles(policy):
-    assert pool_violations(policy) == []
+# Each case breaks one rule in schema/policy.yaml; the schema must reject it.
+REJECTED = {
+    "public-counting-pool": lambda p: stage(p, "public", 2).update(pool="api_counting"),
+    "public-breakdown": lambda p: stage(p, "public", 2).update(
+        pool="api_counting", profile="BreakdownSummaryResponse"),
+    "authenticated-exact": lambda p: stage(p, "authenticated", 5).update(profile="ExactSummaryResponse"),
+    "counting-without-profile": lambda p: stage(p, "authenticated", 5).update(profile="none"),
+    "public-pool-without-profile": lambda p: stage(p, "authenticated", 3).update(profile="none"),
+    "search-returns-counts": lambda p: stage(p, "authorized", 1).update(profile="TotalsSummaryResponse"),
+    "public-pool-breakdown": lambda p: stage(p, "authorized", 3).update(
+        pool="api_public", profile="BreakdownSummaryResponse"),
+    "profile-without-pool": lambda p: stage(p, "authorized", 3).update(pool="none"),
+    "sign-in-queries": lambda p: stage(p, "authorized", 0).update(pool="api_search"),
+    "provisioning-queries": lambda p: stage(p, "authorized", 6).update(pool="api_search"),
+    "six-stages": lambda p: p["tiers"][0]["stages"].pop(),
+    "stage-seven": lambda p: stage(p, "public", 6).update(number=7),
+    "missing-stage-key": lambda p: stage(p, "public", 0).pop("profile"),
+    "two-tiers": lambda p: p["tiers"].pop(),
+    "unknown-tier": lambda p: p["tiers"][0].update(name="guest"),
+    "public-exact-scope": lambda p: p["tiers"][0].update(exact_scope="ENTITLED_AND_ELIGIBLE"),
+    "public-account": lambda p: p["tiers"][0].update(accountability="RAS_ACCOUNT"),
+    "public-no-rate-limit": lambda p: p["tiers"][0].pop("rate_limit"),
+    "authenticated-no-budget": lambda p: p["tiers"][1].pop("budget"),
+    "authorized-no-exact-scope": lambda p: p["tiers"][2].pop("exact_scope"),
+    "budget-both": lambda p: p["tiers"][2]["budget"].update(units_per_day=5),
+    "budget-neither": lambda p: p["tiers"][2]["budget"].pop("draws_on"),
+    "seeded-by-label": lambda p: p["counting"]["noise"]["seed_inputs"].append("LABEL"),
+    "noise-min-above-zero": lambda p: p["counting"]["noise"].update(min=1),
+    "zero-min-count": lambda p: p["counting"].update(min_count=0),
+    "string-version": lambda p: p.update(policy_version="5"),
+    "prose-field": lambda p: stage(p, "public", 2).update(returns="OBFUSCATED total"),
+    "boolean-eligibility": lambda p: p["eligibility"][0].update(sharing=True),
+}
 
 
-@pytest.mark.parametrize(
-    ("pool", "profile"),
-    [
-        ("api_counting", None),
-        ("api_public", None),
-        ("api_public", "BreakdownSummaryResponse"),
-        ("api_search", "TotalsSummaryResponse"),
-        (None, "TotalsSummaryResponse"),
-        ("api_unknown", None),
-    ],
-    ids=["counting-without-profile", "public-without-profile", "public-breakdown", "search-counts",
-         "profile-without-pool", "unknown-pool"],
-)
-def test_unchecked_counting_is_caught(policy, pool, profile):
-    broken = copy.deepcopy(policy)
-    broken["tiers"]["authenticated"]["stages"]["3_and_or_not"].update(pool=pool, profile=profile)
-    assert [v[:2] for v in pool_violations(broken)] == [("authenticated", "3_and_or_not")]
+@pytest.mark.parametrize("change", REJECTED.values(), ids=REJECTED.keys())
+def test_schema_rejects(policy, errors, change):
+    assert errors(broken(policy, change))
 
 
-# Rule 5, and the policy's other references into schema/.
-def test_every_profile_is_a_summary_profile(policy, summary, profiles):
-    classes = {**summary["classes"], **profiles["classes"]}
-    named = {c["profile"] for _, _, c in stages(policy)} - {None}
-    assert named == set().union(*POOL_PROFILES.values()) - {None}
-    for name in named:
-        assert name in profiles["classes"], name
-        assert "SummaryResponse" in ancestors(name, classes), name
-
-
-def test_enum_values_named_in_policy_exist(policy, summary):
-    enums = summary["enums"]
-    known = set(enums["CountModeEnum"]["permissible_values"]) | set(enums["CountStatusEnum"]["permissible_values"])
-    named = {m for _, v in walk(policy) if isinstance(v, str) for m in ENUM_VALUE.findall(v)} - NOT_ENUM_VALUES
-    assert {"OBFUSCATED", "EXACT", "LISTED", "BELOW_MIN_COUNT", "WITHHELD"} <= named
-    assert named <= known
-
-
-def test_slots_named_in_policy_exist(policy, summary):
-    """Snake-case words in the counting rules and tiers are summary slots; pool names are roles, not slots."""
-    text = [v for k, v in walk({"counting": policy["counting"], "tiers": policy["tiers"]})
-            if isinstance(v, str) and k != "pool"]
-    named = {m for v in text for m in SNAKE_CASE.findall(v)}
-    assert {"count_status", "min_count", "suppressed_study_count"} <= named
-    assert named <= set(summary["slots"])
-    assert {"min_count", "record_count"} <= set(summary["slots"])
+def test_profiles_match_the_generated_profiles():
+    """ProfileEnum lists exactly the generated response profiles, and each extends SummaryResponse."""
+    enum = set(SchemaView(str(POLICY_SCHEMA)).get_enum("ProfileEnum").permissible_values) - {"none"}
+    profiles = read(SCHEMA_DIR / "summary-profiles.yaml")["classes"]
+    responses = {name for name, c in profiles.items() if c.get("is_a") == "SummaryResponse"}
+    assert enum == responses
 
 
 @pytest.mark.skipif(not BDCHM.exists(), reason="BDCHM not fetched; run synthetic/fetch-bdchm.sh")
 def test_identity_rule_is_a_bdchm_class(policy):
-    from linkml_runtime import SchemaView
-
     view = SchemaView(str(SCHEMA_DIR / "summary.yaml"))
     rule = policy["counting"]["identity_rule"]
     assert view.get_class(rule) is not None, rule

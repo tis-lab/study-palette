@@ -1,0 +1,674 @@
+id: https://w3id.org/tis-lab/study-palette/policy
+name: cohort_builder_disclosure_policy
+title: Cohort Builder Disclosure Policy
+description: >-
+  Structure of the disclosure policy in policy/disclosure-policy.yaml: what each tier may see at each
+  stage, and how counts are protected. Decisions the committees can change are fields; what those
+  decisions mean is defined here. Rules catch combinations that would release counts no profile
+  checks. Two constraints are not expressible as rules and are checked by
+  schema/tests/test_disclosure_policy.py: tier names and stage numbers are unique, and an unavailable
+  stage (available false) uses no pool, no profile, and sets no other fields.
+license: MIT
+prefixes:
+  linkml: https://w3id.org/linkml/
+  palette: https://w3id.org/tis-lab/study-palette/
+default_prefix: palette
+default_range: string
+imports:
+  - linkml:types
+
+classes:
+  DisclosurePolicy:
+    tree_root: true
+    description: >-
+      One version of the disclosure policy. Every response records the policy_version it was shaped
+      under, in access.query_ledger.
+    slots:
+      - policy_version
+      - status
+      - counting
+      - tiers
+      - eligibility
+    slot_usage:
+      tiers:
+        minimum_cardinality: 3
+        maximum_cardinality: 3
+
+  Counting:
+    description: How counts are formed and protected, for every tier.
+    slots:
+      - min_count
+      - below_min_count_includes_zero
+      - identity_rule
+      - noise
+      - totals
+      - suppression
+      - record_count_scope
+      - releases
+
+  NoiseRule:
+    description: >-
+      Noise added to OBFUSCATED counts at or above min_count; counts below min_count are suppressed,
+      not noised. The seed is a keyed hash of the seed inputs, so the same participant set always
+      gets the same noise wherever it appears. There is deliberately no seed input for a cell's label.
+    slots:
+      - distribution
+      - min
+      - max
+      - clamp_to_min_count
+      - seed_function
+      - seed_inputs
+      - key_reference
+
+  TotalsRule:
+    description: >-
+      How a released total is formed. A total is never a sum of contributions, and clients use a
+      released total where present, never adding OBFUSCATED counts.
+    slots:
+      - method
+      - include_below_min_count_studies
+      - exact_requires_full_exact_scope
+    slot_usage:
+      method:
+        range: TotalsMethodEnum
+
+  SuppressionRule:
+    description: >-
+      Complementary suppression. Wherever a reported parent appears with its parts, the amount a
+      reader can derive from suppressed parts (parent minus reported parts) must itself be at least
+      min_count.
+    slots:
+      - method
+      - withhold_order
+      - fallback
+      - parents
+      - count_implied_not_recorded
+    slot_usage:
+      method:
+        range: SuppressionMethodEnum
+
+  ReleaseRule:
+    description: >-
+      Which releases each tier may query. Tiers not listed in retired_release_tiers query the active
+      release only.
+    slots:
+      - retired_release_tiers
+      - retired_release_own_cohorts_only
+      - overlap_checks_span_releases
+
+  RateLimit:
+    description: Requests allowed per minute, counted per key.
+    slots:
+      - requests_per_minute
+      - keyed_by
+
+  Budget:
+    description: >-
+      Query units a tier may spend. A tier either has its own daily allowance or draws on another
+      tier's.
+    slots:
+      - units_per_day
+      - draws_on
+      - exempt_within_exact_scope
+      - log_every_request
+    rules:
+      - preconditions:
+          slot_conditions:
+            units_per_day:
+              value_presence: ABSENT
+        postconditions:
+          slot_conditions:
+            draws_on:
+              required: true
+      - preconditions:
+          slot_conditions:
+            units_per_day:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            draws_on:
+              value_presence: ABSENT
+
+  Tier:
+    abstract: true
+    description: >-
+      What one tier of user may do, stage by stage. Each tier in a policy is one of the subclasses,
+      chosen by its name; the subclass fixes what that tier may never do.
+    slots:
+      - name
+      - accountability
+      - exact_scope
+      - rate_limit
+      - budget
+      - overlap_check
+      - stages
+    slot_usage:
+      stages:
+        minimum_cardinality: 7
+        maximum_cardinality: 7
+
+  PublicTier:
+    is_a: Tier
+    description: Public users are anonymous, have no exact scope, and never reach a counting pool.
+    slot_usage:
+      name:
+        equals_string: public
+      accountability:
+        equals_string: NONE
+      exact_scope:
+        value_presence: ABSENT
+      rate_limit:
+        required: true
+      stages:
+        range: PublicStage
+
+  AuthenticatedTier:
+    is_a: Tier
+    description: Authenticated users have an account and a budget, but no exact scope.
+    slot_usage:
+      name:
+        equals_string: authenticated
+      accountability:
+        equals_string: RAS_ACCOUNT
+      exact_scope:
+        value_presence: ABSENT
+      budget:
+        required: true
+      stages:
+        range: AuthenticatedStage
+
+  AuthorizedTier:
+    is_a: Tier
+    description: Only authorized users have an exact scope, and they need visas for it.
+    slot_usage:
+      name:
+        equals_string: authorized
+      accountability:
+        equals_string: RAS_ACCOUNT_WITH_VISAS
+      exact_scope:
+        required: true
+      budget:
+        required: true
+
+  Stage:
+    description: >-
+      One stage of the query flow: 0 sign-in and scope, 1 search and add terms, 2 live summary per
+      term, 3 And, Or and Not, 4 refine criteria, 5 cohort and visuals, 6 provisioning. A stage
+      names the database role its queries run as (pool) and the profile its responses must pass;
+      none means none. A stage with no profile returns no counts.
+    slots:
+      - number
+      - available
+      - pool
+      - profile
+      - operators
+      - max_terms
+      - max_nesting
+      - temporal_windows
+      - min_window_days
+      - numeric_ranges
+      - stigmatizing_terms
+      - charts
+      - below_min_count_listing
+      - provisioning
+    rules:
+      - description: A stage that returns counts must name a profile; only search may query without one.
+        preconditions:
+          slot_conditions:
+            profile:
+              equals_string: none
+        postconditions:
+          slot_conditions:
+            pool:
+              equals_string_in: [none, api_search]
+      - description: Search returns terms, not counts.
+        preconditions:
+          slot_conditions:
+            pool:
+              equals_string: api_search
+        postconditions:
+          slot_conditions:
+            profile:
+              equals_string: none
+      - description: The public pool can only produce the totals view.
+        preconditions:
+          slot_conditions:
+            pool:
+              equals_string: api_public
+        postconditions:
+          slot_conditions:
+            profile:
+              equals_string: TotalsSummaryResponse
+      - description: A profile with no pool would check responses nothing produces.
+        preconditions:
+          slot_conditions:
+            pool:
+              equals_string: none
+        postconditions:
+          slot_conditions:
+            profile:
+              equals_string: none
+      - description: Sign-in and provisioning run no counting queries.
+        preconditions:
+          slot_conditions:
+            number:
+              equals_number: 0
+        postconditions:
+          slot_conditions:
+            pool:
+              equals_string: none
+      - preconditions:
+          slot_conditions:
+            number:
+              equals_number: 6
+        postconditions:
+          slot_conditions:
+            pool:
+              equals_string: none
+
+  PublicStage:
+    is_a: Stage
+    description: A public stage never runs as api_counting and never returns more than totals.
+    slot_usage:
+      pool:
+        equals_string_in: [none, api_search, api_public]
+      profile:
+        equals_string_in: [none, TotalsSummaryResponse]
+
+  AuthenticatedStage:
+    is_a: Stage
+    description: An authenticated stage never returns exact counts.
+    slot_usage:
+      profile:
+        equals_string_in: [none, TotalsSummaryResponse, BreakdownSummaryResponse]
+
+  EligibilityDefaults:
+    description: >-
+      Suggested decisions for consent groups carrying a consent modifier. Curators start from these;
+      the committees decide per consent group.
+    slots:
+      - consent_modifier
+      - discovery_counts
+      - exact_counts
+      - sharing
+
+slots:
+  policy_version:
+    description: Increases with every change; changing min_count requires a new version.
+    range: integer
+    required: true
+    minimum_value: 1
+  status:
+    range: PolicyStatusEnum
+    required: true
+  counting:
+    range: Counting
+    required: true
+    inlined: true
+  tiers:
+    range: Tier
+    required: true
+    multivalued: true
+    inlined_as_list: true
+  eligibility:
+    range: EligibilityDefaults
+    multivalued: true
+    inlined_as_list: true
+
+  min_count:
+    description: Smallest count reported; smaller counts are BELOW_MIN_COUNT.
+    range: integer
+    required: true
+    minimum_value: 1
+  below_min_count_includes_zero:
+    description: Whether BELOW_MIN_COUNT reads "fewer than min_count, possibly none", so zero and small counts look alike.
+    range: boolean
+    required: true
+  identity_rule:
+    description: >-
+      The BDCHM class counted as one participant. Participant is one enrollment, so a person in two
+      studies counts twice.
+    required: true
+  noise:
+    range: NoiseRule
+    required: true
+    inlined: true
+  totals:
+    range: TotalsRule
+    required: true
+    inlined: true
+  suppression:
+    range: SuppressionRule
+    required: true
+    inlined: true
+  record_count_scope:
+    description: Where record_count may appear. Profiles below the exact tier forbid it outright.
+    range: RecordCountScopeEnum
+    required: true
+  releases:
+    range: ReleaseRule
+    required: true
+    inlined: true
+
+  distribution:
+    range: NoiseDistributionEnum
+    required: true
+  min:
+    description: Smallest noise added.
+    range: integer
+    required: true
+    maximum_value: 0
+  max:
+    description: Largest noise added.
+    range: integer
+    required: true
+    minimum_value: 0
+  clamp_to_min_count:
+    description: Whether a noisy value that falls below min_count is shown as min_count.
+    range: boolean
+    required: true
+  seed_function:
+    range: SeedFunctionEnum
+    required: true
+  seed_inputs:
+    range: SeedInputEnum
+    required: true
+    multivalued: true
+    minimum_cardinality: 1
+  key_reference:
+    description: >-
+      The Key Vault key the middleware reads for the seed, with one key version per release. Names
+      the key; never contains it.
+
+  method:
+    description: The procedure used; see the range for what each value means.
+    required: true
+  include_below_min_count_studies:
+    description: Whether studies below min_count still contribute their participants to the total.
+    range: boolean
+    required: true
+  exact_requires_full_exact_scope:
+    description: Whether a total is EXACT only when every contributing consent group is in the caller's exact scope.
+    range: boolean
+    required: true
+  withhold_order:
+    range: WithholdOrderEnum
+    required: true
+  fallback:
+    range: SuppressionFallbackEnum
+    required: true
+  parents:
+    description: Which parents the suppression rule protects.
+    range: SuppressionParentEnum
+    required: true
+    multivalued: true
+    minimum_cardinality: 1
+  count_implied_not_recorded:
+    description: Whether a facet's participants with nothing recorded count as an implied part of the cohort total.
+    range: boolean
+    required: true
+  retired_release_tiers:
+    description: Tiers that may query retired releases.
+    range: TierNameEnum
+    multivalued: true
+  retired_release_own_cohorts_only:
+    description: Whether retired releases are queried only for the caller's own saved cohorts.
+    range: boolean
+    required: true
+  overlap_checks_span_releases:
+    description: Whether overlap checks compare queries across releases, not just within one.
+    range: boolean
+    required: true
+
+  name:
+    range: TierNameEnum
+    required: true
+  accountability:
+    range: AccountabilityEnum
+    required: true
+  exact_scope:
+    description: Which consent groups the tier sees exact counts for. Computed from visas at sign-in and shown up front.
+    range: ExactScopeEnum
+  rate_limit:
+    range: RateLimit
+    inlined: true
+  requests_per_minute:
+    range: integer
+    required: true
+    minimum_value: 1
+  keyed_by:
+    range: RateLimitKeyEnum
+    required: true
+  budget:
+    range: Budget
+    inlined: true
+  units_per_day:
+    description: Query units the tier may spend per account per day.
+    range: integer
+    minimum_value: 1
+  draws_on:
+    description: The tier whose budget this tier's queries draw on.
+    range: TierNameEnum
+  exempt_within_exact_scope:
+    description: Whether queries entirely within exact scope spend no budget.
+    range: boolean
+  log_every_request:
+    range: boolean
+  overlap_check:
+    description: >-
+      Whether to block a query whose matched set differs from an earlier one by fewer than min_count
+      participants.
+    range: boolean
+  stages:
+    range: Stage
+    required: true
+    multivalued: true
+    inlined_as_list: true
+
+  number:
+    range: integer
+    required: true
+    minimum_value: 0
+    maximum_value: 6
+  available:
+    description: Whether the tier can use the stage at all.
+    range: boolean
+    required: true
+  pool:
+    description: The database role the stage's queries run as.
+    range: PoolEnum
+    required: true
+  profile:
+    description: The profile every response from the stage must pass.
+    range: ProfileEnum
+    required: true
+  operators:
+    range: OperatorEnum
+    multivalued: true
+  max_terms:
+    range: integer
+    minimum_value: 1
+  max_nesting:
+    range: integer
+    minimum_value: 1
+  temporal_windows:
+    description: Whether criteria may be limited to a time window.
+    range: boolean
+  min_window_days:
+    range: integer
+    minimum_value: 1
+  numeric_ranges:
+    range: NumericRangesEnum
+  stigmatizing_terms:
+    range: StigmatizingTermsEnum
+  charts:
+    description: >-
+      What the stage's charts show, including co-occurrence and Sankey. Charts are always binned and
+      never show individual points.
+    range: ChartsEnum
+  below_min_count_listing:
+    range: BelowMinCountListingEnum
+  provisioning:
+    range: ProvisioningEnum
+
+  consent_modifier:
+    description: A dbGaP consent modifier, or a combination such as NPUNCU.
+    required: true
+    pattern: "^[A-Z]+$"
+  discovery_counts:
+    description: Whether the group's participants appear in discovery counts.
+    range: EligibilityDefaultEnum
+    required: true
+  exact_counts:
+    description: Whether the group may be in an exact scope.
+    range: EligibilityDefaultEnum
+    required: true
+  sharing:
+    description: Whether the group's data may be shared at provisioning.
+    range: EligibilityDefaultEnum
+    required: true
+
+enums:
+  PolicyStatusEnum:
+    permissible_values:
+      draft:
+        description: Not yet approved; not for use with real data.
+      approved:
+        description: Approved by the data access committees.
+  NoiseDistributionEnum:
+    permissible_values:
+      UNIFORM_INTEGER:
+        description: A whole number drawn uniformly from min to max inclusive.
+  SeedFunctionEnum:
+    permissible_values:
+      HMAC_SHA256:
+        description: HMAC-SHA256 keyed by key_reference.
+  SeedInputEnum:
+    permissible_values:
+      RELEASE:
+        description: The release identifier.
+      MATCHED_PARTICIPANTS:
+        description: The sorted numbers of the matched participants.
+  TotalsMethodEnum:
+    permissible_values:
+      UNION_THEN_OBFUSCATE:
+        description: Exact union of matched participants across the studies in scope, obfuscated once with its own seed.
+  SuppressionMethodEnum:
+    permissible_values:
+      REMAINDER:
+        description: The derivable remainder of suppressed parts must be at least min_count.
+  WithholdOrderEnum:
+    permissible_values:
+      SMALLEST_FIRST:
+        description: Withhold further parts (WITHHELD), smallest first, until the remainder is large enough.
+  SuppressionFallbackEnum:
+    permissible_values:
+      WITHHOLD_PARENT:
+        description: If withholding parts cannot protect the remainder, withhold the parent.
+  SuppressionParentEnum:
+    permissible_values:
+      CONTRIBUTIONS:
+        description: A total over its study and consent-group contributions.
+      FACET_VALUES:
+        description: The cohort total over a facet's values.
+  RecordCountScopeEnum:
+    permissible_values:
+      EXACT_SCOPE_ONLY:
+        description: Only for cells entirely within the caller's exact scope.
+  TierNameEnum:
+    permissible_values:
+      public:
+        description: No sign-in.
+      authenticated:
+        description: Signed in through NIH RAS.
+      authorized:
+        description: >-
+          Authenticated, with dbGaP approval for at least one consent group in the release;
+          authorization covers only those groups.
+  AccountabilityEnum:
+    permissible_values:
+      NONE:
+      RAS_ACCOUNT:
+      RAS_ACCOUNT_WITH_VISAS:
+  ExactScopeEnum:
+    permissible_values:
+      ENTITLED_AND_ELIGIBLE:
+        description: Consent groups the caller is entitled to whose current eligibility allows exact counts.
+  RateLimitKeyEnum:
+    permissible_values:
+      NETWORK_ADDRESS:
+      ACCOUNT:
+  PoolEnum:
+    description: Database roles the middleware queries as.
+    permissible_values:
+      none:
+        description: The stage runs no database query.
+      api_search:
+        description: Term search; returns no counts.
+      api_public:
+        description: Precomputed public aggregates.
+      api_counting:
+        description: Event rows, entitlements and eligibility, for counts on arbitrary criteria.
+  ProfileEnum:
+    description: The generated profiles in schema/summary-profiles.yaml.
+    permissible_values:
+      none:
+        description: The stage returns no counts.
+      TotalsSummaryResponse:
+        description: OBFUSCATED totals; studies listed without counts.
+      BreakdownSummaryResponse:
+        description: OBFUSCATED counts per study and consent group, each with a count_status.
+      ExactSummaryResponse:
+        description: >-
+          EXACT counts within exact scope and OBFUSCATED counts outside it, as two figures never
+          combined. Structural only; the service verifies scope.
+  OperatorEnum:
+    permissible_values:
+      all:
+        description: And.
+      any:
+        description: Or.
+      none:
+        description: Not.
+  NumericRangesEnum:
+    permissible_values:
+      BIN_EDGES:
+        description: Only on precomputed bin edges.
+      MIN_ONE_BIN:
+        description: Any range at least one bin of the facet's summary wide.
+      RELAXED_WITHIN_EXACT_SCOPE:
+        description: The authenticated minimum, relaxed within exact scope if the committees agree.
+  StigmatizingTermsEnum:
+    permissible_values:
+      SHOWN_NOT_FILTERABLE:
+        description: Found by search but not usable as criteria.
+      FILTERABLE_WITHIN_EXACT_SCOPE:
+        description: Usable as criteria within exact scope, if the committees approve.
+  ChartsEnum:
+    permissible_values:
+      OBFUSCATED:
+        description: Charts of OBFUSCATED, suppressed counts.
+      EXACT_WITHIN_EXACT_SCOPE:
+        description: Exact charts within exact scope; OBFUSCATED charts outside it.
+  BelowMinCountListingEnum:
+    permissible_values:
+      ALL_UNREPORTED_CONSENT_GROUPS:
+        description: >-
+          Every consent group in the release not otherwise reported, including those with no
+          matches, is listed as BELOW_MIN_COUNT.
+  ProvisioningEnum:
+    permissible_values:
+      ACCESS_INFORMATION:
+        description: Information on how to request access.
+      PREFILLED_ACCESS_REQUEST:
+        description: An access request prefilled from the cohort.
+      SHARE_AND_ACCESS_REQUEST:
+        description: >-
+          A share for entitled, eligible consent groups, and an access request for the rest. Handled
+          by the provisioning service, not the middleware.
+  EligibilityDefaultEnum:
+    permissible_values:
+      ALLOW:
+      DENY:
+      REVIEW:
+        description: Decided case by case.
