@@ -5,9 +5,10 @@ description: >-
   Structure of the disclosure policy in policy/disclosure-policy.yaml: what each tier may see at each
   stage, and how counts are protected. Decisions the committees can change are fields; what those
   decisions mean is defined here. Rules catch combinations that would release counts no profile
-  checks. Two constraints are not expressible as rules and are checked by
-  schema/tests/test_disclosure_policy.py: tier names and stage numbers are unique, and an unavailable
-  stage (available false) uses no pool, no profile, and sets no other fields.
+  checks. Three constraints are not expressible as rules and are checked by
+  schema/tests/test_disclosure_policy.py: tier names and stage numbers are unique, an unavailable
+  stage (available false) uses no pool, no profile, and sets no other fields, and an approved
+  policy names its noise key_reference.
 license: MIT
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -378,7 +379,7 @@ slots:
   key_reference:
     description: >-
       The Key Vault key the middleware reads for the seed, with one key version per release. Names
-      the key; never contains it.
+      the key; never contains it. Required once the policy is approved.
 
   method:
     description: The procedure used; see the range for what each value means.

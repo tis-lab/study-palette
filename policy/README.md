@@ -131,7 +131,7 @@ checks, or that gives a tier more than it should have:
 - Unknown fields are rejected, so prose can't slip back in as an unchecked field.
 
 The tests also check what LinkML rules cannot express: tier names and stage numbers are unique,
-and unavailable stages are inert. They also confirm that every profile the policy names exists in
+unavailable stages are inert, and an approved policy names its noise key (`key_reference`). They also confirm that every profile the policy names exists in
 `summary-profiles.yaml`, and that `identity_rule` is a BDCHM class.
 
 ## Changing the policy
@@ -154,5 +154,6 @@ and unavailable stages are inert. They also confirm that every profile the polic
 
 - Whether the overlap check applies to authorized users' queries outside their exact scope.
 - `ExactSummaryResponse` cannot yet carry the exact and obfuscated figures side by side.
-- The Key Vault key for the noise seed (`key_reference`) is not yet named.
+- The Key Vault key for the noise seed (`key_reference`) is not yet named. The tests will fail if
+  the policy is approved without it.
 - The profile tests use a `min_count` of 11; they should follow the policy's 10.

@@ -2,8 +2,8 @@
 The disclosure policy conforms to schema/policy.yaml and names only things the summary schemas define.
 
 The schema carries the rules. Tests here confirm the policy passes, that each rule rejects what it
-should, and check the two constraints LinkML rules cannot express: tier names and stage numbers are
-unique, and an unavailable stage is inert.
+should, and check the constraints LinkML rules cannot express: tier names and stage numbers are
+unique, an unavailable stage is inert, and an approved policy names its noise key.
 """
 
 import copy
@@ -65,6 +65,12 @@ def active_unavailable_stages(policy):
             s["available"] is False and set(s) - CORE_STAGE_KEYS]
 
 
+def unkeyed_approval(policy):
+    """An approved policy must name the Key Vault key its noise is seeded with."""
+    key = policy["counting"]["noise"].get("key_reference")
+    return policy["status"] == "approved" and not (isinstance(key, str) and key.strip())
+
+
 def test_policy_conforms_to_schema(policy, errors):
     assert errors(policy) == []
 
@@ -101,6 +107,24 @@ def test_active_unavailable_stage_is_caught(policy, change):
     copied = copy.deepcopy(policy)
     change(stage(copied, "public", 5))
     assert active_unavailable_stages(copied) == [("public", 5)]
+
+
+def test_approved_policy_names_its_noise_key(policy):
+    assert not unkeyed_approval(policy)
+
+
+@pytest.mark.parametrize(
+    ("key", "caught"),
+    [(None, True), ("", True), ("  ", True), ("disclosure-noise", False)],
+    ids=["missing", "empty", "blank", "named"],
+)
+def test_approval_without_noise_key_is_caught(policy, errors, key, caught):
+    approved = broken(policy, lambda p: p.update(status="approved"))
+    if key is not None:
+        approved["counting"]["noise"]["key_reference"] = key
+    assert unkeyed_approval(approved) is caught
+    if not caught:
+        assert errors(approved) == []
 
 
 # Each case breaks one rule in schema/policy.yaml; the schema must reject it.

@@ -90,6 +90,7 @@ tiers:
     accountability: RAS_ACCOUNT
     budget:
       units_per_day: 500                    # proposed
+      log_every_request: true
     overlap_check: true
     stages:
       - number: 0
@@ -138,6 +139,7 @@ tiers:
       draws_on: authenticated
       exempt_within_exact_scope: true
       log_every_request: true
+    overlap_check: true
     stages:
       - number: 0
         available: true
@@ -165,6 +167,7 @@ tiers:
         profile: ExactSummaryResponse
         numeric_ranges: RELAXED_WITHIN_EXACT_SCOPE                # if the committees agree
         temporal_windows: true
+        min_window_days: 30     # Window only applies outside of the users EXACT scope
       - number: 5
         available: true
         pool: api_counting
