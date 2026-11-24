@@ -7,7 +7,7 @@ import yaml
 def main():
     """Write deterministic LinkML profiles for policy review."""
     directory = Path(__file__).resolve().parent
-    extension = yaml.safe_load((directory / "summary-disclosure.yaml").read_text())
+    extension = yaml.safe_load((directory / "summary.yaml").read_text())
     schema = {
         "id": "https://w3id.org/tis-lab/study-palette/summary-profiles",
         "name": "study_palette_summary_profiles",
@@ -16,29 +16,29 @@ def main():
         "license": "MIT",
         "prefixes": extension["prefixes"],
         "default_prefix": "palette",
-        "imports": ["summary-disclosure"],
+        "imports": ["summary"],
         "classes": {},
     }
     classes = schema["classes"]
     classes["PublicStudyEntry"] = {
-        "is_a": "DisclosureStudyEntry",
+        "is_a": "StudySummary",
         "slot_usage": {
             "participant_count": {"required": False, "value_presence": "ABSENT"},
             "count_status": {"required": True, "equals_string": "LISTED"},
         },
     }
-    for name, base in (("EstimatedStudyEntry", "DisclosureStudyEntry"),
-                       ("EstimatedContribution", "DisclosureContribution")):
+    for name, base in (("EstimatedStudyEntry", "StudySummary"),
+                       ("EstimatedContribution", "StudyContribution")):
         classes[name] = {"is_a": base, "slot_usage": {
             "count_mode": {"required": True, "equals_string": "OBFUSCATED"},
             "count_status": {"required": True},
         }}
-    facets = extension["classes"]["DisclosureSummaryFacets"]["slot_usage"]
+    facets = {slot: {"range": extension["slots"][slot]["range"]} for slot in extension["classes"]["SummaryFacets"]["slots"]}
     for tier in ("Public", "SignedIn"):
         ranges = {}
         for slot, config in facets.items():
             base = config["range"]
-            name = tier + base.removeprefix("Disclosure")
+            name = tier + base
             classes[name] = {"is_a": base, "slot_usage": {
                 "record_count": {"value_presence": "ABSENT"},
                 "values": {"range": name},
@@ -46,16 +46,16 @@ def main():
                 "studies": {"maximum_cardinality": 0} if tier == "Public" else {"range": "EstimatedContribution"},
             }}
             ranges[slot] = {"range": name}
-        classes[tier + "SummaryFacets"] = {"is_a": "DisclosureSummaryFacets", "slot_usage": ranges}
+        classes[tier + "SummaryFacets"] = {"is_a": "SummaryFacets", "slot_usage": ranges}
         name = "PublicSummaryResponse" if tier == "Public" else "SignedInBreakdownResponse"
-        classes[name] = {"is_a": "DisclosureSummaryResponse", "slot_usage": {
+        classes[name] = {"is_a": "SummaryResponse", "slot_usage": {
             "studies": {"range": "PublicStudyEntry" if tier == "Public" else "EstimatedStudyEntry"},
             "summary": {"range": tier + "SummaryFacets"},
             "records": {"value_presence": "ABSENT"},
             "count_mode": {"required": True, "equals_string": "OBFUSCATED"},
         }}
     classes["ApprovedSummaryResponse"] = {
-        "is_a": "DisclosureSummaryResponse",
+        "is_a": "SummaryResponse",
         "description": "Structural contract only. The service must verify scope before releasing any exact count.",
         "slot_usage": {"records": {"value_presence": "ABSENT"}},
     }

@@ -8,10 +8,10 @@ prefixes:
   palette: https://w3id.org/tis-lab/study-palette/
 default_prefix: palette
 imports:
-- summary-disclosure
+- summary
 classes:
   PublicStudyEntry:
-    is_a: DisclosureStudyEntry
+    is_a: StudySummary
     slot_usage:
       participant_count:
         required: false
@@ -20,7 +20,7 @@ classes:
         required: true
         equals_string: LISTED
   EstimatedStudyEntry:
-    is_a: DisclosureStudyEntry
+    is_a: StudySummary
     slot_usage:
       count_mode:
         required: true
@@ -28,7 +28,7 @@ classes:
       count_status:
         required: true
   EstimatedContribution:
-    is_a: DisclosureContribution
+    is_a: StudyContribution
     slot_usage:
       count_mode:
         required: true
@@ -36,7 +36,7 @@ classes:
       count_status:
         required: true
   PublicParticipantSummary:
-    is_a: DisclosureParticipantSummary
+    is_a: ParticipantSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -48,7 +48,7 @@ classes:
       studies:
         maximum_cardinality: 0
   PublicDemographySummary:
-    is_a: DisclosureDemographySummary
+    is_a: DemographySummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -60,7 +60,7 @@ classes:
       studies:
         maximum_cardinality: 0
   PublicConditionSummary:
-    is_a: DisclosureConditionSummary
+    is_a: ConditionSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -72,7 +72,7 @@ classes:
       studies:
         maximum_cardinality: 0
   PublicProcedureSummary:
-    is_a: DisclosureProcedureSummary
+    is_a: ProcedureSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -84,7 +84,7 @@ classes:
       studies:
         maximum_cardinality: 0
   PublicDrugExposureSummary:
-    is_a: DisclosureDrugExposureSummary
+    is_a: DrugExposureSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -96,7 +96,7 @@ classes:
       studies:
         maximum_cardinality: 0
   PublicMeasurementObservationSummary:
-    is_a: DisclosureMeasurementObservationSummary
+    is_a: MeasurementObservationSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -108,7 +108,7 @@ classes:
       studies:
         maximum_cardinality: 0
   PublicSummaryFacets:
-    is_a: DisclosureSummaryFacets
+    is_a: SummaryFacets
     slot_usage:
       participants:
         range: PublicParticipantSummary
@@ -123,7 +123,7 @@ classes:
       measurements:
         range: PublicMeasurementObservationSummary
   PublicSummaryResponse:
-    is_a: DisclosureSummaryResponse
+    is_a: SummaryResponse
     slot_usage:
       studies:
         range: PublicStudyEntry
@@ -135,7 +135,7 @@ classes:
         required: true
         equals_string: OBFUSCATED
   SignedInParticipantSummary:
-    is_a: DisclosureParticipantSummary
+    is_a: ParticipantSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -147,7 +147,7 @@ classes:
       studies:
         range: EstimatedContribution
   SignedInDemographySummary:
-    is_a: DisclosureDemographySummary
+    is_a: DemographySummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -159,7 +159,7 @@ classes:
       studies:
         range: EstimatedContribution
   SignedInConditionSummary:
-    is_a: DisclosureConditionSummary
+    is_a: ConditionSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -171,7 +171,7 @@ classes:
       studies:
         range: EstimatedContribution
   SignedInProcedureSummary:
-    is_a: DisclosureProcedureSummary
+    is_a: ProcedureSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -183,7 +183,7 @@ classes:
       studies:
         range: EstimatedContribution
   SignedInDrugExposureSummary:
-    is_a: DisclosureDrugExposureSummary
+    is_a: DrugExposureSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -195,7 +195,7 @@ classes:
       studies:
         range: EstimatedContribution
   SignedInMeasurementObservationSummary:
-    is_a: DisclosureMeasurementObservationSummary
+    is_a: MeasurementObservationSummary
     slot_usage:
       record_count:
         value_presence: ABSENT
@@ -207,7 +207,7 @@ classes:
       studies:
         range: EstimatedContribution
   SignedInSummaryFacets:
-    is_a: DisclosureSummaryFacets
+    is_a: SummaryFacets
     slot_usage:
       participants:
         range: SignedInParticipantSummary
@@ -222,7 +222,7 @@ classes:
       measurements:
         range: SignedInMeasurementObservationSummary
   SignedInBreakdownResponse:
-    is_a: DisclosureSummaryResponse
+    is_a: SummaryResponse
     slot_usage:
       studies:
         range: EstimatedStudyEntry
@@ -234,7 +234,7 @@ classes:
         required: true
         equals_string: OBFUSCATED
   ApprovedSummaryResponse:
-    is_a: DisclosureSummaryResponse
+    is_a: SummaryResponse
     description: Structural contract only. The service must verify scope before releasing any exact count.
     slot_usage:
       records:
