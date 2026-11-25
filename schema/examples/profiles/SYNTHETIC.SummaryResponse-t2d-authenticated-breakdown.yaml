@@ -4,7 +4,7 @@
 # Shaped for the authenticated tier as BreakdownSummaryResponse, under policy/disclosure-policy.yaml (policy_version 1, draft).
 # Noise is keyed with a synthetic placeholder (SYNTHETIC-example-noise-key), not the policy's key.
 # The source's participant-level records are omitted: no profile allows them.
-# Withheld by the remainder rule under: palette:condition/MONDO_0005068, palette:condition/MONDO_0005068/ABSENT, palette:condition/MONDO_0005068/PRESENT, palette:condition/MONDO_0005148/PRESENT, palette:condition/MONDO_0005148/UNKNOWN, palette:condition/MONDO_0005252, palette:condition/MONDO_0005252/ABSENT, palette:condition/MONDO_0005252/PRESENT, palette:condition/MONDO_0005267, palette:condition/MONDO_0005267/ABSENT, palette:condition/MONDO_0005267/PRESENT, palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE, palette:demography/race/ASIAN, palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN, palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER, palette:demography/sex/FEMALE, palette:demography/sex/MALE.
+# Withheld by the remainder rule under: palette:condition/MONDO_0005068, palette:condition/MONDO_0005068/ABSENT, palette:condition/MONDO_0005068/PRESENT, palette:condition/MONDO_0005148/PRESENT, palette:condition/MONDO_0005148/UNKNOWN, palette:condition/MONDO_0005252, palette:condition/MONDO_0005252/ABSENT, palette:condition/MONDO_0005252/PRESENT, palette:condition/MONDO_0005267, palette:condition/MONDO_0005267/ABSENT, palette:condition/MONDO_0005267/PRESENT, palette:demography/race, palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE, palette:demography/race/ASIAN, palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN, palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER, palette:demography/sex/FEMALE, palette:demography/sex/MALE.
 release: example-release
 focus:
 - MONDO:0005148
@@ -167,30 +167,29 @@ summary:
       consent_group: palette:study_one/c1
       count_status: REPORTED
       count_mode: OBFUSCATED
-      participant_count: 470
+      participant_count: 468
     - research_study: palette:study_two
       consent_group: palette:study_two/c1
-      count_status: REPORTED
+      count_status: WITHHELD
       count_mode: OBFUSCATED
-      participant_count: 457
     values:
     - id: palette:demography/race/WHITE
       summarized_slot: race
       race:
       - WHITE
-      participant_count: 507
+      participant_count: 513
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 238
+        participant_count: 236
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 276
+        participant_count: 278
     - id: palette:demography/race/BLACK_OR_AFRICAN_AMERICAN
       summarized_slot: race
       race:
@@ -202,17 +201,17 @@ summary:
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 142
+        participant_count: 140
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 91
+        participant_count: 88
     - id: palette:demography/race/ASIAN
       summarized_slot: race
       race:
       - ASIAN
-      participant_count: 46
+      participant_count: 44
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -227,7 +226,7 @@ summary:
       summarized_slot: race
       race:
       - AMERICAN_INDIAN_OR_ALASKA_NATIVE
-      participant_count: 45
+      participant_count: 50
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -242,7 +241,7 @@ summary:
       summarized_slot: race
       race:
       - MIDDLE_EASTERN_OR_NORTH_AFRICAN
-      participant_count: 42
+      participant_count: 45
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -257,7 +256,7 @@ summary:
       summarized_slot: race
       race:
       - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
-      participant_count: 47
+      participant_count: 44
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -319,14 +318,14 @@ summary:
   conditions:
   - id: palette:condition/MONDO_0005148
     condition_concept: MONDO:0005148
-    participant_count: 927
+    participant_count: 933
     count_mode: OBFUSCATED
     studies:
     - research_study: palette:study_one
       consent_group: palette:study_one/c1
       count_status: REPORTED
       count_mode: OBFUSCATED
-      participant_count: 470
+      participant_count: 473
     - research_study: palette:study_two
       consent_group: palette:study_two/c1
       count_status: REPORTED
@@ -336,7 +335,7 @@ summary:
     - id: palette:condition/MONDO_0005148/PRESENT
       condition_concept: MONDO:0005148
       condition_status: PRESENT
-      participant_count: 167
+      participant_count: 168
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -347,7 +346,7 @@ summary:
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 82
+        participant_count: 77
     - id: palette:condition/MONDO_0005148/ABSENT
       condition_concept: MONDO:0005148
       condition_status: ABSENT
@@ -358,7 +357,7 @@ summary:
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 383
+        participant_count: 382
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
@@ -367,7 +366,7 @@ summary:
     - id: palette:condition/MONDO_0005148/UNKNOWN
       condition_concept: MONDO:0005148
       condition_status: UNKNOWN
-      participant_count: 18
+      participant_count: 12
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -395,7 +394,7 @@ summary:
     - id: palette:condition/MONDO_0005068/PRESENT
       condition_concept: MONDO:0005068
       condition_status: PRESENT
-      participant_count: 37
+      participant_count: 41
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -409,7 +408,7 @@ summary:
     - id: palette:condition/MONDO_0005068/ABSENT
       condition_concept: MONDO:0005068
       condition_status: ABSENT
-      participant_count: 442
+      participant_count: 443
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -479,7 +478,7 @@ summary:
     - id: palette:condition/MONDO_0005267/PRESENT
       condition_concept: MONDO:0005267
       condition_status: PRESENT
-      participant_count: 98
+      participant_count: 96
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -493,7 +492,7 @@ summary:
     - id: palette:condition/MONDO_0005267/ABSENT
       condition_concept: MONDO:0005267
       condition_status: ABSENT
-      participant_count: 366
+      participant_count: 362
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -525,43 +524,43 @@ summary:
       observation_type: FAST_GLUC_BLD
       bin_high: 70
       bin_unit: mg/dL
-      participant_count: 33
+      participant_count: 36
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 21
+        participant_count: 15
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 17
+        participant_count: 20
     - id: palette:measurement/FAST_GLUC_BLD/70-100mg_dL
       observation_type: FAST_GLUC_BLD
       bin_low: 70
       bin_high: 100
       bin_unit: mg/dL
-      participant_count: 467
+      participant_count: 470
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 237
+        participant_count: 238
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 227
+        participant_count: 229
     - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
       observation_type: FAST_GLUC_BLD
       bin_low: 100
       bin_high: 126
       bin_unit: mg/dL
-      participant_count: 205
+      participant_count: 207
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -573,24 +572,24 @@ summary:
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 93
+        participant_count: 94
     - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
       observation_type: FAST_GLUC_BLD
       bin_low: 126
       bin_unit: mg/dL
-      participant_count: 232
+      participant_count: 229
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 108
+        participant_count: 111
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 120
+        participant_count: 117
 terms:
   MONDO:0005148:
     label: type 2 diabetes mellitus

@@ -82,7 +82,7 @@ summary:
       summarized_slot: race
       race:
       - WHITE
-      participant_count: 507
+      participant_count: 513
       count_mode: OBFUSCATED
     - id: palette:demography/race/BLACK_OR_AFRICAN_AMERICAN
       summarized_slot: race
@@ -94,25 +94,25 @@ summary:
       summarized_slot: race
       race:
       - ASIAN
-      participant_count: 46
+      participant_count: 44
       count_mode: OBFUSCATED
     - id: palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE
       summarized_slot: race
       race:
       - AMERICAN_INDIAN_OR_ALASKA_NATIVE
-      participant_count: 45
+      participant_count: 50
       count_mode: OBFUSCATED
     - id: palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN
       summarized_slot: race
       race:
       - MIDDLE_EASTERN_OR_NORTH_AFRICAN
-      participant_count: 42
+      participant_count: 45
       count_mode: OBFUSCATED
     - id: palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
       summarized_slot: race
       race:
       - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
-      participant_count: 47
+      participant_count: 44
       count_mode: OBFUSCATED
   - id: palette:demography/ethnicity
     summarized_slot: ethnicity
@@ -132,13 +132,13 @@ summary:
   conditions:
   - id: palette:condition/MONDO_0005148
     condition_concept: MONDO:0005148
-    participant_count: 927
+    participant_count: 933
     count_mode: OBFUSCATED
     values:
     - id: palette:condition/MONDO_0005148/PRESENT
       condition_concept: MONDO:0005148
       condition_status: PRESENT
-      participant_count: 167
+      participant_count: 168
       count_mode: OBFUSCATED
     - id: palette:condition/MONDO_0005148/ABSENT
       condition_concept: MONDO:0005148
@@ -148,7 +148,7 @@ summary:
     - id: palette:condition/MONDO_0005148/UNKNOWN
       condition_concept: MONDO:0005148
       condition_status: UNKNOWN
-      participant_count: 18
+      participant_count: 12
       count_mode: OBFUSCATED
   - id: palette:condition/MONDO_0005068
     condition_concept: MONDO:0005068
@@ -158,12 +158,12 @@ summary:
     - id: palette:condition/MONDO_0005068/PRESENT
       condition_concept: MONDO:0005068
       condition_status: PRESENT
-      participant_count: 37
+      participant_count: 41
       count_mode: OBFUSCATED
     - id: palette:condition/MONDO_0005068/ABSENT
       condition_concept: MONDO:0005068
       condition_status: ABSENT
-      participant_count: 442
+      participant_count: 443
       count_mode: OBFUSCATED
   - id: palette:condition/MONDO_0005252
     condition_concept: MONDO:0005252
@@ -188,12 +188,12 @@ summary:
     - id: palette:condition/MONDO_0005267/PRESENT
       condition_concept: MONDO:0005267
       condition_status: PRESENT
-      participant_count: 98
+      participant_count: 96
       count_mode: OBFUSCATED
     - id: palette:condition/MONDO_0005267/ABSENT
       condition_concept: MONDO:0005267
       condition_status: ABSENT
-      participant_count: 366
+      participant_count: 362
       count_mode: OBFUSCATED
   measurements:
   - id: palette:measurement/FAST_GLUC_BLD
@@ -205,27 +205,27 @@ summary:
       observation_type: FAST_GLUC_BLD
       bin_high: 70
       bin_unit: mg/dL
-      participant_count: 33
+      participant_count: 36
       count_mode: OBFUSCATED
     - id: palette:measurement/FAST_GLUC_BLD/70-100mg_dL
       observation_type: FAST_GLUC_BLD
       bin_low: 70
       bin_high: 100
       bin_unit: mg/dL
-      participant_count: 467
+      participant_count: 470
       count_mode: OBFUSCATED
     - id: palette:measurement/FAST_GLUC_BLD/100-126mg_dL
       observation_type: FAST_GLUC_BLD
       bin_low: 100
       bin_high: 126
       bin_unit: mg/dL
-      participant_count: 205
+      participant_count: 207
       count_mode: OBFUSCATED
     - id: palette:measurement/FAST_GLUC_BLD/126-mg_dL
       observation_type: FAST_GLUC_BLD
       bin_low: 126
       bin_unit: mg/dL
-      participant_count: 232
+      participant_count: 229
       count_mode: OBFUSCATED
 terms:
   MONDO:0005148:

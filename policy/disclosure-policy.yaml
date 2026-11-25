@@ -75,7 +75,7 @@ tiers:
         pool: api_public
         profile: TotalsSummaryResponse
         numeric_ranges: BIN_EDGES
-        temporal_windows: false
+        temporal_windows: NOT_ALLOWED
       - number: 5
         available: false
         pool: none
@@ -118,7 +118,7 @@ tiers:
         pool: api_counting                  # values and time need event rows
         profile: TotalsSummaryResponse      # output is still the public view
         numeric_ranges: MIN_ONE_BIN         # proposed
-        temporal_windows: true
+        temporal_windows: ALLOWED
         min_window_days: 30                 # proposed
       - number: 5                           # on a materialized cohort
         available: true
@@ -166,7 +166,7 @@ tiers:
         pool: api_counting
         profile: ExactSummaryResponse
         numeric_ranges: RELAXED_WITHIN_EXACT_SCOPE                # if the committees agree
-        temporal_windows: true
+        temporal_windows: ALLOWED
         min_window_days: 30     # Window only applies outside of the users EXACT scope
       - number: 5
         available: true

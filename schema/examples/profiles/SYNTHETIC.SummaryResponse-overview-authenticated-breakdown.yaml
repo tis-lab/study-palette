@@ -170,49 +170,49 @@ summary:
         count_mode: OBFUSCATED
   - id: palette:demography/race
     summarized_slot: race
-    participant_count: 2222
+    participant_count: 2228
     count_mode: OBFUSCATED
     studies:
     - research_study: palette:study_one
       consent_group: palette:study_one/c1
       count_status: REPORTED
       count_mode: OBFUSCATED
-      participant_count: 1187
+      participant_count: 1183
     - research_study: palette:study_two
       consent_group: palette:study_two/c1
       count_status: REPORTED
       count_mode: OBFUSCATED
-      participant_count: 1041
+      participant_count: 1042
     values:
     - id: palette:demography/race/WHITE
       summarized_slot: race
       race:
       - WHITE
-      participant_count: 1207
+      participant_count: 1213
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 593
+        participant_count: 589
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 623
+        participant_count: 621
     - id: palette:demography/race/BLACK_OR_AFRICAN_AMERICAN
       summarized_slot: race
       race:
       - BLACK_OR_AFRICAN_AMERICAN
-      participant_count: 571
+      participant_count: 568
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
         consent_group: palette:study_one/c1
         count_status: REPORTED
         count_mode: OBFUSCATED
-        participant_count: 351
+        participant_count: 347
       - research_study: palette:study_two
         consent_group: palette:study_two/c1
         count_status: REPORTED
@@ -222,7 +222,7 @@ summary:
       summarized_slot: race
       race:
       - ASIAN
-      participant_count: 128
+      participant_count: 123
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -237,7 +237,7 @@ summary:
       summarized_slot: race
       race:
       - AMERICAN_INDIAN_OR_ALASKA_NATIVE
-      participant_count: 117
+      participant_count: 122
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -252,7 +252,7 @@ summary:
       summarized_slot: race
       race:
       - MIDDLE_EASTERN_OR_NORTH_AFRICAN
-      participant_count: 103
+      participant_count: 99
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one
@@ -267,7 +267,7 @@ summary:
       summarized_slot: race
       race:
       - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
-      participant_count: 101
+      participant_count: 97
       count_mode: OBFUSCATED
       studies:
       - research_study: palette:study_one

@@ -1,21 +1,23 @@
 """
 Generate per-tier example responses from exact example counts, under the disclosure policy.
 
-Two hand-written examples supply the exact counts: the overview, for every study with no criteria
-applied, and the T2D example, filtered to participants with a fasting glucose measurement. Each is
-shaped once for every (tier, profile) pair the policy uses, and written to examples/profiles/.
+Hand-written examples supply the exact counts: the overview, for every study with no criteria
+applied; the T2D example, filtered to participants with a fasting glucose measurement; and its
+female follow-up, which adds sex FEMALE to that filter. Each is shaped once for every (tier,
+profile) pair the policy uses, and written to examples/profiles/.
 
 The policy seeds noise from the matched participant set, and the examples have counts, not
 participants. So the generator first builds one fictional roster that reproduces every count in
-both examples, with the filtered cohort drawn from the overview's participants. Each cell's exact
-count and noise then come from a real set, and identical sets get identical noise in every file,
-as the policy requires.
+every example, with each filtered cohort drawn from the one it narrows. Each cell's exact count
+and noise then come from a real set, and identical sets get identical noise in every file, as the
+policy requires.
 
     python schema/generate_profile_examples.py
 """
 
 import hashlib
 import hmac
+from itertools import pairwise
 from pathlib import Path
 
 import yaml
@@ -24,10 +26,12 @@ SCHEMA_DIR = Path(__file__).resolve().parent
 EXAMPLES_DIR = SCHEMA_DIR / "examples"
 POLICY = SCHEMA_DIR.parent / "policy" / "disclosure-policy.yaml"
 OUTPUT = EXAMPLES_DIR / "profiles"
-# Label -> source. The first has no criteria and defines everyone; the rest are filtered from it.
+# Label -> source, outermost first. The first has no criteria and defines everyone; each later one
+# adds filter terms to the one before, so its cohort is drawn from that one's.
 SOURCES = {
     "overview": EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-overview.yaml",
     "t2d": EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d.yaml",
+    "t2d-female": EXAMPLES_DIR / "SYNTHETIC.SummaryResponse-t2d-female.yaml",
 }
 
 # A placeholder, labelled so it cannot be mistaken for a real key. The policy's real key lives in
@@ -55,7 +59,6 @@ class View:
         self.label, self.path = label, path
         self.source = yaml.safe_load(path.read_text(encoding="utf-8"))
         self.filter = list(self.source.get("filter") or [])
-        assert len(self.filter) <= 1, f"{path.name}: only a single filter is supported"
         self.studies = [s["research_study"] for s in self.source["studies"]]
         self.nodes, self.children, self.facet = {}, {ROOT: []}, {}
         for facet in FACETS:
@@ -81,8 +84,9 @@ class View:
         return listed.get(study, 0)
 
     def cohort(self, study):
-        """Return everyone the source counts in one study: the filter's participants, or everyone."""
-        return self.roster.sets[study][self.filter[0] if self.filter else ROOT]
+        """Return everyone the source counts in one study: those matching every filter term, or everyone."""
+        sets = self.roster.sets[study]
+        return frozenset.intersection(*(sets[term] for term in self.filter)) if self.filter else sets[ROOT]
 
     def members(self, node_id, column):
         """Return the participants a cell counts: one study, or every study for a total."""
@@ -99,85 +103,129 @@ class View:
 
 class Roster:
     """
-    Fictional participants that reproduce every count in the overview and the filtered examples.
+    Fictional participants that reproduce every count in a chain of nested examples.
 
-    Numbering follows the synthetic sample: study one is 100001 onwards, study two 200001. The
-    filtered cohort is a study's first participants, so it is drawn from the overview's. Every
-    summary takes its filtered count from that block and the rest of its overview count from the
-    participants after it. Values take consecutive runs within their parent's, so a facet's values
-    partition the participants with that facet recorded, and the rest are its implied "not
-    recorded" part.
+    Levels run from the unfiltered overview (level 0) inwards, each filtered example narrowing the
+    one before. Numbering follows the synthetic sample: study one is 100001 onwards, study two
+    200001. Each study's participants are laid out innermost cohort first, so every cohort is a
+    prefix of the one it narrows, and the participants are split into segments: those in the
+    innermost cohort, those in the next cohort out but not the innermost, and so on.
+
+    A summary takes, in each segment, the difference between its counts at the two levels either
+    side. Values take consecutive runs within their parent's, so a facet's values partition the
+    participants with that facet recorded, and the rest are its implied "not recorded" part.
+    Facets are independent of one another, so each starts from a segment's first participant.
+
+    An example that leaves out a facet says nothing about it at that level. Inwards, the facet
+    spans the cohorts it was not described for; outwards, it has no participants beyond the
+    outermost example that describes it.
     """
 
-    def __init__(self, overview, filtered):
-        """Assign participants for every study in the overview."""
-        assert not overview.filter, "the overview must have no criteria"
-        assert len(filtered) <= 1, "one filtered example at a time"
-        self.overview, self.filtered = overview, filtered[0] if filtered else None
+    def __init__(self, levels):
+        """Infer omitted counts, then assign participants for every study in the overview."""
+        assert not levels[0].filter, "the outermost example must have no criteria"
+        for outer, inner in pairwise(levels):
+            assert set(outer.filter) < set(inner.filter), f"{inner.label} must add filter terms to {outer.label}"
+        self.levels = levels
+        self.parent = {}
+        for view in levels:
+            for parent, children in view.walk():
+                self.parent.update(dict.fromkeys(children, parent))
         self.hidden = {}
-        if self.filtered:
-            for study in overview.studies:
-                self._infer_hidden(study)
-        self.sets = {study: self._study(i, study) for i, study in enumerate(overview.studies)}
+        for level in range(1, len(levels)):
+            for study in levels[0].studies:
+                self._infer_hidden(level, study)
+        self.sets = {study: self._study(i, study) for i, study in enumerate(levels[0].studies)}
 
-    def _infer_hidden(self, study):
-        """
-        Recover the values a filtered example left out because they were below its min_count.
+    def known(self, level, node_id):
+        """Say whether an example constrains a summary: it lists it, or lists the facet it belongs to."""
+        if node_id in self.levels[level].nodes:
+            return True
+        parent = self.parent[node_id]
+        return parent != ROOT and self.known(level, parent)
 
-        Where a summary's values sum to less than the summary, the difference belongs to values the
-        example omitted. It is assigned when exactly one omitted value, present in the overview,
-        can hold it; anything else means the examples disagree, and is an error.
-        """
-        for parent, children in self.filtered.walk():
-            if parent == ROOT:
-                continue  # facets are independent, not parts of the cohort
-            residual = self.filtered.count(parent, study) - sum(self.filtered.count(c, study) for c in children)
-            if residual <= 0:
-                continue  # overlapping values, such as race, can sum past their parent
-            candidates = [c for c in self._children(parent) if self.filtered.count(c, study) == 0
-                          and c in self.overview.nodes and self.overview.count(c, study) >= residual]
-            if len(candidates) != 1:
-                raise ValueError(f"{parent} in {study}: {residual} participants belong to no single omitted value "
-                                 f"(candidates {candidates}); the examples disagree")
-            self.hidden[(candidates[0], study)] = residual
+    def count(self, level, node_id, study):
+        """Return a summary's exact count at one level, inferred where the example omitted it."""
+        return self.hidden.get((level, node_id, study), self.levels[level].count(node_id, study))
 
-    def _counts(self, node_id, study):
-        """Return (filtered count, overview count) for one summary in one study."""
-        inside = self.filtered.count(node_id, study) if self.filtered else 0
-        inside = self.hidden.get((node_id, study), inside)
-        total = self.overview.count(node_id, study) if node_id in self.overview.nodes else inside
-        return inside, total
-
-    def _children(self, node_id):
-        ordered = list(self.overview.children.get(node_id, []))
-        if self.filtered:
-            ordered += [c for c in self.filtered.children.get(node_id, []) if c not in ordered]
+    def children(self, node_id):
+        """Return a summary's values, in order, across every example."""
+        ordered = []
+        for view in self.levels:
+            ordered += [c for c in view.children.get(node_id, []) if c not in ordered]
         return ordered
 
+    def _infer_hidden(self, level, study):
+        """
+        Recover the values an example left out because they were below its min_count.
+
+        Where a summary's values sum to less than the summary, the difference belongs to values the
+        example omitted. It is assigned when exactly one omitted value can hold it at the next level
+        out; anything else means the examples disagree, and is an error.
+        """
+        view = self.levels[level]
+        for parent, children in view.walk():
+            if parent == ROOT:
+                continue  # facets are independent, not parts of the cohort
+            residual = view.count(parent, study) - sum(view.count(c, study) for c in children)
+            if residual <= 0:
+                continue  # overlapping values, such as race, can sum past their parent
+            candidates = [c for c in self.children(parent) if view.count(c, study) == 0
+                          and self.known(level - 1, c) and self.count(level - 1, c, study) >= residual]
+            if len(candidates) != 1:
+                raise ValueError(f"{view.label}: {parent} in {study} has {residual} participants that belong "
+                                 f"to no single omitted value (candidates {candidates}); the examples disagree")
+            self.hidden[(level, candidates[0], study)] = residual
+
     def _study(self, index, study):
-        everyone = [(index + 1) * 100000 + n + 1 for n in range(self.overview.count(ROOT, study))]
-        size = self.filtered.count(ROOT, study) if self.filtered else 0
-        block, rest = everyone[:size], everyone[size:]
+        sizes = [view.count(ROOT, study) for view in self.levels]
+        assert sizes == sorted(sizes, reverse=True), f"{study}: a filtered cohort outgrows the one it narrows"
+        everyone = [(index + 1) * 100000 + n + 1 for n in range(sizes[0])]
+        innermost = len(sizes) - 1
+        # Segment L holds the participants in cohort L but not in cohort L + 1.
+        segments = {level: everyone[sizes[level + 1] if level < innermost else 0:sizes[level]]
+                    for level in range(len(sizes))}
         sets = {ROOT: frozenset(everyone)}
 
-        def assign(node_id, inside, outside, partition=True):
-            # A facet's values partition it, so they take successive runs. Facets under the cohort
-            # are independent of one another, so each starts from the cohort's first participant.
-            sets[node_id] = frozenset(inside) | frozenset(outside)
-            i = o = 0
-            for child in self._children(node_id):
-                n_in, n_all = self._counts(child, study)
-                n_out = n_all - n_in
-                assert n_out >= 0, f"{child} in {study}: the filtered count exceeds the overview's"
-                assert i + n_in <= len(inside) and o + n_out <= len(outside), f"{child} in {study} overlaps"
-                assign(child, inside[i:i + n_in], outside[o:o + n_out])
-                if partition:
-                    i, o = i + n_in, o + n_out
+        def counts(node_id, deepest):
+            """Return the summary's count at each level up to its facet's deepest described level."""
+            described = [level for level in range(deepest + 1) if self.known(level, node_id)]
+            shallowest = described[0]
+            return [self.count(max(level, shallowest), node_id, study) for level in range(deepest + 1)]
 
-        assign(ROOT, block, rest, partition=False)
+        def assign(node_id, runs, deepest, partition=True):
+            sets[node_id] = frozenset().union(*runs.values())
+            used = dict.fromkeys(runs, 0)
+            for child in self.children(node_id):
+                described = [lv for lv in range(innermost + 1) if self.known(lv, child)]
+                child_deepest = deepest if partition else max(described)
+                totals = counts(child, child_deepest)
+                sizes_by_level = {lv: totals[lv] - (totals[lv + 1] if lv < child_deepest else 0)
+                                  for lv in range(child_deepest + 1)}
+                source = runs if partition else merged(child_deepest)
+                start = used if partition else dict.fromkeys(source, 0)
+                taken = {}
+                for lv, size in sizes_by_level.items():
+                    assert size >= 0, f"{child} in {study}: level {lv + 1} counts more than level {lv}"
+                    assert start[lv] + size <= len(source[lv]), f"{child} in {study} overlaps its siblings"
+                    taken[lv] = source[lv][start[lv]:start[lv] + size]
+                    if partition:
+                        used[lv] += size
+                assign(child, taken, child_deepest)
+
+        def merged(deepest):
+            """Return the segments a facet described down to one level sees: deeper ones are merged into it."""
+            runs = {level: segments[level] for level in range(deepest)}
+            runs[deepest] = everyone[:sizes[deepest]]
+            return runs
+
+        assign(ROOT, merged(innermost), innermost, partition=False)
         sets[ROOT] = frozenset(everyone)
-        if self.filtered:
-            assert sets[self.filtered.filter[0]] == frozenset(block), f"{study}: the filter is not the cohort"
+        for level, view in enumerate(self.levels):
+            if view.filter:
+                cohort = frozenset.intersection(*(sets[term] for term in view.filter))
+                assert cohort == frozenset(everyone[:sizes[level]]), (
+                    f"{view.label} in {study}: the filter is not the cohort")
         return sets
 
 
@@ -247,8 +295,24 @@ class Disclosure:
 
 
 def tree_groups(view, column):
-    """Pair every parent cell in one column with its child cells."""
-    return [((parent, column), [(c, column) for c in children]) for parent, children in view.walk()]
+    """
+    Pair every parent cell in one column with the parts the remainder rule protects it over.
+
+    A summary is a parent of its values. The cohort is not one group over all its facets: facets
+    overlap (one participant has an age, a sex and a race), so their sum says nothing. Instead the
+    cohort is a parent of each facet on its own, and of each facet's values, so the implied "not
+    recorded" part (cohort minus the facet) is protected wherever it can be derived.
+    """
+    groups = []
+    for parent, children in view.walk():
+        if parent != ROOT:
+            groups.append(((parent, column), [(c, column) for c in children]))
+            continue
+        for facet in children:
+            groups.append(((ROOT, column), [(facet, column)]))
+            if view.children[facet]:
+                groups.append(((ROOT, column), [(v, column) for v in view.children[facet]]))
+    return groups
 
 
 def describe(node):
@@ -267,7 +331,7 @@ def counted(status, value, cell, mode):
 def header(view, tier, profile, policy, notes):
     """Write the comment block that labels a file as synthetic and says how it was made."""
     if view.filter:
-        criteria = f"filtered by {view.filter[0]}; its participants are drawn from the overview's."
+        criteria = f"filtered by {' and '.join(view.filter)}; its participants are drawn from the overview's."
     else:
         criteria = "with no criteria applied."
     lines = [
@@ -422,8 +486,7 @@ def filename(label, tier, profile):
 def views():
     """Load every source and bind them to one shared roster; return {label: view}."""
     loaded = {label: View(label, path) for label, path in SOURCES.items()}
-    overview, *filtered = loaded.values()
-    roster = Roster(overview, filtered)
+    roster = Roster(list(loaded.values()))
     for view in loaded.values():
         view.roster = roster
     return loaded

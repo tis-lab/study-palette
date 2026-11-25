@@ -159,7 +159,43 @@ REJECTED = {
     "string-version": lambda p: p.update(policy_version="5"),
     "prose-field": lambda p: stage(p, "public", 2).update(returns="OBFUSCATED total"),
     "boolean-eligibility": lambda p: p["eligibility"][0].update(sharing=True),
+    # Each tier's limits are locked, not just its pools and profiles.
+    "public-time-windows": lambda p: stage(p, "public", 4).update(temporal_windows="ALLOWED"),
+    "public-or": lambda p: stage(p, "public", 3).update(operators=["all", "any"]),
+    "public-not": lambda p: stage(p, "public", 3).update(operators=["all", "none"]),
+    "public-filterable-stigmatizing": lambda p: stage(p, "public", 1).update(
+        stigmatizing_terms="FILTERABLE_WITHIN_EXACT_SCOPE"),
+    "public-unlimited-terms": lambda p: stage(p, "public", 3).pop("max_terms"),
+    "public-narrow-ranges": lambda p: stage(p, "public", 4).update(numeric_ranges="MIN_ONE_BIN"),
+    "public-charts": lambda p: stage(p, "public", 4).update(charts="OBFUSCATED"),
+    "public-listing": lambda p: stage(p, "public", 4).update(below_min_count_listing="ALL_UNREPORTED_CONSENT_GROUPS"),
+    "authenticated-exact-charts": lambda p: stage(p, "authenticated", 5).update(charts="EXACT_WITHIN_EXACT_SCOPE"),
+    "authenticated-window-without-minimum": lambda p: stage(p, "authenticated", 4).pop("min_window_days"),
+    "authenticated-relaxed-ranges": lambda p: stage(p, "authenticated", 4).update(
+        numeric_ranges="RELAXED_WITHIN_EXACT_SCOPE"),
+    "authenticated-filterable-stigmatizing": lambda p: stage(p, "authenticated", 1).update(
+        stigmatizing_terms="FILTERABLE_WITHIN_EXACT_SCOPE"),
+    "authorized-unlimited-terms": lambda p: stage(p, "authorized", 3).pop("max_terms"),
+    "minimum-without-windows": lambda p: stage(p, "public", 4).update(min_window_days=30),
+    "boolean-time-windows": lambda p: stage(p, "authenticated", 4).update(temporal_windows=True),
+    "zero-noise": lambda p: p["counting"]["noise"].update(min=0, max=0),
+    "no-negative-noise": lambda p: p["counting"]["noise"].update(min=0),
+    "no-positive-noise": lambda p: p["counting"]["noise"].update(max=0),
 }
+
+
+# Settings the locks must still allow, so the rules are not simply rejecting everything nearby.
+ACCEPTED = {
+    "authorized-relaxed-window": lambda p: stage(p, "authorized", 4).pop("min_window_days"),
+    "authorized-exact-charts": lambda p: stage(p, "authorized", 5).update(charts="EXACT_WITHIN_EXACT_SCOPE"),
+    "authenticated-bin-edges": lambda p: stage(p, "authenticated", 4).update(numeric_ranges="BIN_EDGES"),
+    "wider-noise": lambda p: p["counting"]["noise"].update(min=-5, max=5),
+}
+
+
+@pytest.mark.parametrize("change", ACCEPTED.values(), ids=ACCEPTED.keys())
+def test_schema_accepts(policy, errors, change):
+    assert errors(broken(policy, change)) == []
 
 
 @pytest.mark.parametrize("change", REJECTED.values(), ids=REJECTED.keys())

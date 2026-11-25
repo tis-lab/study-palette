@@ -8,7 +8,7 @@ recomputed from the exact counts.
 """
 
 import json
-from itertools import combinations
+from itertools import combinations, pairwise
 from pathlib import Path
 
 import pytest
@@ -119,21 +119,34 @@ def test_enrollments_belong_to_one_study():
     assert all(a.isdisjoint(b) for a, b in combinations(ids, 2))
 
 
-def test_filtered_cohorts_are_drawn_from_the_overview():
-    for label, view in VIEWS.items():
-        for study in view.studies:
-            assert view.cohort(study) <= OVERVIEW.cohort(study), (label, study)
-            for node_id in set(view.nodes) & set(OVERVIEW.nodes):
-                assert view.members(node_id, study) <= OVERVIEW.members(node_id, study), (label, node_id, study)
+def test_each_cohort_is_drawn_from_the_one_it_narrows():
+    """The overview contains T2D, and T2D contains its female follow-up, summary by summary."""
+    levels = list(VIEWS.values())
+    for outer, inner in pairwise(levels):
+        assert set(outer.filter) < set(inner.filter), (outer.label, inner.label)
+        for study in inner.studies:
+            assert inner.cohort(study) < outer.cohort(study), (inner.label, study)
+            for node_id in set(inner.nodes) & set(outer.nodes):
+                assert inner.members(node_id, study) <= outer.members(node_id, study), (inner.label, node_id, study)
+
+
+def test_a_follow_up_cohort_is_its_base_narrowed_by_the_added_term():
+    """T2D-female is exactly T2D's participants with sex FEMALE."""
+    t2d, female = VIEWS["t2d"], VIEWS["t2d-female"]
+    (added,) = set(female.filter) - set(t2d.filter)
+    for study in female.studies:
+        assert female.cohort(study) == t2d.members(added, study)
 
 
 def test_only_omitted_values_are_inferred():
-    """The T2D example leaves out values below its min_count; the roster infers them, and nothing else."""
-    t2d = VIEWS["t2d"]
-    assert t2d.roster.hidden, "nothing was inferred, so this test proves nothing"
-    for (node_id, study), n in t2d.roster.hidden.items():
-        assert t2d.count(node_id, study) == 0, (node_id, study)
-        assert 0 < n < t2d.source["min_count"], (node_id, study, n)
+    """Filtered examples leave out values below their min_count; the roster infers those, and nothing else."""
+    roster = OVERVIEW.roster
+    assert {label for label, view in VIEWS.items() for level, _, _ in roster.hidden
+            if roster.levels[level] is view} == {"t2d", "t2d-female"}, "each filtered example should need inference"
+    for (level, node_id, study), n in roster.hidden.items():
+        view = roster.levels[level]
+        assert view.count(node_id, study) == 0, (view.label, node_id, study)
+        assert 0 < n < view.source["min_count"], (view.label, node_id, study, n)
 
 
 @pytest.mark.skipif(not BDCHM.exists(), reason="BDCHM not fetched; run synthetic/fetch-bdchm.sh")
@@ -200,19 +213,54 @@ def test_nothing_hidden_can_be_derived(example):
     path, response = example
     view, disclosure = view_of(path), disclosure_of(path)
     shown = released(response)
-    present = cells(response)
-    columns = {c for _, c in present}
-    groups = [((p, c), [(k, c) for k in kids]) for c in columns for p, kids in view.walk()]
-    groups += [((n, gen.TOTAL), [(n, s) for s in view.studies]) for n in (gen.ROOT, *view.nodes)]
-    for parent, children in groups:
+    for parent, children in protected_groups(view, {c for _, c in cells(response)}):
         if parent not in shown or shown[parent][0] == "EXACT":
-            continue
-        if not any(p in present for p in children):
             continue
         reported = [p for p in children if p in shown]
         remainder = disclosure.exact(parent) - sum(disclosure.exact(p) for p in reported)
         if len(reported) < len(children) or remainder > 0:
             assert remainder < 0 or remainder >= MIN_COUNT, (parent, remainder)
+
+
+def protected_groups(view, columns):
+    """
+    The parents and parts the policy protects, built from its wording rather than the generator's.
+
+    Totals over their study contributions; each summary over its values; and the cohort total over
+    each facet, and over each facet's values, counting the implied "not recorded" part. Facets are
+    never grouped together: they overlap, so their sum would hide every gap.
+    """
+    groups = [((n, gen.TOTAL), [(n, s) for s in view.studies]) for n in (gen.ROOT, *view.nodes)]
+    for column in columns:
+        for node_id in view.nodes:
+            if view.children[node_id]:
+                groups.append(((node_id, column), [(v, column) for v in view.children[node_id]]))
+        for facet in view.children[gen.ROOT]:
+            groups.append(((gen.ROOT, column), [(facet, column)]))
+            if view.children[facet]:
+                groups.append(((gen.ROOT, column), [(v, column) for v in view.children[facet]]))
+    return groups
+
+
+def test_cohort_minus_a_facet_is_never_a_small_count(example):
+    """Wherever both are released, cohort minus a facet (its "not recorded" part) is zero or at least min_count."""
+    path, response = example
+    shown, disclosure, view = released(response), disclosure_of(path), view_of(path)
+    for column in {c for _, c in cells(response)}:
+        if (gen.ROOT, column) not in shown or shown[(gen.ROOT, column)][0] == "EXACT":
+            continue
+        for facet in view.children[gen.ROOT]:
+            if (facet, column) in shown:
+                gap = disclosure.exact((gen.ROOT, column)) - disclosure.exact((facet, column))
+                assert gap == 0 or gap >= MIN_COUNT, (facet, column, gap)
+
+
+def test_the_cohort_facet_check_has_cases_to_catch():
+    """The examples include a cohort whose race gap is below min_count, so the check above is exercised."""
+    t2d = DISCLOSURES["t2d"]
+    study_two = "palette:study_two"
+    gap = t2d.exact((gen.ROOT, study_two)) - t2d.exact(("palette:demography/race", study_two))
+    assert 0 < gap < MIN_COUNT
 
 
 def test_exact_counts_stay_in_exact_scope(example):

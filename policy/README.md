@@ -127,7 +127,14 @@ checks, or that gives a tier more than it should have:
 - Only the authorized tier has an exact scope; the public tier needs a rate limit, and the other
   tiers need a budget.
 - Every tier has exactly seven stages, numbered 0 to 6, and there are exactly three tiers.
-- Noise can't be seeded by anything except the release and the matched participants.
+- Public limits are locked at the narrowest settings: And only, no time windows, ranges on bin
+  edges only, stigmatizing terms never filterable, and no cohort charts or listings.
+- Authenticated stages get no setting that depends on an exact scope (exact charts, relaxed
+  ranges, filterable stigmatizing terms), and a time window always has a minimum length.
+- Any stage that combines terms caps how many (`max_terms`); a minimum window needs windows to be
+  allowed.
+- Noise can't be seeded by anything except the release and the matched participants, and must
+  range at least one either side of zero, so it can never be switched off.
 - Unknown fields are rejected, so prose can't slip back in as an unchecked field.
 
 The tests also check what LinkML rules cannot express: tier names and stage numbers are unique,

@@ -79,44 +79,44 @@ summary:
       count_mode: OBFUSCATED
   - id: palette:demography/race
     summarized_slot: race
-    participant_count: 2222
+    participant_count: 2228
     count_mode: OBFUSCATED
     values:
     - id: palette:demography/race/WHITE
       summarized_slot: race
       race:
       - WHITE
-      participant_count: 1207
+      participant_count: 1213
       count_mode: OBFUSCATED
     - id: palette:demography/race/BLACK_OR_AFRICAN_AMERICAN
       summarized_slot: race
       race:
       - BLACK_OR_AFRICAN_AMERICAN
-      participant_count: 571
+      participant_count: 568
       count_mode: OBFUSCATED
     - id: palette:demography/race/ASIAN
       summarized_slot: race
       race:
       - ASIAN
-      participant_count: 128
+      participant_count: 123
       count_mode: OBFUSCATED
     - id: palette:demography/race/AMERICAN_INDIAN_OR_ALASKA_NATIVE
       summarized_slot: race
       race:
       - AMERICAN_INDIAN_OR_ALASKA_NATIVE
-      participant_count: 117
+      participant_count: 122
       count_mode: OBFUSCATED
     - id: palette:demography/race/MIDDLE_EASTERN_OR_NORTH_AFRICAN
       summarized_slot: race
       race:
       - MIDDLE_EASTERN_OR_NORTH_AFRICAN
-      participant_count: 103
+      participant_count: 99
       count_mode: OBFUSCATED
     - id: palette:demography/race/NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
       summarized_slot: race
       race:
       - NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER
-      participant_count: 101
+      participant_count: 97
       count_mode: OBFUSCATED
   - id: palette:demography/ethnicity
     summarized_slot: ethnicity

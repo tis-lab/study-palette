@@ -266,22 +266,90 @@ classes:
           slot_conditions:
             pool:
               equals_string: none
+      - description: A stage that combines terms caps how many; there is no unlimited setting.
+        preconditions:
+          slot_conditions:
+            operators:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            max_terms:
+              required: true
+      - description: A minimum window only means something where windows are allowed.
+        preconditions:
+          slot_conditions:
+            temporal_windows:
+              equals_string: NOT_ALLOWED
+        postconditions:
+          slot_conditions:
+            min_window_days:
+              value_presence: ABSENT
 
   PublicStage:
     is_a: Stage
-    description: A public stage never runs as api_counting and never returns more than totals.
+    description: >-
+      A public stage never runs as api_counting and never returns more than totals. Its limits are
+      fixed at the narrowest settings: And only, no time windows, ranges on bin edges only,
+      stigmatizing terms never filterable, and no cohort charts or listings.
     slot_usage:
       pool:
         equals_string_in: [none, api_search, api_public]
       profile:
         equals_string_in: [none, TotalsSummaryResponse]
+      operators:
+        equals_string_in: [all]
+      temporal_windows:
+        equals_string_in: [NOT_ALLOWED]
+      numeric_ranges:
+        equals_string_in: [BIN_EDGES]
+      stigmatizing_terms:
+        equals_string_in: [SHOWN_NOT_FILTERABLE]
+    # One rule per field: LinkML's JSON Schema output merges several ABSENT slots on one class into
+    # a single "not all of these", which forbids only having every one of them at once.
+    rules:
+      - description: Public users get no cohort charts.
+        preconditions:
+          slot_conditions:
+            number:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            charts:
+              value_presence: ABSENT
+      - description: Public users get no listing of groups below min_count.
+        preconditions:
+          slot_conditions:
+            number:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            below_min_count_listing:
+              value_presence: ABSENT
 
   AuthenticatedStage:
     is_a: Stage
-    description: An authenticated stage never returns exact counts.
+    description: >-
+      An authenticated stage never returns exact counts. The tier has no exact scope, so it gets
+      none of the settings that depend on one, and a time window always has a minimum length.
     slot_usage:
       profile:
         equals_string_in: [none, TotalsSummaryResponse, BreakdownSummaryResponse]
+      charts:
+        equals_string_in: [OBFUSCATED]
+      numeric_ranges:
+        equals_string_in: [BIN_EDGES, MIN_ONE_BIN]
+      stigmatizing_terms:
+        equals_string_in: [SHOWN_NOT_FILTERABLE]
+    rules:
+      - description: Time windows need a minimum length outside exact scope.
+        preconditions:
+          slot_conditions:
+            temporal_windows:
+              equals_string: ALLOWED
+        postconditions:
+          slot_conditions:
+            min_window_days:
+              required: true
 
   EligibilityDefaults:
     description: >-
@@ -355,15 +423,19 @@ slots:
     range: NoiseDistributionEnum
     required: true
   min:
-    description: Smallest noise added.
+    description: >-
+      Smallest noise added. At most -1: with no negative noise, every OBFUSCATED count would be
+      a lower bound on the exact one.
     range: integer
     required: true
-    maximum_value: 0
+    maximum_value: -1
   max:
-    description: Largest noise added.
+    description: >-
+      Largest noise added. At least 1, so min and max can never both be zero; zero noise would
+      release exact counts labelled OBFUSCATED.
     range: integer
     required: true
-    minimum_value: 0
+    minimum_value: 1
   clamp_to_min_count:
     description: Whether a noisy value that falls below min_count is shown as min_count.
     range: boolean
@@ -493,8 +565,10 @@ slots:
     range: integer
     minimum_value: 1
   temporal_windows:
-    description: Whether criteria may be limited to a time window.
-    range: boolean
+    description: >-
+      Whether criteria may be limited to a time window. An enum rather than a boolean so a tier can
+      be held to NOT_ALLOWED: LinkML's JSON Schema output cannot fix a boolean's value.
+    range: TemporalWindowsEnum
   min_window_days:
     range: integer
     minimum_value: 1
@@ -631,6 +705,12 @@ enums:
         description: Or.
       none:
         description: Not.
+  TemporalWindowsEnum:
+    permissible_values:
+      NOT_ALLOWED:
+        description: Criteria cannot be limited to a time window.
+      ALLOWED:
+        description: Criteria can be limited to a time window, no shorter than min_window_days where set.
   NumericRangesEnum:
     permissible_values:
       BIN_EDGES:
