@@ -3,7 +3,8 @@ The disclosure policy conforms to schema/policy.yaml and names only things the s
 
 The schema carries the rules. Tests here confirm the policy passes, that each rule rejects what it
 should, and check the constraints LinkML rules cannot express: tier names and stage numbers are
-unique, an unavailable stage is inert, and an approved policy names its noise key.
+unique, an unavailable stage is inert, an approved policy names its noise key, and every signed-in
+tier's limits include a query budget.
 """
 
 import copy
@@ -71,6 +72,12 @@ def unkeyed_approval(policy):
     return policy["status"] == "approved" and not (isinstance(key, str) and key.strip())
 
 
+def tiers_without_budget(policy):
+    """Signed-in tiers whose limits include no QUERY_BUDGET; the schema cannot require an entry of one type."""
+    return [t["name"] for t in policy["tiers"] if t["name"] != "public"
+            and not any(limit["limit_type"] == "QUERY_BUDGET" for limit in t.get("limits") or [])]
+
+
 def test_policy_conforms_to_schema(policy, errors):
     assert errors(policy) == []
 
@@ -107,6 +114,17 @@ def test_active_unavailable_stage_is_caught(policy, change):
     copied = copy.deepcopy(policy)
     change(stage(copied, "public", 5))
     assert active_unavailable_stages(copied) == [("public", 5)]
+
+
+def test_signed_in_tiers_have_a_query_budget(policy):
+    assert tiers_without_budget(policy) == []
+
+
+def test_signed_in_tier_without_budget_is_caught(policy, errors):
+    rate_only = [dict(limit_type="RATE_LIMIT", amount=120, unit="REQUESTS", period="MINUTE", keyed_by="ACCOUNT")]
+    changed = broken(policy, lambda p: p["tiers"][1].update(limits=rate_only))
+    assert errors(changed) == [], "the schema allows it, so this check is the only guard"
+    assert tiers_without_budget(changed) == ["authenticated"]
 
 
 def test_approved_policy_names_its_noise_key(policy):
@@ -148,11 +166,11 @@ REJECTED = {
     "unknown-tier": lambda p: p["tiers"][0].update(name="guest"),
     "public-exact-scope": lambda p: p["tiers"][0].update(exact_scope="ENTITLED_AND_ELIGIBLE"),
     "public-account": lambda p: p["tiers"][0].update(accountability="RAS_ACCOUNT"),
-    "public-no-rate-limit": lambda p: p["tiers"][0].pop("rate_limit"),
-    "authenticated-no-budget": lambda p: p["tiers"][1].pop("budget"),
+    "public-no-limits": lambda p: p["tiers"][0].pop("limits"),
+    "authenticated-no-limits": lambda p: p["tiers"][1].pop("limits"),
     "authorized-no-exact-scope": lambda p: p["tiers"][2].pop("exact_scope"),
-    "budget-both": lambda p: p["tiers"][2]["budget"].update(units_per_day=5),
-    "budget-neither": lambda p: p["tiers"][2]["budget"].pop("draws_on"),
+    "budget-both": lambda p: p["tiers"][2]["limits"][0].update(amount=5),
+    "budget-neither": lambda p: p["tiers"][2]["limits"][0].pop("draws_on"),
     "seeded-by-label": lambda p: p["counting"]["noise"]["seed_inputs"].append("LABEL"),
     "noise-min-above-zero": lambda p: p["counting"]["noise"].update(min=1),
     "zero-min-count": lambda p: p["counting"].update(min_count=0),
@@ -166,6 +184,9 @@ REJECTED = {
     "public-filterable-stigmatizing": lambda p: stage(p, "public", 1).update(
         stigmatizing_terms="FILTERABLE_WITHIN_EXACT_SCOPE"),
     "public-unlimited-terms": lambda p: stage(p, "public", 3).pop("max_terms"),
+    "public-combining-on-counting": lambda p: stage(p, "public", 3).update(pool="api_counting"),
+    "authenticated-combining-on-fixed-table": lambda p: stage(p, "authenticated", 3).update(pool="api_public"),
+    "authenticated-unlimited-terms": lambda p: stage(p, "authenticated", 3).pop("max_terms"),
     "public-narrow-ranges": lambda p: stage(p, "public", 4).update(numeric_ranges="MIN_ONE_BIN"),
     "public-charts": lambda p: stage(p, "public", 4).update(charts="OBFUSCATED"),
     "public-listing": lambda p: stage(p, "public", 4).update(below_min_count_listing="ALL_UNREPORTED_CONSENT_GROUPS"),
@@ -176,11 +197,29 @@ REJECTED = {
     "authenticated-filterable-stigmatizing": lambda p: stage(p, "authenticated", 1).update(
         stigmatizing_terms="FILTERABLE_WITHIN_EXACT_SCOPE"),
     "authorized-unlimited-terms": lambda p: stage(p, "authorized", 3).pop("max_terms"),
-    "minimum-without-windows": lambda p: stage(p, "public", 4).update(min_window_days=30),
+    "minimum-without-windows": lambda p: stage(p, "authenticated", 4).update(temporal_windows="NOT_ALLOWED"),
     "boolean-time-windows": lambda p: stage(p, "authenticated", 4).update(temporal_windows=True),
     "zero-noise": lambda p: p["counting"]["noise"].update(min=0, max=0),
     "no-negative-noise": lambda p: p["counting"]["noise"].update(min=0),
     "no-positive-noise": lambda p: p["counting"]["noise"].update(max=0),
+    # Limits: one block, typed; the public tier is limited by rate only.
+    "public-query-budget": lambda p: p["tiers"][0]["limits"].append(dict(
+        limit_type="QUERY_BUDGET", amount=100, unit="QUERY_UNITS", period="DAY", keyed_by="NETWORK_ADDRESS")),
+    "public-limit-by-account": lambda p: p["tiers"][0]["limits"][0].update(keyed_by="ACCOUNT"),
+    "rate-limit-counts-units": lambda p: p["tiers"][0]["limits"][0].update(unit="QUERY_UNITS"),
+    "rate-limit-without-period": lambda p: p["tiers"][0]["limits"][0].pop("period"),
+    "rate-limit-draws-on": lambda p: p["tiers"][0]["limits"][0].update(draws_on="authenticated"),
+    "rate-limit-exempt": lambda p: p["tiers"][0]["limits"][0].update(exempt_within_exact_scope=True),
+    "budget-counts-requests": lambda p: p["tiers"][1]["limits"][0].update(unit="REQUESTS"),
+    "budget-without-period": lambda p: p["tiers"][1]["limits"][0].pop("period"),
+    "unknown-limit-type": lambda p: p["tiers"][1]["limits"][0].update(limit_type="QUOTA"),
+    "old-rate-limit-field": lambda p: p["tiers"][0].update(rate_limit={"requests_per_minute": 60}),
+    # Overlap check: global for the public tier, and never answered by refusal across callers.
+    "public-no-overlap-check": lambda p: p["tiers"][0].pop("overlap_check"),
+    "public-overlap-per-account": lambda p: p["tiers"][0]["overlap_check"].update(scope="PER_ACCOUNT"),
+    "global-check-refuses": lambda p: p["tiers"][0]["overlap_check"].update(on_match="REFUSE"),
+    "authenticated-no-overlap-check": lambda p: p["tiers"][1].pop("overlap_check"),
+    "boolean-overlap-check": lambda p: p["tiers"][1].update(overlap_check=True),
 }
 
 
@@ -190,6 +229,11 @@ ACCEPTED = {
     "authorized-exact-charts": lambda p: stage(p, "authorized", 5).update(charts="EXACT_WITHIN_EXACT_SCOPE"),
     "authenticated-bin-edges": lambda p: stage(p, "authenticated", 4).update(numeric_ranges="BIN_EDGES"),
     "wider-noise": lambda p: p["counting"]["noise"].update(min=-5, max=5),
+    "authenticated-rate-limit-too": lambda p: p["tiers"][1]["limits"].append(dict(
+        limit_type="RATE_LIMIT", amount=120, unit="REQUESTS", period="MINUTE", keyed_by="ACCOUNT")),
+    "authenticated-global-reuse": lambda p: p["tiers"][1]["overlap_check"].update(
+        scope="GLOBAL", on_match="REUSE_EARLIER_ANSWER"),
+    "authorized-no-overlap-check": lambda p: p["tiers"][2].pop("overlap_check"),
 }
 
 

@@ -95,9 +95,19 @@ def test_examples_are_current():
 
 
 def test_every_source_has_an_example_per_tier_profile():
-    expected = {gen.filename(label, t, p) for label in gen.SOURCES for t, p in gen.tier_profiles(POLICY)}
+    expected = {gen.filename(label, t, p) for label in gen.SOURCES for t, p in gen.tier_profiles(POLICY)
+                if gen.can_run(POLICY, t, VIEWS[label])}
     assert {p.name for p in EXAMPLES} == expected
     assert {t for t, _ in gen.tier_profiles(POLICY)} == {"public", "authenticated", "authorized"}
+
+
+def test_public_examples_stay_within_the_fixed_table():
+    """Public examples combine no more filter terms than the public stage that reads the fixed table allows."""
+    public_tier = next(t for t in POLICY["tiers"] if t["name"] == "public")
+    depth = max(s.get("max_terms", 1) for s in public_tier["stages"] if s["available"] and s.get("operators"))
+    public = [p for p in EXAMPLES if parts(p)[1] == "public"]
+    assert all(len(view_of(p).filter) <= depth for p in public)
+    assert any(len(view_of(p).filter) > 1 for p in public), "no public example combines terms, so this proves little"
 
 
 def test_examples_are_labelled_synthetic():

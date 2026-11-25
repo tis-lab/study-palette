@@ -478,6 +478,21 @@ def tier_profiles(policy):
             yield tier["name"], profile
 
 
+def can_run(policy, tier_name, view):
+    """
+    Say whether a tier can ask the source's query at all.
+
+    A filter of more than one term combines them, which needs an available stage with operators
+    whose max_terms is at least that many. For the public tier that stage reads the fixed table,
+    so its max_terms is also how deep the table goes.
+    """
+    if len(view.filter) <= 1:
+        return True
+    tier = next(t for t in policy["tiers"] if t["name"] == tier_name)
+    return any(stage["available"] and stage.get("operators") and stage.get("max_terms", 0) >= len(view.filter)
+               for stage in tier["stages"])
+
+
 def filename(label, tier, profile):
     """Name one shaped example."""
     return f"SYNTHETIC.SummaryResponse-{label}-{tier}-{SUFFIXES[profile]}.yaml"
@@ -493,13 +508,15 @@ def views():
 
 
 def generate():
-    """Shape every source for every (tier, profile) pair; return {filename: text}."""
+    """Shape every source for every (tier, profile) pair that can ask its query; return {filename: text}."""
     policy = yaml.safe_load(POLICY.read_text(encoding="utf-8"))
     files = {}
     for label, view in views().items():
         assert view.source["min_count"] == policy["counting"]["min_count"], f"{label} and the policy disagree"
         disclosure = Disclosure(view, policy)
         for tier, profile in tier_profiles(policy):
+            if not can_run(policy, tier, view):
+                continue
             response, notes = SHAPERS[profile](view, disclosure)
             for key in ("terms", "relations"):
                 if key in view.source:

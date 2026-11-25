@@ -47,9 +47,15 @@ tiers:
 
   - name: public
     accountability: NONE
-    rate_limit:                             # proposed
-      requests_per_minute: 60
-      keyed_by: NETWORK_ADDRESS
+    limits:
+      - limit_type: RATE_LIMIT              # flood protection only; a query budget could be added later
+        amount: 60                          # proposed
+        unit: REQUESTS
+        period: MINUTE
+        keyed_by: NETWORK_ADDRESS
+    overlap_check:                          # applied across the fixed table when it is built
+      scope: GLOBAL
+      on_match: WITHHOLD
     stages:
       - number: 0
         available: false
@@ -66,16 +72,14 @@ tiers:
         profile: TotalsSummaryResponse
       - number: 3
         available: true
-        pool: api_public
+        pool: api_public                    # read from the fixed table
         profile: TotalsSummaryResponse
         operators: [all]
-        max_terms: 5                        # proposed
-      - number: 4
-        available: true
-        pool: api_public
-        profile: TotalsSummaryResponse
-        numeric_ranges: BIN_EDGES
-        temporal_windows: NOT_ALLOWED
+        max_terms: 2                        # the fixed table holds every filter of up to two terms
+      - number: 4                           # stage 2's summaries already carry the table's bins
+        available: false
+        pool: none
+        profile: none
       - number: 5
         available: false
         pool: none
@@ -88,10 +92,16 @@ tiers:
 
   - name: authenticated
     accountability: RAS_ACCOUNT
-    budget:
-      units_per_day: 500                    # proposed
-      log_every_request: true
-    overlap_check: true
+    limits:
+      - limit_type: QUERY_BUDGET
+        amount: 500                         # proposed
+        unit: QUERY_UNITS
+        period: DAY
+        keyed_by: ACCOUNT
+    overlap_check:
+      scope: PER_ACCOUNT
+      on_match: REFUSE
+    log_every_request: true
     stages:
       - number: 0
         available: true
@@ -108,8 +118,8 @@ tiers:
         profile: TotalsSummaryResponse
       - number: 3
         available: true
-        pool: api_public
-        profile: TotalsSummaryResponse
+        pool: api_counting                  # combining terms needs a live query
+        profile: TotalsSummaryResponse      # output is still the public view
         operators: [all, any, none]
         max_terms: 20                       # proposed
         max_nesting: 3                      # proposed
@@ -135,11 +145,14 @@ tiers:
   - name: authorized
     accountability: RAS_ACCOUNT_WITH_VISAS
     exact_scope: ENTITLED_AND_ELIGIBLE
-    budget:
-      draws_on: authenticated
-      exempt_within_exact_scope: true
-      log_every_request: true
-    overlap_check: true
+    limits:
+      - limit_type: QUERY_BUDGET
+        draws_on: authenticated
+        exempt_within_exact_scope: true
+    overlap_check:
+      scope: PER_ACCOUNT
+      on_match: REFUSE
+    log_every_request: true
     stages:
       - number: 0
         available: true

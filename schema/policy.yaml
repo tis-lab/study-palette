@@ -5,10 +5,10 @@ description: >-
   Structure of the disclosure policy in policy/disclosure-policy.yaml: what each tier may see at each
   stage, and how counts are protected. Decisions the committees can change are fields; what those
   decisions mean is defined here. Rules catch combinations that would release counts no profile
-  checks. Three constraints are not expressible as rules and are checked by
+  checks. Four constraints are not expressible as rules and are checked by
   schema/tests/test_disclosure_policy.py: tier names and stage numbers are unique, an unavailable
-  stage (available false) uses no pool, no profile, and sets no other fields, and an approved
-  policy names its noise key_reference.
+  stage (available false) uses no pool, no profile, and sets no other fields, an approved policy
+  names its noise key_reference, and every signed-in tier's limits include a QUERY_BUDGET.
 license: MIT
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -97,38 +97,133 @@ classes:
       - retired_release_own_cohorts_only
       - overlap_checks_span_releases
 
-  RateLimit:
-    description: Requests allowed per minute, counted per key.
-    slots:
-      - requests_per_minute
-      - keyed_by
-
-  Budget:
+  Limit:
     description: >-
-      Query units a tier may spend. A tier either has its own daily allowance or draws on another
-      tier's.
+      One limit on how much a tier may ask, typed by limit_type. A RATE_LIMIT caps requests per
+      period as flood protection; it needs only a counter per key. A QUERY_BUDGET caps cost-weighted
+      query units per period as a disclosure control; it needs an identity to charge and a ledger,
+      and can instead draw on another tier's budget. A tier may carry both.
     slots:
-      - units_per_day
+      - limit_type
+      - amount
+      - unit
+      - period
+      - keyed_by
       - draws_on
       - exempt_within_exact_scope
-      - log_every_request
     rules:
-      - preconditions:
+      - description: A rate limit counts requests over a period, per key.
+        preconditions:
           slot_conditions:
-            units_per_day:
-              value_presence: ABSENT
+            limit_type:
+              equals_string: RATE_LIMIT
+        postconditions:
+          slot_conditions:
+            amount:
+              required: true
+            unit:
+              equals_string: REQUESTS
+            period:
+              required: true
+            keyed_by:
+              required: true
+      # One ABSENT per rule: LinkML's JSON Schema output merges several into "not all of these".
+      - description: A rate limit stands alone; it never draws on another tier.
+        preconditions:
+          slot_conditions:
+            limit_type:
+              equals_string: RATE_LIMIT
         postconditions:
           slot_conditions:
             draws_on:
-              required: true
-      - preconditions:
+              value_presence: ABSENT
+      - description: Only a budget can exempt exact-scope queries.
+        preconditions:
           slot_conditions:
-            units_per_day:
+            limit_type:
+              equals_string: RATE_LIMIT
+        postconditions:
+          slot_conditions:
+            exempt_within_exact_scope:
+              value_presence: ABSENT
+      - description: A budget with its own allowance counts query units over a period, per key.
+        preconditions:
+          slot_conditions:
+            limit_type:
+              equals_string: QUERY_BUDGET
+            amount:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            unit:
+              equals_string: QUERY_UNITS
+            period:
+              required: true
+            keyed_by:
+              required: true
+      - description: A budget has its own allowance or draws on another tier's, not both.
+        preconditions:
+          slot_conditions:
+            amount:
               value_presence: PRESENT
         postconditions:
           slot_conditions:
             draws_on:
               value_presence: ABSENT
+      - description: A limit with no allowance of its own must draw on another tier's.
+        preconditions:
+          slot_conditions:
+            amount:
+              value_presence: ABSENT
+        postconditions:
+          slot_conditions:
+            draws_on:
+              required: true
+
+  PublicLimit:
+    is_a: Limit
+    description: >-
+      Public users have no identity to charge a budget to, so their only limit is a rate limit per
+      network address. A query budget could be added later; the fixed public table already stops
+      differencing, so it would add little.
+    slot_usage:
+      limit_type:
+        equals_string_in: [RATE_LIMIT]
+      keyed_by:
+        equals_string_in: [NETWORK_ADDRESS]
+
+  OverlapCheck:
+    description: >-
+      Stops differencing. A released count whose matched participant set differs from an earlier
+      released set by between 1 and min_count - 1 participants (counting those in either set but
+      not both) is not answered with a fresh count. Every released count is compared, not only
+      each query's cohort: every facet, value and contribution is a matched set of its own.
+      Identical sets are allowed, since consistent noise gives them identical answers. The check
+      compares sets two at a time; noise, budgets and min_count cover combinations of more.
+    slots:
+      - scope
+      - on_match
+    rules:
+      - description: >-
+          Refusing a match across callers would itself disclose that a nearby set was released, so
+          a global check reuses the earlier answer or withholds instead.
+        preconditions:
+          slot_conditions:
+            scope:
+              equals_string: GLOBAL
+        postconditions:
+          slot_conditions:
+            on_match:
+              equals_string_in: [REUSE_EARLIER_ANSWER, WITHHOLD]
+
+  PublicOverlapCheck:
+    is_a: OverlapCheck
+    description: >-
+      Anonymous callers can rotate addresses, so a check per caller would do nothing: the public
+      check compares against every set released, from any caller.
+    slot_usage:
+      scope:
+        equals_string: GLOBAL
 
   Tier:
     abstract: true
@@ -139,9 +234,9 @@ classes:
       - name
       - accountability
       - exact_scope
-      - rate_limit
-      - budget
+      - limits
       - overlap_check
+      - log_every_request
       - stages
     slot_usage:
       stages:
@@ -150,7 +245,9 @@ classes:
 
   PublicTier:
     is_a: Tier
-    description: Public users are anonymous, have no exact scope, and never reach a counting pool.
+    description: >-
+      Public users are anonymous, have no exact scope, never reach a counting pool, are limited by
+      rate only, and are protected by a global overlap check.
     slot_usage:
       name:
         equals_string: public
@@ -158,14 +255,20 @@ classes:
         equals_string: NONE
       exact_scope:
         value_presence: ABSENT
-      rate_limit:
+      limits:
         required: true
+        range: PublicLimit
+      overlap_check:
+        required: true
+        range: PublicOverlapCheck
       stages:
         range: PublicStage
 
   AuthenticatedTier:
     is_a: Tier
-    description: Authenticated users have an account and a budget, but no exact scope.
+    description: >-
+      Authenticated users have an account, limits and an overlap check, but no exact scope. That
+      their limits include a QUERY_BUDGET is checked by schema/tests/test_disclosure_policy.py.
     slot_usage:
       name:
         equals_string: authenticated
@@ -173,14 +276,18 @@ classes:
         equals_string: RAS_ACCOUNT
       exact_scope:
         value_presence: ABSENT
-      budget:
+      limits:
+        required: true
+      overlap_check:
         required: true
       stages:
         range: AuthenticatedStage
 
   AuthorizedTier:
     is_a: Tier
-    description: Only authorized users have an exact scope, and they need visas for it.
+    description: >-
+      Only authorized users have an exact scope, and they need visas for it. That their limits
+      include a QUERY_BUDGET is checked by schema/tests/test_disclosure_policy.py.
     slot_usage:
       name:
         equals_string: authorized
@@ -188,7 +295,7 @@ classes:
         equals_string: RAS_ACCOUNT_WITH_VISAS
       exact_scope:
         required: true
-      budget:
+      limits:
         required: true
 
   Stage:
@@ -284,13 +391,56 @@ classes:
           slot_conditions:
             min_window_days:
               value_presence: ABSENT
+      # The fixed public table holds filters combined with And, up to the max_terms of the stage
+      # that reads it. Anything else that combines terms, and any refinement, makes a matched set
+      # only a live counting query can produce and check.
+      - description: Combining terms reads the fixed table or runs a live counting query.
+        preconditions:
+          slot_conditions:
+            operators:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            pool:
+              equals_string_in: [api_public, api_counting]
+      - description: The fixed table combines terms with And only; Or and Not need a live query.
+        preconditions:
+          slot_conditions:
+            pool:
+              equals_string: api_public
+            operators:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            operators:
+              equals_string_in: [all]
+      - description: Refining numeric ranges needs a live counting query; the fixed table cannot.
+        preconditions:
+          slot_conditions:
+            numeric_ranges:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            pool:
+              equals_string: api_counting
+      - description: Time windows need a live counting query; the fixed table cannot.
+        preconditions:
+          slot_conditions:
+            temporal_windows:
+              equals_string: ALLOWED
+        postconditions:
+          slot_conditions:
+            pool:
+              equals_string: api_counting
 
   PublicStage:
     is_a: Stage
     description: >-
-      A public stage never runs as api_counting and never returns more than totals. Its limits are
-      fixed at the narrowest settings: And only, no time windows, ranges on bin edges only,
-      stigmatizing terms never filterable, and no cohort charts or listings.
+      A public stage never runs as api_counting and never returns more than totals, so public users
+      only read the fixed table: they can combine terms with And, up to their stage's max_terms,
+      but cannot refine criteria. Should that ever be relaxed, its limits stay at the narrowest
+      settings: And only, no time windows, ranges on bin edges only, stigmatizing terms never
+      filterable, and no cohort charts or listings.
     slot_usage:
       pool:
         equals_string_in: [none, api_search, api_public]
@@ -502,36 +652,48 @@ slots:
   exact_scope:
     description: Which consent groups the tier sees exact counts for. Computed from visas at sign-in and shown up front.
     range: ExactScopeEnum
-  rate_limit:
-    range: RateLimit
-    inlined: true
-  requests_per_minute:
-    range: integer
+  limits:
+    description: How much the tier may ask. Each entry is one limit, typed by limit_type.
+    range: Limit
+    multivalued: true
+    inlined_as_list: true
+    minimum_cardinality: 1
+  limit_type:
+    range: LimitTypeEnum
     required: true
+  amount:
+    description: How many units the limit allows per period.
+    range: integer
     minimum_value: 1
+  unit:
+    description: What the amount counts.
+    range: LimitUnitEnum
+  period:
+    description: How often the allowance resets.
+    range: LimitPeriodEnum
   keyed_by:
-    range: RateLimitKeyEnum
-    required: true
-  budget:
-    range: Budget
-    inlined: true
-  units_per_day:
-    description: Query units the tier may spend per account per day.
-    range: integer
-    minimum_value: 1
+    description: Who the allowance is counted against.
+    range: LimitKeyEnum
   draws_on:
-    description: The tier whose budget this tier's queries draw on.
+    description: The tier whose budget this tier's queries draw on, instead of an allowance of its own.
     range: TierNameEnum
   exempt_within_exact_scope:
     description: Whether queries entirely within exact scope spend no budget.
     range: boolean
   log_every_request:
+    description: Whether every request is logged with the caller's identity, for audit.
     range: boolean
   overlap_check:
-    description: >-
-      Whether to block a query whose matched set differs from an earlier one by fewer than min_count
-      participants.
-    range: boolean
+    range: OverlapCheck
+    inlined: true
+  scope:
+    description: Which earlier released sets a new one is compared against.
+    range: OverlapScopeEnum
+    required: true
+  on_match:
+    description: What happens to a count whose set falls within min_count of an earlier one.
+    range: OverlapActionEnum
+    required: true
   stages:
     range: Stage
     required: true
@@ -559,6 +721,9 @@ slots:
     range: OperatorEnum
     multivalued: true
   max_terms:
+    description: >-
+      The most filter terms one query may combine. On a stage reading api_public, it is also how
+      deep the fixed table goes: every combination of up to this many terms has a row.
     range: integer
     minimum_value: 1
   max_nesting:
@@ -669,10 +834,50 @@ enums:
     permissible_values:
       ENTITLED_AND_ELIGIBLE:
         description: Consent groups the caller is entitled to whose current eligibility allows exact counts.
-  RateLimitKeyEnum:
+  LimitTypeEnum:
+    permissible_values:
+      RATE_LIMIT:
+        description: Requests per period, as flood protection. Needs only a counter per key.
+      QUERY_BUDGET:
+        description: >-
+          Cost-weighted query units per period, as a disclosure control. Needs an identity to
+          charge and a ledger of what each query cost.
+  LimitUnitEnum:
+    permissible_values:
+      REQUESTS:
+        description: Every request counts one.
+      QUERY_UNITS:
+        description: Each query costs units by how much it can reveal.
+  LimitPeriodEnum:
+    permissible_values:
+      MINUTE:
+      HOUR:
+      DAY:
+  LimitKeyEnum:
     permissible_values:
       NETWORK_ADDRESS:
       ACCOUNT:
+  OverlapScopeEnum:
+    permissible_values:
+      PER_ACCOUNT:
+        description: Compared with the caller's own earlier released sets.
+      GLOBAL:
+        description: >-
+          Compared with every set released in the release, from any caller, so changing identity
+          gains nothing.
+  OverlapActionEnum:
+    permissible_values:
+      REFUSE:
+        description: >-
+          The query is refused. Safe only per account, where a refusal tells callers nothing beyond
+          their own earlier queries.
+      REUSE_EARLIER_ANSWER:
+        description: >-
+          The count is answered with the earlier set's released count, so the two have nothing to
+          subtract.
+      WITHHOLD:
+        description: >-
+          The count is withheld. For a fixed table, applied once when the table is built.
   PoolEnum:
     description: Database roles the middleware queries as.
     permissible_values:
@@ -681,7 +886,13 @@ enums:
       api_search:
         description: Term search; returns no counts.
       api_public:
-        description: Precomputed public aggregates.
+        description: >-
+          The fixed public table, built once per release: a summary for every filter combined with
+          And, up to the max_terms of the stage that reads it. It cannot refine criteria. Because
+          every cell is known before any is released, suppression and the overlap check run across
+          the whole table at build time. That matters for combined filters: A and A-and-C are both
+          cells, and their difference (A-and-not-C) is withheld at build time whenever it is below
+          min_count. Focus concepts are not yet part of the table.
       api_counting:
         description: Event rows, entitlements and eligibility, for counts on arbitrary criteria.
   ProfileEnum:

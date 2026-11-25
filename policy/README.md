@@ -32,8 +32,9 @@ middleware; the policy is the specification it follows.
 | Who | Anyone, without signing in | Signed in through NIH RAS | Authenticated, with dbGaP approval for at least one consent group in the release |
 | Accountability | None | RAS account | RAS account plus visa IDs |
 | Exact counts | Never | Never | Within exact scope: entitled consent groups whose current eligibility allows exact counts |
-| Limits | 60 requests per minute per network address | 500 query units per day per account | No budget within exact scope; other queries draw on the authenticated budget. Every request is logged |
-| Overlap check | — | Blocks a query whose matched set differs from an earlier one by fewer than `min_count` participants | Not yet decided |
+| Limits | Rate limit: 60 requests per minute per network address | Query budget: 500 units per day per account | Query budget: none within exact scope; other queries draw on the authenticated budget |
+| Overlap check | Global, across every set in the fixed table; matches withheld when the table is built | Per account; a matching query is refused | Per account; a matching query is refused |
+| Request logging | No | Every request | Every request |
 | Retired releases | No | No | Own saved cohorts only |
 
 ### Stage by stage
@@ -46,13 +47,39 @@ has no profile.
 | 0 Sign-in and scope | Not available | Sign in; budget assigned | Sign in; exact scope computed from visas and shown up front |
 | 1 Search and add terms | `api_search`, no counts. Stigmatizing terms shown, not filterable | `api_search`, no counts. Stigmatizing terms shown, not filterable | `api_search`, no counts. Stigmatizing terms filterable within exact scope, if approved |
 | 2 Live summary per term | `api_public` → Totals | `api_public` → Totals | `api_counting` → Exact |
-| 3 And, Or and Not | `api_public` → Totals. And only; 5 terms | `api_public` → Totals. And, Or, Not; 20 terms; nesting 3 | `api_counting` → Exact. And, Or, Not; 20 terms; nesting 3 |
-| 4 Refine criteria | `api_public` → Totals. Ranges on bin edges only; no time windows | `api_counting` → Totals. Ranges at least one bin wide; time windows of at least 30 days | `api_counting` → Exact. Range minimums relaxed within exact scope, if agreed; time windows |
+| 3 And, Or and Not | `api_public` → Totals. And only; up to 2 terms, read from the fixed table | `api_counting` → Totals. And, Or, Not; 20 terms; nesting 3 | `api_counting` → Exact. And, Or, Not; 20 terms; nesting 3 |
+| 4 Refine criteria | Not available | `api_counting` → Totals. Ranges at least one bin wide; time windows of at least 30 days | `api_counting` → Exact. Range minimums relaxed within exact scope, if agreed; time windows |
 | 5 Cohort and visuals | Not available | `api_counting` → Breakdown. Obfuscated charts; unreported consent groups listed as below `min_count` | `api_counting` → Exact. Exact charts within exact scope, obfuscated outside it |
 | 6 Provisioning | No counts. Information on how to request access | No counts. Access request prefilled from the cohort | No counts. A share for eligible groups, an access request for the rest |
 
-Authenticated stage 4 runs as `api_counting` because value and time criteria need event rows,
-but its output is still checked against the public Totals profile.
+`api_public` is a fixed table, built once per release: a summary for every filter of up to two
+terms combined with And. Its depth is the `max_terms` of public stage 3, the stage that reads it.
+Public users only read the table, never run a live query.
+
+That is what stops them differencing. The table does hold both A and A-and-C, so count(A) minus
+count(A and C) is possible within it. But every cell is known before any is released, so
+suppression and the overlap check run across the whole table at build time, and any such
+difference below `min_count` is withheld before the table is published.
+
+Or, Not, more terms and any refinement need a live query, so authenticated stages 3 and 4 run as
+`api_counting`. Their output is still checked against the public Totals profile.
+
+### Limits and the overlap check
+
+Each tier lists its `limits`, each typed by `limit_type`:
+
+- A **rate limit** caps requests per period, as flood protection. It needs only a counter per
+  key, so it is the public tier's only limit. A query budget could be added to the public tier
+  later; with the fixed table it would add little.
+- A **query budget** caps cost-weighted query units per period, as a disclosure control. It
+  needs an identity to charge, so only signed-in tiers have one. A tier may draw on another
+  tier's budget instead of having its own.
+
+The **overlap check** stops differencing. A released count whose participant set differs from an
+earlier released set by 1 to 9 participants (with `min_count` at 10) is not answered with a fresh
+count. Every released count is compared, not just each query's cohort. Per account, a match is
+refused. Across callers, a refusal would itself reveal that a nearby set was released, so a
+global check reuses the earlier answer or withholds the count instead.
 
 ### What each profile releases
 
@@ -124,11 +151,16 @@ checks, or that gives a tier more than it should have:
 - `api_public` can only produce the Totals profile.
 - Public stages can't use `api_counting` and get at most Totals; authenticated stages never get
   Exact.
-- Only the authorized tier has an exact scope; the public tier needs a rate limit, and the other
-  tiers need a budget.
+- Only the authorized tier has an exact scope.
+- The public tier is limited by rate only, per network address, and its overlap check is global
+  and never refuses. Every tier has limits; each limit type has its own required fields; a budget
+  has its own allowance or draws on another tier's, not both.
+- Combining terms reads the fixed table with And only, or runs on `api_counting`; Or and Not
+  always need `api_counting`. Refining ranges or allowing time windows also needs
+  `api_counting`. Public stages can't use `api_counting`, so public users never get any of these.
 - Every tier has exactly seven stages, numbered 0 to 6, and there are exactly three tiers.
-- Public limits are locked at the narrowest settings: And only, no time windows, ranges on bin
-  edges only, stigmatizing terms never filterable, and no cohort charts or listings.
+- Public stage settings stay locked at the narrowest values even so: And only, no time windows,
+  ranges on bin edges only, stigmatizing terms never filterable, and no cohort charts or listings.
 - Authenticated stages get no setting that depends on an exact scope (exact charts, relaxed
   ranges, filterable stigmatizing terms), and a time window always has a minimum length.
 - Any stage that combines terms caps how many (`max_terms`); a minimum window needs windows to be
@@ -138,7 +170,9 @@ checks, or that gives a tier more than it should have:
 - Unknown fields are rejected, so prose can't slip back in as an unchecked field.
 
 The tests also check what LinkML rules cannot express: tier names and stage numbers are unique,
-unavailable stages are inert, and an approved policy names its noise key (`key_reference`). They also confirm that every profile the policy names exists in
+unavailable stages are inert, an approved policy names its noise key (`key_reference`), and every
+signed-in tier's limits include a query budget. They also confirm that every profile the policy
+names exists in
 `summary-profiles.yaml`, and that `identity_rule` is a BDCHM class.
 
 ## Changing the policy
@@ -159,7 +193,6 @@ unavailable stages are inert, and an approved policy names its noise key (`key_r
 
 ## Open questions
 
-- Whether the overlap check applies to authorized users' queries outside their exact scope.
 - `ExactSummaryResponse` cannot yet carry the exact and obfuscated figures side by side.
 - The Key Vault key for the noise seed (`key_reference`) is not yet named. The tests will fail if
   the policy is approved without it.
