@@ -223,4 +223,3 @@ names exists in
   leave a small remainder.
 - The Key Vault key for the noise seed (`key_reference`) is not yet named. The tests will fail if
   the policy is approved without it.
-- The profile tests use a `min_count` of 11; they should follow the policy's 10.

@@ -6,12 +6,16 @@ import sys
 from pathlib import Path
 
 import pytest
+import yaml
 from jsonschema import Draft202012Validator
 from linkml.generators.jsonschemagen import JsonSchemaGenerator
 
 SCHEMA_DIR = Path(__file__).resolve().parent.parent
+# The policy's threshold, so these fixtures follow it rather than a copy that can drift.
+POLICY = yaml.safe_load((SCHEMA_DIR.parent / 'policy' / 'disclosure-policy.yaml').read_text())
+MIN_COUNT = POLICY['counting']['min_count']
 TOTALS = {
-    'release': 'synthetic', 'min_count': 11, 'count_mode': 'OBFUSCATED',
+    'release': 'synthetic', 'min_count': MIN_COUNT, 'count_mode': 'OBFUSCATED',
     'participant_count': 1200, 'suppressed_study_count': 2,
     'studies': [{'research_study': 'palette:study_one', 'name': 'Example Study One', 'count_status': 'LISTED'}],
     'summary': {'conditions': [{
@@ -134,7 +138,7 @@ def exact_totals():
     inside = {'research_study': 'palette:study_one', 'consent_group': 'palette:study_one/c1',
               'count_status': 'REPORTED', 'count_mode': 'EXACT', 'participant_count': 300}
     return {
-        'release': 'synthetic', 'min_count': 11, 'participant_count': 300, 'count_mode': 'EXACT',
+        'release': 'synthetic', 'min_count': MIN_COUNT, 'participant_count': 300, 'count_mode': 'EXACT',
         'outside_scope': dict(outside),
         'studies': [dict(inside), {'research_study': 'palette:study_two', 'count_status': 'LISTED'}],
         'summary': {'conditions': [{
