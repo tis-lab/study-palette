@@ -90,7 +90,12 @@ class View:
 
     def members(self, node_id, column):
         """Return the participants a cell counts: one study, or every study for a total."""
-        studies = self.studies if column == TOTAL else [column]
+        if column == TOTAL:
+            studies = self.studies
+        elif isinstance(column, frozenset):  # a group of studies, such as those outside exact scope
+            studies = sorted(column)
+        else:
+            studies = [column]
         return frozenset().union(*(self.roster.sets[s][node_id] & self.cohort(s) for s in studies))
 
     def walk(self, node_id=ROOT):
@@ -418,14 +423,80 @@ def breakdown(view, disclosure):
     return response, notes
 
 
-def exact(view, disclosure):
+def scope_columns(view):
+    """Return (inside, outside): the studies within the example caller's exact scope, and the rest."""
+    inside = frozenset(s for s in view.studies if CONSENT_GROUP.format(study=s) in EXAMPLE_EXACT_SCOPE)
+    return inside, frozenset(view.studies) - inside
+
+
+def exact_totals(view, disclosure):
     """
-    Shape an ExactSummaryResponse: exact counts within the caller's exact scope, obfuscated outside it.
+    Shape an ExactTotalsSummaryResponse, for stages 2 to 4.
+
+    Within the caller's exact scope: exact counts per study and in total, with no min_count or
+    noise. Outside it: only what Totals gives at the same stage, which is studies listed without
+    counts and one obfuscated figure across every group outside scope, suppressed on its own. The
+    two figures are never combined.
+    """
+    inside, outside = scope_columns(view)
+    exact_cells = [(n, c) for n in (ROOT, *view.nodes) for c in (inside, *inside)]
+    outside_cells = [(n, outside) for n in (ROOT, *view.nodes)] if outside else []
+    status, value = disclosure.release_cells(exact_cells + outside_cells, tree_groups(view, outside) if outside else [],
+                                             exact_columns=frozenset({inside, *inside}))
+
+    def outside_figure(node_id):
+        if not outside:
+            return {}
+        figure = {"count_status": status[(node_id, outside)], "count_mode": "OBFUSCATED"}
+        if (node_id, outside) in value:
+            figure["participant_count"] = value[(node_id, outside)]
+        figure["consent_group_count"] = len(outside)
+        return {"outside_scope": figure}
+
+    def contribution(node_id, study):
+        return {"research_study": study, "consent_group": CONSENT_GROUP.format(study=study),
+                **counted(status, value, (node_id, study), "EXACT")}
+
+    def node(node_id):
+        out = describe(view.nodes[node_id])
+        out["participant_count"] = value[(node_id, inside)]
+        out["count_mode"] = "EXACT"
+        out.update(outside_figure(node_id))
+        out["studies"] = [contribution(node_id, s) for s in view.studies if s in inside]
+        if view.children[node_id]:
+            out["values"] = [node(c) for c in view.children[node_id]]
+        return out
+
+    names = {s["research_study"]: s["name"] for s in view.source["studies"]}
+    listed = [s for s in view.studies if s in outside and disclosure.exact((ROOT, s)) >= disclosure.min_count]
+    response = base_response(view)
+    def listed_entry(study):
+        return {"research_study": study, "name": names[study], "consent_group": CONSENT_GROUP.format(study=study),
+                "count_status": "LISTED"}
+
+    response["studies"] = [{"name": names[s], **contribution(ROOT, s)} if s in inside else listed_entry(s)
+                           for s in view.studies if s in inside or s in listed]
+    response["suppressed_study_count"] = len(outside) - len(listed)
+    response["participant_count"] = value[(ROOT, inside)]
+    response["count_mode"] = "EXACT"
+    response.update(outside_figure(ROOT))
+    response["summary"] = facets(view, node)
+    notes = [
+        f"The caller's exact scope is {', '.join(sorted(EXAMPLE_EXACT_SCOPE))}.",
+        "Totals are exact within scope; outside_scope is one obfuscated figure for the other groups, "
+        "never added to them.",
+    ]
+    return response, notes
+
+
+def exact_breakdown(view, disclosure):
+    """
+    Shape an ExactBreakdownSummaryResponse, for stage 5: exact within scope, obfuscated per study outside it.
 
     The two are never combined, so no total spans both, and suppression applies only to the
     obfuscated part. Within exact scope there is no min_count and no noise.
     """
-    in_scope = frozenset(s for s in view.studies if CONSENT_GROUP.format(study=s) in EXAMPLE_EXACT_SCOPE)
+    in_scope, _ = scope_columns(view)
     cells = [(n, s) for n in (ROOT, *view.nodes) for s in view.studies]
     groups = [g for s in view.studies if s not in in_scope for g in tree_groups(view, s)]
     status, value = disclosure.release_cells(cells, groups, exact_columns=in_scope)
@@ -463,8 +534,18 @@ def facets(view, node):
     return summary
 
 
-SHAPERS = {"TotalsSummaryResponse": totals, "BreakdownSummaryResponse": breakdown, "ExactSummaryResponse": exact}
-SUFFIXES = {"TotalsSummaryResponse": "totals", "BreakdownSummaryResponse": "breakdown", "ExactSummaryResponse": "exact"}
+SHAPERS = {
+    "TotalsSummaryResponse": totals,
+    "BreakdownSummaryResponse": breakdown,
+    "ExactTotalsSummaryResponse": exact_totals,
+    "ExactBreakdownSummaryResponse": exact_breakdown,
+}
+SUFFIXES = {
+    "TotalsSummaryResponse": "totals",
+    "BreakdownSummaryResponse": "breakdown",
+    "ExactTotalsSummaryResponse": "exact_totals",
+    "ExactBreakdownSummaryResponse": "exact_breakdown",
+}
 
 
 def tier_profiles(policy):

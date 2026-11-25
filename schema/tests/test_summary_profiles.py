@@ -33,7 +33,8 @@ FACETS = {
 def validators():
     return {name: Draft202012Validator(json.loads(JsonSchemaGenerator(
         str(SCHEMA_DIR / 'summary-profiles.yaml'), top_class=name, not_closed=False,
-    ).serialize())) for name in ['TotalsSummaryResponse', 'BreakdownSummaryResponse', 'ExactSummaryResponse']}
+    ).serialize())) for name in ['TotalsSummaryResponse', 'BreakdownSummaryResponse', 'ExactTotalsSummaryResponse',
+                                   'ExactBreakdownSummaryResponse']}
 
 
 def test_totals_validates(validators):
@@ -118,12 +119,56 @@ def test_withheld_entry_has_no_count(validators):
     assert validators['BreakdownSummaryResponse'].is_valid(data)
 
 
-def test_exact_profile_is_structural_only(validators):
+def test_exact_breakdown_profile_is_structural_only(validators):
     data = breakdown()
     data['count_mode'] = 'EXACT'
-    assert validators['ExactSummaryResponse'].is_valid(data)
+    assert validators['ExactBreakdownSummaryResponse'].is_valid(data)
     data['records'] = {}
-    assert not validators['ExactSummaryResponse'].is_valid(data)
+    assert not validators['ExactBreakdownSummaryResponse'].is_valid(data)
+
+
+def exact_totals():
+    """Study one in exact scope; study two outside it, listed, with one obfuscated figure apart."""
+    outside = {'count_status': 'REPORTED', 'count_mode': 'OBFUSCATED', 'participant_count': 460,
+               'consent_group_count': 1}
+    inside = {'research_study': 'palette:study_one', 'consent_group': 'palette:study_one/c1',
+              'count_status': 'REPORTED', 'count_mode': 'EXACT', 'participant_count': 300}
+    return {
+        'release': 'synthetic', 'min_count': 11, 'participant_count': 300, 'count_mode': 'EXACT',
+        'outside_scope': dict(outside),
+        'studies': [dict(inside), {'research_study': 'palette:study_two', 'count_status': 'LISTED'}],
+        'summary': {'conditions': [{
+            'id': 'palette:condition/t2d', 'condition_concept': 'MONDO:0005148',
+            'participant_count': 90, 'count_mode': 'EXACT', 'outside_scope': dict(outside, participant_count=80),
+            'studies': [dict(inside, participant_count=90)],
+        }]},
+    }
+
+
+def test_exact_totals_validates(validators):
+    assert list(validators['ExactTotalsSummaryResponse'].iter_errors(exact_totals())) == []
+
+
+@pytest.mark.parametrize('violation', [
+    'study-count-outside', 'contribution-outside', 'outside-exact', 'root-obfuscated', 'records', 'outside-no-status',
+])
+def test_exact_totals_gives_nothing_per_study_outside_scope(validators, violation):
+    data = exact_totals()
+    if violation == 'study-count-outside':
+        data['studies'][1].update(count_status='REPORTED', count_mode='OBFUSCATED', participant_count=460)
+    elif violation == 'contribution-outside':
+        data['summary']['conditions'][0]['studies'].append({
+            'research_study': 'palette:study_two', 'count_status': 'REPORTED', 'count_mode': 'OBFUSCATED',
+            'participant_count': 80})
+    elif violation == 'outside-exact':
+        data['outside_scope']['count_mode'] = 'EXACT'
+    elif violation == 'root-obfuscated':
+        data['count_mode'] = 'OBFUSCATED'
+    elif violation == 'records':
+        data['records'] = {}
+    else:
+        del data['summary']['conditions'][0]['outside_scope']['count_status']
+    assert not validators['ExactTotalsSummaryResponse'].is_valid(data)
 
 
 def test_generator_is_reproducible():

@@ -150,7 +150,14 @@ REJECTED = {
     "public-counting-pool": lambda p: stage(p, "public", 2).update(pool="api_counting"),
     "public-breakdown": lambda p: stage(p, "public", 2).update(
         pool="api_counting", profile="BreakdownSummaryResponse"),
-    "authenticated-exact": lambda p: stage(p, "authenticated", 5).update(profile="ExactSummaryResponse"),
+    "authenticated-exact": lambda p: stage(p, "authenticated", 5).update(profile="ExactBreakdownSummaryResponse"),
+    "authenticated-exact-totals": lambda p: stage(p, "authenticated", 4).update(profile="ExactTotalsSummaryResponse"),
+    # Per-group counts outside exact scope come only at stage 5, for every tier.
+    "authorized-breakdown-at-stage-2": lambda p: stage(p, "authorized", 2).update(
+        profile="ExactBreakdownSummaryResponse"),
+    "authenticated-breakdown-at-stage-4": lambda p: stage(p, "authenticated", 4).update(
+        profile="BreakdownSummaryResponse"),
+    "old-exact-profile": lambda p: stage(p, "authorized", 2).update(profile="ExactSummaryResponse"),
     "counting-without-profile": lambda p: stage(p, "authenticated", 5).update(profile="none"),
     "public-pool-without-profile": lambda p: stage(p, "authenticated", 3).update(profile="none"),
     "search-returns-counts": lambda p: stage(p, "authorized", 1).update(profile="TotalsSummaryResponse"),

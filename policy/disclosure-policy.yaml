@@ -166,25 +166,25 @@ tiers:
       - number: 2
         available: true
         pool: api_counting                  # exact scope needs entitlements and eligibility
-        profile: ExactSummaryResponse
+        profile: ExactTotalsSummaryResponse
       - number: 3
         available: true
         pool: api_counting
-        profile: ExactSummaryResponse
+        profile: ExactTotalsSummaryResponse
         operators: [all, any, none]
         max_terms: 20                       # proposed
         max_nesting: 3                      # proposed
       - number: 4
         available: true
         pool: api_counting
-        profile: ExactSummaryResponse
+        profile: ExactTotalsSummaryResponse
         numeric_ranges: RELAXED_WITHIN_EXACT_SCOPE                # if the committees agree
         temporal_windows: ALLOWED
         min_window_days: 30     # Window only applies outside of the users EXACT scope
       - number: 5
         available: true
         pool: api_counting
-        profile: ExactSummaryResponse
+        profile: ExactBreakdownSummaryResponse
         charts: EXACT_WITHIN_EXACT_SCOPE
       - number: 6
         available: true

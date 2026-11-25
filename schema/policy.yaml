@@ -356,6 +356,18 @@ classes:
           slot_conditions:
             profile:
               equals_string: none
+      - description: >-
+          Counts per study and consent group outside exact scope come only at stage 5, on a
+          materialized cohort, for every tier. Approval adds exact counts within scope, never earlier
+          per-group estimates for the groups outside it.
+        preconditions:
+          slot_conditions:
+            profile:
+              equals_string_in: [BreakdownSummaryResponse, ExactBreakdownSummaryResponse]
+        postconditions:
+          slot_conditions:
+            number:
+              equals_number: 5
       - description: Sign-in and provisioning run no counting queries.
         preconditions:
           slot_conditions:
@@ -904,10 +916,15 @@ enums:
         description: OBFUSCATED totals; studies listed without counts.
       BreakdownSummaryResponse:
         description: OBFUSCATED counts per study and consent group, each with a count_status.
-      ExactSummaryResponse:
+      ExactTotalsSummaryResponse:
         description: >-
-          EXACT counts within exact scope and OBFUSCATED counts outside it, as two figures never
-          combined. Structural only; the service verifies scope.
+          EXACT counts within exact scope, per study and in total; outside it, studies listed
+          without counts and one OBFUSCATED figure, never combined with the exact one. The same as
+          Totals outside scope. The service verifies scope.
+      ExactBreakdownSummaryResponse:
+        description: >-
+          EXACT counts within exact scope; OBFUSCATED counts per study and consent group outside
+          it, the same as Breakdown. Stage 5 only. Structural only; the service verifies scope.
   OperatorEnum:
     permissible_values:
       all:

@@ -30,6 +30,7 @@ classes:
     - studies
     - participant_count
     - count_mode
+    - outside_scope
   Binned:
     mixin: true
     description: A bin [bin_low, bin_high); either end may be left open.
@@ -213,6 +214,7 @@ classes:
     - suppressed_study_count
     - participant_count
     - count_mode
+    - outside_scope
     slot_usage:
       studies:
         range: StudySummary
@@ -255,6 +257,22 @@ classes:
             required: true
     - *id001
     - *id002
+    - *id003
+    - *id004
+  OutsideScopeCount:
+    description: The figure for consent groups outside the caller's exact scope, beside an exact figure for the groups
+      inside it. It is computed and suppressed on its own and never combined with the exact figure, so a response with
+      exact counts can still say something about the other groups without adding the two together.
+    slots:
+    - participant_count
+    - count_mode
+    - count_status
+    - consent_group_count
+    slot_usage:
+      count_status:
+        required: true
+    rules:
+    - *id001
     - *id003
     - *id004
   SummaryFacets:
@@ -394,6 +412,14 @@ slots:
   count_status:
     description: Whether a count is reported or intentionally omitted.
     range: CountStatusEnum
+  outside_scope:
+    description: Participants in consent groups outside the caller's exact scope, counted apart from the exact figure.
+    range: OutsideScopeCount
+    inlined: true
+  consent_group_count:
+    description: How many consent groups the figure covers.
+    range: integer
+    minimum_value: 1
   consent_group:
     description: Stable consent-group identifier supplied by the authorized release; not inferred from a study ID.
     range: uriorcurie

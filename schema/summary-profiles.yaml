@@ -22,7 +22,7 @@ classes:
   ObfuscatedStudyEntry:
     is_a: StudySummary
     slot_usage:
-      count_mode:
+      count_mode: &id001
         required: true
         equals_string: OBFUSCATED
       count_status:
@@ -30,83 +30,84 @@ classes:
   ObfuscatedContribution:
     is_a: StudyContribution
     slot_usage:
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
+      count_mode: *id001
       count_status:
         required: true
+  ExactStudyEntry:
+    is_a: StudySummary
+    description: Exact within scope; a study outside scope is listed without a count.
+    slot_usage:
+      count_mode:
+        equals_string: EXACT
+      count_status:
+        required: true
+        equals_string_in:
+        - REPORTED
+        - LISTED
+  ExactContribution:
+    is_a: StudyContribution
+    description: A contribution from a consent group within scope; groups outside it contribute none.
+    slot_usage:
+      count_mode:
+        required: true
+        equals_string: EXACT
+      count_status:
+        required: true
+        equals_string: REPORTED
+  ObfuscatedOutsideScope:
+    is_a: OutsideScopeCount
+    slot_usage:
+      count_mode: *id001
   TotalsParticipantSummary:
     is_a: ParticipantSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: TotalsParticipantSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
+      record_count: &id002
+        value_presence: ABSENT
+      count_mode: *id001
+      studies: &id003
         maximum_cardinality: 0
   TotalsDemographySummary:
     is_a: DemographySummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: TotalsDemographySummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        maximum_cardinality: 0
+      record_count: *id002
+      count_mode: *id001
+      studies: *id003
   TotalsConditionSummary:
     is_a: ConditionSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: TotalsConditionSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        maximum_cardinality: 0
+      record_count: *id002
+      count_mode: *id001
+      studies: *id003
   TotalsProcedureSummary:
     is_a: ProcedureSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: TotalsProcedureSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        maximum_cardinality: 0
+      record_count: *id002
+      count_mode: *id001
+      studies: *id003
   TotalsDrugExposureSummary:
     is_a: DrugExposureSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: TotalsDrugExposureSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        maximum_cardinality: 0
+      record_count: *id002
+      count_mode: *id001
+      studies: *id003
   TotalsMeasurementObservationSummary:
     is_a: MeasurementObservationSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: TotalsMeasurementObservationSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        maximum_cardinality: 0
+      record_count: *id002
+      count_mode: *id001
+      studies: *id003
   TotalsSummaryFacets:
     is_a: SummaryFacets
     slot_usage:
@@ -127,85 +128,61 @@ classes:
     slot_usage:
       studies:
         range: ListedStudyEntry
+      count_mode: *id001
       summary:
         range: TotalsSummaryFacets
       records:
         value_presence: ABSENT
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
   BreakdownParticipantSummary:
     is_a: ParticipantSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: BreakdownParticipantSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
+      record_count: &id004
+        value_presence: ABSENT
+      count_mode: *id001
+      studies: &id005
         range: ObfuscatedContribution
   BreakdownDemographySummary:
     is_a: DemographySummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: BreakdownDemographySummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        range: ObfuscatedContribution
+      record_count: *id004
+      count_mode: *id001
+      studies: *id005
   BreakdownConditionSummary:
     is_a: ConditionSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: BreakdownConditionSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        range: ObfuscatedContribution
+      record_count: *id004
+      count_mode: *id001
+      studies: *id005
   BreakdownProcedureSummary:
     is_a: ProcedureSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: BreakdownProcedureSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        range: ObfuscatedContribution
+      record_count: *id004
+      count_mode: *id001
+      studies: *id005
   BreakdownDrugExposureSummary:
     is_a: DrugExposureSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: BreakdownDrugExposureSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        range: ObfuscatedContribution
+      record_count: *id004
+      count_mode: *id001
+      studies: *id005
   BreakdownMeasurementObservationSummary:
     is_a: MeasurementObservationSummary
     slot_usage:
-      record_count:
-        value_presence: ABSENT
       values:
         range: BreakdownMeasurementObservationSummary
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-      studies:
-        range: ObfuscatedContribution
+      record_count: *id004
+      count_mode: *id001
+      studies: *id005
   BreakdownSummaryFacets:
     is_a: SummaryFacets
     slot_usage:
@@ -226,16 +203,98 @@ classes:
     slot_usage:
       studies:
         range: ObfuscatedStudyEntry
+      count_mode: *id001
       summary:
         range: BreakdownSummaryFacets
       records:
         value_presence: ABSENT
-      count_mode:
-        required: true
-        equals_string: OBFUSCATED
-  ExactSummaryResponse:
+  ExactTotalsParticipantSummary:
+    is_a: ParticipantSummary
+    slot_usage:
+      values:
+        range: ExactTotalsParticipantSummary
+      count_mode: &id006
+        equals_string: EXACT
+      studies: &id007
+        range: ExactContribution
+      outside_scope: &id008
+        range: ObfuscatedOutsideScope
+  ExactTotalsDemographySummary:
+    is_a: DemographySummary
+    slot_usage:
+      values:
+        range: ExactTotalsDemographySummary
+      count_mode: *id006
+      studies: *id007
+      outside_scope: *id008
+  ExactTotalsConditionSummary:
+    is_a: ConditionSummary
+    slot_usage:
+      values:
+        range: ExactTotalsConditionSummary
+      count_mode: *id006
+      studies: *id007
+      outside_scope: *id008
+  ExactTotalsProcedureSummary:
+    is_a: ProcedureSummary
+    slot_usage:
+      values:
+        range: ExactTotalsProcedureSummary
+      count_mode: *id006
+      studies: *id007
+      outside_scope: *id008
+  ExactTotalsDrugExposureSummary:
+    is_a: DrugExposureSummary
+    slot_usage:
+      values:
+        range: ExactTotalsDrugExposureSummary
+      count_mode: *id006
+      studies: *id007
+      outside_scope: *id008
+  ExactTotalsMeasurementObservationSummary:
+    is_a: MeasurementObservationSummary
+    slot_usage:
+      values:
+        range: ExactTotalsMeasurementObservationSummary
+      count_mode: *id006
+      studies: *id007
+      outside_scope: *id008
+  ExactTotalsSummaryFacets:
+    is_a: SummaryFacets
+    slot_usage:
+      participants:
+        range: ExactTotalsParticipantSummary
+      demographics:
+        range: ExactTotalsDemographySummary
+      conditions:
+        range: ExactTotalsConditionSummary
+      procedures:
+        range: ExactTotalsProcedureSummary
+      drug_exposures:
+        range: ExactTotalsDrugExposureSummary
+      measurements:
+        range: ExactTotalsMeasurementObservationSummary
+  ExactTotalsSummaryResponse:
     is_a: SummaryResponse
-    description: Structural contract only. The service must verify scope before releasing any exact count.
+    description: For stages 2 to 4. Exact counts within the caller's exact scope, per study and in total; outside
+      it, studies are listed without counts and only one obfuscated figure is given, as Totals gives. The service
+      must verify scope before releasing any exact count.
+    slot_usage:
+      studies:
+        range: ExactStudyEntry
+      count_mode:
+        equals_string: EXACT
+      outside_scope: *id008
+      summary:
+        range: ExactTotalsSummaryFacets
+      records:
+        value_presence: ABSENT
+  ExactBreakdownSummaryResponse:
+    is_a: SummaryResponse
+    description: 'For stage 5, on a materialized cohort. Exact counts within the caller''s exact scope and obfuscated
+      per-study counts outside it, as Breakdown gives. Structural contract only: the service must verify scope before
+      releasing any exact count.'
     slot_usage:
       records:
         value_presence: ABSENT
+      outside_scope: *id008

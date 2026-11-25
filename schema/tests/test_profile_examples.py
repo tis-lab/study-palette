@@ -20,7 +20,8 @@ from schema import generate_profile_examples as gen
 
 SCHEMA_DIR = Path(__file__).resolve().parent.parent
 BDCHM = SCHEMA_DIR.parent / "synthetic" / "bdchm.yaml"
-PROFILES = {"totals": "TotalsSummaryResponse", "breakdown": "BreakdownSummaryResponse", "exact": "ExactSummaryResponse"}
+PROFILES = {suffix: profile for profile, suffix in gen.SUFFIXES.items()}
+EXACT_PROFILES = {"ExactTotalsSummaryResponse", "ExactBreakdownSummaryResponse"}
 
 
 def read(path):
@@ -54,16 +55,28 @@ def disclosure_of(path):
     return DISCLOSURES[parts(path)[0]]
 
 
-def cells(response):
-    """Every count-bearing entry, keyed by (node, column) as the generator keys them."""
+def cells(response, path):
+    """
+    Every count-bearing entry, keyed by (node, column) as the generator keys them.
+
+    A total covers every study, except in Exact Totals, where it covers the studies within exact
+    scope and outside_scope covers the rest.
+    """
+    total, outside = gen.TOTAL, None
+    if profile_of(path) == "ExactTotalsSummaryResponse":
+        total, outside = gen.scope_columns(view_of(path))
     found = {}
     if "participant_count" in response or "count_mode" in response:
-        found[(gen.ROOT, gen.TOTAL)] = response
+        found[(gen.ROOT, total)] = response
+    if outside and "outside_scope" in response:
+        found[(gen.ROOT, outside)] = response["outside_scope"]
     for study in response["studies"]:
         found[(gen.ROOT, study["research_study"])] = study
 
     def walk(node):
-        found[(node["id"], gen.TOTAL)] = node
+        found[(node["id"], total)] = node
+        if outside and "outside_scope" in node:
+            found[(node["id"], outside)] = node["outside_scope"]
         for contribution in node.get("studies") or []:
             found[(node["id"], contribution["research_study"])] = contribution
         for value in node.get("values") or []:
@@ -75,10 +88,10 @@ def cells(response):
     return found
 
 
-def released(response):
+def released(response, path):
     """Cells that carry a count, with how it was produced."""
     return {cell: (entry["count_mode"], entry["participant_count"])
-            for cell, entry in cells(response).items() if "participant_count" in entry}
+            for cell, entry in cells(response, path).items() if "participant_count" in entry}
 
 
 @pytest.fixture(params=EXAMPLES, ids=lambda p: p.name)
@@ -179,7 +192,7 @@ def test_examples_keep_their_query(example):
 def test_obfuscated_counts_respect_min_count_and_noise(example):
     path, response = example
     disclosure = disclosure_of(path)
-    for cell, (mode, count) in released(response).items():
+    for cell, (mode, count) in released(response, path).items():
         if mode != "OBFUSCATED":
             continue
         exact = disclosure.exact(cell)
@@ -192,7 +205,7 @@ def test_obfuscated_counts_respect_min_count_and_noise(example):
 def test_a_participant_set_gets_the_same_noise_everywhere():
     seen, released_counts = {}, 0
     for path in EXAMPLES:
-        for cell, (mode, count) in released(read(path)).items():
+        for cell, (mode, count) in released(read(path), path).items():
             if mode == "OBFUSCATED":
                 seen.setdefault(view_of(path).members(*cell), set()).add(count)
                 released_counts += 1
@@ -210,7 +223,7 @@ def test_a_filtered_cohort_and_its_overview_share_noise():
 
 def test_suppressed_counts_say_why(example):
     path, response = example
-    for cell, entry in cells(response).items():
+    for cell, entry in cells(response, path).items():
         status = entry.get("count_status")
         if status == "BELOW_MIN_COUNT":
             assert disclosure_of(path).exact(cell) < MIN_COUNT, cell
@@ -222,8 +235,8 @@ def test_nothing_hidden_can_be_derived(example):
     """Wherever a parent and some parts are released, the hidden remainder is zero or at least min_count."""
     path, response = example
     view, disclosure = view_of(path), disclosure_of(path)
-    shown = released(response)
-    for parent, children in protected_groups(view, {c for _, c in cells(response)}):
+    shown = released(response, path)
+    for parent, children in protected_groups(view, {c for _, c in cells(response, path)}):
         if parent not in shown or shown[parent][0] == "EXACT":
             continue
         reported = [p for p in children if p in shown]
@@ -255,8 +268,8 @@ def protected_groups(view, columns):
 def test_cohort_minus_a_facet_is_never_a_small_count(example):
     """Wherever both are released, cohort minus a facet (its "not recorded" part) is zero or at least min_count."""
     path, response = example
-    shown, disclosure, view = released(response), disclosure_of(path), view_of(path)
-    for column in {c for _, c in cells(response)}:
+    shown, disclosure, view = released(response, path), disclosure_of(path), view_of(path)
+    for column in {c for _, c in cells(response, path)}:
         if (gen.ROOT, column) not in shown or shown[(gen.ROOT, column)][0] == "EXACT":
             continue
         for facet in view.children[gen.ROOT]:
@@ -275,21 +288,56 @@ def test_the_cohort_facet_check_has_cases_to_catch():
 
 def test_exact_counts_stay_in_exact_scope(example):
     path, response = example
-    exact = {cell for cell, (mode, _) in released(response).items() if mode == "EXACT"}
-    if profile_of(path) != "ExactSummaryResponse":
+    exact = {cell for cell, (mode, _) in released(response, path).items() if mode == "EXACT"}
+    if profile_of(path) not in EXACT_PROFILES:
         assert exact == set()
         return
-    scope = {s for s in view_of(path).studies if gen.CONSENT_GROUP.format(study=s) in gen.EXAMPLE_EXACT_SCOPE}
-    assert exact and {c for _, c in exact} <= scope
-    for cell, (mode, count) in released(response).items():
+    inside, _ = gen.scope_columns(view_of(path))
+    assert exact and {c for _, c in exact} <= inside | {inside}
+    for cell, (mode, count) in released(response, path).items():
         if mode == "EXACT":
             assert count == disclosure_of(path).exact(cell), cell
 
 
 def test_exact_and_obfuscated_figures_are_never_combined(example):
+    """No count covers studies both inside and outside exact scope, and each scope keeps its own mode."""
     path, response = example
-    if profile_of(path) == "ExactSummaryResponse":
-        assert {c for _, c in released(response)} <= set(view_of(path).studies), "a total spans both scopes"
+    if profile_of(path) not in EXACT_PROFILES:
+        return
+    inside, outside = gen.scope_columns(view_of(path))
+    for (_, column), (mode, _) in released(response, path).items():
+        assert column != gen.TOTAL, "a total spans both scopes"
+        covered = column if isinstance(column, frozenset) else frozenset({column})
+        assert covered <= inside or covered <= outside, column
+        assert mode == ("EXACT" if covered <= inside else "OBFUSCATED"), column
+
+
+def test_no_per_study_counts_outside_scope_before_stage_5(example):
+    """
+    Outside exact scope, Exact Totals gives only what Totals gives: studies listed without counts,
+    and one figure across all of them. Per-study counts outside scope wait for stage 5.
+    """
+    path, response = example
+    if profile_of(path) != "ExactTotalsSummaryResponse":
+        return
+    _, outside = gen.scope_columns(view_of(path))
+    assert outside, "every study is in scope, so this test proves nothing"
+    shown = released(response, path)
+    assert not [cell for cell in shown if cell[1] in outside], "a per-study count outside scope"
+    for study in response["studies"]:
+        if study["research_study"] in outside:
+            assert study["count_status"] == "LISTED", study
+    assert any(column == outside for _, column in shown), "no figure outside scope at all"
+
+
+def test_exact_totals_list_only_studies_at_or_above_min_count(example):
+    path, response = example
+    if profile_of(path) != "ExactTotalsSummaryResponse":
+        return
+    _, outside = gen.scope_columns(view_of(path))
+    listed = {s["research_study"] for s in response["studies"]} & outside
+    assert listed == {s for s in outside if disclosure_of(path).exact((gen.ROOT, s)) >= MIN_COUNT}
+    assert response["suppressed_study_count"] == len(outside) - len(listed)
 
 
 def test_totals_list_only_studies_at_or_above_min_count(example):
@@ -306,6 +354,6 @@ def test_breakdown_lists_every_consent_group(example):
     path, response = example
     if profile_of(path) != "BreakdownSummaryResponse":
         return
-    for (node_id, column), entry in cells(response).items():
+    for (node_id, column), entry in cells(response, path).items():
         if node_id != gen.ROOT and column == gen.TOTAL:
             assert [c["research_study"] for c in entry["studies"]] == view_of(path).studies, node_id
