@@ -185,7 +185,7 @@ REJECTED = {
     "prose-field": lambda p: stage(p, "public", 2).update(returns="OBFUSCATED total"),
     "boolean-eligibility": lambda p: p["eligibility"][0].update(sharing=True),
     # Each tier's limits are locked, not just its pools and profiles.
-    "public-time-windows": lambda p: stage(p, "public", 4).update(temporal_windows="ALLOWED"),
+    "public-time-windows": lambda p: stage(p, "public", 4).update(temporal_windows={"min_days": 30}),
     "public-or": lambda p: stage(p, "public", 3).update(operators=["all", "any"]),
     "public-not": lambda p: stage(p, "public", 3).update(operators=["all", "none"]),
     "public-filterable-stigmatizing": lambda p: stage(p, "public", 1).update(
@@ -198,14 +198,15 @@ REJECTED = {
     "public-charts": lambda p: stage(p, "public", 4).update(charts="OBFUSCATED"),
     "public-listing": lambda p: stage(p, "public", 4).update(below_min_count_listing="ALL_UNREPORTED_CONSENT_GROUPS"),
     "authenticated-exact-charts": lambda p: stage(p, "authenticated", 5).update(charts="EXACT_WITHIN_EXACT_SCOPE"),
-    "authenticated-window-without-minimum": lambda p: stage(p, "authenticated", 4).pop("min_window_days"),
+    "authenticated-window-without-minimum": lambda p: stage(p, "authenticated", 4)["temporal_windows"].pop("min_days"),
     "authenticated-relaxed-ranges": lambda p: stage(p, "authenticated", 4).update(
         numeric_ranges="RELAXED_WITHIN_EXACT_SCOPE"),
     "authenticated-filterable-stigmatizing": lambda p: stage(p, "authenticated", 1).update(
         stigmatizing_terms="FILTERABLE_WITHIN_EXACT_SCOPE"),
     "authorized-unlimited-terms": lambda p: stage(p, "authorized", 3).pop("max_terms"),
-    "minimum-without-windows": lambda p: stage(p, "authenticated", 4).update(temporal_windows="NOT_ALLOWED"),
+    "windows-on-fixed-table": lambda p: stage(p, "authenticated", 2).update(temporal_windows={"min_days": 30}),
     "boolean-time-windows": lambda p: stage(p, "authenticated", 4).update(temporal_windows=True),
+    "old-enum-windows": lambda p: stage(p, "authenticated", 4).update(temporal_windows="ALLOWED"),
     "zero-noise": lambda p: p["counting"]["noise"].update(min=0, max=0),
     "no-negative-noise": lambda p: p["counting"]["noise"].update(min=0),
     "no-positive-noise": lambda p: p["counting"]["noise"].update(max=0),
@@ -227,12 +228,22 @@ REJECTED = {
     "global-check-refuses": lambda p: p["tiers"][0]["overlap_check"].update(on_match="REFUSE"),
     "authenticated-no-overlap-check": lambda p: p["tiers"][1].pop("overlap_check"),
     "boolean-overlap-check": lambda p: p["tiers"][1].update(overlap_check=True),
+    # Relaxed queries: the policy says what they return outside exact scope, and only where there is one.
+    "authorized-relaxed-undecided": lambda p: p["tiers"][2].pop("relaxed_queries_outside_scope"),
+    "authorized-relaxed-estimated": lambda p: p["tiers"][2].update(relaxed_queries_outside_scope="ESTIMATED"),
+    "authenticated-relaxed-setting": lambda p: p["tiers"][1].update(relaxed_queries_outside_scope="EXCLUDED"),
+    "public-relaxed-setting": lambda p: p["tiers"][0].update(relaxed_queries_outside_scope="EXCLUDED"),
+    # Window minimums: always one for queries reaching outside exact scope; an inside one needs an exact scope.
+    "authorized-window-without-minimum": lambda p: stage(p, "authorized", 4)["temporal_windows"].pop("min_days"),
+    "authenticated-inside-window": lambda p: stage(p, "authenticated", 4)["temporal_windows"].update(
+        min_days_within_exact_scope=7),
 }
 
 
 # Settings the locks must still allow, so the rules are not simply rejecting everything nearby.
 ACCEPTED = {
-    "authorized-relaxed-window": lambda p: stage(p, "authorized", 4).pop("min_window_days"),
+    "authorized-inside-window": lambda p: stage(p, "authorized", 4)["temporal_windows"].update(
+        min_days_within_exact_scope=7),
     "authorized-exact-charts": lambda p: stage(p, "authorized", 5).update(charts="EXACT_WITHIN_EXACT_SCOPE"),
     "authenticated-bin-edges": lambda p: stage(p, "authenticated", 4).update(numeric_ranges="BIN_EDGES"),
     "wider-noise": lambda p: p["counting"]["noise"].update(min=-5, max=5),

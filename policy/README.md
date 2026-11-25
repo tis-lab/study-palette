@@ -48,7 +48,7 @@ has no profile.
 | 1 Search and add terms | `api_search`, no counts. Stigmatizing terms shown, not filterable | `api_search`, no counts. Stigmatizing terms shown, not filterable | `api_search`, no counts. Stigmatizing terms filterable within exact scope, if approved |
 | 2 Live summary per term | `api_public` → Totals | `api_public` → Totals | `api_counting` → Exact Totals |
 | 3 And, Or and Not | `api_public` → Totals. And only; up to 2 terms, read from the fixed table | `api_counting` → Totals. And, Or, Not; 20 terms; nesting 3 | `api_counting` → Exact Totals. And, Or, Not; 20 terms; nesting 3 |
-| 4 Refine criteria | Not available | `api_counting` → Totals. Ranges at least one bin wide; time windows of at least 30 days | `api_counting` → Exact Totals. Range minimums relaxed within exact scope, if agreed; time windows |
+| 4 Refine criteria | Not available | `api_counting` → Totals. Ranges at least one bin wide; time windows of at least 30 days | `api_counting` → Exact Totals. Range minimums relaxed within exact scope, if agreed; time windows of at least 30 days when reaching outside exact scope, no minimum within it (proposed) |
 | 5 Cohort and visuals | Not available | `api_counting` → Breakdown. Obfuscated charts; unreported consent groups listed as below `min_count` | `api_counting` → Exact Breakdown. Exact charts within exact scope, obfuscated outside it |
 | 6 Provisioning | No counts. Information on how to request access | No counts. Access request prefilled from the cohort | No counts. A share for eligible groups, an access request for the rest |
 
@@ -94,6 +94,14 @@ Approval adds exact counts within the caller's exact scope and nothing else. Out
 authorized user sees what an authenticated user sees at the same stage: Exact Totals matches Totals,
 and Exact Breakdown matches Breakdown. Per-group counts outside exact scope come only at stage 5,
 on a materialized cohort, for every tier.
+
+Some authorized settings apply only within exact scope: filterable stigmatizing terms, relaxed
+ranges, and windows shorter than `temporal_windows.min_days`. A query using any of them is a *relaxed
+query*, and it leaves groups outside exact scope out of the response entirely
+(`relaxed_queries_outside_scope: EXCLUDED`). There is no out-of-scope figure, no listing of
+those studies and no `suppressed_study_count` for them. A relaxed criterion is one an
+authenticated user can't use, so even "at least 10 match in that study" would say more than
+that user could learn.
 
 The exact profiles are structural only. The middleware must verify the caller's scope before
 releasing any exact count.
@@ -170,7 +178,13 @@ checks, or that gives a tier more than it should have:
 - Public stage settings stay locked at the narrowest values even so: And only, no time windows,
   ranges on bin edges only, stigmatizing terms never filterable, and no cohort charts or listings.
 - Authenticated stages get no setting that depends on an exact scope (exact charts, relaxed
-  ranges, filterable stigmatizing terms), and a time window always has a minimum length.
+  ranges, filterable stigmatizing terms, a window minimum within exact scope).
+- Time windows are one `temporal_windows` block; a stage without it allows none. Its `min_days` is
+  required and governs every query that reaches outside exact scope, for every tier. A shorter
+  minimum within exact scope is its own field, `min_days_within_exact_scope`, allowed only for the
+  authorized tier.
+- The authorized tier must say what a relaxed query returns outside exact scope, and only a tier
+  with an exact scope may set it.
 - Any stage that combines terms caps how many (`max_terms`); a minimum window needs windows to be
   allowed.
 - Noise can't be seeded by anything except the release and the matched participants, and must

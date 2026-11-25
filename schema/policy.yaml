@@ -237,11 +237,22 @@ classes:
       - limits
       - overlap_check
       - log_every_request
+      - relaxed_queries_outside_scope
       - stages
     slot_usage:
       stages:
         minimum_cardinality: 7
         maximum_cardinality: 7
+    rules:
+      - description: Only a tier with an exact scope has relaxed queries to decide about.
+        preconditions:
+          slot_conditions:
+            exact_scope:
+              value_presence: ABSENT
+        postconditions:
+          slot_conditions:
+            relaxed_queries_outside_scope:
+              value_presence: ABSENT
 
   PublicTier:
     is_a: Tier
@@ -286,14 +297,17 @@ classes:
   AuthorizedTier:
     is_a: Tier
     description: >-
-      Only authorized users have an exact scope, and they need visas for it. That their limits
-      include a QUERY_BUDGET is checked by schema/tests/test_disclosure_policy.py.
+      Only authorized users have an exact scope, and they need visas for it. The policy must say
+      what a relaxed query returns for groups outside that scope. That their limits include a
+      QUERY_BUDGET is checked by schema/tests/test_disclosure_policy.py.
     slot_usage:
       name:
         equals_string: authorized
       accountability:
         equals_string: RAS_ACCOUNT_WITH_VISAS
       exact_scope:
+        required: true
+      relaxed_queries_outside_scope:
         required: true
       limits:
         required: true
@@ -313,7 +327,6 @@ classes:
       - max_terms
       - max_nesting
       - temporal_windows
-      - min_window_days
       - numeric_ranges
       - stigmatizing_terms
       - charts
@@ -394,15 +407,6 @@ classes:
           slot_conditions:
             max_terms:
               required: true
-      - description: A minimum window only means something where windows are allowed.
-        preconditions:
-          slot_conditions:
-            temporal_windows:
-              equals_string: NOT_ALLOWED
-        postconditions:
-          slot_conditions:
-            min_window_days:
-              value_presence: ABSENT
       # The fixed public table holds filters combined with And, up to the max_terms of the stage
       # that reads it. Anything else that combines terms, and any refinement, makes a matched set
       # only a live counting query can produce and check.
@@ -439,7 +443,7 @@ classes:
         preconditions:
           slot_conditions:
             temporal_windows:
-              equals_string: ALLOWED
+              value_presence: PRESENT
         postconditions:
           slot_conditions:
             pool:
@@ -460,8 +464,6 @@ classes:
         equals_string_in: [none, TotalsSummaryResponse]
       operators:
         equals_string_in: [all]
-      temporal_windows:
-        equals_string_in: [NOT_ALLOWED]
       numeric_ranges:
         equals_string_in: [BIN_EDGES]
       stigmatizing_terms:
@@ -487,12 +489,21 @@ classes:
           slot_conditions:
             below_min_count_listing:
               value_presence: ABSENT
+      - description: Public users get no time windows.
+        preconditions:
+          slot_conditions:
+            number:
+              value_presence: PRESENT
+        postconditions:
+          slot_conditions:
+            temporal_windows:
+              value_presence: ABSENT
 
   AuthenticatedStage:
     is_a: Stage
     description: >-
       An authenticated stage never returns exact counts. The tier has no exact scope, so it gets
-      none of the settings that depend on one, and a time window always has a minimum length.
+      none of the settings that depend on one.
     slot_usage:
       profile:
         equals_string_in: [none, TotalsSummaryResponse, BreakdownSummaryResponse]
@@ -502,16 +513,25 @@ classes:
         equals_string_in: [BIN_EDGES, MIN_ONE_BIN]
       stigmatizing_terms:
         equals_string_in: [SHOWN_NOT_FILTERABLE]
-    rules:
-      - description: Time windows need a minimum length outside exact scope.
-        preconditions:
-          slot_conditions:
-            temporal_windows:
-              equals_string: ALLOWED
-        postconditions:
-          slot_conditions:
-            min_window_days:
-              required: true
+      temporal_windows:
+        range: TemporalWindowWithoutExactScope
+
+  TemporalWindow:
+    description: >-
+      Criteria may be limited to a time window. A stage without this block allows none. min_days
+      governs every query that touches a group outside the caller's exact scope; for a tier with no
+      exact scope, that is every query. A window shorter than min_days is a relaxed query: see
+      relaxed_queries_outside_scope.
+    slots:
+      - min_days
+      - min_days_within_exact_scope
+
+  TemporalWindowWithoutExactScope:
+    is_a: TemporalWindow
+    description: Time windows for a tier with no exact scope, so with no minimum of its own inside one.
+    slot_usage:
+      min_days_within_exact_scope:
+        value_presence: ABSENT
 
   EligibilityDefaults:
     description: >-
@@ -742,13 +762,27 @@ slots:
     range: integer
     minimum_value: 1
   temporal_windows:
+    range: TemporalWindow
+    inlined: true
+  min_days:
     description: >-
-      Whether criteria may be limited to a time window. An enum rather than a boolean so a tier can
-      be held to NOT_ALLOWED: LinkML's JSON Schema output cannot fix a boolean's value.
-    range: TemporalWindowsEnum
-  min_window_days:
+      The shortest time window a query may use when it touches any group outside the caller's exact
+      scope. For a tier with no exact scope, that is every query.
+    range: integer
+    required: true
+    minimum_value: 1
+  min_days_within_exact_scope:
+    description: >-
+      The shortest window a query may use when every group it touches is within the caller's exact
+      scope. Absent means no minimum there.
     range: integer
     minimum_value: 1
+  relaxed_queries_outside_scope:
+    description: >-
+      What a relaxed query returns for groups outside the caller's exact scope. A query is relaxed
+      when it uses any setting allowed only within exact scope: a filterable stigmatizing term, a
+      relaxed numeric range, or a window shorter than temporal_windows.min_days.
+    range: RelaxedOutsideScopeEnum
   numeric_ranges:
     range: NumericRangesEnum
   stigmatizing_terms:
@@ -869,6 +903,14 @@ enums:
     permissible_values:
       NETWORK_ADDRESS:
       ACCOUNT:
+  RelaxedOutsideScopeEnum:
+    permissible_values:
+      EXCLUDED:
+        description: >-
+          Groups outside exact scope are left out of the response entirely: no outside_scope
+          figure, no per-group counts, no listing and no suppressed_study_count for them. A relaxed
+          criterion is one an authenticated user cannot use, so even "at least min_count match" in
+          a study would say more than that user could learn.
   OverlapScopeEnum:
     permissible_values:
       PER_ACCOUNT:
@@ -933,12 +975,6 @@ enums:
         description: Or.
       none:
         description: Not.
-  TemporalWindowsEnum:
-    permissible_values:
-      NOT_ALLOWED:
-        description: Criteria cannot be limited to a time window.
-      ALLOWED:
-        description: Criteria can be limited to a time window, no shorter than min_window_days where set.
   NumericRangesEnum:
     permissible_values:
       BIN_EDGES:
@@ -946,13 +982,17 @@ enums:
       MIN_ONE_BIN:
         description: Any range at least one bin of the facet's summary wide.
       RELAXED_WITHIN_EXACT_SCOPE:
-        description: The authenticated minimum, relaxed within exact scope if the committees agree.
+        description: >-
+          The authenticated minimum outside exact scope, relaxed within it if the committees agree.
+          A query using the relaxation is a relaxed query: see relaxed_queries_outside_scope.
   StigmatizingTermsEnum:
     permissible_values:
       SHOWN_NOT_FILTERABLE:
         description: Found by search but not usable as criteria.
       FILTERABLE_WITHIN_EXACT_SCOPE:
-        description: Usable as criteria within exact scope, if the committees approve.
+        description: >-
+          Usable as criteria within exact scope, if the committees approve. A query using one is a
+          relaxed query: see relaxed_queries_outside_scope.
   ChartsEnum:
     permissible_values:
       OBFUSCATED:

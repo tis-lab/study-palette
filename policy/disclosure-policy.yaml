@@ -128,8 +128,8 @@ tiers:
         pool: api_counting                  # values and time need event rows
         profile: TotalsSummaryResponse      # output is still the public view
         numeric_ranges: MIN_ONE_BIN         # proposed
-        temporal_windows: ALLOWED
-        min_window_days: 30                 # proposed
+        temporal_windows:
+          min_days: 30                      # proposed
       - number: 5                           # on a materialized cohort
         available: true
         pool: api_counting
@@ -153,6 +153,7 @@ tiers:
       scope: PER_ACCOUNT
       on_match: REFUSE
     log_every_request: true
+    relaxed_queries_outside_scope: EXCLUDED # a relaxed query leaves groups outside exact scope out entirely
     stages:
       - number: 0
         available: true
@@ -179,8 +180,9 @@ tiers:
         pool: api_counting
         profile: ExactTotalsSummaryResponse
         numeric_ranges: RELAXED_WITHIN_EXACT_SCOPE                # if the committees agree
-        temporal_windows: ALLOWED
-        min_window_days: 30     # Window only applies outside of the users EXACT scope
+        temporal_windows:
+          min_days: 30                      # for any query touching groups outside exact scope
+                                            # within exact scope: no minimum (proposed)
       - number: 5
         available: true
         pool: api_counting
