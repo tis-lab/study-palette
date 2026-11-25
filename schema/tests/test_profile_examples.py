@@ -199,7 +199,7 @@ def test_obfuscated_counts_respect_min_count_and_noise(example):
         assert exact >= MIN_COUNT, f"{cell}: released a count below min_count"
         assert count >= MIN_COUNT, cell
         noisy = range(exact + NOISE["min"], exact + NOISE["max"] + 1)
-        assert count in noisy or (NOISE["clamp_to_min_count"] and count == MIN_COUNT), cell
+        assert count in noisy or count == MIN_COUNT, cell
 
 
 def test_a_participant_set_gets_the_same_noise_everywhere():

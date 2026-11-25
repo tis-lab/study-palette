@@ -34,7 +34,7 @@ middleware; the policy is the specification it follows.
 | Exact counts | Never | Never | Within exact scope: entitled consent groups whose current eligibility allows exact counts |
 | Limits | Rate limit: 60 requests per minute per network address | Query budget: 500 units per day per account | Query budget: none within exact scope; other queries draw on the authenticated budget |
 | Overlap check | Global, across every set in the fixed table; matches withheld when the table is built | Per account; a matching query is refused | Per account; a matching query is refused |
-| Request logging | No | Every request | Every request |
+| Request logging | No | Every request, always | Every request, always |
 | Retired releases | No | No | Own saved cohorts only |
 
 ### Stage by stage
@@ -108,7 +108,27 @@ releasing any exact count.
 
 ## How counts are protected
 
-These rules, under `counting`, apply to every tier.
+These rules apply to every tier. Some are settings under `counting`; others are **fixed
+protections**, defined in [`schema/policy.yaml`](../schema/policy.yaml) and absent from the policy,
+because switching one off would reopen a known disclosure. A fixed protection can't be turned off
+by editing the policy: the schema rejects the field.
+
+Fixed protections:
+
+- `BELOW_MIN_COUNT` means "possibly none".
+- Noisy values are clamped to `min_count`.
+- Totals are exact only when every contributing group is in exact scope.
+- Suppression protects every total over its contributions and the cohort over each facet and its
+  values, counting the "not recorded" part.
+- Retired releases serve only the caller's own saved cohorts.
+- Overlap checks compare queries across releases.
+- Every request from an identified caller is logged with that identity.
+
+Settings also have **floors** in the schema, at today's values: `min_count` at least 10, noise of
+at least ±3, and time windows of at least 30 days wherever a query reaches outside exact scope. The
+policy may tighten any of them; loosening one below its floor means changing the schema, which is
+reviewed like code.
+
 
 - **Minimum count.** Counts below `min_count` (10) are not reported. `BELOW_MIN_COUNT` means
   "fewer than 10, possibly none", so zero and small counts look alike.
@@ -187,8 +207,10 @@ checks, or that gives a tier more than it should have:
   with an exact scope may set it.
 - Any stage that combines terms caps how many (`max_terms`); a minimum window needs windows to be
   allowed.
-- Noise can't be seeded by anything except the release and the matched participants, and must
-  range at least one either side of zero, so it can never be switched off.
+- Noise can't be seeded by anything except the release and the matched participants.
+- Fixed protections can't be switched off, because they aren't fields; `min_count`, the noise
+  range and window minimums can't go below their floors. The authorized tier must have an overlap
+  check.
 - Unknown fields are rejected, so prose can't slip back in as an unchecked field.
 
 The tests also check what LinkML rules cannot express: tier names and stage numbers are unique,

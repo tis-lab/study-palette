@@ -36,10 +36,11 @@ classes:
         maximum_cardinality: 3
 
   Counting:
-    description: How counts are formed and protected, for every tier.
+    description: >-
+      How counts are formed and protected, for every tier. Fixed, not a setting: BELOW_MIN_COUNT
+      always reads "fewer than min_count, possibly none", so zero and small counts look alike.
     slots:
       - min_count
-      - below_min_count_includes_zero
       - identity_rule
       - noise
       - totals
@@ -52,11 +53,12 @@ classes:
       Noise added to OBFUSCATED counts at or above min_count; counts below min_count are suppressed,
       not noised. The seed is a keyed hash of the seed inputs, so the same participant set always
       gets the same noise wherever it appears. There is deliberately no seed input for a cell's label.
+      Fixed, not a setting: a noisy value that falls below min_count is shown as min_count, so noise
+      never produces a count that looks suppressible.
     slots:
       - distribution
       - min
       - max
-      - clamp_to_min_count
       - seed_function
       - seed_inputs
       - key_reference
@@ -64,11 +66,11 @@ classes:
   TotalsRule:
     description: >-
       How a released total is formed. A total is never a sum of contributions, and clients use a
-      released total where present, never adding OBFUSCATED counts.
+      released total where present, never adding OBFUSCATED counts. Fixed, not a setting: a total is
+      EXACT only when every contributing consent group is in the caller's exact scope.
     slots:
       - method
       - include_below_min_count_studies
-      - exact_requires_full_exact_scope
     slot_usage:
       method:
         range: TotalsMethodEnum
@@ -77,13 +79,13 @@ classes:
     description: >-
       Complementary suppression. Wherever a reported parent appears with its parts, the amount a
       reader can derive from suppressed parts (parent minus reported parts) must itself be at least
-      min_count.
+      min_count. Fixed, not a setting, because leaving either out reopens a known disclosure: it
+      protects every total over its study and consent-group contributions, and the cohort total over
+      each facet and each facet's values, counting the implied "not recorded" part.
     slots:
       - method
       - withhold_order
       - fallback
-      - parents
-      - count_implied_not_recorded
     slot_usage:
       method:
         range: SuppressionMethodEnum
@@ -91,11 +93,10 @@ classes:
   ReleaseRule:
     description: >-
       Which releases each tier may query. Tiers not listed in retired_release_tiers query the active
-      release only.
+      release only. Fixed, not settings: a retired release is queried only for the caller's own
+      saved cohorts, and overlap checks compare queries across releases, not just within one.
     slots:
       - retired_release_tiers
-      - retired_release_own_cohorts_only
-      - overlap_checks_span_releases
 
   Limit:
     description: >-
@@ -236,7 +237,6 @@ classes:
       - exact_scope
       - limits
       - overlap_check
-      - log_every_request
       - relaxed_queries_outside_scope
       - stages
     slot_usage:
@@ -308,6 +308,8 @@ classes:
       exact_scope:
         required: true
       relaxed_queries_outside_scope:
+        required: true
+      overlap_check:
         required: true
       limits:
         required: true
@@ -567,14 +569,12 @@ slots:
     inlined_as_list: true
 
   min_count:
-    description: Smallest count reported; smaller counts are BELOW_MIN_COUNT.
+    description: >-
+      Smallest count reported; smaller counts are BELOW_MIN_COUNT. At least 10: the policy may
+      raise it, but lowering it below that floor means changing this schema.
     range: integer
     required: true
-    minimum_value: 1
-  below_min_count_includes_zero:
-    description: Whether BELOW_MIN_COUNT reads "fewer than min_count, possibly none", so zero and small counts look alike.
-    range: boolean
-    required: true
+    minimum_value: 10
   identity_rule:
     description: >-
       The BDCHM class counted as one participant. Participant is one enrollment, so a person in two
@@ -606,22 +606,19 @@ slots:
     required: true
   min:
     description: >-
-      Smallest noise added. At most -1: with no negative noise, every OBFUSCATED count would be
-      a lower bound on the exact one.
+      Smallest noise added. At most -3: the policy may widen the range, but narrowing it means
+      changing this schema. Without negative noise, every OBFUSCATED count would be a lower bound
+      on the exact one.
     range: integer
     required: true
-    maximum_value: -1
+    maximum_value: -3
   max:
     description: >-
-      Largest noise added. At least 1, so min and max can never both be zero; zero noise would
-      release exact counts labelled OBFUSCATED.
+      Largest noise added. At least 3: the policy may widen the range, but narrowing it means
+      changing this schema. Zero noise would release exact counts labelled OBFUSCATED.
     range: integer
     required: true
-    minimum_value: 1
-  clamp_to_min_count:
-    description: Whether a noisy value that falls below min_count is shown as min_count.
-    range: boolean
-    required: true
+    minimum_value: 3
   seed_function:
     range: SeedFunctionEnum
     required: true
@@ -642,38 +639,16 @@ slots:
     description: Whether studies below min_count still contribute their participants to the total.
     range: boolean
     required: true
-  exact_requires_full_exact_scope:
-    description: Whether a total is EXACT only when every contributing consent group is in the caller's exact scope.
-    range: boolean
-    required: true
   withhold_order:
     range: WithholdOrderEnum
     required: true
   fallback:
     range: SuppressionFallbackEnum
     required: true
-  parents:
-    description: Which parents the suppression rule protects.
-    range: SuppressionParentEnum
-    required: true
-    multivalued: true
-    minimum_cardinality: 1
-  count_implied_not_recorded:
-    description: Whether a facet's participants with nothing recorded count as an implied part of the cohort total.
-    range: boolean
-    required: true
   retired_release_tiers:
     description: Tiers that may query retired releases.
     range: TierNameEnum
     multivalued: true
-  retired_release_own_cohorts_only:
-    description: Whether retired releases are queried only for the caller's own saved cohorts.
-    range: boolean
-    required: true
-  overlap_checks_span_releases:
-    description: Whether overlap checks compare queries across releases, not just within one.
-    range: boolean
-    required: true
 
   name:
     range: TierNameEnum
@@ -711,9 +686,6 @@ slots:
     range: TierNameEnum
   exempt_within_exact_scope:
     description: Whether queries entirely within exact scope spend no budget.
-    range: boolean
-  log_every_request:
-    description: Whether every request is logged with the caller's identity, for audit.
     range: boolean
   overlap_check:
     range: OverlapCheck
@@ -767,10 +739,11 @@ slots:
   min_days:
     description: >-
       The shortest time window a query may use when it touches any group outside the caller's exact
-      scope. For a tier with no exact scope, that is every query.
+      scope. For a tier with no exact scope, that is every query. At least 30: the policy may
+      lengthen it, but shortening it below that floor means changing this schema.
     range: integer
     required: true
-    minimum_value: 1
+    minimum_value: 30
   min_days_within_exact_scope:
     description: >-
       The shortest window a query may use when every group it touches is within the caller's exact
@@ -851,12 +824,6 @@ enums:
     permissible_values:
       WITHHOLD_PARENT:
         description: If withholding parts cannot protect the remainder, withhold the parent.
-  SuppressionParentEnum:
-    permissible_values:
-      CONTRIBUTIONS:
-        description: A total over its study and consent-group contributions.
-      FACET_VALUES:
-        description: The cohort total over a facet's values.
   RecordCountScopeEnum:
     permissible_values:
       EXACT_SCOPE_ONLY:
@@ -872,10 +839,16 @@ enums:
           Authenticated, with dbGaP approval for at least one consent group in the release;
           authorization covers only those groups.
   AccountabilityEnum:
+    description: >-
+      Who a caller is. Fixed, not a setting: every request from an identified caller is logged with
+      that identity, for audit.
     permissible_values:
       NONE:
+        description: Anonymous; requests are limited by network address.
       RAS_ACCOUNT:
+        description: An NIH RAS account; every request is logged with it.
       RAS_ACCOUNT_WITH_VISAS:
+        description: An NIH RAS account with dbGaP visas; every request is logged with it.
   ExactScopeEnum:
     permissible_values:
       ENTITLED_AND_ELIGIBLE:

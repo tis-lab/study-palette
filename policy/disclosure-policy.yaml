@@ -16,32 +16,25 @@ policy_version: 1
 status: draft
 
 counting:
-  min_count: 10                             # changed only by issuing a new policy_version
-  below_min_count_includes_zero: true
+  min_count: 10                             # changed only by issuing a new policy_version; never below 10
   identity_rule: Participant
   noise:
     distribution: UNIFORM_INTEGER           # proposed
     min: -3                                 # proposed
     max: 3                                  # proposed
-    clamp_to_min_count: true
     seed_function: HMAC_SHA256
     seed_inputs: [RELEASE, MATCHED_PARTICIPANTS]
     # key_reference: the Key Vault key name; to be set before approval
   totals:
     method: UNION_THEN_OBFUSCATE
     include_below_min_count_studies: true
-    exact_requires_full_exact_scope: true
   suppression:
     method: REMAINDER
     withhold_order: SMALLEST_FIRST
     fallback: WITHHOLD_PARENT
-    parents: [CONTRIBUTIONS, FACET_VALUES]
-    count_implied_not_recorded: true
   record_count_scope: EXACT_SCOPE_ONLY
   releases:
     retired_release_tiers: [authorized]
-    retired_release_own_cohorts_only: true
-    overlap_checks_span_releases: true
 
 tiers:
 
@@ -101,7 +94,6 @@ tiers:
     overlap_check:
       scope: PER_ACCOUNT
       on_match: REFUSE
-    log_every_request: true
     stages:
       - number: 0
         available: true
@@ -152,7 +144,6 @@ tiers:
     overlap_check:
       scope: PER_ACCOUNT
       on_match: REFUSE
-    log_every_request: true
     relaxed_queries_outside_scope: EXCLUDED # a relaxed query leaves groups outside exact scope out entirely
     stages:
       - number: 0

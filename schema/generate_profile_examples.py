@@ -257,9 +257,9 @@ class Disclosure:
         return len(self.view.members(*cell))
 
     def obfuscated(self, cell):
-        """Return the noisy count, clamped to min_count."""
+        """Return the noisy count, clamped to min_count, as the policy always requires."""
         n = self.exact(cell) + noise(self.release, self.view.members(*cell), self.counting["noise"])
-        return max(n, self.min_count) if self.counting["noise"]["clamp_to_min_count"] else n
+        return max(n, self.min_count)
 
     def release_cells(self, cells, groups, exact_columns=frozenset()):
         """

@@ -228,6 +228,24 @@ REJECTED = {
     "global-check-refuses": lambda p: p["tiers"][0]["overlap_check"].update(on_match="REFUSE"),
     "authenticated-no-overlap-check": lambda p: p["tiers"][1].pop("overlap_check"),
     "boolean-overlap-check": lambda p: p["tiers"][1].update(overlap_check=True),
+    "authorized-no-overlap-check": lambda p: p["tiers"][2].pop("overlap_check"),
+    # Protections are fixed: switching one off is an unknown field, not a setting.
+    "possibly-none-off": lambda p: p["counting"].update(below_min_count_includes_zero=False),
+    "clamp-off": lambda p: p["counting"]["noise"].update(clamp_to_min_count=False),
+    "partial-exact-totals": lambda p: p["counting"]["totals"].update(exact_requires_full_exact_scope=False),
+    "facet-suppression-off": lambda p: p["counting"]["suppression"].update(parents=["CONTRIBUTIONS"]),
+    "not-recorded-off": lambda p: p["counting"]["suppression"].update(count_implied_not_recorded=False),
+    "retired-releases-for-anything": lambda p: p["counting"]["releases"].update(
+        retired_release_own_cohorts_only=False),
+    "overlap-within-release-only": lambda p: p["counting"]["releases"].update(overlap_checks_span_releases=False),
+    "logging-off": lambda p: p["tiers"][1].update(log_every_request=False),
+    # Floors: the policy may tighten, never loosen below them.
+    "min-count-below-floor": lambda p: p["counting"].update(min_count=9),
+    "noise-narrower-below": lambda p: p["counting"]["noise"].update(min=-2),
+    "noise-narrower-above": lambda p: p["counting"]["noise"].update(max=2),
+    "authenticated-window-below-floor": lambda p: stage(p, "authenticated", 4)["temporal_windows"].update(
+        min_days=29),
+    "authorized-window-below-floor": lambda p: stage(p, "authorized", 4)["temporal_windows"].update(min_days=7),
     # Relaxed queries: the policy says what they return outside exact scope, and only where there is one.
     "authorized-relaxed-undecided": lambda p: p["tiers"][2].pop("relaxed_queries_outside_scope"),
     "authorized-relaxed-estimated": lambda p: p["tiers"][2].update(relaxed_queries_outside_scope="ESTIMATED"),
@@ -247,11 +265,12 @@ ACCEPTED = {
     "authorized-exact-charts": lambda p: stage(p, "authorized", 5).update(charts="EXACT_WITHIN_EXACT_SCOPE"),
     "authenticated-bin-edges": lambda p: stage(p, "authenticated", 4).update(numeric_ranges="BIN_EDGES"),
     "wider-noise": lambda p: p["counting"]["noise"].update(min=-5, max=5),
+    "higher-min-count": lambda p: p["counting"].update(min_count=20),
+    "longer-window": lambda p: stage(p, "authenticated", 4)["temporal_windows"].update(min_days=60),
     "authenticated-rate-limit-too": lambda p: p["tiers"][1]["limits"].append(dict(
         limit_type="RATE_LIMIT", amount=120, unit="REQUESTS", period="MINUTE", keyed_by="ACCOUNT")),
     "authenticated-global-reuse": lambda p: p["tiers"][1]["overlap_check"].update(
         scope="GLOBAL", on_match="REUSE_EARLIER_ANSWER"),
-    "authorized-no-overlap-check": lambda p: p["tiers"][2].pop("overlap_check"),
 }
 
 
