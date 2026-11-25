@@ -144,7 +144,7 @@ summary:
       - research_study: palette:study_one
         participant_count: 245
       - research_study: palette:study_two
-        participant_count: 205
+        participant_count: 210
   - id: palette:demography/race
     summarized_slot: race
     studies:
