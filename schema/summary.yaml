@@ -4,10 +4,11 @@ title: Study Palette summary statistics
 description: Class-first summaries of a meta-analysis study. Each concept or value appears once, with counts for
   each contributing study. Summary IDs remain stable within a release. Filter determines who is counted; focus determines
   which concepts are described. Age and demographics are always summarized. The overview has no filter or focus
-  and supplies the unfiltered study denominators. Clients may sum reported study counts; this is not a distinct-person
-  union across studies. Omitted or suppressed contributions are not zero. Race values can overlap. Repeated measurements
-  use the most recent value; ontology rollups remain out of scope. Summary classes extend BDCHM, and participant-level
-  records remain separate.
+  and supplies the unfiltered study denominators. Where a released participant_count is present on the response
+  or a facet, clients use it; they never sum counts whose count_mode is OBFUSCATED. Sums of exact study counts are
+  study-participant counts, not a distinct-person union across studies. Omitted or suppressed contributions are
+  not zero. Race values can overlap. Repeated measurements use the most recent value; ontology rollups remain out
+  of scope. Summary classes extend BDCHM, and participant-level records remain separate.
 license: MIT
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -27,6 +28,9 @@ classes:
     - record_count
     - values
     - studies
+    - participant_count
+    - count_mode
+    - outside_scope
   Binned:
     mixin: true
     description: A bin [bin_low, bin_high); either end may be left open.
@@ -49,6 +53,16 @@ classes:
         required: false
       values:
         range: ParticipantSummary
+    rules:
+    - &id005
+      preconditions:
+        slot_conditions:
+          participant_count:
+            value_presence: PRESENT
+      postconditions:
+        slot_conditions:
+          count_mode:
+            required: true
   DemographySummary:
     is_a: Demography
     mixins:
@@ -61,6 +75,8 @@ classes:
         required: false
       values:
         range: DemographySummary
+    rules:
+    - *id005
   ConditionSummary:
     is_a: Condition
     mixins:
@@ -77,6 +93,8 @@ classes:
         required: false
       values:
         range: ConditionSummary
+    rules:
+    - *id005
   ProcedureSummary:
     is_a: Procedure
     mixins:
@@ -91,6 +109,8 @@ classes:
         required: false
       values:
         range: ProcedureSummary
+    rules:
+    - *id005
   DrugExposureSummary:
     is_a: DrugExposure
     mixins:
@@ -103,6 +123,8 @@ classes:
         required: false
       values:
         range: DrugExposureSummary
+    rules:
+    - *id005
   MeasurementObservationSummary:
     is_a: MeasurementObservation
     mixins:
@@ -115,6 +137,8 @@ classes:
         required: false
       values:
         range: MeasurementObservationSummary
+    rules:
+    - *id005
   StudySummary:
     description: Matching participant count for one BDCHM ResearchStudy. On the unfiltered overview this is the
       study denominator; name is an optional display label.
@@ -122,6 +146,56 @@ classes:
     - research_study
     - name
     - participant_count
+    - count_mode
+    - count_status
+    - consent_group
+    rules:
+    - preconditions:
+        slot_conditions:
+          count_status:
+            value_presence: ABSENT
+      postconditions:
+        slot_conditions:
+          participant_count:
+            required: true
+    - &id001
+      preconditions:
+        slot_conditions:
+          count_status:
+            equals_string: REPORTED
+      postconditions:
+        slot_conditions:
+          participant_count:
+            required: true
+          count_mode:
+            required: true
+    - &id002
+      preconditions:
+        slot_conditions:
+          count_status:
+            equals_string: LISTED
+      postconditions:
+        slot_conditions:
+          participant_count:
+            value_presence: ABSENT
+    - &id003
+      preconditions:
+        slot_conditions:
+          count_status:
+            equals_string: BELOW_MIN_COUNT
+      postconditions:
+        slot_conditions:
+          participant_count:
+            value_presence: ABSENT
+    - &id004
+      preconditions:
+        slot_conditions:
+          count_status:
+            equals_string: WITHHELD
+      postconditions:
+        slot_conditions:
+          participant_count:
+            value_presence: ABSENT
   SummaryResponse:
     tree_root: true
     description: Class-first description of the participants matching the filter, with study totals and a term dictionary.
@@ -138,9 +212,14 @@ classes:
     - seed
     - summary
     - suppressed_study_count
+    - participant_count
+    - count_mode
+    - outside_scope
     slot_usage:
       studies:
         range: StudySummary
+    rules:
+    - *id005
   ParticipantRecords:
     description: Participant-level records, kept apart from summaries.
     attributes:
@@ -164,6 +243,38 @@ classes:
     slots:
     - research_study
     - participant_count
+    - count_mode
+    - count_status
+    - consent_group
+    rules:
+    - preconditions:
+        slot_conditions:
+          count_status:
+            value_presence: ABSENT
+      postconditions:
+        slot_conditions:
+          participant_count:
+            required: true
+    - *id001
+    - *id002
+    - *id003
+    - *id004
+  OutsideScopeCount:
+    description: The figure for consent groups outside the caller's exact scope, beside an exact figure for the groups
+      inside it. It is computed and suppressed on its own and never combined with the exact figure, so a response with
+      exact counts can still say something about the other groups without adding the two together.
+    slots:
+    - participant_count
+    - count_mode
+    - count_status
+    - consent_group_count
+    slot_usage:
+      count_status:
+        required: true
+    rules:
+    - *id001
+    - *id003
+    - *id004
   SummaryFacets:
     description: Class-based arrays. Omitted classes are unavailable; an empty array has no reportable entries.
     slots:
@@ -175,9 +286,10 @@ classes:
     - measurements
 slots:
   participant_count:
-    description: How many participants match.
+    description: How many participants match. Required on study entries and contributions unless count_status says
+      the count is listed, below min_count or withheld.
     range: integer
-    required: true
+    required: false
     minimum_value: 0
   record_count:
     description: How many records match.
@@ -294,6 +406,23 @@ slots:
       This is not a participant count.
     range: integer
     minimum_value: 0
+  count_mode:
+    description: How the released participant count was produced. A label alone does not implement obfuscation.
+    range: CountModeEnum
+  count_status:
+    description: Whether a count is reported or intentionally omitted.
+    range: CountStatusEnum
+  outside_scope:
+    description: Participants in consent groups outside the caller's exact scope, counted apart from the exact figure.
+    range: OutsideScopeCount
+    inlined: true
+  consent_group_count:
+    description: How many consent groups the figure covers.
+    range: integer
+    minimum_value: 1
+  consent_group:
+    description: Stable consent-group identifier supplied by the authorized release; not inferred from a study ID.
+    range: uriorcurie
 enums:
   SummarizedSlotEnum:
     permissible_values:
@@ -301,3 +430,19 @@ enums:
       race: null
       ethnicity: null
       age_at_index: null
+  CountModeEnum:
+    permissible_values:
+      EXACT:
+        description: Exact count; release requires authorization for its full scope.
+      OBFUSCATED:
+        description: Count transformed by an approved disclosure method; the algorithm is not defined here.
+  CountStatusEnum:
+    permissible_values:
+      REPORTED:
+        description: A participant count is provided.
+      LISTED:
+        description: Study listed without a count.
+      BELOW_MIN_COUNT:
+        description: Count omitted because it is below the reporting threshold.
+      WITHHELD:
+        description: Count withheld by disclosure policy.

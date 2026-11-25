@@ -238,10 +238,28 @@ def test_missing_contribution_count_is_rejected(errors):
     assert errors(response)
 
 
-def test_no_global_participant_count(schema):
+TOTAL_CLASSES = ("SummaryResponse", "ParticipantSummary", "DemographySummary", "ConditionSummary",
+                 "ProcedureSummary", "DrugExposureSummary", "MeasurementObservationSummary")
+
+
+def test_released_total_is_optional(schema, errors):
     view = SchemaView(schema)
-    for name in ("SummaryResponse", "ConditionSummary", "DemographySummary"):
-        assert "participant_count" not in view.class_slots(name)
+    for name in TOTAL_CLASSES:
+        assert "participant_count" in view.class_slots(name), name
+        assert not view.induced_slot("participant_count", name).required, name
+    response = yaml.safe_load(BASE.read_text())
+    assert "participant_count" not in response
+    assert errors(response) == []
+
+
+@pytest.mark.parametrize("where", ["response", "facet"])
+def test_released_total_states_its_count_mode(errors, where):
+    response = yaml.safe_load(BASE.read_text())
+    target = response if where == "response" else response["summary"]["conditions"][0]
+    target["participant_count"] = 1000
+    assert errors(response)
+    target["count_mode"] = "OBFUSCATED"
+    assert errors(response) == []
 
 
 def test_seed_is_optional(errors):
